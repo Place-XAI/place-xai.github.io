@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A multi-agent framework combining LLMs with medical flowcharts for self-triage — AI Digest</title>
+<meta name="description" content="AI Digest: A multi-agent framework combining large language models with medical flowcharts for self-triage (Nature Health, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Health</span>
+      <span class="tag">Self-triage</span>
+      <span class="tag">Multi-agent LLM</span>
+      <span class="tag">Clinical decision support</span>
+      <span class="tag">Retrieval-augmented</span>
+    </div>
+    <h1>A multi-agent framework combining large language models with medical flowcharts for self-triage</h1>
+    <div class="meta">
+      <span class="authors">Yujia Liu · Sophia Yu · Hongyue Jin · Jessica Wen · Alexander Qian · Terrence Lee · Mattheus Ramsis · Gi Won Choi · Lianhui Qin · Xin Liu · Edward Jay Wang</span>
+      <span><b>Published</b> 2026-04-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s44360-026-00112-2" target="_blank">10.1038/s44360-026-00112-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s44360-026-00112-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Free-text LLM chat is flexible but unreliable for health advice; rigid clinical flowcharts are auditable but inflexible. This paper <strong>fuses the two</strong>: a three-agent system (retrieval → decision → conversation) lets an LLM converse naturally while being <strong>constrained to walk 100 American Medical Association self-triage flowcharts</strong>. On large synthetic evaluations it reaches <strong>84.1% flowchart-retrieval accuracy</strong> (N = 2,000) and <strong>99.1% flowchart-navigation accuracy</strong> (N = 37,200), demonstrating that a <strong>structured, transparent and auditable</strong> protocol layer can make conversational AI self-triage both accurate and trustworthy.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Tackles the core failure mode of medical LLMs head-on.</b> Pure LLM chat hallucinates, is opaque, and cannot be audited — exactly the properties that block safe deployment. Grounding every step in a published AMA flowchart makes each recommendation <strong>traceable to a clinical protocol</strong>.</li>
+      <li><b>Separates "what to talk about" from "what to decide."</b> By splitting retrieval, decision and conversation into distinct agents, clinical logic lives in the auditable flowchart, while the LLM only handles language — a clean way to keep the model from improvising medicine.</li>
+      <li><b>Evaluated at a scale clinical NLP rarely reaches.</b> 37,200 simulated navigation conversations and 2,000 retrieval cases across varied conversational styles stress-test robustness far beyond hand-curated vignettes.</li>
+      <li><b>Targets a real bottleneck: triage and resource utilization.</b> Reliable at-home self-triage could route patients to the right level of care, easing pressure on overstretched primary and emergency services.</li>
+      <li><b>Open-source and reproducible by design.</b> Code is released on <a href="https://github.com/digihealthucsd/Multi-agent-self-triage-system" target="_blank">GitHub</a>, with prompts and dataset samples in the Supplementary Information.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Health (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Safety and transparency first:</b> the contribution is a mechanism for making medical AI <em>auditable</em>, matching Nature Health's emphasis on trustworthy, deployable health technology.</li>
+      <li><b>Generalizable framework, not a single model:</b> the agent architecture is protocol-agnostic and could wrap any standardized clinical guideline — a transferable design.</li>
+      <li><b>Rigorous, large-scale evaluation:</b> headline accuracies are backed by tens of thousands of simulated conversations across conditions and styles.</li>
+      <li><b>Direct health-system relevance:</b> self-triage links AI capability to patient decision-making and healthcare resource utilization, bridging method and population-health impact.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Clinical knowledge base</dt><dd><strong>100 self-triage medical flowcharts from the American Medical Association (AMA)</strong> — the published protocol set that anchors every decision. Owing to copyright the full set is <em>not</em> redistributed; one representative flowchart is shown in Supplementary Information Section 4.</dd>
+      <dt>Retrieval eval set</dt><dd><strong>N = 2,000</strong> synthetic opening statements used to test which flowchart the retrieval agent selects (84.1% accuracy).</dd>
+      <dt>Navigation eval set</dt><dd><strong>N = 37,200</strong> synthetic simulated patient-response conversations spanning varied conversational styles and conditions, used to test flowchart navigation (99.1% accuracy).</dd>
+      <dt>Data generation</dt><dd>Evaluation datasets are <strong>fully synthetic</strong>, generated with LLM prompts; the prompts and dataset samples are released in Supplementary Information Sections 1 and 2. No real patient data are used.</dd>
+      <dt>Time / model basis</dt><dd>Proof-of-concept system; the paper does not report a real-world patient deployment or longitudinal time window — evaluation is in-silico.</dd>
+      <dt>Availability</dt><dd>AMA flowcharts must be obtained from the original published volume (copyright-restricted). The full synthetic datasets are <strong>not released publicly</strong> (they could leak AMA content); available on individual request to the authors. Code: <a href="https://github.com/digihealthucsd/Multi-agent-self-triage-system" target="_blank">github.com/digihealthucsd/Multi-agent-self-triage-system</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>AMA self-triage flowcharts</td><td>Clinical decision protocols (ground truth)</td><td>100 flowcharts (copyright-restricted)</td><td><a href="https://www.ama-assn.org/" target="_blank">AMA (published volume)</a></td></tr>
+        <tr><td>Synthetic opening statements</td><td>Flowchart-retrieval evaluation</td><td>N = 2,000 (synthetic)</td><td>On request (not public)</td></tr>
+        <tr><td>Synthetic patient-response conversations</td><td>Flowchart-navigation evaluation</td><td>N = 37,200 (synthetic)</td><td>On request (not public)</td></tr>
+        <tr><td>Source code + prompts</td><td>System implementation &amp; reproducibility</td><td>Full multi-agent pipeline</td><td><a href="https://github.com/digihealthucsd/Multi-agent-self-triage-system" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: numbers (100 flowcharts; N = 2,000; N = 37,200; 84.1% / 99.1%) are taken verbatim from the abstract. The exact base LLM(s) and per-condition breakdowns are detailed in the main text/Supplementary, not in the scraped metadata; no real patient cohort is involved.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Multi-agent decomposition:</b> three specialized LLM agents — a <strong>retrieval agent</strong> (pick the most relevant flowchart from the opening statement), a <strong>decision agent</strong> (interpret the patient's free-text reply and choose the next flowchart branch), and a <strong>conversation agent</strong> (turn protocol state into a patient-friendly, personalized message).</li>
+      <li><b>Flowchart grounding:</b> clinical logic is externalized into the 100 AMA flowcharts; the LLM never invents triage steps — it only maps natural language onto a fixed, auditable graph of decision nodes.</li>
+      <li><b>Retrieval over a structured protocol library:</b> matching a free-text symptom description to the correct flowchart among 100 candidates (the dominant error source, at 84.1%).</li>
+      <li><b>Constrained navigation:</b> step-by-step traversal of the chosen flowchart, with the decision agent resolving each node from conversational input (99.1%).</li>
+      <li><b>Synthetic-conversation evaluation at scale:</b> LLM-generated simulated patients with varied conversational styles/conditions provide a controlled, repeatable benchmark for retrieval and navigation accuracy.</li>
+      <li><b>Transparency by construction:</b> because every recommendation is the endpoint of a traceable flowchart path, the system output is inherently auditable against a clinical standard.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig1.png" target="_blank">
+        <img src="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig1.png" alt="Fig.1 Multi-agent self-triage system overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Multi-agent self-triage system overview — retrieval, decision and conversation agents around the flowchart store.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig2.png" target="_blank">
+        <img src="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig2.png" alt="Fig.2 Flowchart database breakdown" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Flowchart database breakdown — composition of the 100 AMA self-triage flowcharts.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig3.png" target="_blank">
+        <img src="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig3.png" alt="Fig.3 Evaluation of flowchart retrieval accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Flowchart-retrieval accuracy on synthetic opening statements (84.1%, N = 2,000).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig4.png" target="_blank">
+        <img src="assets/a-multi-agent-framework-combining-large-language-models-with-medical-flowcharts-for-self-t__s44360-026-00112-2/fig4.png" alt="Fig.4 Evaluation of flowchart navigation accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Flowchart-navigation accuracy on synthetic patient responses (99.1%, N = 37,200).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0); Supplementary Tables 1–14 and a flowchart example are provided.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, health-geography &amp; accessibility, 2SFCA/R2SFCA, explainable ML, reproducible multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Geolocate the triage endpoint — from "what level of care" to "which reachable facility"</h3>
+      <p><span class="lab paper">Extending this paper</span>The system stops at a <strong>care-level recommendation</strong> (e.g., self-care, primary care, emergency) but is blind to <em>where</em> the patient can actually obtain that care. A direct extension: add a fourth, spatially-aware agent that, given the flowchart's acuity verdict and the user's location, returns the nearest <strong>reachable, open, appropriate-tier facility</strong> — closing the loop from triage decision to actionable referral and making the AMA protocol spatially grounded.</p>
+      <p><span class="lab mine">Added value to my research</span>This is exactly my <strong>spatial accessibility of primary care</strong> agenda: the triage acuity becomes the "demand weight" feeding an <strong>R2SFCA</strong> service-area model, so the referral respects real catchments, travel time and supply capacity rather than naive nearest-distance.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unequal roles of cities in the intercity healthcare system — <a href="https://doi.org/10.1038/s44284-024-00185-8" target="_blank">10.1038/s44284-024-00185-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Audit the flowchart system for socio-demographic and digital-divide bias</h3>
+      <p><span class="lab paper">Extending this paper</span>Flowchart grounding constrains the <em>decision logic</em>, but the conversation and retrieval agents still parse free text via an LLM, which can encode bias. The paper's all-synthetic evaluation cannot surface this. Extending it: stratify the synthetic patients by inferred age, gender, ethnicity and health-literacy/conversational fluency, then test whether retrieval and navigation accuracy — and the final acuity recommendation — drift across groups, the way LLM pain-management advice has been shown to.</p>
+      <p><span class="lab mine">Added value to my research</span>Directly feeds my <strong>telehealth / digital-divide</strong> line: free-text triage may systematically underserve low-literacy or non-native-speaker populations, and pairing equity audits with the spatial distribution of those populations links algorithmic bias to <em>geographic</em> health inequity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Socio-demographic gaps in pain management guided by large language models — <a href="https://doi.org/10.1038/s44360-025-00017-6" target="_blank">10.1038/s44360-025-00017-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Move from in-silico accuracy to real-world safety and trust</h3>
+      <p><span class="lab paper">Extending this paper</span>Headline accuracies (84.1% / 99.1%) are on <strong>synthetic conversations</strong> — a clean benchmark, but not deployment evidence. The natural extension is a prospective, randomized evaluation with real users, measuring not just accuracy but <strong>safety (missed high-acuity cases), over-triage, and user trust/comprehension</strong>, mirroring how community-codesigned and African-clinic LLM systems were validated.</p>
+      <p><span class="lab mine">Added value to my research</span>Supports my <strong>open-science / FAIR</strong> stance: a transparent, flowchart-auditable system is the ideal substrate for a reproducible safety study, and the trust dimension connects to my interest in how digital health literacy mediates uptake across populations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A community-codesigned LLM-powered chatbot for primary care: a randomized controlled trial — <a href="https://doi.org/10.1038/s44360-025-00021-w" target="_blank">10.1038/s44360-025-00021-w</a> · Safety of a large language model-based clinical decision support system in African primary healthcare — <a href="https://doi.org/10.1038/s44360-026-00082-5" target="_blank">10.1038/s44360-026-00082-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Make the retrieval bottleneck explainable — and learn from where it fails</h3>
+      <p><span class="lab paper">Extending this paper</span>The 84.1% retrieval accuracy is the system's weakest link: ~16% of users get routed to the <em>wrong</em> flowchart from the start. Extending it: apply <strong>explainable analysis of retrieval errors</strong> — which symptom phrasings, comorbidities or overlapping flowcharts cause confusion — and feed those failure clusters back as targeted training/contrastive examples, turning a black-box retriever into a diagnosable, improvable component.</p>
+      <p><span class="lab mine">Added value to my research</span>Mirrors my <strong>explainable machine learning for spatial prediction</strong> work: the same error-attribution discipline (which features/regions drive misclassification) transfers from spatial models to clinical retrieval, and the failure taxonomy is itself a research artifact.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Large language model diagnostic assistance for physicians in a lower-middle-income country — <a href="https://doi.org/10.1038/s44360-025-00007-8" target="_blank">10.1038/s44360-025-00007-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Generalize the architecture into a reliability pattern for protocol-grounded agents</h3>
+      <p><span class="lab paper">Extending this paper</span>The deepest contribution is a <strong>design pattern</strong>: externalize the decision logic into an auditable graph and let LLMs handle only language. Extending it: formalize this as a reliability framework and apply it beyond triage — to any standardized guideline (screening intervals, medication titration, public-health advisories) — and quantify the reliability gain versus an unconstrained LLM under the "rethinking reliability" lens for healthcare foundation models.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a template for my <strong>geospatial foundation-model / agent</strong> work: ground a GeoAI agent's reasoning in explicit, auditable spatial rules (accessibility standards, zoning, service-area constraints) so the model's flexibility never overrides domain logic — a physics/policy-informed agent rather than a free-running one.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation models in healthcare require rethinking reliability — <a href="https://doi.org/10.1038/s42256-024-00924-5" target="_blank">10.1038/s42256-024-00924-5</a> · Public use of a generalist LLM chatbot for health queries — <a href="https://doi.org/10.1038/s44360-026-00117-x" target="_blank">10.1038/s44360-026-00117-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

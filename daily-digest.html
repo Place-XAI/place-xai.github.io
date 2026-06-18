@@ -4,12 +4,101 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Digest — Place XAI</title>
-  <meta name="description" content="A daily pulse on AI for places — urban analytics, geospatial methods, and open spatial data." />
+  <meta name="description" content="AI-generated digests of Nature / Science family papers on urban analytics, geospatial AI, health geography, mobility and sustainability." />
   <link rel="icon" href="logos/psi.svg" />
   <script>(function(){var t=localStorage.getItem('pxai-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── AI Digest list-view styles — inherits all place-xai CSS variables ── */
+    .digest-wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 80px; }
+
+    .digest-toolbar {
+      position: sticky; top: 64px; z-index: 4;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 14px 0 10px;
+    }
+    .digest-toolbar input[type="search"] {
+      width: 100%; padding: 11px 16px;
+      border: 1px solid var(--border-strong); border-radius: 12px;
+      background: var(--surface); color: var(--text);
+      font: inherit; font-size: 15px; outline: none;
+      transition: border-color .15s;
+    }
+    .digest-toolbar input[type="search"]:focus { border-color: var(--brand); }
+    .digest-toolbar input[type="search"]::placeholder { color: var(--text-muted); }
+    .digest-filters {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      align-items: center; margin-top: 10px;
+    }
+    .digest-filters select {
+      padding: 7px 10px; border: 1px solid var(--border-strong);
+      border-radius: 9px; background: var(--surface); color: var(--text);
+      font: inherit; font-size: 13px; outline: none; cursor: pointer;
+    }
+    .digest-filters select:focus { border-color: var(--brand); }
+    .digest-count { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+    /* list rows */
+    ul.digest-list { list-style: none; margin: 16px 0 0; padding: 0; }
+    li.digest-row {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 20px; margin-bottom: 10px;
+      display: grid; grid-template-columns: 1fr 140px; gap: 16px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    li.digest-row:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 4px 16px rgba(79,124,255,.08);
+    }
+    .drow-main .drow-top {
+      display: flex; align-items: center; gap: 7px;
+      flex-wrap: wrap; margin-bottom: 7px;
+    }
+    .badge-journal {
+      font-size: 11px; font-weight: 700; color: #fff;
+      background: var(--brand); border-radius: 999px; padding: 2px 10px;
+      white-space: nowrap;
+    }
+    .badge-subj {
+      font-size: 11px; font-weight: 600;
+      color: var(--brand); background: rgba(79,124,255,.12);
+      border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+    }
+    .drow-main h3 { font-size: 16px; margin: 0 0 6px; line-height: 1.4; }
+    .drow-main h3 a { color: var(--text); text-decoration: none; }
+    .drow-main h3 a:hover { color: var(--brand); }
+    .drow-concl { font-size: 13.5px; color: var(--text-soft); margin: 0 0 9px; line-height: 1.5; }
+    .drow-kws { display: flex; flex-wrap: wrap; gap: 5px; }
+    .kw-chip {
+      font-size: 11px; padding: 2px 9px; border-radius: 7px;
+      background: var(--surface-2); color: var(--text-muted);
+    }
+    .drow-side {
+      text-align: right; display: flex; flex-direction: column;
+      align-items: flex-end; justify-content: space-between;
+    }
+    .drow-date { font-size: 13px; font-weight: 600; color: var(--text); }
+    .drow-doi { font-size: 12px; color: var(--text-muted); }
+    .drow-doi a { color: var(--text-muted); text-decoration: none; }
+    .drow-doi a:hover { color: var(--brand); }
+
+    .digest-empty {
+      padding: 48px 24px; text-align: center; color: var(--text-muted);
+      background: var(--surface); border: 1px dashed var(--border);
+      border-radius: 14px; margin-top: 16px;
+    }
+    .digest-empty code {
+      font-family: ui-monospace, monospace; font-size: 13px;
+      background: var(--surface-2); padding: 1px 6px; border-radius: 5px;
+    }
+
+    @media (max-width: 640px) {
+      li.digest-row { grid-template-columns: 1fr; }
+      .drow-side { text-align: left; flex-direction: row; align-items: center; gap: 12px; margin-top: 6px; }
+    }
+  </style>
 </head>
 <body>
   <main>
@@ -17,22 +106,120 @@
       <div class="container">
         <span class="eyebrow"><span class="dot"></span>Insights · AI Digest</span>
         <h1 class="page-title">AI <span class="grad">Digest</span></h1>
-        <p class="page-lead">A daily pulse on AI for places — curated readings across urban analytics, geospatial methods, and open data.</p>
+        <p class="page-lead">AI-generated digests of Nature / Science family papers — core conclusions, data sources, methods, figures, and expanded research ideas anchored to Place XAI's agenda.</p>
       </div>
     </section>
+
     <section class="section">
-      <div class="container">
-        <div class="cards-grid products-grid">
-          <article class="card"><span class="tag">Today</span><h3>Heat &amp; cities</h3><p>Curated readings on urban heat, exposure modeling, and adaptation.</p></article>
-          <article class="card"><span class="tag">Today</span><h3>GeoAI methods</h3><p>New work on explainable spatial machine learning and accessibility.</p></article>
-          <article class="card"><span class="tag">Today</span><h3>Open data</h3><p>Fresh spatial datasets and tools worth a look.</p></article>
-          <article class="card"><span class="tag">Yesterday</span><h3>Mobility</h3><p>Network science, 15-minute cities, and service-area modeling.</p></article>
-          <article class="card"><span class="tag">Yesterday</span><h3>Health access</h3><p>Spatial accessibility, telehealth, and equity in care.</p></article>
-          <article class="card card-accent"><span class="card-ic">✉️</span><h3>Get it by email</h3><p>The digest, in your inbox each morning.</p><a class="card-link" href="news.html#newsletter">Subscribe →</a></article>
+      <div class="digest-wrap">
+        <div class="digest-toolbar">
+          <input id="dq" type="search" placeholder="Search title, keyword, method, data source, author…" autocomplete="off" />
+          <div class="digest-filters">
+            <select id="df-journal"><option value="">All journals</option></select>
+            <select id="df-year"><option value="">All years</option></select>
+            <select id="df-subject"><option value="">All subjects</option></select>
+            <select id="df-sort">
+              <option value="new">Newest first</option>
+              <option value="old">Oldest first</option>
+            </select>
+            <span class="digest-count" id="dcount"></span>
+          </div>
         </div>
+
+        <ul id="dlist" class="digest-list"></ul>
+        <div id="dempty" class="digest-empty" style="display:none">No matching articles.</div>
       </div>
     </section>
   </main>
-  <script src="layout.js"></script><script src="main.js"></script>
+
+  <script src="layout.js"></script>
+  <script src="main.js"></script>
+  <script>
+  (function () {
+    let DATA = [];
+    const $ = id => document.getElementById(id);
+
+    function uniq(a) { return [...new Set(a)].sort(); }
+    function fill(sel, vals) {
+      vals.forEach(v => {
+        const o = document.createElement('option');
+        o.value = v; o.textContent = v; sel.appendChild(o);
+      });
+    }
+
+    function render() {
+      const q = $('dq').value.trim().toLowerCase();
+      const fj = $('df-journal').value;
+      const fy = $('df-year').value;
+      const fs = $('df-subject').value;
+      const sort = $('df-sort').value;
+      const list = $('dlist');
+      list.innerHTML = '';
+
+      let rows = DATA.filter(a => {
+        const hay = [
+          a.title,
+          (a.authors || []).join(' '),
+          (a.keywords || []).join(' '),
+          (a.methods || []).join(' '),
+          (a.data_sources || []).join(' '),
+          (a.subjects || []).join(' '),
+          a.core_conclusion
+        ].join(' ').toLowerCase();
+        if (q && !hay.includes(q)) return false;
+        if (fj && a.journal !== fj) return false;
+        if (fy && String(a.year) !== fy) return false;
+        if (fs && !(a.subjects || []).includes(fs)) return false;
+        return true;
+      });
+
+      rows.sort((x, y) => sort === 'old'
+        ? (x.published || '').localeCompare(y.published || '')
+        : (y.published || '').localeCompare(x.published || ''));
+
+      rows.forEach(a => {
+        const li = document.createElement('li');
+        li.className = 'digest-row';
+        const subj = (a.subjects || []).map(s => `<span class="badge-subj">${s}</span>`).join('');
+        const concl = (a.core_conclusion || '').slice(0, 220) + ((a.core_conclusion || '').length > 220 ? '…' : '');
+        const kws = (a.keywords || []).slice(0, 5).map(k => `<span class="kw-chip">${k}</span>`).join('');
+        li.innerHTML = `
+          <div class="drow-main">
+            <div class="drow-top">
+              <span class="badge-journal">${a.journal || ''}</span>${subj}
+            </div>
+            <h3><a href="AIdigest/${a.html}">${a.title}</a></h3>
+            <p class="drow-concl">${concl}</p>
+            <div class="drow-kws">${kws}</div>
+          </div>
+          <div class="drow-side">
+            <span class="drow-date">${a.year_month || a.year || ''}</span>
+            <span class="drow-doi"><a href="https://doi.org/${a.doi}" target="_blank" rel="noopener">DOI ↗</a></span>
+          </div>`;
+        list.appendChild(li);
+      });
+
+      $('dcount').textContent = rows.length + ' / ' + DATA.length + ' articles';
+      $('dempty').style.display = rows.length ? 'none' : 'block';
+    }
+
+    fetch('AIdigest/index.json')
+      .then(r => r.json())
+      .then(d => {
+        DATA = d.articles || [];
+        fill($('df-journal'), uniq(DATA.map(a => a.journal).filter(Boolean)));
+        fill($('df-year'), uniq(DATA.map(a => String(a.year)).filter(Boolean)).reverse());
+        fill($('df-subject'), d.subjects || uniq(DATA.flatMap(a => a.subjects || [])));
+        ['dq', 'df-journal', 'df-year', 'df-subject', 'df-sort'].forEach(id =>
+          $(id).addEventListener('input', render));
+        render();
+      })
+      .catch(() => {
+        $('dlist').style.display = 'none';
+        $('dempty').style.display = 'block';
+        $('dempty').innerHTML = 'Could not load <code>AIdigest/index.json</code>.';
+      });
+  })();
+  </script>
 </body>
 </html>

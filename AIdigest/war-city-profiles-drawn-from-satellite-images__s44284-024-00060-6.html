@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War city profiles drawn from satellite images — AI Digest</title>
+<meta name="description" content="AI Digest: War city profiles drawn from satellite images (Nature Cities, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Cities</span>
+      <span class="tag">War damage</span>
+      <span class="tag">Satellite imagery</span>
+      <span class="tag">Change detection</span>
+      <span class="tag">Transformer</span>
+    </div>
+    <h1>War city profiles drawn from satellite images</h1>
+    <div class="meta">
+      <span class="authors">Zhengyang Hou · Ying Qu · Liqiang Zhang · Jun Liu · Faqiang Wang · Qiwei Yu · An Zeng · Ziyue Chen · Yuanyuan Zhao · Hong Tang · Yuebin Wang · Xingang Li · Yang Li · Shuwen Peng · Jing Ran · Xin Yao · Xichen Meng · Suhong Liu · Chenghu Zhou</span>
+      <span><b>Published</b> 2024-04-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s44284-024-00060-6" target="_blank">10.1038/s44284-024-00060-6</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s44284-024-00060-6" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>temporal-knowledge-guided detection scheme (TKDS)</strong> coupled with a <strong>pixel-based transformer network (PtNet)</strong> detects war-induced building destruction from satellite imagery far more accurately than prior change-detection methods — improving F1 by <strong>+44.0 (72.5 vs 28.5)</strong> across six Syrian cities and <strong>+34.2 (83.5 vs 49.3)</strong> across four Ukrainian cities. The detected damaged buildings are then translated into estimates of <strong>affected population</strong> and damage to <strong>critical infrastructure (hospitals, schools)</strong>, demonstrating a repeatable, relatively low-cost route to near-real-time monitoring of urban destruction from war, earthquakes, or extreme weather.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Geotargets destruction where ground access is impossible.</b> In active conflict zones, on-the-ground damage assessment is dangerous or infeasible; the paper provides a <strong>remote, repeatable, near-real-time</strong> alternative for relief, impact assessment, and reconstruction decisions.</li>
+      <li><b>A large, honest accuracy gap is closed.</b> Generic urban change detection collapses on war damage (F1 ≈ 28.5 / 49.3); TKDS-PtNet lifts this to 72.5 / 83.5, turning an unusable signal into an actionable one.</li>
+      <li><b>From pixels to people.</b> Detected damaged buildings are fused with <strong>WorldPop</strong> to estimate affected population and with infrastructure footprints to flag damaged <strong>hospitals and schools</strong> — connecting imagery directly to humanitarian consequence.</li>
+      <li><b>Open and transferable.</b> Source code (<a href="https://github.com/Houzy116/TKDS-PtNet" target="_blank">TKDS-PtNet on GitHub</a>) and openly available inputs (UNITAR labels, Google Earth, Sentinel-2, OSM/Microsoft footprints) make the pipeline reusable for other crises, including non-conflict disasters.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>High-stakes societal urgency:</b> quantifying urban destruction from the Syrian civil war and the Russia–Ukraine conflict speaks directly to global humanitarian and policy audiences.</li>
+      <li><b>Method + impact, not method alone:</b> a novel detection scheme is carried all the way to affected population and critical-infrastructure damage — mechanism plus consequence.</li>
+      <li><b>Transferable framework:</b> the scheme is pitched as repeatable across wars, earthquakes, and extreme weather, matching Nature Cities' preference for generalizable urban tools.</li>
+      <li><b>Open and reproducible:</b> public data sources and released code make the contribution infrastructure for the community, not a one-off case study.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Study areas</dt><dd><strong>Six Syrian cities</strong> (Aleppo, Homs, Raqqa, Hama, Deir-Ez-Zor, Idlib) from the Syrian civil war and <strong>four Ukrainian cities</strong> (Mariupol, Rubizhne, Sievierodonetsk, Volnovakha) from the Russia–Ukraine conflict.</dd>
+      <dt>Damage labels</dt><dd><strong>UNITAR / UNOSAT</strong> "completely destroyed building" labels — the ground-truth reference for training/validation (<a href="https://www.unitar.org/maps" target="_blank">unitar.org/maps</a>).</dd>
+      <dt>High-res imagery</dt><dd><strong>Google Earth</strong> 0.5-m resolution images for 2009 and 2018 (<a href="https://www.google.com/earth" target="_blank">google.com/earth</a>).</dd>
+      <dt>Multispectral imagery</dt><dd><strong>Sentinel-2</strong> satellite images via the Copernicus Data Space Ecosystem (<a href="https://dataspace.copernicus.eu/" target="_blank">dataspace.copernicus.eu</a>) — the temporal source for change monitoring.</dd>
+      <dt>Bombing events</dt><dd><strong>Liveuamap</strong> conflict/bombing event records (<a href="http://liveuamap.com" target="_blank">liveuamap.com</a>) used as temporal knowledge to guide detection.</dd>
+      <dt>Population</dt><dd><strong>WorldPop</strong> gridded population (<a href="https://hub.worldpop.org/" target="_blank">hub.worldpop.org</a>) for converting damaged buildings into affected-population estimates.</dd>
+      <dt>Building footprints</dt><dd><strong>OpenStreetMap</strong> (<a href="https://www.openstreetmap.org/" target="_blank">openstreetmap.org</a>) and <strong>Microsoft GlobalMLBuildingFootprints</strong> (<a href="https://github.com/microsoft/GlobalMLBuildingFootprints" target="_blank">GitHub</a>) for building geometry in Syria and Ukraine.</dd>
+      <dt>Code</dt><dd>Released at <a href="https://github.com/Houzy116/TKDS-PtNet" target="_blank">github.com/Houzy116/TKDS-PtNet</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>UNITAR / UNOSAT labels</td><td>Ground-truth damaged buildings</td><td>Conflict cities, Syria + Ukraine</td><td><a href="https://www.unitar.org/maps" target="_blank">unitar.org/maps</a></td></tr>
+        <tr><td>Google Earth imagery</td><td>High-res optical (training/eval)</td><td>0.5 m, 2009 &amp; 2018</td><td><a href="https://www.google.com/earth" target="_blank">google.com/earth</a></td></tr>
+        <tr><td>Sentinel-2 (Copernicus)</td><td>Multispectral temporal source</td><td>10 cities, conflict periods</td><td><a href="https://dataspace.copernicus.eu/" target="_blank">copernicus.eu</a></td></tr>
+        <tr><td>Liveuamap events</td><td>Temporal-knowledge guidance</td><td>Bombing/conflict events</td><td><a href="http://liveuamap.com" target="_blank">liveuamap.com</a></td></tr>
+        <tr><td>WorldPop</td><td>Affected-population estimate</td><td>Gridded, country-scale</td><td><a href="https://hub.worldpop.org/" target="_blank">worldpop.org</a></td></tr>
+        <tr><td>OSM + MS footprints</td><td>Building geometry</td><td>Syria &amp; Ukraine</td><td><a href="https://github.com/microsoft/GlobalMLBuildingFootprints" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the article reports F1 gains and the 6 Syrian + 4 Ukrainian study cities but does not state a single headline count of total labeled buildings or images in the abstract/data sections; exact sample volumes are detailed in the Supplementary Information (Figs. 1–12, Tables 1–3), which is not reproduced here.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Temporal-Knowledge-Guided Detection Scheme (TKDS):</b> instead of naive bi-temporal differencing, the scheme injects <strong>conflict-event timing</strong> (bombing records) as temporal priors so that change detection focuses on war-relevant periods (Fig. 1).</li>
+      <li><b>Pixel-based Transformer Network (PtNet):</b> a transformer backbone operating at the <strong>pixel level</strong> to classify war damage from multi-temporal satellite imagery (Fig. 2 architecture).</li>
+      <li><b>Benchmarking against SOTA:</b> compared with state-of-the-art change-detection baselines, reporting <strong>F1 improvements of +44.0</strong> (Syria) and <strong>+34.2</strong> (Ukraine).</li>
+      <li><b>Damage-to-impact fusion:</b> overlay detected damaged buildings with <strong>WorldPop</strong> for affected population and with building/infrastructure footprints to flag damaged <strong>hospitals and schools</strong> (Fig. 4).</li>
+      <li><b>Generalization framing:</b> positioned as a repeatable, low-cost pipeline transferable to earthquakes and extreme-weather damage, not only armed conflict.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig1.png" target="_blank">
+        <img src="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig1.png" alt="Fig.1 Commonly used urban change detection vs TKDS" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Comparison between the commonly used urban change-detection scheme and TKDS — the temporal-knowledge guidance.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig2.png" target="_blank">
+        <img src="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig2.png" alt="Fig.2 TKDS-PtNet architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> The TKDS-PtNet architecture — pixel-based transformer for war-damage detection.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig3.png" target="_blank">
+        <img src="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig3.png" alt="Fig.3 Detection results / performance" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Detection results and performance comparison across study cities.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig4.png" target="_blank">
+        <img src="assets/war-city-profiles-drawn-from-satellite-images__s44284-024-00060-6/fig4.png" alt="Fig.4 Building damage and population distribution" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Building damage and population distribution across six Syrian and four Ukrainian cities.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0); Supplementary Information contains Tables 1–3 and Figs. 1–12.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatial accessibility &amp; health geography, explainable &amp; physics-informed graph learning, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① From completely-destroyed labels to function-aware graded damage</h3>
+      <p><span class="lab paper">Extending this paper</span>TKDS-PtNet is trained on UNITAR's binary "completely destroyed" labels, so partial damage and the <em>function</em> of the hit building (clinic vs warehouse) are invisible. A direct extension: couple the pixel-transformer with a <strong>building-function classifier</strong> so each detected loss is tagged by use-type, turning a damage map into a <strong>service-loss</strong> map — exactly what relief triage needs.</p>
+      <p><span class="lab mine">Added value to my research</span>Function-tagged destruction feeds straight into my <strong>healthcare-accessibility</strong> work: removing damaged hospitals/clinics from the supply set lets me recompute <strong>2SFCA/R2SFCA</strong> access loss in a conflict or disaster zone — a dynamic, event-driven accessibility surface.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Satellite mapping of every building's function in urban China reveals deep built environment disparities — <a href="https://doi.org/10.1038/s41467-026-69589-5" target="_blank">10.1038/s41467-026-69589-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Audit the footprint base layer the impact estimates ride on</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper converts damaged pixels to affected population and infrastructure using OSM and Microsoft footprints — but OSM building completeness is known to be spatially uneven, which would bias damage counts in exactly the under-mapped neighborhoods most at risk. Extending the paper: propagate a <strong>footprint-completeness uncertainty layer</strong> through the damage-to-population pipeline and report confidence intervals, not point estimates.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a clean instance of my <strong>FAIR / multi-source data-fusion</strong> agenda — characterizing how base-map incompleteness propagates into accessibility and equity metrics, and building density-aware correction factors I can reuse across telehealth and primary-care access studies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A spatio-temporal analysis investigating completeness and inequalities of global urban building data in OpenStreetMap — <a href="https://doi.org/10.1038/s41467-023-39698-6" target="_blank">10.1038/s41467-023-39698-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Fuse optical damage with complementary conflict signals</h3>
+      <p><span class="lab paper">Extending this paper</span>TKDS leans on optical Sentinel-2/Google Earth, which clouds and smoke degrade, plus Liveuamap events as priors. The same Russia–Ukraine theatre has been profiled with <strong>independent remote-sensing signals</strong> (e.g., methane plumes from destroyed infrastructure). Extending the paper: add SAR and atmospheric-trace channels into the transformer so damage detection survives cloud cover and is <strong>cross-validated</strong> against a physically distinct emission signature.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-sensor fusion (optical + SAR + atmospheric + social-media/event feeds) is core to my <strong>spatiotemporal data-fusion</strong> line; a transformer that ingests heterogeneous geospatial streams is a reusable backbone for my GeoAI foundation-model fine-tuning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Vast and hidden urban methane emissions from the Russia–Ukraine war — <a href="https://doi.org/10.1038/s44284-025-00309-8" target="_blank">10.1038/s44284-025-00309-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Generalize the scheme to earthquakes with citizen-sensed ground truth</h3>
+      <p><span class="lab paper">Extending this paper</span>The authors explicitly claim transfer to earthquakes and extreme weather, but never test it. A concrete extension: retarget TKDS-PtNet to a seismic event and replace conflict-event priors with <strong>citizen-smartphone shaking intensity</strong> as the temporal-knowledge layer, then validate damage maps against the crowdsensed intensity field — a real cross-hazard transfer experiment.</p>
+      <p><span class="lab mine">Added value to my research</span>This pairs satellite damage with <strong>opportunistic mobile-phone sensing</strong>, a data type central to my work; the smartphone intensity field becomes an exposure covariate for post-disaster <strong>health-service accessibility</strong> and triage modeling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Citizens' smartphones unravel earthquake shaking in urban areas — <a href="https://doi.org/10.1038/s41467-025-64543-3" target="_blank">10.1038/s41467-025-64543-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Couple damage detection with mobility to model displacement, not just static loss</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's "affected population" is a <strong>static</strong> overlay of pre-conflict WorldPop on damaged buildings — it cannot capture that residents <em>flee</em> destroyed districts. Extending it: link the damage time series to a <strong>deep mobility-flow model driven by satellite imagery</strong> so the framework outputs dynamic displacement and post-event population redistribution, the quantity relief logistics actually need.</p>
+      <p><span class="lab mine">Added value to my research</span>Damage-driven displacement flows are direct inputs to my <strong>physics-informed graph learning</strong> and job–housing / accessibility-network analysis; a learned damage→mobility operator lets me re-estimate demand-side accessibility under shock conditions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting human mobility flows in cities using deep learning on satellite imagery — <a href="https://doi.org/10.1038/s41467-025-65373-z" target="_blank">10.1038/s41467-025-65373-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

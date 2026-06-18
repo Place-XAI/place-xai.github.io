@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reward magnitude determines reinforcement learning efficiency — AI Digest</title>
+<meta name="description" content="AI Digest: Reward magnitude determines reinforcement learning efficiency (Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Science</span>
+      <span class="tag">Reinforcement Learning</span>
+      <span class="tag">Dopamine</span>
+      <span class="tag">Animal Behavior</span>
+      <span class="tag">Neuroscience</span>
+    </div>
+    <h1>Reward magnitude determines reinforcement learning efficiency</h1>
+    <div class="meta">
+      <span class="authors">(Authors not listed in public metadata — see article)</span>
+      <span><b>Published</b> 2026-05-21</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1126/science.aeb0813" target="_blank">10.1126/science.aeb0813</a></span>
+      <span><b>Source</b> <a href="https://www.science.org/doi/10.1126/science.aeb0813" target="_blank">science.org ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Contrary to decades of animal learning practice that minimizes reward magnitude to maximize behavioral repetitions, <strong>outsized rewards dramatically accelerate learning efficiency</strong> in mice across five task types — through dissociable effects on within-session learning, across-session consolidation, and task engagement. Ventral striatal <strong>dopamine release duration and magnitude scale with reward size</strong>, and prolonged optogenetic boosting of dopamine responses partially recapitulates this benefit. Animals' reinforcement learning capacity has been <strong>systematically underestimated</strong>, and absolute reward magnitude — not just presence — is a primary driver of task engagement via dopamine signaling.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Overturns a foundational assumption in animal learning research.</b> The century-old practice of using small rewards to enable more trials is shown to trade speed of learning for volume of trials — a false economy that has systematically underestimated the learning capacity of animals.</li>
+      <li><b>Reveals a graded dopamine-magnitude link.</b> The finding that ventral striatal dopamine release <em>scales continuously</em> with reward size — not just its presence or absence — reframes dopamine signaling from a binary reinforcement signal to a quantitative learning-rate controller.</li>
+      <li><b>Dissects multiple routes from reward to learning.</b> The work separates within-session acquisition, across-session consolidation, and task engagement as three distinct channels through which large rewards act — providing a mechanistic decomposition that guides future neuroscience and AI.</li>
+      <li><b>Bridges biological and artificial reinforcement learning.</b> By connecting absolute reward magnitude to learning efficiency, the paper has direct implications for reward-shaping design in AI systems that draw on biological learning principles.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY SCIENCE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">S</span><h2>Why Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-shifting claim with broad disciplinary reach:</b> challenges a universal assumption in behavioral neuroscience and learning theory — exactly the kind of high-impact, field-correcting finding Science prioritizes.</li>
+      <li><b>Mechanistic depth across multiple levels:</b> from behavior (five paradigms, naïve mice) to circuits (ventral striatum dopamine) to causal intervention (optogenetics) — a complete causal chain.</li>
+      <li><b>Bridging biological and computational sciences:</b> the result speaks simultaneously to behavioral ecology, neuropharmacology, and AI/RL algorithm design — maximizing cross-disciplinary readership.</li>
+      <li><b>Practical implications for translational neuroscience:</b> understanding how dopamine magnitude drives engagement has clear relevance to motivation disorders (depression, addiction, Parkinson's) and rehabilitation paradigms.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Study system</dt><dd>Naïve laboratory mice (<em>Mus musculus</em>); exact strain and sample sizes not stated in public abstract — full details expected in Methods of the article.</dd>
+      <dt>Behavioral paradigms</dt><dd>Five distinct paradigms tested, covering a range of conditioning and instrumental learning tasks. Specific task names not available from the public abstract.</dd>
+      <dt>Neural measurement</dt><dd>Ventral striatal dopamine release measured during reward delivery — likely via fiber photometry (dopamine sensors such as dLight or GRAB-DA) or microdialysis; exact method not specified in the public abstract.</dd>
+      <dt>Causal manipulation</dt><dd>Prolonged optogenetic enhancement of dopamine reward responses used as an experimental intervention to test whether dopamine duration/magnitude causally mediates the learning benefits.</dd>
+      <dt>Reward conditions</dt><dd>Multiple reward magnitude levels compared, including "especially large" rewards; specific volumes/concentrations not stated in the public abstract.</dd>
+      <dt>Data availability</dt><dd>Not stated in public metadata. Full data availability statement expected in the published article at <a href="https://www.science.org/doi/10.1126/science.aeb0813" target="_blank">science.org</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Mouse behavioral experiments</td><td>Primary behavioral data across five paradigms</td><td>Naïve mice; exact N not in public abstract</td><td>Original study (see article)</td></tr>
+        <tr><td>Ventral striatal dopamine recordings</td><td>Neural correlate of reward magnitude</td><td>In vivo recording during behavioral tasks</td><td>Original study (see article)</td></tr>
+        <tr><td>Optogenetic manipulation data</td><td>Causal test of dopamine's role in learning benefit</td><td>Mice with dopamine pathway optogenetic constructs</td><td>Original study (see article)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: The full article was not publicly accessible at time of indexing (HTTP 403). Data details above are inferred from the abstract only. Specific sample sizes, reward volumes, recording methods, and data availability are described in the published article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Multi-paradigm behavioral testing:</b> five distinct learning paradigms applied to naïve mice, testing whether the reward-magnitude effect generalizes across task types (classical conditioning, operant, etc.).</li>
+      <li><b>Reward magnitude manipulation:</b> systematic variation of reward size to isolate the effect of absolute magnitude on learning rate and task engagement, independent of total reward quantity.</li>
+      <li><b>Dissociation of learning components:</b> within-session acquisition curves and across-session retention measured separately to identify which learning phases are most sensitive to reward magnitude.</li>
+      <li><b>In vivo dopamine monitoring:</b> real-time measurement of ventral striatal dopamine release to characterize how duration and magnitude of the dopamine signal co-vary with reward size.</li>
+      <li><b>Optogenetic causal intervention:</b> prolonged optogenetic stimulation of dopamine reward circuits to directly test whether extended dopamine signaling is sufficient to replicate the large-reward learning advantage.</li>
+      <li><b>Task engagement quantification:</b> behavioral metrics (e.g., trial initiation rate, response vigor) used to quantify engagement as a distinct component separable from accuracy/learning per se.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <p class="no-table">No figures available: figures.json is empty for this article. The full article was not publicly accessible at time of indexing (HTTP 403 from science.org), so figure image URLs could not be retrieved. Consult the published article at <a href="https://www.science.org/doi/10.1126/science.aeb0813" target="_blank">science.org</a> for all figures and tables.</p>
+    <p class="no-table">Tables: no main-text table count available from public metadata (tables_count = 0 in scraped record).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Translate the reward-magnitude/dopamine-scaling law into a curriculum for spatial RL agents</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper shows that large rewards do not merely reinforce behavior more often — they boost <em>how efficiently</em> each experience is converted into learning, via scaled dopamine duration. A direct extension: map this biological magnitude-efficiency curve onto the reward-shaping schedule of an AI agent and test whether biologically calibrated large-reward curricula outperform standard constant-reward regimes on sample efficiency. The paper's five paradigms provide a biological benchmark for how quickly the benefit saturates, informing when to decay reward magnitude during training.</p>
+      <p><span class="lab mine">Added value to my research</span>My facility-location and accessibility optimization problems currently use fixed reward signals in heuristic or greedy solvers. Translating the reward-magnitude insight into a <strong>biologically inspired curriculum</strong> — large synthetic rewards early in training to bootstrap engagement, gradually decayed — could dramatically reduce the sample complexity of learned spatial planners (e.g., for EV charging station placement or R2SFCA catchment tuning).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Operationalize "task engagement" as a measurable construct in human mobility and health-access behavior</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies task engagement — distinct from learning accuracy — as a third channel through which large rewards improve performance, mediated by dopamine magnitude. Extending this: design a longitudinal behavioral study in which human participants search for healthcare or service resources under varying incentive magnitudes, measuring engagement metrics (session initiation frequency, time-on-task, return visits) analogous to the mouse paradigm's within- and across-session metrics. This would test whether the dopamine-magnitude engagement law has a behavioral analog in human spatial search.</p>
+      <p><span class="lab mine">Added value to my research</span>In my telehealth/digital-divide work, patient engagement with health resources (scheduling appointments, completing telehealth sessions) maps onto the paper's engagement construct. The paper's finding that <strong>absolute reward magnitude — not just availability — drives engagement</strong> suggests that healthcare accessibility interventions should consider <em>perceived benefit magnitude</em> (e.g., travel-time savings, care quality) as a primary driver of uptake, alongside proximity — a new dimension for my 2SFCA demand-side modeling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A machine learning-based model for the quantification of mental conflict — <a href="https://doi.org/10.1038/s43588-023-00444-z" target="_blank">10.1038/s43588-023-00444-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use the within-session vs. across-session dissociation as a template for spatiotemporal learning dynamics</h3>
+      <p><span class="lab paper">Extending this paper</span>A key methodological contribution of this paper is separating learning into within-session (fast acquisition) and across-session (consolidation/retention) components and showing that reward magnitude affects them dissociably. Extending it: apply the same two-timescale decomposition to test how reward magnitude influences the <em>retention of spatial maps</em> — do large rewards lead to more durable place-cell or grid-cell representations after a delay? This extension would connect the behavioral result to hippocampal memory consolidation using the approach of related corpus work on cognitive map orthogonalization.</p>
+      <p><span class="lab mine">Added value to my research</span>The two-timescale framing translates directly to my spatiotemporal kernel density estimation work: fast (within-session) dynamics correspond to short-term spatial event clustering (e.g., daily trip patterns), while slow (across-session) dynamics correspond to persistent spatial structures (weekly or seasonal patterns). The paper's dissociation method — fitting separate models for each timescale — provides a principled decomposition template for <strong>multi-scale spatiotemporal density estimation</strong> in urban mobility data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning produces an orthogonalized state machine in the hippocampus — <a href="https://doi.org/10.1038/s41586-024-08548-w" target="_blank">10.1038/s41586-024-08548-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Encode biologically realistic synaptic learning rules — reward-magnitude gated plasticity — in GeoAI graph networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core neural mechanism is that dopamine duration and magnitude jointly gate synaptic plasticity in the ventral striatum. Extending it: implement a <em>magnitude-gated Hebbian update rule</em> in a graph neural network — where edge weights update proportionally to the magnitude of a "reward" signal at each node — and test whether this biologically inspired update outperforms standard gradient descent on sparse, noisy spatial graph data (e.g., transportation networks with sparse ground-truth labels).</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning work currently uses physical conservation laws as soft constraints. Adding a <strong>biologically inspired magnitude-gated plasticity rule</strong> as a local update operator could improve convergence speed on sparse geospatial networks — directly addressing the sample-efficiency bottleneck in my spatiotemporal graph models for urban mobility and healthcare access prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Network of evolvable neural units can learn synaptic learning rules and spiking dynamics — <a href="https://doi.org/10.1038/s42256-020-00267-x" target="_blank">10.1038/s42256-020-00267-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Reframe healthcare accessibility as a reinforcement signal: magnitude, not just proximity, shapes utilization behavior</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper's central insight — that the <em>magnitude</em> of a reward (not merely its presence) determines how efficiently an organism learns to repeat the rewarded behavior — can be reframed as a general principle for any system where agents learn to access resources. Extending it to a computational social science context: model patients as reinforcement learners whose utilization behavior (repeated care visits) is governed not just by facility proximity but by the <em>perceived magnitude</em> of the health benefit received, with a dopamine-analog "engagement signal" that decays as benefit magnitude declines (e.g., as conditions worsen or care quality drops).</p>
+      <p><span class="lab mine">Added value to my research</span>Current 2SFCA and R2SFCA models treat accessibility as purely supply-side and static. Embedding the paper's reward-magnitude framework into a <strong>demand-side engagement model</strong> would let me predict not just whether a facility is accessible but whether patients will <em>persistently engage</em> with it — a fundamentally different and more policy-relevant accessibility metric. This bridges my health-geography and GeoAI agendas: explainable ML could then identify which spatial features (travel time, care quality, socio-economic status) drive the perceived-benefit magnitude signal.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> High-speed quadrupedal locomotion by imitation-relaxation reinforcement learning — <a href="https://doi.org/10.1038/s42256-022-00576-3" target="_blank">10.1038/s42256-022-00576-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to AAAS/Science; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

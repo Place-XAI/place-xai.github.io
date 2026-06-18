@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experiments implementing small commuting models lack gravitational features — AI Digest</title>
+<meta name="description" content="AI Digest: Experiments implementing small commuting models lack gravitational features (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Quantum Simulation</span>
+      <span class="tag">Holography</span>
+      <span class="tag">Model Validation</span>
+      <span class="tag">Matters Arising</span>
+    </div>
+    <h1>Experiments implementing small commuting models lack gravitational features</h1>
+    <div class="meta">
+      <span class="authors">Bryce Kobrin · Thomas Schuster · Norman Y. Yao</span>
+      <span><b>Published</b> 2025-07-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-08939-7" target="_blank">10.1038/s41586-025-08939-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-08939-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Small quantum circuits used in previous wormhole-teleportation experiments <strong>lack the essential gravitational features</strong> — thermalization, a correct teleportation signal, and perfect size winding — that would be required to interpret them as genuine holographic traversable wormholes. The paper demonstrates three concrete failures in "Model 1" (the circuit from Jafferis et al. 2022): it does not thermalize, its teleportation signal is inconsistent outside the training-data regime, and non-commuting extensions fail to show perfect size winding. These results establish that <strong>passing a few learned observables is insufficient evidence</strong> for gravitational dynamics when the underlying model is too small to possess the correct holographic structure.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Sets a rigorous bar for quantum gravity experiments.</b> Claims of "wormhole dynamics on a quantum processor" drew enormous attention in 2022; this paper is the first systematic demonstration that the experimental circuit <em>provably</em> fails multiple independent gravitational benchmarks simultaneously.</li>
+      <li><b>Identifies the root cause: model size and commutativity.</b> The paper shows that "commuting" (algebraically simplified) small SYK models cannot encode the non-commuting operator algebra required for true holographic scrambling — a structural argument, not a fine-tuning critique.</li>
+      <li><b>Generalization beyond a single experiment.</b> The three diagnostics (thermalization, teleportation signal fidelity, size winding) provide a reusable checklist for any future analog quantum gravity implementation, raising the standard for the whole field.</li>
+      <li><b>Published as a "Matters Arising" in Nature, eliciting a formal Reply.</b> The scientific community (Jafferis, Zlokapa, Spiropulu) published a direct rebuttal in the same journal, confirming the significance and openness of this debate for quantum information science.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Directly addresses a landmark Nature paper:</b> The Jafferis et al. (2022) wormhole experiment (Nature 612, 51–55) was one of the journal's most-cited recent physics papers; a rigorous "Matters Arising" response belongs in the same venue.</li>
+      <li><b>Raises a foundational question with broad impact:</b> What constitutes valid evidence for holographic physics in a laboratory quantum system is a frontier question spanning quantum computing, high-energy physics, and quantum information — exactly the cross-disciplinary scope Nature values.</li>
+      <li><b>Clear falsifiable claims supported by multiple independent tests:</b> Each of the three failures (Figs. 1–3) is an independent, concrete observable — the paper's evidentiary structure meets Nature's standard for decisive experimental critique.</li>
+      <li><b>Consequence for the quantum-computing community:</b> The result cautions that machine-learning-optimized quantum circuits can overfit observable proxies without capturing the underlying physics, a lesson with immediate practical implications for quantum simulation programs worldwide.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary subject</dt><dd>The <strong>Sachdev-Ye-Kitaev (SYK) model</strong> and its small-N approximations, specifically <strong>Model 1</strong> from Jafferis et al. (2022) — a 7-qubit quantum circuit trained via machine learning on a small SYK Hamiltonian and implemented on Google's Sycamore quantum processor.</dd>
+      <dt>Theoretical framework</dt><dd>Holographic duality (AdS/CFT correspondence): 't Hooft (1993), Susskind (1995), Maldacena (1999). Traversable-wormhole theory via double-trace deformation: Gao, Jafferis &amp; Wall (2017); Maldacena, Stanford &amp; Yang (2017).</dd>
+      <dt>Model &amp; circuit</dt><dd>The specific <strong>7-qubit commuting Hamiltonian</strong> (Model 1 of Jafferis et al. 2022) and its <strong>non-commuting extensions</strong> tested in this Matters Arising paper. N is small (exact value not independently re-stated; taken from the original experiment's specification).</dd>
+      <dt>Diagnostics computed</dt><dd>(1) <strong>Thermalization</strong> — spectral statistics and energy-level spacing distributions; (2) <strong>Teleportation signal</strong> — mutual information / signal strength vs. coupling parameter g, compared inside and outside the training regime; (3) <strong>Size winding</strong> — operator size distribution in the complex plane for non-commuting model extensions.</dd>
+      <dt>Data availability</dt><dd>This is a theoretical/analytical Matters Arising article. No new experimental datasets are introduced. All computations are reproducible from the published Hamiltonian specifications of the original paper (Jafferis et al. 2022, Nature 612). Funding: US DOE GeoFlow consortium (QuantISED Award DE-SC0019380); Walter Burke Institute for Theoretical Physics, Caltech; Simons Investigator award.</dd>
+      <dt>Code availability</dt><dd>Not explicitly stated in the accessible portions of this article; Supplementary Information (PDF) contains methodological details.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Model</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>SYK Model 1 (Jafferis et al. 2022)</td><td>Subject of critique — the 7-qubit ML-optimized circuit</td><td>7 qubits, single Hamiltonian; Google Sycamore experiment</td><td><a href="https://doi.org/10.1038/s41586-022-05424-3" target="_blank">Nature 612 (2022)</a></td></tr>
+        <tr><td>SYK holographic theory</td><td>Theoretical baseline for gravitational features</td><td>Analytical; large-N SYK limit</td><td>Kitaev (2015); Sachdev &amp; Ye (1993)</td></tr>
+        <tr><td>Non-commuting extensions of Model 1</td><td>Testing size winding in broader model family</td><td>Analytical construction; not independently enumerated</td><td>This paper's Supplementary Information</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: This is an analytical Matters Arising critique with no new experimental dataset. Figures are computed diagnostics from the original circuit specification. Exact qubit count and parameter values are taken from the Jafferis et al. (2022) paper.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Thermalization test (Fig. 1):</b> Analyze <strong>energy-level spacing statistics</strong> of Model 1's Hamiltonian — a Wigner-Dyson / Poisson distribution comparison distinguishes chaotic (thermalizing) from integrable (non-thermalizing) systems. The paper shows Model 1 is integrable and therefore fails the necessary thermalization condition for a holographic wormhole.</li>
+      <li><b>Teleportation signal consistency (Fig. 2):</b> Compute the <strong>mutual information / teleportation signal</strong> as a function of the coupling parameter g for Model 1, and compare behavior inside the ML training regime versus <em>beyond</em> it. Inconsistencies outside training data indicate the signal is an artifact of overfitting rather than an underlying gravitational mechanism.</li>
+      <li><b>Size winding analysis (Fig. 3):</b> Examine the <strong>operator size distribution in the complex plane</strong> for non-commuting extensions of Model 1. Perfect size winding — a necessary holographic signature — is shown to be absent, ruling out the gravitational interpretation for the broader model family.</li>
+      <li><b>Analytical / numerical exact diagonalization:</b> Given the small system size (7 qubits), exact diagonalization is feasible; results are sharp and model-specific rather than statistical estimates.</li>
+      <li><b>Theoretical framing:</b> All diagnostics are grounded in the AdS/CFT correspondence and SYK holography literature — the criteria are not invented for this paper but are accepted standards in quantum gravity phenomenology.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/experiments-implementing-small-commuting-models-lack-gravitational-features__s41586-025-08939-7/fig1.png" target="_blank">
+        <img src="assets/experiments-implementing-small-commuting-models-lack-gravitational-features__s41586-025-08939-7/fig1.png" alt="Fig.1 Lack of thermalization in model 1" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Lack of thermalization in model 1 — energy-level statistics reveal the circuit is integrable, not chaotic, disqualifying it as a holographic system.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/experiments-implementing-small-commuting-models-lack-gravitational-features__s41586-025-08939-7/fig2.png" target="_blank">
+        <img src="assets/experiments-implementing-small-commuting-models-lack-gravitational-features__s41586-025-08939-7/fig2.png" alt="Fig.2 Inconsistencies in the teleportation signal beyond training data" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Inconsistencies in the teleportation signal of model 1 beyond training data — the signal does not extrapolate correctly, indicating overfitting to the training regime.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/experiments-implementing-small-commuting-models-lack-gravitational-features__s41586-025-08939-7/fig3.png" target="_blank">
+        <img src="assets/experiments-implementing-small-commuting-models-lack-gravitational-features__s41586-025-08939-7/fig3.png" alt="Fig.3 Absence of perfect size winding in non-commuting extensions" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Absence of perfect size winding in non-commuting extensions of model 1 — the operator size distribution fails to exhibit the winding required for holographic teleportation.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Supplementary Information PDF contains additional mathematical derivations.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Use the paper's "beyond training regime" diagnostic to stress-test learned spatial models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most transferable methodological contribution is Fig. 2's out-of-training-regime test: a learned model that fits training observables but fails when the control parameter is extrapolated is not capturing the underlying physics. An extension of the paper would apply this same protocol across a family of small SYK approximations with increasing N, producing a <strong>size-vs-fidelity curve</strong> that identifies a minimum model size sufficient for genuine gravitational behavior — rather than simply rejecting Model 1.</p>
+      <p><span class="lab mine">Added value to my research</span>The identical logic applies to my spatial-interaction (gravity) models for human mobility. Learned gravity models are routinely evaluated only on in-sample cities; this paper's diagnostic suggests a rigorous out-of-distribution test: <strong>train on one city-size regime, evaluate signal fidelity on a different regime</strong>. Applied to my Deep Gravity or R2SFCA accessibility models, this would expose whether the distance-decay kernel is a genuine structural feature or a training artifact — directly improving out-of-sample reliability.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Human mobility is well described by closed-form gravity-like models learned automatically from data — <a href="https://doi.org/10.1038/s41467-025-56495-5" target="_blank">10.1038/s41467-025-56495-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Map "gravitational features" onto emergent features in urban scaling laws</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper argues that thermalization and size winding are <em>necessary</em> emergent collective properties of a holographic system that cannot appear in small integrable models regardless of how well they are trained. A natural extension: identify analogous <strong>necessary emergent signatures</strong> in other complex systems — e.g., urban scaling exponents, Zipf's law for city sizes — and test whether small parametric models reproduce them. This would generalize the paper's "gravitational features checklist" into a broader framework for evaluating whether learned models capture collective behavior or are merely interpolating.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal analysis frequently uses scaling laws (e.g., urban population dynamics, job-housing networks). The paper's logic suggests a diagnostic: does a learned spatial model reproduce the <strong>correct scaling exponent</strong> when extrapolated to larger urban agglomerations? If not, the model is analogous to Model 1 — it passes training benchmarks but lacks the structural "gravitational" analog. This frames scaling-law preservation as a <em>necessary condition</em> for transferable GeoAI models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> The spatiotemporal scaling laws of urban population dynamics — <a href="https://doi.org/10.1038/s41467-025-58286-4" target="_blank">10.1038/s41467-025-58286-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Thermalization as a model quality criterion: an analogy for equity in facility-access models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's thermalization test probes whether Model 1 reaches a stationary distribution consistent with maximum entropy — a property holographic black holes must have. The paper could be extended by deriving <strong>quantitative bounds</strong> on how non-thermalizing the model is (e.g., level-spacing ratio r vs. Wigner-Dyson prediction) and relating this gap to the magnitude of the teleportation signal error, providing a direct quantitative link between the structural failure and the observable error.</p>
+      <p><span class="lab mine">Added value to my research</span>In facility accessibility modeling, "thermalization" has a spatial analog: a well-specified accessibility model should distribute demand across all candidate facilities in a way that is <strong>robust to small perturbations in supply</strong> — analogous to ergodic mixing. If an R2SFCA model is "non-thermalizing" (i.e., it funnels demand rigidly into a few facilities regardless of parameter changes), it will fail equity tests out-of-sample. This paper's level-spacing diagnostic inspires a new model audit: check whether the demand distribution across facilities is ergodic or integrable, as a proxy for equity robustness.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal framework for inclusive 15-minute cities — <a href="https://doi.org/10.1038/s44284-024-00119-4" target="_blank">10.1038/s44284-024-00119-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Non-commutativity as a structural complexity requirement: lessons for graph neural network design</h3>
+      <p><span class="lab paper">Extending this paper</span>A central argument of the paper is that <em>commutativity</em> of the operator algebra is the fatal structural limitation of Model 1 — commuting Hamiltonians are integrable by definition and cannot scramble information holographically. The paper's extension would be to characterize exactly <strong>how much non-commutativity</strong> (in terms of operator norm of commutators) is required to achieve thermalization at finite N, producing a tractable design criterion for future experiments.</p>
+      <p><span class="lab mine">Added value to my research</span>In my physics-informed graph learning work, the analog of non-commutativity is <strong>asymmetry in spatial interactions</strong> — origin-destination flows are not symmetric (commuting), and models that impose symmetric kernels (e.g., standard GCN with symmetric adjacency) may systematically miss directional spatial structure, just as commuting models miss holographic scrambling. The paper's argument motivates using <strong>directed/asymmetric graph operators</strong> in GNNs for urban mobility, and testing whether symmetric-kernel models fail out-of-distribution tests in a manner analogous to Fig. 2.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A Deep Gravity model for mobility flows generation — <a href="https://doi.org/10.1038/s41467-021-26752-4" target="_blank">10.1038/s41467-021-26752-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ "Matters Arising" as a scientific norm: building critique infrastructure for GeoAI benchmark claims</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper is published in Nature's "Matters Arising" format — a formal, peer-reviewed critique of a landmark finding. The paper could be generalized into a <strong>methodological framework for evaluating analog-system claims</strong>: (1) state the necessary structural conditions the analog must satisfy; (2) provide multiple independent, theoretically grounded diagnostics; (3) demonstrate failure on each independently. This three-step protocol, formalized, would be a reusable paper-writing guide for critiquing claimed demonstrations of complex physical behavior in any quantum or classical system.</p>
+      <p><span class="lab mine">Added value to my research</span>The GeoAI field is beginning to generate high-visibility benchmark claims (e.g., "foundation model X outperforms all baselines on Y"). This paper's three-diagnostic structure provides a template for rigorous critique: define the <strong>necessary structural properties</strong> a GeoAI model must exhibit to justify a claim (e.g., spatial non-stationarity awareness for MGWR replacement, equivariance for urban flow prediction), then test each independently via out-of-distribution probes. This would sharpen reproducibility practice in GeoAI — directly connecting to my open science and FAIR data research line.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Demography and the emergence of universal patterns in urban systems — <a href="https://doi.org/10.1038/s41467-020-18205-1" target="_blank">10.1038/s41467-020-18205-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

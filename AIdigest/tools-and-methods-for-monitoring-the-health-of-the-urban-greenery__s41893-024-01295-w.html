@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools and methods for monitoring the health of the urban greenery — AI Digest</title>
+<meta name="description" content="AI Digest: Tools and methods for monitoring the health of the urban greenery (Nature Sustainability, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Sustainability</span>
+      <span class="tag">Urban greenery</span>
+      <span class="tag">Remote sensing</span>
+      <span class="tag">Ecosystem health</span>
+      <span class="tag">SDGs</span>
+    </div>
+    <h1>Tools and methods for monitoring the health of the urban greenery</h1>
+    <div class="meta">
+      <span class="authors">Akshit Gupta · Simone Mora · Yakir Preisler · Fàbio Duarte · Venkatesha Prasad · Carlo Ratti</span>
+      <span><b>Published</b> 2024-03-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41893-024-01295-w" target="_blank">10.1038/s41893-024-01295-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41893-024-01295-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Cities urgently need <strong>scalable, technology-assisted tools</strong> to monitor urban greenery health, but no single method resolves the fundamental <strong>space–time resolution trade-off</strong>: embedded sensors yield high temporal granularity for individual trees while satellite and airborne methods cover large areas at lower temporal frequency. <strong>Hyper-local greenery health data</strong> — collected via combinations of physical sensors, thermal/hyperspectral imaging, LiDAR, and citizen science — can directly support achieving at least <strong>six Sustainable Development Goal use cases</strong>, from selective irrigation and early disease detection to urban heat island mitigation and community engagement.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges a $2 trillion maintenance gap.</b> Global costs for tree inspection, maintenance, and damage settlement exceed US$2 trillion, yet most cities survey their greenery only every 3–5 years or have never done so; scalable monitoring technology is the missing lever.</li>
+      <li><b>Exposes the resolution dilemma clearly.</b> The review is the first systematic mapping of the space–time resolution trade-offs across all major sensing classes — manual, embedded sensors, and imaging-based — giving planners an evidence-based method-selection guide.</li>
+      <li><b>Links tree health directly to SDG delivery.</b> Six concrete use cases (selective watering, disease detection, continuous monitoring, cost–benefit quantification, UHI mitigation, community engagement) connect monitoring data to SDGs 3, 4, 8, 10, 11, 13, 15, and 17.</li>
+      <li><b>Opens a frontier for citizen science and open-source tools.</b> Low-cost, open-source platforms (e.g., DIY dendrometers, modified RGB cameras for multispectral imaging) make greenery health monitoring accessible to under-resourced cities and communities.</li>
+      <li><b>Identifies the gaps that can spur future research.</b> Most reviewed techniques have been evaluated on only a few dozen trees in controlled settings; the review pinpoints the need for large-scale, species-transferable, and automated validation pipelines.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Sustainability (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Policy-urgent topic at planetary scale:</b> urban greenery health is a cross-cutting lever for multiple SDGs in virtually every city — a signature concern of <em>Nature Sustainability</em>.</li>
+      <li><b>Synthesizes a fragmented field into an actionable framework:</b> the review consolidates scattered literature across arboriculture, remote sensing, IoT, and citizen science into a unified decision framework for researchers and policymakers.</li>
+      <li><b>Equity dimension:</b> the paper highlights that high-cost monitoring concentrates data in wealthy cities, leaving low-income urban communities underserved — linking greenery science to environmental justice.</li>
+      <li><b>Future-facing technology assessment:</b> the treatment of scalability limits and emerging low-cost alternatives positions the review as a roadmap for next-generation urban environmental monitoring.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Nature of data</dt><dd>This is a <strong>review paper</strong>; it synthesizes published literature rather than collecting primary empirical data. No single primary dataset underpins all findings; the evidence base spans hundreds of peer-reviewed studies on urban tree monitoring.</dd>
+      <dt>Case examples cited</dt><dd><strong>TreesCount! 2015 inventory</strong> (New York City) and the <strong>i-Tree Eco assessment</strong> (London, UK) are named as community-engagement campaign exemplars. Both are publicly accessible tree inventory programs.</dd>
+      <dt>Sensors reviewed</dt><dd>Accelerometers, electrical impedance spectroscopy electrodes, dendrometers (analogue and digital), IoT multi-sensor platforms, infrared thermography (IRT) cameras (e.g., FLIR Lepton 3.5 at 8–14 µm), multispectral cameras (e.g., MAPIR Survey 3W at 660/550/850 nm), LiDAR (e.g., Apple iPhone 12 Pro + Polycam), and hyperspectral imagers deployed on satellites, UAVs, and ground vehicles.</dd>
+      <dt>Vegetation indices</dt><dd><strong>NDVI</strong> (Normalized Difference Vegetation Index), <strong>CWSI</strong> (Crop Water Stress Index), <strong>LAI</strong> (Leaf Area Index) — all discussed as health proxies; NDVI is the most widely cited.</dd>
+      <dt>Deployment platforms</dt><dd>Satellites (Sentinel, Landsat-class — cited as context), UAVs/aeroplanes (airborne sensing), ground-based vehicles (drive-by platforms), static embedded sensors, and hand-held devices. Specific satellite products are discussed generically; no single satellite dataset is the primary source.</dd>
+      <dt>Street-view data</dt><dd><strong>Google Street View</strong> panoramas are cited in multiple reviewed studies for urban tree detection, species mapping, and shade estimation (e.g., studies in Boston, USA and Chinese cities using Baidu panoramic imagery).</dd>
+      <dt>Time period</dt><dd>Review encompasses literature up to ~2023; individual studies cited span roughly 2010–2023. No single common time window applies.</dd>
+      <dt>Availability</dt><dd>No new primary data released; Supplementary Tables 1 and 2 compile all reviewed methods with their detection resolution, cost, and invasiveness ratings.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Tool</th><th>Role in Review</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>NYC TreesCount! 2015</td><td>Citizen-science tree inventory exemplar (UC6)</td><td>~666,000 street trees, New York City</td><td><a href="https://data.cityofnewyork.us/Environment/2015-Street-Tree-Census-Tree-Data/pi5s-9p35" target="_blank">NYC Open Data</a></td></tr>
+        <tr><td>i-Tree Eco (London)</td><td>Urban forest valuation case study</td><td>City-wide tree assessment, London, UK</td><td><a href="https://www.itreetools.org" target="_blank">itreetools.org</a></td></tr>
+        <tr><td>Google Street View panoramas</td><td>Tree detection, species mapping, shade estimation (cited studies)</td><td>Global street-level imagery; Boston &amp; Chinese cities cited specifically</td><td><a href="https://maps.googleapis.com/maps/api/streetview" target="_blank">Google Maps API</a></td></tr>
+        <tr><td>UAV hyperspectral imagery</td><td>Bark-beetle damage detection, species ID at tree level (cited studies)</td><td>Individual study plots; exact extents vary per cited study</td><td>Study-specific (not a single open dataset)</td></tr>
+        <tr><td>Satellite remote sensing (Sentinel/Landsat-class)</td><td>Large-area NDVI estimation; context for spatial resolution limits</td><td>Global coverage; study-specific subsets</td><td><a href="https://earthexplorer.usgs.gov" target="_blank">USGS EarthExplorer</a></td></tr>
+        <tr><td>Auto Arborist Dataset</td><td>Multi-view urban forest benchmark for ML evaluation (cited)</td><td>Large-scale benchmark; multiple cities</td><td><a href="https://google.github.io/auto-arborist/" target="_blank">google.github.io/auto-arborist</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: as a review, this paper does not report a single primary dataset. City counts, tree numbers, and coverage areas vary per cited study. Figures stated above are taken from directly named sources in the article text; numbers not stated in the article are not imputed here.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Systematic literature review:</b> survey of technology-assisted methods for urban greenery health monitoring, organized into three sensing clusters — manual techniques, physical/chemical/electrical sensors, and imaging-based sensors.</li>
+      <li><b>Space–time resolution framework:</b> each method class is evaluated on two axes — achievable spatial granularity and temporal resolution — and mapped onto SDG use cases (Fig. 1). Manual methods offer fine spatial detail but low automation; embedded sensors offer high temporal frequency but limited spatial coverage; remote sensing covers large areas but at lower temporal frequency.</li>
+      <li><b>Manual inspection techniques:</b> visual inspection by arborists, non-invasive acoustic/electronic tools for fungal decay, electrical resistivity measurements, increment borers, and electromagnetic/stress-wave tomography — ordered from least to most invasive and costly.</li>
+      <li><b>Physical, chemical &amp; electrical sensors:</b> accelerometers (insect vibration detection), electrical impedance spectroscopy (water stress and disease), digital and analogue dendrometers (stem growth), IoT multi-sensor platforms with neural-network-based health classification.</li>
+      <li><b>Imaging-based sensors:</b> infrared thermography (IRT) for cavity/decay detection and water stress; hyperspectral and multispectral imaging (HMI) for NDVI and vegetation index calculation; LiDAR for geometric parameters (crown diameter, LAI, leaf count); street-view image analysis (Google Street View, Baidu panoramas) for tree location, species, and shade extent.</li>
+      <li><b>Multi-sensor fusion:</b> combining LiDAR with hyperspectral cameras for species identification and stressor mapping; fusing thermal with RGB imagery for automated leaf segmentation.</li>
+      <li><b>Machine learning integration:</b> cited use of neural networks for sensor calibration, geometric property extraction, health classification from IoT data, and automated disease identification from multi-spectral inputs.</li>
+      <li><b>Citizen-science deployment:</b> low-cost and open-source tools (DIY dendrometer bands, modified RGB cameras for near-IR capture) to enable community participation and complement institutional surveys.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/tools-and-methods-for-monitoring-the-health-of-the-urban-greenery__s41893-024-01295-w/fig1.png" target="_blank">
+        <img src="assets/tools-and-methods-for-monitoring-the-health-of-the-urban-greenery__s41893-024-01295-w/fig1.png" alt="Fig.1 Space-time resolution of method classes versus SDG requirements" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Space–time resolution of sensing method classes mapped to SDG requirements — the central decision framework of the review.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/tools-and-methods-for-monitoring-the-health-of-the-urban-greenery__s41893-024-01295-w/fig2.png" target="_blank">
+        <img src="assets/tools-and-methods-for-monitoring-the-health-of-the-urban-greenery__s41893-024-01295-w/fig2.png" alt="Fig.2 Examples of three imaging-based methods for urban greenery health" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Three imaging methods side by side: thermal (FLIR IRT), multispectral (MAPIR Survey 3W), and LiDAR point cloud (iPhone 12 Pro + Polycam).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0 in main text); Supplementary Information contains Tables 1 and 2 compiling all reviewed methods with working principles, detection resolution, cost, invasiveness, and automation level.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, health geography, urban accessibility, explainable &amp; physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① From resolution trade-off chart to a transferable ML model predicting method suitability</h3>
+      <p><span class="lab paper">Extending this paper</span>The review's core contribution is a qualitative space–time resolution framework (Fig. 1) mapping method classes to SDG use cases. The next step directly extending this paper is to operationalize that framework: train a <strong>spatially-aware classifier</strong> that, given a city's tree inventory density, road network, tree species mix, and available sensor budget, <em>recommends</em> the optimal combination of methods rather than relying on expert judgement. Using the Auto Arborist Dataset and open tree inventories (NYC TreesCount!, i-Tree Eco) as labels, a GeoAI model could generalize the paper's qualitative framework into a quantitative, city-agnostic decision tool. The corpus paper on urban tree cover in China provides a test bed of thousands of trees across climatically diverse cities for validating such a classifier.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct application of my <strong>explainable geospatial ML</strong> agenda: the features are spatial (tree density, land use, road network structure) and the output is a ranked method recommendation with SHAP attributions explaining which spatial predictors drive each recommendation. The framework parallels my 2SFCA service-area approach — instead of delineating healthcare catchments, we delineate "optimal monitoring catchments" for each sensor class as a function of local urban morphology.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A strong but uneven increase in urban tree cover in China over the recent decade — <a href="https://doi.org/10.1038/s44284-025-00227-9" target="_blank">10.1038/s44284-025-00227-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Coupling remote sensing of green-roof vegetation health to street-level urban greenery monitoring</h3>
+      <p><span class="lab paper">Extending this paper</span>This review focuses on ground-level greenery (primarily street trees) and explicitly excludes green roofs and vertical green walls from most of its sensing discussion. A direct extension: couple the review's ground-level sensor framework with the multispectral and thermal approaches used for <strong>green roof vegetation health</strong> — using satellite-derived NDVI and thermal anomaly time series as a complementary city-scale signal to validate or calibrate the costlier ground-based embedded sensors the paper reviews. The corpus paper on remote sensing for healthy vegetation on green roofs provides exactly the technical bridge needed, employing satellite-based temporal NDVI trends to detect vegetation decline on rooftops across multiple cities.</p>
+      <p><span class="lab mine">Added value to my research</span>Green roofs and street trees together form a <strong>vertically integrated urban green network</strong>. For my spatiotemporal kernel density estimation work, fusing rooftop NDVI signals with ground-sensor data enables a 3-D urban green health surface — a new input layer for my urban health geography models linking greenery exposure to population health outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Remote sensing for healthy vegetation on green roofs — <a href="https://doi.org/10.1038/s44284-025-00331-w" target="_blank">10.1038/s44284-025-00331-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Quantifying cooling benefit heterogeneity using the review's monitoring toolkit to validate urban tree planting strategies</h3>
+      <p><span class="lab paper">Extending this paper</span>The review identifies UHI mitigation (UC5) as a key SDG 13 use case and notes that cooling effect varies with species, canopy density, and health status — but it stops short of <em>quantifying</em> how much the choice of monitoring method affects the accuracy of cooling attribution. An extension of this paper: deploy the reviewed sensor suite (IRT for surface temperature, LiDAR for crown geometry, HMI for NDVI as a proxy for transpiration rate) at matched street segments across a gradient of tree health states, then validate the cooling attributions against ground-truth temperature loggers. The corpus paper on urban trees reducing land surface temperatures in European cities provides the empirical benchmark and the climate-zone stratification needed to test transferability of species-specific cooling models — a gap the review itself flags.</p>
+      <p><span class="lab mine">Added value to my research</span>My urban analytics research on healthy cities uses satellite-derived land surface temperature as a proxy for heat exposure inequality. Linking tree health monitoring data (from embedded sensors) to LST variation with attribution to specific tree attributes (LAI, health score) would let me <strong>replace the coarse "greenness = NDVI" proxy</strong> with a mechanistically-grounded, sensor-validated cooling model in my spatial regression analyses.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> The role of urban trees in reducing land surface temperatures in European cities — <a href="https://doi.org/10.1038/s41467-021-26768-w" target="_blank">10.1038/s41467-021-26768-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ IoT sensor networks for urban trees as a data backbone for real-time public-health co-benefits monitoring</h3>
+      <p><span class="lab paper">Extending this paper</span>The review discusses IoT tree health platforms for disease and water stress detection (UC1, UC2) but treats human health outcomes as downstream policy benefits rather than as co-monitored variables. A direct extension: instrument IoT tree sensor nodes with <strong>ambient air quality sensors</strong> (particulate matter, ozone, NO₂) co-located with tree health sensors, enabling the review's UC3 continuous monitoring framework to simultaneously track both tree physiological status and the air-filtration ecosystem service delivered to nearby residents. This would operationalize the review's SDG 3 (good health) claim with direct evidence rather than inference. The corpus paper on green infrastructure and air pollution injustice shows that greenery's air quality benefits are unevenly distributed — IoT co-monitoring would make that inequality spatially explicit at the block level.</p>
+      <p><span class="lab mine">Added value to my research</span>My health geography research on spatial accessibility of health-relevant environments can incorporate a <strong>real-time IoT-green-health signal</strong>: instead of treating greenspace as a binary presence/absence variable, I can model <em>effective greenspace quality</em> (tree health score × air filtration rate × cooling contribution) as the exposure variable in epidemiological accessibility models, sharpening the link between urban green infrastructure and health outcomes for underserved populations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Green infrastructure can limit but not solve air pollution injustice — <a href="https://doi.org/10.1038/s41467-021-24892-1" target="_blank">10.1038/s41467-021-24892-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Citizen-science tree health data as a spatially-biased open dataset — correcting for sampling inequity with GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>The review advocates citizen science (UC6) as a scalable, low-cost complement to institutional monitoring, citing NYC TreesCount! and i-Tree Eco as examples. However, it does not address a fundamental limitation of citizen-science approaches: <strong>spatial sampling bias</strong> — volunteers cluster in higher-income, accessible neighborhoods, systematically under-sampling trees in low-income or high-crime areas where monitoring is arguably most needed. An extension of the paper: apply spatial bias correction (e.g., Maxent-style preferential sampling models or spatially stratified active learning) to citizen-collected tree health records, using the paper's low-cost sensor outputs as ground-truth labels in under-sampled areas. The corpus paper on improved human greenspace exposure equality demonstrates that greenspace data gaps track socio-economic gradients — the same mechanism applies to tree health monitoring deserts.</p>
+      <p><span class="lab mine">Added value to my research</span>Sampling bias correction in geospatial citizen-science data is directly analogous to my <strong>multi-source data fusion</strong> work (mobile phone records, social media, remote sensing) where self-selection biases require explicit statistical correction before spatial models are valid. Developing a transferable bias-correction pipeline for tree health citizen-science data would produce a template applicable to any participatory urban environmental monitoring program — and the corrected data would directly feed my health geography accessibility analyses with equity-aware greenery exposure surfaces.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Improved human greenspace exposure equality during 21st century urbanization — <a href="https://doi.org/10.1038/s41467-023-41620-z" target="_blank">10.1038/s41467-023-41620-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

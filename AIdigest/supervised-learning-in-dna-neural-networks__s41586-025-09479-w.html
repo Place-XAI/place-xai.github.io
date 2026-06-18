@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supervised learning in DNA neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Supervised learning in DNA neural networks (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">DNA Computing</span>
+      <span class="tag">Molecular Neural Networks</span>
+      <span class="tag">Supervised Learning</span>
+      <span class="tag">Synthetic Biology</span>
+    </div>
+    <h1>Supervised learning in DNA neural networks</h1>
+    <div class="meta">
+      <span class="authors">Kevin M. Cherry · Lulu Qian</span>
+      <span><b>Published</b> 2025-09-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09479-w" target="_blank">10.1038/s41586-025-09479-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09479-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>DNA molecules can be programmed to <strong>autonomously carry out supervised learning in vitro</strong>, without any silicon hardware, by encoding training data directly into molecular concentrations. A <strong>100-bit, 2-class DNA neural network</strong> — composed of over 700 distinct molecular species — correctly classifies handwritten MNIST digits after learning entirely from molecular examples of inputs and desired responses. This is the first experimental demonstration that molecular circuits can learn tasks of this complexity, opening paths to <strong>embedded learning in biological and materials systems</strong> ranging from smart therapeutics to adaptive soft materials.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the in silico barrier.</b> All prior molecular neural network demonstrations computed weights digitally and only implemented inference in chemistry; this paper is the first to implement the <em>training phase itself</em> in molecules — weights emerge from chemical reactions, not from a computer.</li>
+      <li><b>Proves that molecular systems can handle 100-dimensional, noisy, real-world data.</b> Classifying MNIST handwritten digits at 100 bits vastly exceeds the previous record of roughly a dozen signals, establishing a new complexity ceiling for wet-lab computation.</li>
+      <li><b>Introduces four hallmarks of genuine learning in a non-living system:</b> independence (same molecules for training and testing), integration (sequential multi-class learning), generality (correct classification of unseen digit variants), and stability (memories persist days after training ends).</li>
+      <li><b>Opens a concrete route to molecular therapeutics that learn.</b> A DNA circuit that can remember previous disease-biomarker encounters and adapt future responses could replace static diagnostic probes with adaptive, self-improving biosensors.</li>
+      <li><b>Demonstrates a general engineering methodology for ultra-complex DNA systems.</b> The system uses 1,200+ unique DNA strands assembled from unpurified oligos, and the fabrication lessons reported (one-pot purification, systematic strand-quality monitoring) address long-standing scalability bottlenecks.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>A landmark first in a multi-decade quest:</b> the authors frame — and deliver — the first in vitro supervised learning in molecular circuits, a milestone that the physical computing and synthetic biology communities have been working toward since the Hopfield network era.</li>
+      <li><b>Cross-disciplinary impact:</b> the result is simultaneously a biochemistry breakthrough, a machine-learning-hardware result, and a synthetic-biology advance — exactly the breadth Nature targets.</li>
+      <li><b>Clearly bounded and reproducible:</b> the system is characterized quantitatively (crosstalk ≤20%, matching pairs ≥88%), the data and code are deposited at CaltechDATA, and the methods are detailed enough to enable replication — meeting Nature's reproducibility standards.</li>
+      <li><b>Transformative societal vision:</b> the paper's vision of molecular machines with embedded decision-making spans biomedicine and programmable materials, giving it the "transformative potential" framing Nature prioritizes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Pattern dataset</dt><dd><strong>MNIST handwritten digit database</strong> (LeCun et al., 1998) — used for training and testing patterns. Three pairwise classification tasks: digits 0 vs. 1, 3 vs. 4, and 6 vs. 7. <strong>10 training patterns per class</strong> (selected via a "good teacher" filtering strategy from the broader dataset). <strong>12 test patterns per class</strong> were used in each experiment, selected by k-means clustering (k=12) in the weighted-sum space.</dd>
+      <dt>Experimental scale</dt><dd>A 100-bit, 2-memory DNA neural network with <strong>over 700 distinct molecular species</strong> in a single test tube and <strong>more than 1,200 unique DNA strands</strong> across the learning and testing phases. Standard operating concentration: 1× = 50 nM.</dd>
+      <dt>Fluorescence readout</dt><dd>Fluorescence kinetics monitored over 2–24 hours using dual-channel reporters (ATTO590 and ATTO488 fluorophores). Data arrays: 10×10 grids — one position per bit in each memory — enabling visual and quantitative verification of learned weights.</dd>
+      <dt>Validation scope</dt><dd><strong>72 representative test classifications</strong> demonstrated after 3 distinct training processes (one per digit pair). Crosstalk evaluations involved 18 weight gates × 18 activators (306 off-diagonal cases) and 8 learning gates × 8 input–label pairs (56 off-diagonal cases).</dd>
+      <dt>Code &amp; source data</dt><dd>Simulation code (ODE-based mass-action kinetics) and all source data deposited at <strong>CaltechDATA</strong> (<a href="https://doi.org/10.22002/5bvkt-r7y16" target="_blank">doi.org/10.22002/5bvkt-r7y16</a>).</dd>
+      <dt>Time window</dt><dd>Experiments performed in vitro; training phases last 24–26 h per class; testing phases last 8 h. Stability of stored memories verified over multiple days post-training.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MNIST handwritten digits</td><td>Training and test patterns (100-bit binary representation)</td><td>3 digit pairs; 10 training + 12 test patterns per class per task</td><td><a href="http://yann.lecun.com/exdb/mnist/" target="_blank">yann.lecun.com</a></td></tr>
+        <tr><td>DNA seesaw circuit library</td><td>Molecular implementation substrate (strand-displacement gates, activatable motifs)</td><td>700+ species, 1,200+ unique strands; designed via NUPACK</td><td>Paper Methods + CaltechDATA</td></tr>
+        <tr><td>NUPACK (nucleic acid design software)</td><td>Secondary structure prediction &amp; sequence design for 100 intermediate activators per memory</td><td>All 100 learning gate intermediates analysed</td><td><a href="http://www.nupack.org" target="_blank">nupack.org</a></td></tr>
+        <tr><td>CaltechDATA repository</td><td>Source data files (fluorescence kinetics, endpoint measurements) + simulation code</td><td>Figs. 2–6 and Extended Data Figs. 4–10</td><td><a href="https://doi.org/10.22002/5bvkt-r7y16" target="_blank">doi.org/10.22002/5bvkt-r7y16</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all data are self-contained within the in vitro experimental system; no external geospatial or large-scale observational datasets are used. Numbers above are taken verbatim from the article text and figures.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>DNA strand-displacement (seesaw motif):</b> the core computation primitive. Catalytic and stoichiometric strand-displacement reactions implement weight multiplication, summation, thresholding, and winner-take-all competition — all without enzymes.</li>
+      <li><b>Activatable gate motifs (two new designs):</b> (1) <em>activatable amplification gate</em> — an inhibited weight gate that becomes functional only when the matching activator is present; (2) <em>activatable transformation gate</em> (learning gate) — converts a co-presented input and class label into an activator signal, irreversibly encoding one training bit into a passive molecular memory.</li>
+      <li><b>In vitro supervised learning algorithm:</b> a variant of Hebbian/k-means learning implemented molecularly. Training patterns are presented sequentially or in batch; activator concentrations integrate and accumulate the averaged class signature. No external computation; learning is powered solely by strand thermodynamics.</li>
+      <li><b>Winner-take-all (WTA) competition:</b> pairwise annihilation reactions resolve which class has the higher weighted sum, and a signal restoration gate amplifies the winner to an ideal ON signal — implementing classification as a chemical reaction race.</li>
+      <li><b>Mass-action ODE simulation:</b> chemical kinetics modeled with ordinary differential equations calibrated to fluorescence kinetics data; simulations overlaid directly on experimental trajectories throughout the paper.</li>
+      <li><b>Scalability characterization:</b> systematic experiments varying memory size (n = 4 to 100 bits) and activation fraction (b/n ratio), identifying the key trade-off: unused (inhibited) bits dominate error once the ratio of total-to-activated bits exceeds ~5.</li>
+      <li><b>One-pot double-stranded complex purification:</b> all 100 learning gates per memory assembled and corrected for stoichiometric errors in a single pot — a fabrication advance enabling the largest DNA circuit yet demonstrated with learning capability.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig1.png" target="_blank">
+        <img src="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig1.png" alt="Fig. 1: Concept and design of supervised learning in DNA neural networks" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Concept and design — abstract training/testing process, seesaw circuit implementation, and 5-layer DNA neural network architecture.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig2.png" target="_blank">
+        <img src="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig2.png" alt="Fig. 2: Characterization of key motifs" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Motif characterization — fluorescence kinetics of weight-activation and learning gates; crosstalk evaluations for 18 weight gates and 8 learning gates.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig3.png" target="_blank">
+        <img src="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig3.png" alt="Fig. 3: Pattern classification with activatable memories" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Activatable memories — MNIST digit pair classification (0/1, 3/4, 6/7) using in silico-loaded weights; 12 test patterns per class show correct ON/OFF separation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig4.png" target="_blank">
+        <img src="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig4.png" alt="Fig. 4: Learned weights" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Learned weights — 10×10 fluorescence arrays visualizing digit shapes emerging from molecular learning; error analysis across 3 digit pairs and 2 training orders.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig5.png" target="_blank">
+        <img src="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig5.png" alt="Fig. 5: Scalability of pattern classification using learned weights" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Scalability — performance vs. activated-to-total bit ratio (b/n) from 4 to 100 bits; identifies the critical trade-off limiting scaling.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig6.png" target="_blank">
+        <img src="assets/supervised-learning-in-dna-neural-networks__s41586-025-09479-w/fig6.png" alt="Fig. 6: 100-bit pattern classification using learned weights" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Full system — 72 representative tests after 3 training processes; species counts comparing networks with and without learning capability.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 in main); Supplementary Information contains Tables 1–19 and Supplementary Figs. 1–33.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, spatial accessibility and public-health equity).</p>
+
+    <div class="idea">
+      <h3>① Replace batch training with a reservoir-style molecular encoding for continuous learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's current training protocol is fundamentally batch-oriented: all patterns from one class are mixed together and the system waits 24 hours for equilibrium. This means the system cannot yet learn from a stream of single-example observations in real time — a key limitation acknowledged by the authors. A direct extension: reframe the DNA circuit as a <strong>molecular reservoir</strong> where input patterns drive transient dynamics of the seesaw network, and a simple linear readout layer (itself implemented in DNA concentrations) is updated online. The reservoir's rich transient trajectories would replace the explicit accumulation mechanism, potentially enabling sub-hour learning from individual molecular examples.</p>
+      <p><span class="lab mine">Added value to my research</span>Reservoir computing's separation of a fixed dynamic substrate from a trainable linear readout mirrors how I treat spatiotemporal kernel density estimation: a fixed spatial kernel drives transient density surfaces, and a regression layer extracts signals. Formally mapping the reservoir analogy onto KDE opens a path to <strong>online-updating spatiotemporal density estimators</strong> that incorporate new mobility-trace observations without re-fitting the entire kernel — directly relevant to real-time mobile-phone-based pandemic monitoring or live transit-demand sensing.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Energy-efficient multimodal zero-shot learning using in-memory reservoir computing — <a href="https://doi.org/10.1038/s43588-024-00762-w" target="_blank">10.1038/s43588-024-00762-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Scale from 2-class to multi-class by replacing WTA competition with a graph-structured annihilation network</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly identifies the quadratic growth of annihilator species and biased winner-take-all competition as blockers for scaling beyond two output classes. Its pairwise-annihilation WTA topology creates O(k²) molecular species for k classes — untenable at k=10 (all MNIST digits). A principled extension: replace the fully-connected WTA with a <strong>sparse tournament-graph annihilation network</strong>, where species compete only within a structured bracket rather than globally. Drawing on recent advances in scalable graph-based computation, the network topology itself becomes a design variable that trades exactness for molecular economy.</p>
+      <p><span class="lab mine">Added value to my research</span>Sparse-graph competition structures are exactly what I use in spatial network community detection (Louvain/Leiden algorithms for urban sub-regions). The analogy suggests a <strong>hierarchical network decomposition strategy</strong> for multi-label spatial classification tasks — e.g., partitioning land-use categories or healthcare facility types into a tournament bracket rather than exhaustive pairwise comparison — reducing computation while preserving classification accuracy. This could improve scalability of my MGWR-based multi-class models for urban analytics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Resistive memory-based zero-shot liquid state machine for multimodal event data learning — <a href="https://doi.org/10.1038/s43588-024-00751-z" target="_blank">10.1038/s43588-024-00751-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Integrate spatial organization via phase-separated DNA condensates to enable distributed memory</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's authors explicitly flag the absence of spatial organization as a fundamental limitation: everything happens in a single well-mixed solution, which prohibits encoding memory in spatial structure. They propose phase-separated DNA condensates (micrometre-scale droplets containing billions of branched DNA monomers) as a promising path to scaling. A concrete extension: implement the learning gate and weight gate motifs inside condensate droplets, using the condensate boundary as a programmable diffusion barrier to create <strong>spatially partitioned memory stores</strong> — effectively a multi-compartment molecular brain where each droplet learns a distinct sub-pattern and lateral interactions route signals between compartments.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatially partitioned computation in physical systems is structurally equivalent to the geographically weighted regression framework I use: each spatial window "learns" local parameters independently while sharing global priors through the kernel bandwidth. The DNA condensate architecture suggests a <strong>physically realizable analogue of MGWR</strong> where each condensate corresponds to a local bandwidth regime. More directly, it sharpens my intuition for how to design spatially federated ML models where privacy constraints prevent pooling of local health or mobility data — each "droplet" trains locally and communicates only summary statistics (activator concentrations ↔ gradient updates).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Dynamic and scalable DNA-based information storage — <a href="https://doi.org/10.1038/s41467-020-16797-2" target="_blank">10.1038/s41467-020-16797-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Exploit the paper's error-characterization framework to build bias-aware molecular diagnostics</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most underexplored findings is its detailed error analysis (Methods: "Errors in learned weights"): certain bits (27, 85, 86) consistently showed lower-than-expected signals across all training patterns and both memories, traced to secondary structure formation in intermediate activators. The paper addresses this as a fabrication defect, but a richer extension would treat systematic bit-level bias as a <strong>learnable signal</strong>: map the NUPACK-predicted intermediate-structure stability scores onto bit indices and use that mapping as a prior to regularize learned weights, effectively correcting for molecular "dyslexia" before classification rather than after. This produces a <strong>self-correcting molecular perceptron</strong> that compensates for known physical biases during training.</p>
+      <p><span class="lab mine">Added value to my research</span>Bias-aware correction during learning is the molecular analogue of what I do with spatially varying coefficients in GWR/MGWR: some spatial units systematically over- or under-predict due to data sparsity or local non-stationarity, and I apply bandwidth-adaptive regularization to correct this. The DNA paper's NUPACK-prior approach suggests a general recipe for <strong>physics-informed regularization</strong> where a structural model (NUPACK for DNA; gravity model or distance-decay prior for spatial networks) provides a theoretically grounded penalty term that steers learning away from known-biased directions — a method I could apply in physics-informed graph learning for urban accessibility prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning incorporating biologically inspired neural dynamics and in-memory computing — <a href="https://doi.org/10.1038/s42256-020-0187-0" target="_blank">10.1038/s42256-020-0187-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Embed the DNA learning system in a feedback loop with environmental sensors for adaptive biosurveillance</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates stability (memories persist days post-training) but the system currently operates in isolation from the environment after training. A natural extension toward the paper's own vision of "molecular machines capable of embedded learning and decision-making" is to close the feedback loop: couple the DNA classifier's output signals directly to a molecular actuator layer (e.g., DNA-controlled hydrogel expansion or aptamer-gated drug release), and feed environmental biomarker concentrations back as new training inputs, creating a <strong>closed-loop adaptive therapeutic circuit</strong>. The learning mechanism already present in the paper is precisely what would allow the circuit to update its classification boundaries as disease phenotypes evolve, without requiring any silicon hardware or human intervention.</p>
+      <p><span class="lab mine">Added value to my research</span>The closed-loop adaptive circuit maps directly onto my interest in adaptive spatial-decision systems for public health: just as the DNA circuit should update its weights when biomarker distributions shift, a geospatial health-surveillance model should update its accessibility scores when care-seeking behaviour or facility capacity changes. This motivates <strong>online-updating 2SFCA/R2SFCA models</strong> where the distance-decay function and catchment boundary are re-estimated in real time from incoming mobile-phone or telehealth encounter data — shifting from static, annually-recalibrated accessibility maps to continuously-adapting accessibility surfaces that can detect emerging spatial disparities within days of onset.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fully analogue reinforcement learning with memristors — <a href="https://doi.org/10.1038/s42256-025-01157-w" target="_blank">10.1038/s42256-025-01157-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

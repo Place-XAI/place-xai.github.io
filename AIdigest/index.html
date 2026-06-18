@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Digest — Nature Thinking</title>
+<style>
+  :root{--bg:#f6f7f9;--card:#fff;--ink:#1c2530;--muted:#5b6675;--line:#e6e9ee;
+    --accent:#2c6e8f;--accent-soft:#eaf2f6;--radius:12px;--maxw:1040px}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+  header h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  .toolbar{position:sticky;top:0;background:var(--bg);padding:16px 0 10px;margin-top:16px;z-index:5;border-bottom:1px solid var(--line)}
+  #q{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+  .filters select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;color:var(--ink)}
+  .count{font-size:13px;color:var(--muted);margin-left:auto}
+
+  ul.list{list-style:none;margin:14px 0 0;padding:0}
+  li.row{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;margin-bottom:10px;display:grid;grid-template-columns:1fr 150px;gap:14px;
+    box-shadow:0 1px 2px rgba(20,30,45,.03)}
+  li.row:hover{border-color:#cfd8e0;box-shadow:0 2px 6px rgba(20,30,45,.06)}
+  .main .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .j{font-size:11px;font-weight:700;color:#fff;background:#1c2530;border-radius:999px;padding:2px 9px}
+  .subj{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 9px}
+  .main h3{font-size:16.5px;margin:0 0 6px;line-height:1.35}
+  .main h3 a{color:var(--ink)}
+  .concl{font-size:13.5px;color:var(--muted);margin:0 0 8px}
+  .kws{display:flex;flex-wrap:wrap;gap:5px}
+  .chip{font-size:11px;padding:2px 8px;border-radius:6px;background:#f0f2f5;color:var(--muted)}
+  .side{text-align:right;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between}
+  .date{font-size:13px;font-weight:600;color:var(--ink)}
+  .side .doi{font-size:12px;color:var(--muted)}
+  .msg{padding:40px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:var(--radius)}
+  code{font-family:ui-monospace,Menlo,monospace;background:#eef1f4;padding:1px 6px;border-radius:5px;font-size:12px}
+  @media(max-width:640px){li.row{grid-template-columns:1fr}.side{text-align:left;align-items:flex-start;flex-direction:row;gap:14px;margin-top:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AI Digest</h1>
+    <p>AI-generated digests of Nature / Science (and family) papers · Nature Thinking Corpus · Place-XAI</p>
+  </header>
+
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search title, keyword, method, data source, author…">
+    <div class="filters">
+      <select id="f-journal"><option value="">All journals</option></select>
+      <select id="f-year"><option value="">All years</option></select>
+      <select id="f-subject"><option value="">All subjects</option></select>
+      <select id="f-sort">
+        <option value="new">Newest first</option>
+        <option value="old">Oldest first</option>
+      </select>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <ul id="list" class="list"></ul>
+  <div id="empty" class="msg" style="display:none">No matching articles.</div>
+</div>
+
+<script>
+let DATA = [];
+const $ = s => document.querySelector(s);
+function uniq(a){return [...new Set(a)].sort();}
+function fill(sel, vals){vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);});}
+
+function render(){
+  const q=$('#q').value.trim().toLowerCase(), fj=$('#f-journal').value,
+        fy=$('#f-year').value, fs=$('#f-subject').value, sort=$('#f-sort').value;
+  const list=$('#list'); list.innerHTML='';
+  let rows=DATA.filter(a=>{
+    const hay=[a.title,(a.authors||[]).join(' '),(a.keywords||[]).join(' '),
+               (a.methods||[]).join(' '),(a.data_sources||[]).join(' '),
+               (a.subjects||[]).join(' '),a.core_conclusion].join(' ').toLowerCase();
+    if(q && !hay.includes(q)) return false;
+    if(fj && a.journal!==fj) return false;
+    if(fy && String(a.year)!==fy) return false;
+    if(fs && !(a.subjects||[]).includes(fs)) return false;
+    return true;
+  });
+  rows.sort((x,y)=> sort==='old'
+    ? (x.published||'').localeCompare(y.published||'')
+    : (y.published||'').localeCompare(x.published||''));
+
+  rows.forEach(a=>{
+    const li=document.createElement('li'); li.className='row';
+    const subj=(a.subjects||[]).map(s=>`<span class="subj">${s}</span>`).join('');
+    li.innerHTML=`
+      <div class="main">
+        <div class="top"><span class="j">${a.journal||''}</span>${subj}</div>
+        <h3><a href="${a.html}">${a.title}</a></h3>
+        <p class="concl">${(a.core_conclusion||'').slice(0,200)}${(a.core_conclusion||'').length>200?'…':''}</p>
+        <div class="kws">${(a.keywords||[]).slice(0,5).map(k=>`<span class="chip">${k}</span>`).join('')}</div>
+      </div>
+      <div class="side">
+        <span class="date">${a.year_month||a.year||''}</span>
+        <span class="doi"><a href="https://doi.org/${a.doi}" target="_blank">DOI ↗</a></span>
+      </div>`;
+    list.appendChild(li);
+  });
+  $('#count').textContent = rows.length+' / '+DATA.length+' articles';
+  $('#empty').style.display = rows.length? 'none':'block';
+}
+
+fetch('index.json').then(r=>r.json()).then(d=>{
+  DATA=d.articles||[];
+  fill($('#f-journal'), uniq(DATA.map(a=>a.journal).filter(Boolean)));
+  fill($('#f-year'), uniq(DATA.map(a=>String(a.year)).filter(Boolean)).reverse());
+  fill($('#f-subject'), d.subjects || uniq(DATA.flatMap(a=>a.subjects||[])));
+  ['#q','#f-journal','#f-year','#f-subject','#f-sort'].forEach(s=>$(s).addEventListener('input',render));
+  render();
+}).catch(()=>{
+  $('#list').style.display='none'; $('#empty').style.display='block';
+  $('#empty').innerHTML='Could not load <code>index.json</code>. Run <code>python3 -m http.server</code> in this folder '+
+    '(browsers block <code>fetch()</code> on <code>file://</code>). On GitHub Pages it works directly.';
+});
+</script>
+</body>
+</html>

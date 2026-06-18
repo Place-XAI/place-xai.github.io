@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing greener cities — AI Digest</title>
+<meta name="description" content="AI Digest: Visualizing greener cities (Nature Sustainability, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Sustainability</span>
+      <span class="tag">Visual framing</span>
+      <span class="tag">Public support</span>
+      <span class="tag">Urban green policy</span>
+    </div>
+    <h1>Visualizing greener cities</h1>
+    <div class="meta">
+      <span class="authors">Tamara Metze · Eduardo Rojas-Padilla</span>
+      <span><b>Published</b> 2024-02-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41893-024-01277-y" target="_blank">10.1038/s41893-024-01277-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41893-024-01277-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>AI-generated images of greener urban futures can <strong>build cross-partisan public support</strong> for green transportation policies, even among politically sceptical groups such as Republicans who typically oppose such investments. This News &amp; Views piece comments on Dubey et al. (2024), stressing that <strong>realistic visual framing</strong> — not just text — is a promising, scalable tool to accelerate sustainability transitions, while raising important questions about image provenance, audience effects, and the risk of misinformation.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges political divides with images, not arguments.</b> The reviewed study (Dubey et al.) showed that 1,529 Americans — including Republicans who typically oppose green transit investment — increased support for a hypothetical green infrastructure bill after viewing AI-generated city visuals, demonstrating a powerful tool for overcoming partisan resistance.</li>
+      <li><b>Elevates visual communication to a policy lever.</b> Green policies often fail not from lack of evidence but from lack of emotional resonance. This piece synthesizes literature showing that visuals "package emotions, values and information" and travel rapidly on social media, making them inherently political artifacts.</li>
+      <li><b>Opens a research agenda, not just a finding.</b> The commentary poses four unresolved questions: which image types work best, why AI realism outperforms abstraction, who creates and spreads the images, and why specific audiences respond differently — framing an entire research programme.</li>
+      <li><b>Signals AI-generated content as a double-edged sword.</b> The same generative AI tools that build support for green policy can produce misinformation; distinguishing beneficial from harmful visual persuasion is a new societal challenge the paper explicitly flags.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Sustainability (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>At the interface of science and societal action:</b> Nature Sustainability regularly publishes work that links empirical findings to policy uptake — this piece maps the path from AI-generated images to legislative support, a directly policy-relevant mechanism.</li>
+      <li><b>Timeliness with generative AI:</b> publishing in early 2024, the piece captures a precise moment when text-to-image AI tools (Stable Diffusion, DALL·E) became accessible enough to deploy in policy communication research — maximizing relevance.</li>
+      <li><b>Cross-disciplinary reach:</b> fuses communication science, political science, urban planning, and AI technology — fitting Nature Sustainability's appetite for cross-disciplinary synthesis that none of those fields would publish alone.</li>
+      <li><b>Framing a new research frontier:</b> the commentary format explicitly sets a four-question agenda for the field, acting as a signpost paper that positions Nature Sustainability at the forefront of visual communication for sustainability.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>News &amp; Views commentary — no primary dataset collected by the authors. The data source is the study by Dubey et al. (2024), published concurrently in <em>Nature Sustainability</em> (DOI: <a href="https://doi.org/10.1038/s41893-024-01299-6" target="_blank">10.1038/s41893-024-01299-6</a>).</dd>
+      <dt>Survey sample</dt><dd><strong>1,529 Americans</strong> with diverse political preferences (Republicans, Democrats, Independents) recruited for an online experiment. Three treatment arms: (1) no visual (baseline); (2) simple illustration; (3) highly realistic AI-generated image of a car-free city.</dd>
+      <dt>Stimulus material</dt><dd>Hypothetical congressional bill proposing investment in green urban transport infrastructure for US cities. AI-generated images produced with text-to-image generative models (specific model not stated in this commentary).</dd>
+      <dt>Outcome measured</dt><dd>Self-reported support for the bill, compared across political identity groups and visual treatment conditions. Exact statistical measures reported in Dubey et al., not in this commentary.</dd>
+      <dt>Supporting literature</dt><dd>10 cited references spanning political communication (Klein et al. 2022; Powell et al. 2015), climate image studies (Pearce et al. 2019; Krause &amp; Bucy 2018), and policy-framing research (Boscarino 2022; Guenther &amp; Shanahan 2020).</dd>
+      <dt>Availability</dt><dd>This is a commentary; no original data available. Refer to Dubey et al. (2024) for the experiment data.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Dubey et al. (2024) experiment</td><td>Primary empirical basis for commentary</td><td>1,529 US participants, 3 treatment arms</td><td><a href="https://doi.org/10.1038/s41893-024-01299-6" target="_blank">doi.org</a></td></tr>
+        <tr><td>Political communication literature</td><td>Contextual support for visual-framing claims</td><td>10 cited studies (2015–2022)</td><td>Various journals</td></tr>
+        <tr><td>AI-generated city visuals</td><td>Experimental stimulus (green mobility futures)</td><td>Realistic images of car-free US cities</td><td>Created with generative AI for the study</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: as a News &amp; Views piece (pp. 377–378), this article contains no original data collection or statistical analysis. All quantitative figures cited here are drawn from Dubey et al. (2024) as described in the commentary text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Commentary / narrative review format:</b> this is a News &amp; Views piece — the method is synthesizing a key primary study (Dubey et al.) alongside a curated body of visual-communication literature, not running an experiment.</li>
+      <li><b>Online survey experiment (Dubey et al., the reviewed study):</b> a <strong>randomized, between-subjects design</strong> — 1,529 participants assigned to baseline (text only), simple illustration, or realistic AI-generated visual conditions — measuring changes in self-reported policy support.</li>
+      <li><b>Political subgroup analysis:</b> results stratified by party affiliation (Republican vs. other), identifying differential visual effects across political identity groups.</li>
+      <li><b>Text-to-image generative AI:</b> the study used generative AI models (model unspecified in this commentary) to produce photorealistic depictions of car-free urban streetscapes for use as experimental stimuli.</li>
+      <li><b>Research-agenda framing:</b> the commentary's contribution is methodological in kind — it structures four open questions (image typology, mechanism, provenance, audience) as a research agenda for the field of visual sustainability communication.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/visualizing-greener-cities__s41893-024-01277-y/fig1.png" target="_blank">
+        <img src="assets/visualizing-greener-cities__s41893-024-01277-y/fig1.png" alt="Imagining greener cities — headline editorial image" loading="lazy"></a>
+        <figcaption><b>Fig. A</b> Editorial image accompanying the News &amp; Views piece — depicts a greener urban streetscape illustrating the concept of imagining sustainable city futures to build public support for green transport policy.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: none in main text (Tables = 0). As a 2-page News &amp; Views piece, the article contains a single editorial image (Fig. A) and no data tables. All quantitative results are reported in narrative form as drawn from Dubey et al. (2024).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, spatial accessibility, explainable ML, urban health policy).</p>
+
+    <div class="idea">
+      <h3>① Systematically decode which visual features drive cross-partisan policy support</h3>
+      <p><span class="lab paper">Extending this paper</span>The commentary poses the unanswered question: was it the colours, composition, people, realism, or story in the AI-generated images that moved Republican respondents? A direct extension: deploy a <strong>computer-vision saliency analysis</strong> (Grad-CAM or SHAP on a CNN image classifier) to decompose the AI-generated stimuli into feature importance maps, then correlate those maps with the survey support scores across political groups. This converts the paper's qualitative intuition into a <em>quantitative visual feature importance</em> model — and could generalize findings from US green transportation to other urban sustainability contexts globally.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable machine learning work (XGBoost + SHAP for spatial prediction) directly transfers here: the same feature-attribution logic applied to images instead of tabular spatial predictors. This creates a methodological bridge between GeoAI explainability and visual communication research — potentially useful for interpreting how satellite or street-view imagery influences public perception of urban spaces.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Global urban visual perception varies across demographics and personalities — <a href="https://doi.org/10.1038/s44284-025-00330-x" target="_blank">10.1038/s44284-025-00330-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Map geospatial heterogeneity in visual-framing effectiveness across US cities</h3>
+      <p><span class="lab paper">Extending this paper</span>The Dubey et al. study pooled 1,529 Americans nationally, but visual framing effects on policy support are almost certainly <strong>spatially heterogeneous</strong> — urban vs. suburban vs. rural residents, Sun Belt vs. Rust Belt cities, transit-rich vs. car-dependent metros may respond very differently to images of car-free streets. Extending the paper: run the same experiment with geo-tagged respondents and apply <strong>geographically weighted regression (GWR)</strong> to estimate local treatment effects, producing a map of where visual persuasion is most needed and most effective — a spatial targeting tool for sustainability advocacy campaigns.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a natural application of my MGWR/GWR toolkit: instead of predicting health outcomes or housing prices, the dependent variable is policy support and the independent variables are visual treatment and political composition. It would let me demonstrate that GWR methods have broad applicability in communication science and urban governance — extending my spatial non-stationarity methods into a new domain.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Democratic discrepancies in urban sustainable development — <a href="https://doi.org/10.1038/s41893-024-01425-4" target="_blank">10.1038/s41893-024-01425-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Couple AI-generated urban visuals with real accessibility data to build honest green futures</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper raises a concern: highly realistic AI images may veer into misinformation if the depicted futures are physically infeasible in the target city. A responsible extension: constrain generative AI image synthesis with <strong>real accessibility and infrastructure data</strong> (transit networks, walkability scores, POI density) so that AI-generated "greener city" visuals are factually grounded in what is actually achievable within that city's spatial structure. This would make visual persuasion an <em>evidence-informed</em> policy tool rather than a fantasy, directly addressing the misinformation concern raised in this piece.</p>
+      <p><span class="lab mine">Added value to my research</span>This idea links my 2SFCA/R2SFCA accessibility modelling directly to visual communication: an accessibility model provides the feasibility constraint for what a greener city can realistically look like, and the AI image generator produces a faithful visualization. My spatial accessibility work would become an input to generative AI workflows for urban sustainability communication — a novel application of facility accessibility science.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> AI-generated visuals of car-free US cities help improve support for sustainable policies — <a href="https://doi.org/10.1038/s41893-024-01299-6" target="_blank">10.1038/s41893-024-01299-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Trace how AI-generated green-city images spread and mutate across social media networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The commentary notes that once released online, images "travel fast" and their provenance becomes opaque — but the paper stops there. A key extension: instrument a large-scale <strong>social media diffusion study</strong> tracking the actual spread of AI-generated urban sustainability visuals (e.g., on X/Twitter or Reddit), measuring how images are modified (cropped, captioned, re-contextualized) as they travel and how these mutations shift the political framing. Combining network community detection with image similarity metrics would reveal whether green-city visuals remain persuasive or become ammunition for opponents once they leave controlled channels.</p>
+      <p><span class="lab mine">Added value to my research</span>My experience with multi-source data fusion (social media + mobile phone + GPS) provides a methodological foundation: applying network community detection (which I use for job-housing networks and urban agglomeration) to information diffusion graphs would let me model how sustainability narratives propagate through urban social networks — a spatially embedded information-flow problem that bridges my urban analytics and data science themes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A new urban narrative for sustainable development — <a href="https://doi.org/10.1038/s41893-022-00979-5" target="_blank">10.1038/s41893-022-00979-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Personalize green-city visualizations using mobility and land-use data to maximize local resonance</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper briefly notes that "personalized images" of hypothetical green future cities are relatively easy to create — but does not operationalize personalization. Extending it: use respondents' residential location and <strong>actual mobility patterns</strong> (from GPS or mobile-phone data) to condition the generative AI image on their <em>familiar streetscapes</em> — generating a "greener version of your own neighbourhood." This hyper-local framing could dramatically increase the emotional resonance and effectiveness of the visual stimulus, especially for groups (e.g., car-dependent suburban Republicans) who find abstract urban green images alienating.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal kernel density estimation and GPS trajectory analysis skills are directly applicable: deriving the local built-environment signature of a respondent's daily movement range, then conditioning a text-to-image model on that spatial signature, is a GeoAI pipeline I could design and implement. This would be a novel demonstration of geospatial foundation models fine-tuned for personalized urban sustainability communication — connecting my fine-tuning of geospatial foundation models to a policy communication outcome.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Impacts of nature-inclusive urban development on well-being and fairness perceptions — <a href="https://doi.org/10.1038/s44284-026-00425-z" target="_blank">10.1038/s44284-026-00425-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine learning reveals the control mechanics of an insect wing hinge — AI Digest</title>
+<meta name="description" content="AI Digest: Machine learning reveals the control mechanics of an insect wing hinge (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Biomechanics</span>
+      <span class="tag">Convolutional Neural Network</span>
+      <span class="tag">Motor Control</span>
+      <span class="tag">Physics-based Simulation</span>
+    </div>
+    <h1>Machine learning reveals the control mechanics of an insect wing hinge</h1>
+    <div class="meta">
+      <span class="authors">Johan M. Melis · Igor Siwanowicz · Michael H. Dickinson</span>
+      <span><b>Published</b> 2024-04-17</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-07293-4" target="_blank">10.1038/s41586-024-07293-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-07293-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Using simultaneous calcium imaging of 12 steering muscles and high-speed 3D wing tracking in tethered <em>Drosophila</em>, a <strong>convolutional neural network</strong> was trained on 72,219 wingbeats from 82 flies to accurately predict wing kinematics from muscle activity. An <strong>encoder–decoder</strong> further revealed the distinct mechanical role of each axillary sclerite. Embedding the CNN hinge model in a <strong>model predictive control</strong> loop reproduced canonical free-flight manoeuvres (saccades, forward/backward flight), demonstrating that insect flight control emerges from the coordinated action of just 12 sparsely innervated steering muscles acting through a mechanically sophisticated wing hinge.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Decodes one of evolution's most complex skeletal structures.</b> The insect wing hinge underpins the species radiation of nearly all flying insects; this is the first data-driven model capable of predicting its dynamic control logic in a living animal.</li>
+      <li><b>Bridges multi-modal biological measurement and ML.</b> Combining genetically encoded calcium imaging at ~100 fps with high-speed videography at 15,000 fps, the paper demonstrates a new experimental paradigm for musculoskeletal systems research.</li>
+      <li><b>Virtual experiments replace invasive physiology.</b> Because recording from individual steering muscles by electrophysiology is often impossible, the CNN enables systematic "virtual activation" experiments that would be impractical in vivo.</li>
+      <li><b>Physics-based flight simulator closes the loop.</b> The MPC simulation validated against free-flight saccade kinematics, creating a predictive model of insect aerobatics that can guide bioinspired micro-air-vehicle design.</li>
+      <li><b>Connectome linkage.</b> With the <em>Drosophila</em> ventral nerve cord connectome now available, the hinge model bridges neural circuitry to flight forces — a key step toward whole-animal flight models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Foundational evolutionary significance:</b> the wing hinge is central to the evolutionary success of insects (~1 million species); uncovering its control logic is a landmark discovery that transcends any single sub-discipline.</li>
+      <li><b>True integration of disciplines:</b> the work spans neuroscience, biomechanics, machine learning, aerodynamics, and physics-based simulation — exactly the kind of synthetic, cross-cutting study Nature prizes.</li>
+      <li><b>Generalizable ML methodology:</b> the CNN–encoder–decoder pipeline for musculoskeletal control is readily transferable to other biological systems, beyond insects.</li>
+      <li><b>Tangible engineering impact:</b> insights directly inform flapping micro-aerial vehicle design and bio-inspired robotics, extending reach to applied science readership.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Biological subjects</dt><dd><em>Drosophila melanogaster</em> — 82 individual flies; 485 high-speed flight sequences recorded, yielding a final dataset of <strong>72,219 wingbeats</strong> after quality filtering (13% excluded for outlier kinematics or off-frequency wingbeats).</dd>
+      <dt>Calcium imaging</dt><dd>GCaMP7f genetically encoded calcium indicator expressed in 12 steering muscles; captured at ~100 fps (strobed at dorsal stroke reversal) using an epifluorescence microscope (4× lens, Nikon CFI Plan Fluor). Real-time unmixing algorithm extracted per-muscle Ca²⁺ signals.</dd>
+      <dt>Wing kinematics</dt><dd>Three synchronized Photron SA5 high-speed cameras at <strong>15,000 fps</strong>, 256×256 pixels, 8-bit, IR backlit; custom Flynet CNN + particle swarm optimization tracked 3D wing pose (4 angles: stroke, deviation, pitch, deformation).</dd>
+      <dt>Robotic fly data</dt><dd>Dynamically scaled flapping robot immersed in mineral oil; 6-DOF ATI Nano 17 force/torque sensor; 12 baseline + maximum-activity kinematic patterns tested — data in <code>robofly_data.zip</code> (MATLAB format).</dd>
+      <dt>Simulation</dt><dd>Model predictive control (MPC) using do-mpc Python package; state vector = 13 parameters (velocity, quaternion, position); control vector = 24 muscle activities (12 per wing); finite horizon = 10 wingbeats.</dd>
+      <dt>Public data deposit</dt><dd>All processed data (muscle activity time series, wing kinematics, Flynet weights, robofly forces) at Caltech Data: <a href="https://doi.org/10.22002/aypcy-ck464" target="_blank">doi.org/10.22002/aypcy-ck464</a>. Code at <a href="https://github.com/FlyRanch/mscode-melis-siwanowicz-dickinson" target="_blank">github.com/FlyRanch/mscode-melis-siwanowicz-dickinson</a>. Raw videos not publicly hosted due to size; available on request.</dd>
+      <dt>Time period</dt><dd>Flight recordings 2020–2022; data deposit accessed as of paper submission (2024).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td><code>main_muscle_and_wing_data.h5</code></td><td>Muscle Ca²⁺ time series + wing kinematics for CNN and encoder–decoder training</td><td>72,219 wingbeats, 82 flies, 12 muscles</td><td><a href="https://doi.org/10.22002/aypcy-ck464" target="_blank">Caltech Data</a></td></tr>
+        <tr><td><code>flynet_data.zip</code></td><td>Camera calibration, example movies, training labels, network weights for the Flynet wing-tracking CNN</td><td>Example session (2020-01-12) + pre-trained weights</td><td><a href="https://doi.org/10.22002/aypcy-ck464" target="_blank">Caltech Data</a></td></tr>
+        <tr><td><code>robofly_data.zip</code></td><td>Force and torque measurements from dynamically scaled robotic fly wing</td><td>12 kinematic patterns × 7 wingbeats each (MATLAB)</td><td><a href="https://doi.org/10.22002/aypcy-ck464" target="_blank">Caltech Data</a></td></tr>
+        <tr><td>GitHub (FlyRanch/mscode-…)</td><td>All analysis code: Flynet, Flynet-Kalman, Flynet-optimizer, latent-analysis, mpc-simulations, robofly, wing-hinge-cnn</td><td>7 submodules, Python + MATLAB</td><td><a href="https://github.com/FlyRanch/mscode-melis-siwanowicz-dickinson" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: raw high-speed video files (Ca²⁺ imaging + wing kinematics movies) are too large for public hosting; example session included in flynet_data.zip; full sequences available on request from the corresponding author.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Multi-modal recording:</b> simultaneous GCaMP7f calcium imaging of 12 steering muscles and 15,000 fps high-speed 3D wing tracking in tethered flies, with open- and closed-loop visual stimulation via a cylindrical LED array.</li>
+      <li><b>Automated wing pose reconstruction (Flynet):</b> CNN-based pose prediction followed by particle swarm optimization (PSO) 3D model fitting; extended Kalman filter + Rauch–Tung–Striebel smoother for temporal smoothing; wing angles encoded as 80 Legendre polynomial coefficients.</li>
+      <li><b>Wing-hinge CNN:</b> 13×9 input matrix (12 muscle Ca²⁺ signals + wingbeat frequency over 9-wingbeat temporal window); two convolutional layers (SELU activation) + dense layer (1,024 neurons) + 80 linear output neurons; trained on 85% / validated on 15% of 72,219 wingbeats; MSE loss reaching 10⁻³·³³ (train) and 10⁻³·⁰⁷ (validation).</li>
+      <li><b>Virtual activation experiments:</b> CNN-driven "in silico physiology" — each of the 12 steering muscles maximally activated individually while correlated muscles adjusted proportionally (from a learned 12-D muscle correlation structure, using RANSAC linear regression).</li>
+      <li><b>Robotic aerodynamics:</b> dynamically scaled flapping robot in mineral oil; 6-DOF force/torque sensing; inertial forces computed via Newton–Euler equations and added to aerodynamic measurements.</li>
+      <li><b>MPC flight simulation:</b> non-linear discrete-time state-space model integrated into a do-mpc MPC loop; control inputs are 24 steering muscle activities; manoeuvres (saccades, forward/backward flight) optimized over a 10-wingbeat horizon.</li>
+      <li><b>Encoder–decoder latent variable analysis:</b> five-stream encoder (one per sclerite group + frequency) projecting onto 5 latent nodes; wing kinematics decoder (1,024-neuron dense layer, SELU) predicts 80 Legendre coefficients; backprop stop prevents muscle reconstruction error from corrupting encoder gradients; reveals sclerite-specific control logic.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig1.png" target="_blank">
+        <img src="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig1.png" alt="Fig.1 Wing hinge anatomy and steering muscles" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Anatomy of the fly wing hinge — power muscles, sclerites (ax1–ax4, basalare) and the 12 named steering muscles.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig2.png" target="_blank">
+        <img src="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig2.png" alt="Fig.2 Simultaneous imaging of muscle activity and wing motion" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Experimental apparatus: simultaneous GCaMP7f calcium imaging and 15,000 fps wing tracking; definition of the four wing kinematic angles.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig3.png" target="_blank">
+        <img src="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig3.png" alt="Fig.3 CNN architecture and prediction accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Wing-hinge CNN: architecture (13×9 input → 80 Legendre outputs) and prediction accuracy vs. tracked wing angles.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig4.png" target="_blank">
+        <img src="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig4.png" alt="Fig.4 Virtual muscle activation experiments" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Virtual activation experiments: CNN-predicted wing kinematics for maximum activity of each of the 12 steering muscles.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig5.png" target="_blank">
+        <img src="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig5.png" alt="Fig.5 MPC simulation of a rightward saccade" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> MPC simulation of a rightward body saccade — 90° yaw in 10 wingbeats, matching free-flight dynamics.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig6.png" target="_blank">
+        <img src="assets/machine-learning-reveals-the-control-mechanics-of-an-insect-wing-hinge__s41586-024-07293-4/fig6.png" alt="Fig.6 Sclerite function from encoder-decoder" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Encoder–decoder latent analysis: proposed mechanical role of each sclerite group (basalare, ax1, ax3, ax4) in wing motion.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 tables in main text; 2 Extended Data tables (Extended Data Table 1: correlation slopes and baseline muscle activity pattern; Extended Data Table 2: number of high-speed sequences recorded per trigger muscle).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, accessibility modeling).</p>
+
+    <div class="idea">
+      <h3>① Transfer the encoder–decoder sclerite model to multi-sensor spatiotemporal prediction problems</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper's encoder–decoder groups sensor streams (muscles) by anatomical unit (sclerite) and enforces a bottleneck that forces each group to explain its share of the output (wing motion). This architectural discipline — grouping correlated inputs by a domain-driven partition and projecting through a narrow latent — is transferable to any musculoskeletal or mechanical system where sensors cluster into functional units. A direct extension would apply the same architecture to a <em>multi-joint robotic limb</em>, grouping actuator channels by joint, and use the latent variables as interpretable joint-level control signals. The encoder–decoder framework from the corpus generalizes this approach across biological data modalities.</p>
+      <p><span class="lab mine">Added value to my research</span> The domain-partitioned bottleneck architecture is directly analogous to my <strong>physics-informed graph learning</strong> agenda: grouping spatial sensors (e.g., mobile phone towers, GPS trajectories) by administrative zone and projecting through zone-level latent nodes gives interpretable spatial-unit representations analogous to the sclerite latent variables. This approach could structure spatiotemporal embeddings in a manner that reflects real administrative or epidemiological boundaries — producing latents that are both predictive and meaningfully interpretable for urban health policy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning and beyond — <a href="https://doi.org/10.1038/s43588-025-00916-4" target="_blank">10.1038/s43588-025-00916-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace the CNN hinge model with an effective-dynamics surrogate to speed up MPC at scale</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper's MPC simulation calls the CNN hinge model at every optimization step. For real-time on-board control (e.g., in a micro-aerial vehicle) the 1,000-epoch-trained CNN is fixed and fast, but the MPC horizon is only 10 wingbeats. A key extension would be to learn a <strong>coarser effective dynamics model</strong> directly from MPC trajectories — essentially distilling the CNN + aerodynamic model into a reduced-order surrogate that predicts body state over tens of wingbeats in a single forward pass, enabling much longer planning horizons or real-time closed-loop onboard control.</p>
+      <p><span class="lab mine">Added value to my research</span> The surrogate-MPC idea is applicable to <strong>spatiotemporal forecasting</strong>: learning an effective-dynamics operator that maps coarse population mobility states forward in time (analogous to body quaternion + velocity) and querying it in a planning loop. This bridges the paper's flight-control framing to my work on agent-based modeling and Monte Carlo simulation of population dynamics — replacing expensive full-resolution simulation with a learned, computationally tractable surrogate.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiscale simulations of complex systems by learning their effective dynamics — <a href="https://doi.org/10.1038/s42256-022-00464-w" target="_blank">10.1038/s42256-022-00464-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Adapt the virtual-activation experiment paradigm as a counterfactual explanation tool for ML models</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper's "virtual experiments" — setting each of the 12 muscle inputs to maximum while adjusting correlated muscles, then reading off CNN-predicted wing changes — constitute a structured, biologically grounded <strong>counterfactual attribution method</strong>. This could be generalized: given any trained CNN with correlated inputs (grouped by a domain-identified correlation structure), perform the same sweep to attribute output variance to input groups. An extension would formalize this as an <em>interaction-aware attribution score</em>, using the learned muscle-correlation manifold as a constraint, and compare it with standard Shapley values on the same biological dataset.</p>
+      <p><span class="lab mine">Added value to my research</span> This directly advances my <strong>explainable machine learning for spatial prediction</strong> work. In my spatial ML models (MGWR, ML ensembles), input features are spatially correlated. The paper's constrained counterfactual sweep — varying one feature along its empirical correlation manifold rather than independently — offers a more realistic attribution than vanilla Shapley values, since it respects the actual joint distribution. This would improve XAI explanations of, for example, socioeconomic predictors of healthcare accessibility.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Error-controlled non-additive interaction discovery in machine learning models — <a href="https://doi.org/10.1038/s42256-025-01086-8" target="_blank">10.1038/s42256-025-01086-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use bio-inspired gait control transfer as a model for cross-city transferability of accessibility models</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper trains its CNN on a single fly species (<em>D. melanogaster</em>) and validates against a different species (<em>D. hydei</em>). The implicit finding — that muscle-to-wing mapping generalizes across species with similar hinge anatomy — is a biological form of <strong>domain transfer</strong>. A natural extension would systematically benchmark this cross-species transfer: train on <em>D. melanogaster</em> data, fine-tune with a small <em>D. hydei</em> dataset, and measure kinematic prediction loss. This quantifies how much of the hinge model is "universal" vs. species-specific, directly paralleling cross-city transfer in urban ML.</p>
+      <p><span class="lab mine">Added value to my research</span> The cross-species transfer framing maps naturally to <strong>cross-city transfer of geospatial foundation models</strong>, which I work on. Just as the fly CNN must decide which features are conserved across species (sclerite geometry) vs. species-specific (muscle tuning), a GeoAI model must distinguish features that are universal across cities (network topology, density scaling) from locally contingent ones (cultural POI usage). The paper's domain-transfer experiment design provides a concrete experimental template for my fine-tuning studies of geospatial foundation models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning to adapt through bio-inspired gait strategies for versatile quadruped locomotion — <a href="https://doi.org/10.1038/s42256-025-01065-z" target="_blank">10.1038/s42256-025-01065-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Formalize the MPC control loop as reinforcement learning to discover novel flight manoeuvres</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper's MPC framework requires a pre-specified goal state (e.g., 90° yaw in 10 wingbeats). This means the planner only discovers trajectories to pre-defined targets. An extension: replace MPC with a <strong>reinforcement learning agent</strong> that receives aerodynamic rewards (lift efficiency, energy cost) without a fixed goal, allowing the policy to discover energetically optimal manoeuvres that no experimenter pre-specified. Using the paper's CNN hinge model as the simulator environment, the RL agent's policy would reveal emergent control strategies analogous to those observed in free-flying insects. Biological systems and RL share deep algorithmic roots.</p>
+      <p><span class="lab mine">Added value to my research</span> The RL-over-physics-simulator paradigm translates to <strong>optimal facility-location optimization</strong> in my urban analytics work: treating city space as the environment, facility locations as actions, and spatial accessibility scores as rewards, an RL agent could discover placement strategies beyond greedy heuristics. This connects the paper's MPC-to-RL upgrade path directly to my EV charging-station and healthcare facility optimization work, where the paper's control-loop formalism provides a compelling methodological analogy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reinforcement learning in artificial and biological systems — <a href="https://doi.org/10.1038/s42256-019-0025-4" target="_blank">10.1038/s42256-019-0025-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

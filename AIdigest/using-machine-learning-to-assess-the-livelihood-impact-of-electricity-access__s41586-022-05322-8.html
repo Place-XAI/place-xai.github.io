@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using machine learning to assess the livelihood impact of electricity access — AI Digest</title>
+<meta name="description" content="AI Digest: Using machine learning to assess the livelihood impact of electricity access (Nature, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Satellite imagery</span>
+      <span class="tag">Causal inference</span>
+      <span class="tag">Electrification</span>
+      <span class="tag">Policy evaluation</span>
+    </div>
+    <h1>Using machine learning to assess the livelihood impact of electricity access</h1>
+    <div class="meta">
+      <span class="authors">Nathan Ratledge · Gabe Cadamuro · Brandon de la Cuesta · Matthieu Stigler · Marshall Burke</span>
+      <span><b>Published</b> 2022-11-16</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-022-05322-8" target="_blank">10.1038/s41586-022-05322-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-022-05322-8" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Combining <strong>satellite imagery, computer vision, and ML-based causal inference</strong> yields reliable village-level livelihood measurements in data-sparse environments. Applied to Uganda's electrical grid expansion (2011–2012), the method estimates that grid access <strong>improves rural asset wealth by up to 0.15 standard deviations</strong> — more than doubling the growth rate relative to unelectrified areas. The approach is <strong>low-cost and generalizable</strong> to future infrastructure policy evaluation across sub-Saharan Africa and beyond, addressing a long-standing data gap in development economics.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves the data-gap problem at country scale.</b> In low-income settings, national statistics are infrequent and coarse; this work shows how satellite imagery can substitute for expensive surveys, generating annual village-level wealth measurements across all of Uganda from publicly available inputs alone.</li>
+      <li><b>Advances credible causal identification.</b> Matrix completion (MC) and synthetic control with elastic net (SC-EN) outperform difference-in-differences when pre-treatment trends are heterogeneous — a setting pervasive in development contexts — validating ML as a more reliable quasi-experimental tool.</li>
+      <li><b>Delivers a country-scale treatment-effect estimate with policy relevance.</b> Electrification roughly doubles the village-level wealth growth rate, providing direct evidence that grid infrastructure investment yields measurable livelihood returns, informing large-scale programs like the World Bank's Energy Sector Management Assistance Program.</li>
+      <li><b>Generalizable pipeline.</b> The CNN + bias-correction + ML-inference workflow is explicitly designed for transfer to other infrastructure shocks (roads, water, telecom) and other countries in sub-Saharan Africa with similar data scarcity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological breakthrough with broad reach:</b> the paper is not merely a Uganda study — it demonstrates a replicable, low-cost approach to policy evaluation applicable across the developing world, meeting Nature's bar for generalized impact.</li>
+      <li><b>Bridges disciplines:</b> blends computer vision, causal econometrics, and development economics in a single coherent framework — the kind of cross-disciplinary synthesis Nature rewards.</li>
+      <li><b>Quantifies a high-stakes policy question:</b> the economic impact of grid electrification is one of the most contested debates in development economics; delivering credible country-scale evidence on it is high-value.</li>
+      <li><b>Advances open science:</b> the full data and R code are publicly archived on GitHub, enabling direct replication — consistent with Nature's reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>DHS Survey data</dt><dd><strong>Demographic and Health Surveys (DHS)</strong> — asset wealth estimates from <strong>more than 640,000 households</strong> across <strong>27,174 villages</strong> in <strong>25 countries in sub-Saharan Africa (SSA)</strong>. DHS survey years range from <strong>2005 to 2017</strong>. Used to train and validate the CNN wealth-prediction model.</dd>
+      <dt>Satellite imagery</dt><dd>Multispectral satellite images (daytime imagery referenced in the context of training the CNN for asset wealth prediction; specific sensor not named in available text). Imagery covers SSA communities co-located with DHS clusters.</dd>
+      <dt>Electricity grid maps</dt><dd><strong>Uganda Energy Sector GIS Working Group</strong> — distribution lines operational dataset (2016/2017). Identifies grid extension events used to define treated and control communities (2011–2012 expansion; <strong>2-km buffer</strong> around grid lines).</dd>
+      <dt>Road network data</dt><dd><strong>Uganda National Roads Authority</strong> — road improvement/resurfacing records (2010–2016); used as a falsification check (road upgrades averaged <strong>184 km/year</strong>, totaling 1,102 km, covering less than 1% of Uganda's road network).</dd>
+      <dt>Mobile coverage</dt><dd><strong>Collins Bartholomew / GSMA Mobile Coverage Explorer</strong> (2010–2016) — percentage of treated and control communities with cell coverage; used as a second falsification check.</dd>
+      <dt>Road/OSM</dt><dd><strong>OpenStreetMap</strong> (planet dump, 2019) — used as a supplementary geographic reference layer.</dd>
+      <dt>World Bank</dt><dd>World Bank electricity access indicator for Uganda (data.worldbank.org) and World Bank Poverty Maps of Uganda (2018) — contextual data.</dd>
+      <dt>Study period</dt><dd>Treatment: electrical grid expansion <strong>2011–2012</strong>. Outcome tracking: <strong>2010–2016</strong>. CNN training data: DHS rounds <strong>2005–2017</strong>.</dd>
+      <dt>Code &amp; replication</dt><dd>Full data and R code: <a href="https://github.com/nwrat/RCQSB2022_public" target="_blank">github.com/nwrat/RCQSB2022_public</a></dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>DHS (Demographic and Health Surveys)</td><td>Training labels for CNN asset wealth model</td><td>&gt;640,000 households; 27,174 villages; 25 SSA countries; 2005–2017</td><td><a href="https://dhsprogram.com" target="_blank">dhsprogram.com</a></td></tr>
+        <tr><td>Satellite imagery (multispectral)</td><td>CNN input features for wealth prediction</td><td>Co-located with DHS clusters across SSA</td><td>Publicly available sources (specific sensor not named in abstract)</td></tr>
+        <tr><td>Uganda GIS Grid Lines</td><td>Identifies treated (electrified) communities</td><td>Uganda-wide; expansion events 2011–2012</td><td>Uganda Energy Sector GIS Working Group (2017)</td></tr>
+        <tr><td>Uganda National Roads Authority</td><td>Falsification check (road co-investment)</td><td>1,102 km road upgrades 2010–2016 (~184 km/year)</td><td><a href="https://www.unra.go.ug" target="_blank">unra.go.ug</a></td></tr>
+        <tr><td>GSMA Mobile Coverage Explorer</td><td>Falsification check (cellular co-investment)</td><td>Uganda, 2010–2016</td><td>Collins Bartholomew Ltd (2014)</td></tr>
+        <tr><td>World Bank indicators</td><td>Contextual electrification rates</td><td>Uganda, national level</td><td><a href="https://data.worldbank.org/indicator/EG.ELC.ACCS.ZS?locations=UG" target="_blank">data.worldbank.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: specific satellite sensor names are not identified in the publicly available abstract and extended-data captions; the DHS household count and village counts are explicitly stated in the extended-data captions. Numbers above are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Convolutional neural network (CNN) for wealth prediction:</b> a ResNet-style CNN trained on DHS asset wealth indices from 25 SSA countries (640,000+ households, 27,174 villages) predicts community-level asset wealth annually from satellite imagery. A <strong>custom quintile-bias penalty</strong> (λ<sub>b</sub>) corrects prediction bias across the wealth distribution, trading modest overall R² for a bias-corrected slope coefficient near 1.</li>
+      <li><b>Asset wealth index construction:</b> a composite index is built from a battery of household-level DHS asset variables (appliances, building materials, ownership items); robustness checks show alternative index specifications are highly correlated (Extended Data Figs. 3–4).</li>
+      <li><b>Causal identification — Matrix Completion (MC):</b> treats the counterfactual of each electrified village as a missing entry in a panel matrix and recovers it via low-rank matrix factorization. Simulation experiments confirm MC is less biased than DiD when treatment-correlated pre-trends exist (Extended Data Fig. 7).</li>
+      <li><b>Causal identification — Synthetic Control with Elastic Net (SC-EN):</b> constructs a synthetic control for each treated village as a regularized linear combination of control units. Cross-validation confirms SC-EN and MC recover held-out control values with mean absolute error of approximately 0.017–0.018 (Extended Data Fig. 6).</li>
+      <li><b>Difference-in-Differences (DiD) benchmark:</b> used as a traditional comparison; the paper shows pre-trend violations inflate false-positive rates, motivating ML alternatives.</li>
+      <li><b>Falsification tests:</b> road investment and cellular coverage are shown to be uncorrelated with grid expansion timing and location, ruling out confounding co-investments (Extended Data Figs. 10–11).</li>
+      <li><b>Bootstrap confidence intervals:</b> all treatment effect estimates are based on 100 bootstrapped model runs; 2-km, 3-km, and 4-km buffer robustness checks confirm stability.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/using-machine-learning-to-assess-the-livelihood-impact-of-electricity-access__s41586-022-05322-8/fig1.png" target="_blank">
+        <img src="assets/using-machine-learning-to-assess-the-livelihood-impact-of-electricity-access__s41586-022-05322-8/fig1.png" alt="Fig.1 Electricity access rates, Ugandan electrification and asset wealth training data" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Electricity access rates, Ugandan electrification geography, and the DHS asset wealth training data across sub-Saharan Africa.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/using-machine-learning-to-assess-the-livelihood-impact-of-electricity-access__s41586-022-05322-8/fig2.png" target="_blank">
+        <img src="assets/using-machine-learning-to-assess-the-livelihood-impact-of-electricity-access__s41586-022-05322-8/fig2.png" alt="Fig.2 Wealth predictions in Uganda over time" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> CNN-predicted asset wealth across Uganda villages over time (2010–2016), showing the spatial pattern of wealth change around electrified areas.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/using-machine-learning-to-assess-the-livelihood-impact-of-electricity-access__s41586-022-05322-8/fig3.png" target="_blank">
+        <img src="assets/using-machine-learning-to-assess-the-livelihood-impact-of-electricity-access__s41586-022-05322-8/fig3.png" alt="Fig.3 Electricity access increases household wealth in electrified communities" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Treatment effect estimates from MC and SC-EN: grid access increases village-level asset wealth by up to 0.15 s.d. in newly electrified communities vs. controls.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). 13 Extended Data figures and 1 Supplementary peer review file are available. Extended Data covers the full analysis pipeline, DHS training samples, CNN bias correction, cross-validation, robustness checks, and falsification tests.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Transfer the CNN wealth pipeline to urban healthcare accessibility measurement</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's CNN is trained on rural DHS clusters in SSA and optimized to predict <em>village-level</em> asset wealth; it was not designed for informal urban settlements where the built environment is heterogeneous at much finer spatial scales. A direct extension: retrain the same bias-penalized CNN architecture on DHS clusters in African <em>cities</em> — particularly informal settlements now mapped in detail (see cross-ref below) — to generate annual, sub-district wealth estimates. This would fill the urban data gap the paper's authors note as a limitation, and the quadrant-bias correction trick generalizes to any skewed urban wealth distribution.</p>
+      <p><span class="lab mine">Added value to my research</span>This CNN wealth pipeline would serve as a <strong>demand-surface generator</strong> for my 2SFCA/R2SFCA models: instead of relying on census-based population counts (often outdated in fast-growing African cities), satellite-derived wealth estimates would weight health-facility demand by socioeconomic vulnerability — producing a <em>need-adjusted</em> accessibility score directly relevant to my health geography work on telehealth and primary care deserts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Mapping urban slums and their inequality in sub-Saharan Africa — <a href="https://doi.org/10.1038/s44284-025-00276-0" target="_blank">10.1038/s44284-025-00276-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend from grid-line buffers to a full spatial accessibility index of electricity as a health determinant</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's treatment assignment is a binary indicator (within/outside a 2 km grid buffer), collapsing continuous distance-to-grid into a threshold. A richer extension: compute a <strong>continuous electricity accessibility score</strong> using the paper's own infrastructure GIS data — analogous to a 2SFCA score where "supply" is grid capacity and "demand" is household count — and model the dose-response relationship between this score and CNN-predicted wealth. This would recover heterogeneity in treatment intensity that the binary instrument discards, and the paper's cross-validation framework already supports such a graded outcome model.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly imports my <strong>R2SFCA service-area delineation toolkit</strong> into energy access research: distance-decay functions from my healthcare accessibility models (Gaussian, kernel-density) are immediately applicable to electricity coverage, and the resulting continuous access index would replace the arbitrary buffer threshold with a theoretically grounded spatial measure — an idea transferable to any infrastructure-access study.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Grid connections and inequitable access to electricity in African cities — <a href="https://doi.org/10.1038/s44284-025-00221-1" target="_blank">10.1038/s44284-025-00221-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply explainable ML to audit and attribute the CNN's wealth predictions spatially</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's CNN is a black-box predictor: it reports aggregate R² and slope coefficients but does not identify <em>which</em> visual features — building density, rooftop materials, road surface quality, agricultural land use — drive wealth predictions in different spatial regimes. Extending it: apply <strong>SHAP (SHapley Additive exPlanations) or GradCAM attribution maps</strong> to the trained CNN to decompose predictions village by village. This would validate the model's spatial logic (does it "look at" meaningful development proxies?), reveal where the model fails (e.g., dense informal settlements vs. dispersed rural areas), and pinpoint which satellite features mediate the electrification-wealth pathway.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable spatial ML is one of my core methods; this would be a direct application of my <strong>SHAP-augmented GeoAI pipeline</strong> to a development context. Attribution maps would also inform feature engineering for spatiotemporal kernel density models of infrastructure access — a methodological bridge between remote-sensing-based wealth prediction and my spatiotemporal analysis toolkit.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting human mobility flows in cities using deep learning on satellite imagery — <a href="https://doi.org/10.1038/s41467-025-65373-z" target="_blank">10.1038/s41467-025-65373-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Replace the panel-matrix counterfactual with a physics-informed graph model of infrastructure diffusion</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's MC and SC-EN estimators treat villages as independent time series arranged in a matrix, learning counterfactuals from statistical similarity. This ignores the <em>network topology</em> of the grid: electricity diffuses along transmission lines, so nearby villages are correlated through a physical graph structure. An extension: encode the grid network as a graph and learn a <strong>physics-informed GNN counterfactual model</strong> where the message-passing operator is constrained by Kirchhoff's voltage law analogs — ensuring that wealth predictions respect the electrical network's spatial propagation structure. This would improve counterfactual accuracy, particularly for villages just outside the 2 km buffer where spillovers are plausible.</p>
+      <p><span class="lab mine">Added value to my research</span>This is precisely the kind of <strong>physics-informed graph learning</strong> architecture I am developing for spatiotemporal prediction of health outcomes: the infrastructure network encodes a physical prior that regularizes the GNN, analogous to how road-network topology constrains my graph-learning models for job-housing accessibility. A Uganda electricity GNN would be a compelling proof-of-concept for my broader physics-informed GeoAI agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Rising infrastructure inequalities accompany urbanization and economic development — <a href="https://doi.org/10.1038/s41467-025-56539-w" target="_blank">10.1038/s41467-025-56539-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Scale the causal pipeline to multi-country infrastructure evaluation using multi-source data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper validates its method on Uganda and gestures at generalizability, but the actual estimation is Uganda-specific: the grid GIS data, the DHS survey rounds, and the buffer thresholds are all Uganda-tailored. A systematic extension: assemble a multi-country panel covering all SSA countries with completed rural electrification programs — drawing on the same DHS corpus (27,174 villages, 25 countries already in the training set) — and run a <strong>pooled MC/SC-EN meta-analysis</strong> with country-fixed counterfactuals. This would answer whether the 0.15 s.d. estimate is Uganda-specific or representative of SSA electrification in general, and identify which country-level moderators (baseline access rate, grid topology, urbanization) amplify or attenuate the effect.</p>
+      <p><span class="lab mine">Added value to my research</span>This matches my <strong>multi-source data fusion</strong> and <strong>open science/FAIR</strong> research directions: combining DHS, satellite, and GIS grid data across 25 countries requires exactly the kind of harmonized, reproducible pipeline I develop. The country-level moderator analysis would deploy my <strong>MGWR/GWR spatially varying coefficient models</strong> — asking whether electrification effects are spatially stationary or vary with local context, a question directly transferable to healthcare infrastructure investments across administrative units.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Infrastructure deficits and informal settlements in sub-Saharan Africa — <a href="https://doi.org/10.1038/s41586-025-09465-2" target="_blank">10.1038/s41586-025-09465-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spatial distribution of foot traffic in New York City — AI Digest</title>
+<meta name="description" content="AI Digest: Spatial distribution of foot traffic in New York City and applications for urban planning (Nature Cities, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Cities</span>
+      <span class="tag">Foot traffic</span>
+      <span class="tag">Pedestrian modeling</span>
+      <span class="tag">Street networks</span>
+      <span class="tag">Spatial equity</span>
+    </div>
+    <h1>Spatial distribution of foot traffic in New York City and applications for urban planning</h1>
+    <div class="meta">
+      <span class="authors">Andres Sevtsuk · Rounaq Basu · Liu Liu · Abdulaziz Alhassan · Justin Kollar</span>
+      <span><b>Published</b> 2026-02-06</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s44284-025-00383-y" target="_blank">10.1038/s44284-025-00383-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s44284-025-00383-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The authors build the <strong>first city-wide foot-traffic model</strong> for New York City — a calibrated pedestrian-flow estimate over a <strong>315,577-segment</strong> sidewalk/crosswalk network for six peak time periods. Comparing modeled volumes to the city's official street classifications reveals that <strong>many outer-borough streets carry foot traffic comparable to central Manhattan yet remain "undercategorized"</strong> for pedestrian priority, exposing infrastructure-investment inequity. Linking volumes to crash data shows that the <strong>highest exposure-adjusted pedestrian injury risk often lies outside Manhattan</strong>, turning raw crash counts into a per-pedestrian danger metric for evidence-based, equitable street design.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Measures the most common, least measured mode.</b> Walking dominates urban trips but is rarely counted at scale; this delivers a <strong>continuous, city-wide pedestrian-volume surface</strong> instead of a handful of intersection counts.</li>
+      <li><b>Reframes safety as exposure-adjusted risk.</b> Raw crash counts conflate danger with footfall — normalizing crashes by modeled pedestrian volume relocates the <strong>most dangerous intersections to the outer boroughs</strong>, changing where safety dollars should go.</li>
+      <li><b>Audits official policy with data.</b> Overlaying modeled volumes on NYC's street classifications flags <strong>"undercategorized" corridors</strong> that warrant pedestrian-priority upgrades, making investment inequity legible.</li>
+      <li><b>Transferable planning baseline.</b> The calibrated network, per-trip-type flows and model files are released, giving planners a reusable benchmark for infrastructure, hazard and accessibility analysis.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>City-scale first:</b> a first-of-its-kind, fully city-wide calibrated foot-traffic model — the kind of methodological milestone Nature Cities highlights.</li>
+      <li><b>Space meets equity and health:</b> connects pedestrian flow geometry to investment inequity and injury risk, carrying both mechanism and societal significance.</li>
+      <li><b>Directly policy-translatable:</b> outputs feed street reclassification, Vision-Zero safety targeting and capital budgeting.</li>
+      <li><b>Open, reusable artifact:</b> a released, calibrated pedestrian network and model files (Supplementary Data) make it infrastructure other cities can adapt, not just a single analysis.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Study area</dt><dd>All of <strong>New York City</strong> (five boroughs, 59 Community Districts), modeled over a purpose-built pedestrian network of <strong>315,577 segments</strong> — topologically connected centerlines of sidewalks, crosswalks and footpaths, validated on 2019 aerial imagery.</dd>
+      <dt>Street network</dt><dd><strong>OpenStreetMap</strong> (ODbL license) base, reconciled with NYC's <strong>LION</strong> street geometry; street classifications drawn from NYC DOT pedestrian-mobility/priority categories.</dd>
+      <dt>Calibration counts</dt><dd>Observed pedestrian counts from <strong>NYC DOT</strong> (incl. 2018–2019 segment counts) used to calibrate modeled volumes; summary statistics in Extended Data Table 1. Exact total count-station number is not stated in the available text.</dd>
+      <dt>Trip generators (POIs)</dt><dd>NYC Open Data layers — <strong>school point locations</strong>, <strong>parks properties</strong>, <strong>MTA subway entrances/exits</strong> — plus US <strong>Census</strong> population/employment for origins and destinations feeding the origin–destination flow model.</dd>
+      <dt>Safety / crashes</dt><dd>NYC <strong>Motor Vehicle Collisions — Crashes</strong> (NYPD via NYC Open Data) and <strong>Vision Zero</strong> resources, linked to modeled volumes for exposure-adjusted risk (Fig. 5).</dd>
+      <dt>Time window</dt><dd><strong>Six peak time periods</strong> modeled (e.g., weekday AM and 5–6 PM evening peaks); calibration counts from 2018–2019; network validated on 2019 imagery.</dd>
+      <dt>Availability</dt><dd>Street network, estimated flows by trip type, calibrated volumes for the six periods, and calibrated model files (<code>.pckl</code>) released as <strong>Supplementary Data 1 &amp; 2</strong>. Code availability not stated.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Pedestrian network (this study)</td><td>Routing graph for flows</td><td>315,577 segments, NYC-wide</td><td><a href="https://www.nature.com/articles/s44284-025-00383-y" target="_blank">Suppl. Data 1</a></td></tr>
+        <tr><td>OpenStreetMap</td><td>Sidewalk/path base geometry</td><td>NYC extract (ODbL)</td><td><a href="https://www.openstreetmap.org" target="_blank">openstreetmap.org</a></td></tr>
+        <tr><td>NYC DOT pedestrian counts</td><td>Model calibration</td><td>Select segments, 2018–2019</td><td><a href="https://www.nyc.gov/html/dot/html/pedestrians/pedestrian-mobility.shtml" target="_blank">nyc.gov DOT</a></td></tr>
+        <tr><td>NYC LION street network</td><td>Street classification overlay</td><td>NYC-wide</td><td><a href="https://www.nyc.gov/content/planning/pages/resources/datasets/lion" target="_blank">NYC Planning</a></td></tr>
+        <tr><td>Motor Vehicle Collisions – Crashes</td><td>Exposure-adjusted risk</td><td>NYC, NYPD records</td><td><a href="https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95/about_data" target="_blank">NYC Open Data</a></td></tr>
+        <tr><td>Schools / Parks / Subway POIs</td><td>Trip origins &amp; destinations</td><td>NYC-wide layers</td><td><a href="https://data.cityofnewyork.us/" target="_blank">NYC Open Data</a></td></tr>
+        <tr><td>US Census</td><td>Population / employment OD</td><td>NYC tracts</td><td><a href="https://data.census.gov/all" target="_blank">data.census.gov</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: figures are taken verbatim from the article and Supplementary text where stated (315,577 segments; six time periods; 59 Community Districts). Where an exact count (e.g., number of calibration stations) is not reported in the available text, it is flagged as not stated rather than estimated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Origin–destination pedestrian flow model:</b> generate trips between population/employment origins and amenity destinations (schools, parks, transit, retail), then route them over the sidewalk/crosswalk network using shortest-path / spatial-network betweenness logic to accumulate segment-level foot-traffic volumes.</li>
+      <li><b>Trip-type weighting:</b> distinct origin–destination trip types are combined with calibrated weights (Extended Data Table 3) to reflect the mix of walking purposes.</li>
+      <li><b>Calibration to observed counts:</b> modeled volumes are calibrated against NYC DOT pedestrian counts for six peak time periods, with summary statistics and borough/period distributions reported (Extended Data Tables 1–2).</li>
+      <li><b>Feature importance:</b> permutation-importance analysis (Fig. 1) ranks which inputs drive predicted volumes across different time periods.</li>
+      <li><b>Policy diagnostics:</b> (i) overlay modeled volumes on NYC street classifications to flag undercategorized corridors (Figs. 3–4); (ii) normalize crash counts by modeled pedestrian exposure to map per-pedestrian injury risk (Fig. 5).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig1.png" target="_blank">
+        <img src="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig1.png" alt="Fig.1 Permutation importances during different time periods" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Permutation importances of model inputs across time periods — which factors drive foot traffic when.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig2.png" target="_blank">
+        <img src="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig2.png" alt="Fig.2 Spatial distribution of estimated foot-traffic volumes, weekday AM peak" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> City-wide spatial distribution of estimated foot-traffic volumes during the weekday AM peak.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig3.png" target="_blank">
+        <img src="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig3.png" alt="Fig.3 Box plots of estimated hourly pedestrian volumes by corridor type" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Estimated hourly pedestrian volumes (PM peak) across NYC's corridor types — overlap between classes.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig4.png" target="_blank">
+        <img src="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig4.png" alt="Fig.4 Corridor types and underclassified street segments" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Corridor types and "undercategorized" street segments carrying high volumes but low pedestrian priority.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig5.png" target="_blank">
+        <img src="assets/spatial-distribution-of-foot-traffic-in-new-york-city-and-applications-for-urban-planning__s44284-025-00383-y/fig5.png" alt="Fig.5 Pedestrian crash counts versus exposure-adjusted risk" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Pedestrian crash counts vs. exposure-adjusted risk — danger shifts outside Manhattan once normalized by footfall.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0); Extended Data adds Tables 1–3 (calibration summary, borough/period volume distribution, OD trip-type weights) plus Extended Data Figs. 1–3 and Supplementary Tables 1–2.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Replace the assumed OD/gravity trip generation with a learned mobility model</h3>
+      <p><span class="lab paper">Extending this paper</span>The model's foot-traffic surface rests on <strong>hand-specified origin–destination trip types and weights</strong> (Extended Data Table 3) routed over the network. A direct extension: swap that fixed gravity-style generation for a <strong>closed-form, automatically-learned gravity model</strong> calibrated on the same NYC DOT counts, so trip production, attraction and distance decay are inferred rather than assumed — tightening calibration and exposing where the analytic flow assumptions break.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the same move I want inside <strong>R2SFCA</strong>: replace the assumed Gaussian/power distance-decay with a flow-learned kernel, yielding a demand-aware accessibility allocator validated against real pedestrian counts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Human mobility is well described by closed-form gravity-like models learned automatically from data — <a href="https://doi.org/10.1038/s41467-025-56495-5" target="_blank">10.1038/s41467-025-56495-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Ground betweenness-based foot traffic in street-network structural invariants</h3>
+      <p><span class="lab paper">Extending this paper</span>The flow model is effectively a <strong>weighted betweenness over a 315,577-segment graph</strong>. Extending it: relate the predicted volume distribution to known <strong>structural invariants of planar street networks</strong>, asking how much of NYC's foot-traffic pattern is dictated by raw topology versus land use and OD demand — separating geometry-driven flow from behavior-driven flow.</p>
+      <p><span class="lab mine">Added value to my research</span>Feeds my explainable-ML spatial-prediction line: structural-invariant features become interpretable priors/baselines for predicting flow and accessibility, and a clean null model against which ML gains are measured.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> From the betweenness centrality in street networks to structural invariants in random planar graphs — <a href="https://doi.org/10.1038/s41467-018-04978-z" target="_blank">10.1038/s41467-018-04978-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Validate the static model against passive mobility data and extend to off-peak dynamics</h3>
+      <p><span class="lab paper">Extending this paper</span>The model covers <strong>six discrete peak periods</strong> calibrated on sparse DOT counts. Extending it: cross-validate and densify the surface with <strong>large-scale passive mobility data</strong> (GPS/mobile-phone footfall), enabling continuous diurnal and seasonal foot-traffic dynamics instead of static peak snapshots — and quantifying where the analytic model and observed mobility diverge.</p>
+      <p><span class="lab mine">Added value to my research</span>Direct fit with my multi-source data-fusion and spatiotemporal-KDE work: fuse model output with mobile-phone trajectories into a continuous footfall field for health-accessibility and exposure studies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> The 15-minute city quantified using human mobility data — <a href="https://doi.org/10.1038/s41562-023-01770-y" target="_blank">10.1038/s41562-023-01770-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Couple the exposure-adjusted risk surface with health and pollution exposure</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper turns crashes into <strong>per-pedestrian injury risk</strong> (Fig. 5) but stops at traffic safety. Extending it: use the same volume surface as a <strong>population-exposure denominator</strong> for hyperlocal air-pollution and heat, producing a combined "where people walk × what they're exposed to" hazard map that is far richer than crash risk alone, especially for the outer-borough hotspots the paper surfaces.</p>
+      <p><span class="lab mine">Added value to my research</span>Squarely my health-geography agenda: modeled footfall becomes the exposure weight for environmental-health and digital-divide accessibility studies, sharpening equity diagnostics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Big mobility data reveals hyperlocal air pollution exposure disparities in the Bronx, New York — <a href="https://doi.org/10.1038/s44284-024-00093-x" target="_blank">10.1038/s44284-024-00093-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Close the loop: built-environment interventions → foot traffic → physical activity</h3>
+      <p><span class="lab paper">Extending this paper</span>The model predicts <em>where</em> people walk but not <em>how interventions change</em> walking. Extending it into a <strong>scenario/natural-experiment engine</strong> — re-route flows after sidewalk widening, transit additions or corridor reclassification — would let planners forecast the physical-activity payoff of each investment, linking the foot-traffic baseline to a causal built-environment → activity chain.</p>
+      <p><span class="lab mine">Added value to my research</span>Enables physics-informed graph/agent-based simulation of policy scenarios in my urban-analytics line, with explainable ML attributing which built-environment levers most increase active travel and equity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Countrywide natural experiment links built environment to physical activity — <a href="https://doi.org/10.1038/s41586-025-09321-3" target="_blank">10.1038/s41586-025-09321-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>
