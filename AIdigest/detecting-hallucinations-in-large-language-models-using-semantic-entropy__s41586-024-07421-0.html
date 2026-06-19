@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detecting hallucinations in large language models using semantic entropy — AI Digest</title>
+<meta name="description" content="AI Digest: Detecting hallucinations in large language models using semantic entropy (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">LLM Hallucination</span>
+      <span class="tag">Uncertainty Estimation</span>
+      <span class="tag">Semantic Entropy</span>
+      <span class="tag">Free-form Generation</span>
+    </div>
+    <h1>Detecting hallucinations in large language models using semantic entropy</h1>
+    <div class="meta">
+      <span class="authors">Sebastian Farquhar · Jannik Kossen · Lorenz Kuhn · Yarin Gal</span>
+      <span><b>Published</b> 2024-06-19</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-07421-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Hallucinations (specifically <strong>confabulations</strong> — arbitrary, fluent falsehoods) in LLMs can be detected without domain knowledge by measuring <strong>semantic entropy</strong>: entropy computed over clusters of <em>meaning</em> rather than over raw token sequences. Semantic entropy achieves an average AUROC of <strong>0.790</strong> across 30 model–dataset combinations, outperforming supervised and naive entropy baselines, works for sentence-length QA (TriviaQA, SQuAD, BioASQ, NQ-Open, SVAMP) and paragraph-length biography generation (FactualBio/GPT-4), and generalizes out-of-distribution without any labelled examples.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes a critical safety gap in LLM deployment.</b> Users of ChatGPT, Gemini, and similar systems cannot currently tell which outputs to trust. Semantic entropy provides a <strong>model-agnostic, task-agnostic</strong> signal that flags when the model is likely to confabulate — enabling selective abstention or human review.</li>
+      <li><b>Principle over heuristic.</b> Rather than curating failure examples, the method derives uncertainty from first principles in probabilistic machine learning — computing entropy in the space of <em>meanings</em> rather than tokens — making it applicable to any generative model.</li>
+      <li><b>Demonstrates confabulations are the dominant error mode.</b> Semantic entropy outperforms even supervised classifiers trained on the same distribution, implying that arbitrary incorrect generations (confabulations) are a larger error category than systematic biases from training data.</li>
+      <li><b>Enables a discrete black-box variant.</b> By approximating probability clusters from generation counts alone, the method works without access to output token probabilities — extending applicability to proprietary APIs like GPT-4.</li>
+      <li><b>High-stakes domains.</b> Confabulations in medical (radiology), legal (precedents), and journalistic contexts are not hypothetical risks; this paper frames a detection method with direct application to safety-critical deployments.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>General law, not task-specific fix:</b> the method is domain-free and transferable across model families (LLaMA, Falcon, Mistral, GPT-4) and task types — matching Nature's preference for universally applicable findings.</li>
+      <li><b>Connects fundamental mathematics to urgent societal problem:</b> uses classical information-theoretic entropy and NLI entailment, but addresses the pressing challenge of AI trustworthiness at scale.</li>
+      <li><b>Introduces new conceptual vocabulary:</b> the distinction between confabulations (arbitrary) and other hallucinations (systematic) is a conceptual contribution the field lacked.</li>
+      <li><b>Broad cross-disciplinary impact:</b> relevant to medicine, law, journalism, and any domain considering LLM adoption — the societal stakes justify Nature-level prominence.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>QA benchmarks</dt><dd><strong>TriviaQA</strong> (trivia knowledge), <strong>SQuAD 1.1</strong> (Wikipedia reading comprehension), <strong>BioASQ 11B Task B 2023</strong> (life-sciences QA), <strong>NQ-Open</strong> (natural questions from Google Search), and <strong>SVAMP</strong> (elementary-school math word problems). Each dataset is sampled to <strong>400 train + 400 test examples</strong> (800 examples per dataset; 5 datasets = up to 4,000 evaluation instances).</dd>
+      <dt>Biography dataset</dt><dd><strong>FactualBio</strong> (new, released with the paper): biographies of <strong>21 Wikipedia-notable individuals</strong> without extensive online coverage, generated by GPT-4 (v.0613). Contains <strong>150 manually labelled factual claims</strong> (45 of 150 labelled as incorrect). Source individuals sampled from the WikiBio dataset.</dd>
+      <dt>Models evaluated</dt><dd><strong>LLaMA 2 Chat</strong> (7B, 13B, 70B), <strong>Falcon Instruct</strong> (7B, 40B), <strong>Mistral Instruct</strong> (7B) for sentence-length tasks; <strong>GPT-4</strong> (v.0613) for biography generation — 6 model variants across 3 families.</dd>
+      <dt>Entailment models</dt><dd><strong>DeBERTa-Large-MNLI</strong> (1.5B parameters, fine-tuned on MNLI); <strong>GPT-3.5 Turbo 1106</strong>; GPT-4 as secondary option. The study settles on GPT-3.5 for sentence-length tasks and DeBERTa for biography tasks.</dd>
+      <dt>Code &amp; data release</dt><dd>All code released at <a href="https://github.com/jlko/semantic_uncertainty" target="_blank">github.com/jlko/semantic_uncertainty</a> and <a href="https://github.com/jlko/long_hallucinations" target="_blank">github.com/jlko/long_hallucinations</a>; archived at <a href="https://doi.org/10.5281/zenodo.10964366" target="_blank">zenodo.10964366</a>. FactualBio released as part of the codebase. Input QA datasets are all publicly available.</dd>
+      <dt>Availability</dt><dd>Fully open: all evaluation datasets are public; FactualBio and all experimental code are released under open license.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TriviaQA</td><td>Trivia QA benchmark</td><td>400 train + 400 test (sampled)</td><td><a href="https://nlp.cs.washington.edu/triviaqa/" target="_blank">nlp.cs.washington.edu</a></td></tr>
+        <tr><td>SQuAD 1.1</td><td>Reading comprehension benchmark</td><td>400 train + 400 test (sampled)</td><td><a href="https://rajpurkar.github.io/SQuAD-explorer/" target="_blank">SQuAD explorer</a></td></tr>
+        <tr><td>BioASQ 11B Task B 2023</td><td>Life-sciences QA benchmark</td><td>400 train + 400 test (sampled)</td><td><a href="http://www.bioasq.org/" target="_blank">bioasq.org</a></td></tr>
+        <tr><td>NQ-Open</td><td>Natural questions from Google Search</td><td>400 train + 400 test (sampled)</td><td><a href="https://github.com/google-research-datasets/natural-questions" target="_blank">GitHub</a></td></tr>
+        <tr><td>SVAMP</td><td>Math word-problem benchmark</td><td>400 train + 400 test (sampled)</td><td><a href="https://github.com/arkilpatel/SVAMP" target="_blank">GitHub</a></td></tr>
+        <tr><td>FactualBio (new)</td><td>Long-generation confabulation evaluation</td><td>21 biographies, 150 labelled claims</td><td><a href="https://github.com/jlko/long_hallucinations" target="_blank">github.com/jlko/long_hallucinations</a></td></tr>
+        <tr><td>WikiBio</td><td>Source for FactualBio person sampling</td><td>21 individuals drawn</td><td><a href="https://github.com/DavidGrangier/wikipedia-biography-dataset" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all volume figures are taken verbatim from the article. The paper uses 400 train + 400 test per dataset; exact dataset sizes before subsampling are not stated for all benchmarks.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Semantic entropy (SE):</b> sample M outputs from the LLM given a prompt; cluster outputs by <strong>bidirectional entailment</strong> (if A entails B and B entails A, they share a meaning-cluster); compute Shannon entropy over cluster probabilities (summing token probabilities within each cluster). High SE = likely confabulation.</li>
+      <li><b>Discrete semantic entropy:</b> approximates cluster probabilities from generation counts alone (no token probabilities required) using the empirical categorical distribution — enabling application to black-box APIs such as GPT-4.</li>
+      <li><b>Bidirectional entailment clustering:</b> uses DeBERTa-Large-MNLI or GPT-3.5 to check whether two candidate answers logically entail each other in the context of the question, building semantic equivalence classes transitively.</li>
+      <li><b>Factoid-decomposition pipeline for long text:</b> (i) decompose paragraph into factual claims; (ii) generate Q questions per factoid; (iii) resample M answers per question; (iv) compute SE per question; (v) average over questions as a factoid-level confabulation score.</li>
+      <li><b>Evaluation metrics:</b> AUROC (measures ability to distinguish correct vs incorrect answers) and AURAC (area under the rejection-accuracy curve — accuracy gain when abstaining on highest-entropy fraction).</li>
+      <li><b>Baselines:</b> naive length-normalized joint entropy; P(True) prompted LLM self-evaluation (supervised in-context); embedding regression logistic classifier (supervised, trained on hidden states).</li>
+      <li><b>Rao-Blackwellized Monte Carlo estimation:</b> approximates the full semantic entropy from M=10 samples (sentence-length) or M=3 samples (biography factoids), selected via ablation in supplementary figures.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/detecting-hallucinations-in-large-language-models-using-semantic-entropy__s41586-024-07421-0/fig1.png" target="_blank">
+        <img src="assets/detecting-hallucinations-in-large-language-models-using-semantic-entropy__s41586-024-07421-0/fig1.png" alt="Fig.1 Overview of semantic entropy and confabulation detection" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of semantic entropy. (a) Naive entropy treats synonymous phrasings as distinct; semantic entropy clusters by meaning first. (b) Long-passage confabulation detection via factoid decomposition and per-question SE.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/detecting-hallucinations-in-large-language-models-using-semantic-entropy__s41586-024-07421-0/fig2.png" target="_blank">
+        <img src="assets/detecting-hallucinations-in-large-language-models-using-semantic-entropy__s41586-024-07421-0/fig2.png" alt="Fig.2 Detecting confabulations in sentence-length generations" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Confabulation detection in sentence-length generations. Semantic entropy outperforms all baselines (naive entropy, P(True), embedding regression) on AUROC and AURAC across five QA and math datasets.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/detecting-hallucinations-in-large-language-models-using-semantic-entropy__s41586-024-07421-0/fig3.png" target="_blank">
+        <img src="assets/detecting-hallucinations-in-large-language-models-using-semantic-entropy__s41586-024-07421-0/fig3.png" alt="Fig.3 Detecting GPT-4 confabulations in paragraph-length biographies" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> GPT-4 confabulation detection in paragraph-length biographies (FactualBio). Discrete SE outperforms self-check and P(True) baselines on AUROC and on AURAC above 80% acceptance rate.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — semantic entropy applied to worked examples from TriviaQA, SQuAD, BioASQ for LLaMA 2 Chat 70B). Extended Data: Fig. 1 (bidirectional entailment clustering algorithm). Supplementary: 7 notes, 10 figures, 4 tables.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, open science).</p>
+
+    <div class="idea">
+      <h3>① Extend semantic entropy from confabulation detection to calibrated confidence for geospatial LLM agents</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates semantic entropy on general QA benchmarks and biographies, but its authors acknowledge that "algorithmic adaptations to other problems" could unlock new domains. A direct extension: apply semantic entropy to <strong>geospatial question answering</strong> (e.g., "Which hospitals in rural Kenya have catchment coverage below 30 minutes?") where LLMs are increasingly used as plan-language interfaces over spatial databases. The factoid-decomposition pipeline maps naturally onto multi-hop geospatial reasoning chains, and the discrete variant handles black-box LLM-powered GIS copilots without token-probability access.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatiotemporal analysis work, I increasingly use LLMs to synthesize multi-source inputs (mobile phone data, POIs, census) into natural-language policy summaries. Attaching semantic entropy scores to those summaries would allow automatic flagging of unreliable geographic inferences — building a <strong>confabulation-aware geospatial AI pipeline</strong> that is especially valuable in data-sparse regions where ground truth is unavailable for supervised calibration.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A scalable and generic framework for city-wide traffic prediction with large language models — <a href="https://doi.org/10.1038/s41467-026-73610-2" target="_blank">10.1038/s41467-026-73610-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use semantic entropy as a curriculum signal for RLHF-free LLM self-improvement</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's method is purely <em>diagnostic</em>: it detects confabulations but does not correct them. The natural next step is closing the loop — using semantic entropy scores to prioritize which generations an LLM should revise or retrieve external knowledge for, without requiring human-labelled preference pairs. This would convert semantic entropy from a passive detector into an <strong>active self-calibration signal</strong>: high-entropy outputs trigger retrieval-augmented generation (RAG) or chain-of-thought verification while low-entropy outputs are passed through directly, saving compute.</p>
+      <p><span class="lab mine">Added value to my research</span>In my work fine-tuning geospatial foundation models on multi-source data, training signal quality is the central bottleneck. Using semantic entropy as a curriculum filter — only propagating gradients on low-entropy (confident, consistent) generations — would reduce the noise injected by contradictory spatial descriptions, acting as a <strong>self-supervised data quality filter for geospatial instruction tuning</strong>.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Larger and more instructable language models become less reliable — <a href="https://doi.org/10.1038/s41586-024-07930-y" target="_blank">10.1038/s41586-024-07930-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Transfer the bidirectional entailment clustering to spatial-claim consistency checking</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's bidirectional entailment clustering operationalizes semantic equivalence for factual propositions in English. Extending this: adapt entailment clustering to <strong>spatial-relational claims</strong> (e.g., "Facility A is within 5 km of population centre B" vs "Population centre B is accessible from facility A in under 10 minutes by road") where two phrasings may be spatially equivalent but lexically distinct — requiring a geometry-aware semantic equivalence checker rather than a pure NLI model. The clustering framework stays identical; only the entailment oracle changes.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly addresses a bottleneck in my 2SFCA/R2SFCA accessibility research: when validating LLM-generated accessibility narratives against GIS computations, I need to determine whether a model's verbal description of a catchment area is factually consistent with the underlying spatial data. A <strong>geometry-informed entailment model</strong> would allow automated consistency checking between natural-language accessibility reports and GIS outputs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating large language models for accuracy incentivizes hallucinations — <a href="https://doi.org/10.1038/s41586-026-10549-w" target="_blank">10.1038/s41586-026-10549-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Semantic entropy as a trustworthiness layer for LLM-driven public-health decision support</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly motivates the medical domain (radiology hallucinations risk lives) but tests only on general QA benchmarks and biographies. A direct extension: deploy semantic entropy in a <strong>clinical decision-support loop</strong>, using the discrete variant (which works without token probabilities, matching the black-box API access typical in health IT), and calibrate AUROC thresholds against expert-annotated clinical question sets. The factoid-decomposition pipeline maps naturally onto multi-sentence clinical reasoning chains.</p>
+      <p><span class="lab mine">Added value to my research</span>In my health geography work — spatial accessibility of primary care, mental health services, and telehealth divides — I use LLMs to synthesize population-level narratives from heterogeneous data. Integrating a semantic-entropy guard layer would produce <strong>uncertainty-quantified health accessibility reports</strong> that flag where the model is confabulating regional service availability, directly supporting trustworthy digital-health tools in under-served areas.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Safety of a large language model-based clinical decision support system in African primary care — <a href="https://doi.org/10.1038/s44360-026-00082-5" target="_blank">10.1038/s44360-026-00082-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Combine semantic entropy with watermarking to build a full provenance-and-reliability stack for LLM outputs</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper addresses the question <em>"is this generation likely to be wrong?"</em> but not <em>"was this generation produced by a specific model?"</em> Combining semantic entropy with <strong>cryptographic watermarking</strong> (as developed in parallel Nature work) would create a two-layer reliability stack: the watermark establishes provenance (which model generated it), while semantic entropy assesses faithfulness (how uncertain that model was). Together they address both fabrication (wrong model) and confabulation (uncertain model) — the two dominant AI-content integrity risks.</p>
+      <p><span class="lab mine">Added value to my research</span>My open-science and FAIR-data commitments in multi-source data fusion research increasingly require <strong>provenance tracking for AI-generated analytical outputs</strong>. Pairing watermarked LLM outputs with semantic entropy confidence metadata would enable reproducible audit trails for AI-assisted geospatial analysis — a concrete contribution to explainable, FAIR-compliant GeoAI pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Scalable watermarking for identifying large language model outputs — <a href="https://doi.org/10.1038/s41586-024-08025-4" target="_blank">10.1038/s41586-024-08025-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

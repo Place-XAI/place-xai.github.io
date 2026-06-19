@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A pathology foundation model for cancer diagnosis and prognosis prediction — AI Digest</title>
+<meta name="description" content="AI Digest: A pathology foundation model for cancer diagnosis and prognosis prediction (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Pathology Foundation Model</span>
+      <span class="tag">Cancer AI</span>
+      <span class="tag">Digital Pathology</span>
+      <span class="tag">Weakly Supervised Learning</span>
+    </div>
+    <h1>A pathology foundation model for cancer diagnosis and prognosis prediction</h1>
+    <div class="meta">
+      <span class="authors">Wang, Xiyue · Zhao, Junhan · Marostica, Eliana · Yuan, Wei · Jin, Jietian · Zhang, Jiayu · Li, Ruijiang · Tang, Hongping · Wang, Kanran · Li, Yu · Wang, Fang · Peng, Yulong · Zhu, Junyou · Zhang, Jing · Jackson, Christopher R. · Zhang, Jun · Dillon, Deborah · Lin, Nancy U. · Sholl, Lynette · Denize, Thomas · Meredith, David · Ligon, Keith L. · Signoretti, Sabina · Ogino, Shuji · Golden, Jeffrey A. · Nasrallah, MacLean P. · Han, Xiao · Yang, Sen · Yu, Kun-Hsing</span>
+      <span><b>Published</b> 2024-09-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-07894-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>CHIEF (Clinical Histopathology Imaging Evaluation Foundation) is a <strong>general-purpose weakly supervised framework</strong> that extracts transferable pathology representations from 60,530 whole-slide images across 19 anatomical sites. Pre-trained on 44 terabytes of data, it outperformed state-of-the-art deep learning methods by up to <strong>36.1%</strong> across cancer detection, tumour origin identification, molecular profiling, and survival prediction tasks. Validated on <strong>19,491 whole-slide images from 32 independent cohorts across 24 hospitals</strong> internationally, CHIEF addresses domain shifts across diverse populations and digitization protocols — providing a generalizable foundation for digital pathology at scale.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the one-model-per-task bottleneck.</b> Prior AI pathology models were specialized and non-transferable; CHIEF is the first to demonstrate a single pre-trained backbone excelling across cancer detection, subtyping, molecular profiling, and prognosis — with only lightweight task-specific fine-tuning.</li>
+      <li><b>Addresses the generalization crisis in medical AI.</b> Domain shift across slide preparation protocols and patient populations has been a major barrier. CHIEF's validation across 24 hospitals and 32 independent cohorts with up to 36.1% improvement over specialized models directly confronts this failure mode.</li>
+      <li><b>Bridges imaging and genomics.</b> CHIEF predicts genetic mutations (IDH, MSI status, targeted-therapy targets) and molecular profiles directly from H&amp;E images alone — transforming cheap imaging into a proxy for expensive molecular testing.</li>
+      <li><b>Prognostic power at the bedside.</b> Survival prediction validated in 15 independent cohorts worldwide means CHIEF's outputs could augment or replace existing manual prognostic scoring in resource-limited settings.</li>
+      <li><b>Open and reproducible.</b> Full source code and Docker images are publicly available (<a href="https://github.com/hms-dbmi/CHIEF" target="_blank">github.com/hms-dbmi/CHIEF</a>), enabling global adoption and benchmarking.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Broad scope and universality:</b> CHIEF spans 19 anatomical sites and 32 independent international cohorts — matching Nature's preference for findings with global rather than narrow clinical scope.</li>
+      <li><b>Methodological innovation with demonstrated impact:</b> the two-stage complementary pre-training (unsupervised tile-level + weakly supervised slide-level) is architecturally novel and empirically superior, not merely incremental.</li>
+      <li><b>Societal and healthcare significance:</b> improved generalizable cancer diagnosis tools directly affect patient outcomes worldwide, particularly in settings that cannot afford molecular testing.</li>
+      <li><b>Rigorous validation standard:</b> 44 TB of training data, 32 independent test sets, international multi-hospital validation — satisfying Nature's benchmark for claims of clinical readiness.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Pre-training data</dt><dd><strong>60,530 whole-slide images (WSIs)</strong> spanning 19 anatomical sites; 44 terabytes of high-resolution pathology imaging, sourced from 16 public pathology datasets and additional institutional collections from DFCI, BWH, YH, SMCH, CUCH, and the Hospital of the University of Pennsylvania.</dd>
+      <dt>Validation data</dt><dd><strong>19,491 WSIs</strong> from 32 independent slide sets, collected from <strong>24 hospitals and cohorts internationally</strong> — covering cancer detection, tumour origin identification, molecular profiling, and survival prediction tasks.</dd>
+      <dt>Public datasets</dt><dd>TCGA (GDC portal), GTEx, PAIP, PANDA (Kaggle), BCC (AIDA), ACROBAT, BCNB, TOC (Cancer Imaging Archive), CPTAC, DROID-Breast, Dataset-PT, Diagset-B, MUV, PLCO, PAIP2020, TissueNet — 16 datasets in total with individual access portals listed in data availability.</dd>
+      <dt>Institutional data</dt><dd>Slides from DFCI, BWH, YH, SMCH, CUCH, and Hospital of University of Pennsylvania. <em>Not publicly available</em> due to patient privacy obligations; de-identified data available on reasonable request.</dd>
+      <dt>Cancer types</dt><dd>19 anatomical sites; specific cancer types include glioma (IDH status), colorectal cancer (MSI status), lung cancer (survival), melanoma, kidney cancer, breast cancer, prostate cancer, and others across training and validation.</dd>
+      <dt>Imaging resolution</dt><dd>Whole-slide images processed as image tiles at 20× and 40× magnification; full-slide attention visualization at 40× (top 1% patches for cell composition analysis).</dd>
+      <dt>Time period</dt><dd>Retrospective analysis; dataset collection spans from TCGA era (2010s) to institutional slides acquired through the study period; no single common time window stated explicitly.</dd>
+      <dt>Availability</dt><dd>Public datasets linked in data availability; code at <a href="https://github.com/hms-dbmi/CHIEF" target="_blank">github.com/hms-dbmi/CHIEF</a>; Docker at <a href="https://hub.docker.com/r/chiefcontainer/chief" target="_blank">hub.docker.com</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TCGA / GDC</td><td>Pre-training + validation (multi-cancer)</td><td>Multi-cancer WSIs; largest public pathology repository</td><td><a href="https://portal.gdc.cancer.gov" target="_blank">portal.gdc.cancer.gov</a></td></tr>
+        <tr><td>GTEx</td><td>Normal tissue pre-training</td><td>Multi-tissue normal histology</td><td><a href="https://www.gtexportal.org" target="_blank">gtexportal.org</a></td></tr>
+        <tr><td>PANDA (Kaggle)</td><td>Prostate cancer grading</td><td>10,616 WSIs (public competition)</td><td><a href="https://www.kaggle.com/c/prostate-cancer-grade-assessment" target="_blank">kaggle.com</a></td></tr>
+        <tr><td>CPTAC</td><td>Tumour origin validation (independent cohort)</td><td>Multi-cancer proteomics cohort</td><td><a href="https://portal.gdc.cancer.gov" target="_blank">portal.gdc.cancer.gov</a></td></tr>
+        <tr><td>MUV (glioma)</td><td>IDH status validation</td><td>GBM+LGG cohort; 507 GBM + 365 LGG slides</td><td><a href="https://doi.org/10.25493/WQ48-ZGX" target="_blank">10.25493/WQ48-ZGX</a></td></tr>
+        <tr><td>PAIP / PAIP2020</td><td>Liver cancer + MSI colorectal validation</td><td>Challenge datasets</td><td><a href="http://www.wisepaip.org/paip" target="_blank">wisepaip.org</a></td></tr>
+        <tr><td>BCNB / ACROBAT / BCC</td><td>Breast cancer subtypes</td><td>Multiple breast cancer cohorts</td><td><a href="https://bcnb.grand-challenge.org/" target="_blank">grand-challenge.org</a></td></tr>
+        <tr><td>Institutional slides (DFCI, BWH, YH, SMCH, CUCH, UPenn)</td><td>Pre-training + key validation cohorts</td><td>Not disclosed; de-identified, available on request</td><td>Request via K.-H. Yu</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact WSI counts per public dataset are not individually reported in the main text; totals of 60,530 (training) and 19,491 (validation) are stated in the abstract. Individual cancer-type sample counts are provided in Supplementary Tables 14–20.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Two-stage complementary pre-training:</b> (1) <em>Unsupervised tile-level pre-training</em> using contrastive learning (self-supervised) to learn microscopic patch representations without labels; (2) <em>Weakly supervised slide-level pre-training</em> using slide-level annotations to capture whole-slide spatial patterns — combining tile and slide context.</li>
+      <li><b>Multiple Instance Learning (MIL) aggregation:</b> because only slide-level labels are used (weak supervision), CHIEF aggregates tile-level features via an attention-based MIL mechanism to produce slide-level predictions.</li>
+      <li><b>Attention score visualization:</b> model interpretability via spatial attention maps overlaid on whole-slide images, showing which tissue regions drove each prediction — validated qualitatively by six experienced pathologists.</li>
+      <li><b>Downstream fine-tuning:</b> CHIEF's pre-trained backbone is fine-tuned with lightweight classifiers (logistic regression or shallow MLP) on each downstream task, requiring far fewer labeled examples than task-specific models.</li>
+      <li><b>Benchmarking framework:</b> CHIEF compared against multiple state-of-the-art models (PORPOISE, DSMIL, and others) using AUROC, accuracy, sensitivity, specificity, and log-rank tests on survival curves; 5-fold cross-validation on held-out sets plus independent external validation.</li>
+      <li><b>Cell composition analysis:</b> top-1% high-attention patches analyzed with HoverNet (cell segmentation) to quantify tumor, lymphocyte, stromal, necrotic, and epithelial cell fractions — linking imaging attention to biological microenvironment.</li>
+      <li><b>Implementation:</b> Python / PyTorch; code and Docker containers publicly released.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig1.png" target="_blank">
+        <img src="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig1.png" alt="Fig.1 An overview of the CHIEF model" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> An overview of the CHIEF model — architecture of the two-stage pre-training pipeline and downstream task evaluation framework.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig2.png" target="_blank">
+        <img src="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig2.png" alt="Fig.2 CHIEF cancer cell detection performance" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> CHIEF outperformed state-of-the-art deep learning methods in detecting cancer cells using WSIs across multiple cancer types.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig3.png" target="_blank">
+        <img src="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig3.png" alt="Fig.3 CHIEF genetic mutation prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> CHIEF successfully predicted genetic mutations across cancer types using histopathology images.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig4.png" target="_blank">
+        <img src="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig4.png" alt="Fig.4 IDH and MSI status prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> CHIEF predicted IDH status of glioma samples and MSI status of patients with colorectal cancer (CRC) in several independent cohorts.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig5.png" target="_blank">
+        <img src="assets/a-pathology-foundation-model-for-cancer-diagnosis-and-prognosis-prediction__s41586-024-07894-z/fig5.png" alt="Fig.5 Survival prediction validated in 15 cohorts" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> CHIEF predicted survival outcomes of patients with cancer, validated in 15 validation cohorts collected from hospitals worldwide.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Extended Data contains 9 figures; Supplementary Information contains Figs. 1–14 and Tables 1–25 (including per-cancer sample counts and dataset links).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, health geography, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Inject spatial epidemiology context into CHIEF's slide-level representation</h3>
+      <p><span class="lab paper">Extending this paper</span>CHIEF predicts survival and molecular profiles from slide pixels alone, yet outcomes are profoundly shaped by where the patient lives — environmental exposures, healthcare access, socioeconomic deprivation, and regional treatment variation all modulate prognosis. A direct extension of CHIEF: augment its weakly supervised pre-training with a <strong>geospatial context token</strong> (census-tract deprivation index, distance-to-hospital, PM2.5 exposure) appended to the slide-level embedding. This would produce a spatially-conditioned foundation model that can simultaneously attribute outcome variation to imaging phenotype <em>and</em> place — and test whether CHIEF's 36.1% performance advantage is uniform across geographies or concentrated in well-resourced regions.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly bridges my <strong>health geography and GeoAI</strong> agendas: CHIEF's slide embeddings become a high-dimensional imaging phenotype that I can fuse with geospatial covariates (2SFCA accessibility scores, remote-sensing deprivation proxies) using my spatiotemporal kernel density and MGWR toolchain — turning a pathology model into an instrument for <em>spatial health disparities</em> research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Geospatial insights of health vulnerability during the Ukraine war — <a href="https://doi.org/10.1038/s44360-026-00064-7" target="_blank">10.1038/s44360-026-00064-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Make CHIEF's domain-shift robustness explainable with causal biomarker modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>CHIEF shows that its representations transfer across hospitals and slide preparation protocols, but the paper cannot explain <em>why</em> a given feature transfers while another does not. A corpus-grounded extension: apply <strong>causal modelling</strong> (e.g., domain-invariant representation learning with causal graphs) to CHIEF's attention weights to distinguish features caused by true cancer biology from those caused by confounding staining artifacts or scanner type. This would transform CHIEF's empirical robustness into a causally-interpreted backbone — identifying which histological patterns are genuine biomarkers vs. protocol confounders.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>explainable ML for spatial prediction</strong> (SHAP, MGWR) faces the identical confounder problem: spatially-varying coefficients may reflect genuine place effects or data artifact. CHIEF's extension motivates a causal analogue in GeoAI — using domain-invariant spatial features to separate true place effects from survey/sampling confounders in mobile-phone and POI data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Improving generalization of machine learning-identified biomarkers using causal modelling with examples from immune receptor diagnostics — <a href="https://doi.org/10.1038/s42256-023-00781-8" target="_blank">10.1038/s42256-023-00781-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend CHIEF's weakly supervised pre-training to spatially-indexed multi-modal data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>CHIEF fuses two modalities (tile-level patches + slide-level patterns) within a single imaging channel. The next frontier for CHIEF is <strong>true multi-modal pre-training</strong>: pairing each WSI with its matched molecular profile (RNA-seq, proteomics from CPTAC/TCGA), clinical record, and — where available — radiology imaging. This would create a joint pathomics–genomics foundation model, with CHIEF's existing weakly supervised slide-level pre-training acting as the histological anchor for cross-modal alignment. The paper already hints at this by predicting IDH and MSI from images, but pre-training rather than fine-tuning on these paired modalities would be a qualitative leap.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-modal pre-training mirrors my <strong>multi-source data fusion</strong> agenda (mobile phone + social media + remote sensing + POIs). CHIEF's architecture — separating a tile-level unsupervised stage from a slide-level weak supervision stage — offers a transferable recipe for fusing heterogeneous geospatial data modalities: e.g., a patch-level RS encoder pre-trained unsupervised, then weakly supervised at the neighborhood level using administrative health outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> HESpotEx: a dual-stream deep learning framework for spot-level gene expression prediction from histological images — <a href="https://doi.org/10.1038/s43588-026-00992-0" target="_blank">10.1038/s43588-026-00992-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Benchmark CHIEF against a concurrent whole-slide foundation model for architecture lessons</h3>
+      <p><span class="lab paper">Extending this paper</span>Nature published a concurrent whole-slide foundation model (CONCH/UNI family, 10.1038/s41586-024-07441-w) trained from real-world data using a different pre-training strategy. A systematic head-to-head comparison between CHIEF and this model — controlling for pre-training dataset size, task diversity, and fine-tuning protocol — would reveal whether CHIEF's two-stage strategy (unsupervised tiles + weakly supervised slides) is the key ingredient, or whether scale alone drives the 36.1% improvement. This extension would produce design principles for the next generation of pathology foundation models rather than a single winner.</p>
+      <p><span class="lab mine">Added value to my research</span>This architectural audit is directly applicable to my <strong>geospatial foundation model fine-tuning</strong> agenda: comparing pre-training strategies (unsupervised patch vs. supervised region) for RS-based GeoAI models would yield analogous design principles for spatial foundation models — informing whether tile-level or region-level supervision matters more when adapting a model to new geographic domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A whole-slide foundation model for digital pathology from real-world data — <a href="https://doi.org/10.1038/s41586-024-07441-w" target="_blank">10.1038/s41586-024-07441-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Adapt CHIEF's survival prediction head as a spatial accessibility-adjusted prognosis model</h3>
+      <p><span class="lab paper">Extending this paper</span>CHIEF's Fig. 5 demonstrates survival prediction across 15 international cohorts — but all cohorts are analyzed as if geography is irrelevant. A powerful extension: use CHIEF's slide-level embedding as the imaging phenotype input to a <strong>spatially-aware survival model</strong> that jointly models imaging features and healthcare access barriers (distance to oncology center, insurance penetration, physician density). This would let the model quantify whether imaging-predicted risk is systematically under-actualized in low-access regions — a critical equity audit of AI-assisted prognosis. The paper's PLCO dataset (population-based, with geographic linkage) is already present in the training corpus and could seed this analysis.</p>
+      <p><span class="lab mine">Added value to my research</span>This fuses my two core agendas: <strong>spatial accessibility of healthcare</strong> (2SFCA/R2SFCA) and <strong>health outcome prediction</strong>. Integrating CHIEF embeddings with my R2SFCA-derived access scores in a geographically weighted survival model would produce the first spatially-resolved cancer prognosis map that separates imaging-biology risk from access-barrier risk — a new instrument for healthcare equity research and facility-location optimization.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A survival model generalized to regression learning algorithms — <a href="https://doi.org/10.1038/s43588-021-00083-2" target="_blank">10.1038/s43588-021-00083-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

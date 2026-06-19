@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enzyme specificity prediction using cross-attention graph neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Enzyme specificity prediction using cross-attention graph neural networks (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&larr; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Enzyme Specificity</span>
+      <span class="tag">Biocatalysis</span>
+      <span class="tag">Protein Function</span>
+    </div>
+    <h1>Enzyme specificity prediction using cross-attention graph neural networks</h1>
+    <div class="meta">
+      <span class="authors">Haiyang Cui &middot; Yufeng Su &middot; Tanner J. Dean &middot; Tianhao Yu &middot; Zhengyi Zhang &middot; Jian Peng &middot; Diwakar Shukla &middot; Huimin Zhao</span>
+      <span><b>Published</b> 2025-10-08</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09697-2" target="_blank">10.1038/s41586-025-09697-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09697-2" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>EZSpecificity, a <strong>cross-attention-empowered SE(3)-equivariant graph neural network</strong>, predicts enzyme substrate specificity from both sequence and 3D structural information — trained on the purpose-built <strong>ESIBank</strong> database of enzyme&#8211;substrate interactions. Validated against eight halogenases and 78 substrates, EZSpecificity achieved <strong>91.7% accuracy</strong> in identifying the single reactive substrate per enzyme, versus 58.3% for the prior state-of-the-art, and generalizes across seven proof-of-concept protein families — positioning it as a <strong>general-purpose tool</strong> to decode the substrate specificity of the millions of enzymes currently lacking annotation.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Fills a vast annotation gap.</b> Millions of known enzymes still lack reliable substrate specificity information; EZSpecificity provides a scalable computational route to annotating this dark matter of biochemistry.</li>
+      <li><b>Dual-modality design outperforms single-modality baselines.</b> By encoding both protein sequence (via pre-trained language models) and 3D active-site structure (via an SE(3)-equivariant GNN) and linking them through cross-attention, the model captures complementary information that neither modality alone can provide.</li>
+      <li><b>Experimental wet-lab validation at scale.</b> Rather than benchmarking only in silico, the study tests 78 real substrates against eight halogenases — providing direct evidence of practical utility for enzyme engineering and synthetic biology.</li>
+      <li><b>Broad applicability across biology and medicine.</b> Predicting enzyme&#8211;substrate specificity underpins drug discovery, biosynthesis pathway design, industrial biocatalysis, and understanding microbial metabolism — the model's generality amplifies its impact across all of these.</li>
+      <li><b>Open data and code.</b> The ESIBank dataset (Google Drive) and EZSpecificity source code (Zenodo) are released, enabling community reuse and benchmarking.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>High-impact cross-disciplinary advance:</b> bridges machine learning (SE(3)-equivariant GNNs, cross-attention, language models) with biochemistry and synthetic biology — the scale of the problem and the accuracy jump justify a flagship venue.</li>
+      <li><b>Wet-lab closes the loop:</b> the halogenase experiments (8 enzymes, 78 substrates) demonstrate that computational predictions translate directly to real experimental outcomes — not merely a benchmark paper.</li>
+      <li><b>General model, not a niche tool:</b> validated across seven structurally diverse protein families and an independent unknown-substrate/enzyme database, matching Nature's preference for universal, transferable contributions.</li>
+      <li><b>Dual open-science contribution:</b> ESIBank as a community database and EZSpecificity as open-source software constitute both a methodological and an infrastructure contribution, consistent with Nature's recent emphasis on research tools.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9411;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary database</dt><dd><strong>ESIBank</strong> (Enzyme&#8211;Substrate Interaction Bank) — the paper's own purpose-built database aggregating enzyme&#8211;substrate interaction records at both sequence and structural levels. Available at <a href="https://drive.google.com/drive/folders/1-lfpKPhmf_P837UBfgUt_7R00_f45DtA?usp=drive_link" target="_blank">Google Drive</a>. Exact record count is not stated in the abstract; the paper describes it as a "comprehensive, tailor-made database."</dd>
+      <dt>Protein sequences</dt><dd><strong>UniProt</strong> (Nucleic Acids Res., 2018, doi:10.1093/nar/gky1049) — worldwide hub of protein sequence and functional annotation, used for enzyme sequence embeddings.</dd>
+      <dt>Enzymatic activity</dt><dd><strong>BRENDA</strong> (Nucleic Acids Res., 2018, doi:10.1093/nar/gky1048) — European ELIXIR enzyme kinetics and substrate data resource, used to source known enzyme&#8211;substrate pairs.</dd>
+      <dt>Protein structures</dt><dd><strong>AlphaFold structures</strong> augmented via <strong>AlphaFill</strong> (Nat. Methods, 2023, doi:10.1038/s41592-022-01685-y) — enriches AlphaFold models with ligands and cofactors to improve active-site representation.</dd>
+      <dt>Metabolite evaluation</dt><dd><strong>E. coli metabolites</strong> (34 target metabolites) used for the metabolite-enzyme pair prediction task as an independent evaluation set (Extended Data Fig. 1).</dd>
+      <dt>In-house halogenase set</dt><dd><strong>HaloS dataset</strong> — collected by a semi-automatic extraction approach; 8 halogenases tested against 78 substrates for wet-lab experimental validation (Fig. 5).</dd>
+      <dt>Chemical toolkit</dt><dd><strong>RDKit</strong> and <strong>Open Babel</strong> — substrate molecular graph construction; <strong>AutoDock Vina / Vina-GPU 2.0</strong> — docking score baselines.</dd>
+      <dt>Biosynthetic clusters</dt><dd>Two biosynthetic gene clusters (BGCs) used as retrieval benchmarks: clavulanic acid BGC (8 reaction steps) and albonoursin BGC (2 reaction steps) (Extended Data Fig. 2).</dd>
+      <dt>Code availability</dt><dd>EZSpecificity source code: <a href="https://doi.org/10.5281/zenodo.17129895" target="_blank">Zenodo doi:10.5281/zenodo.17129895</a></dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ESIBank</td><td>Training/evaluation: enzyme&#8211;substrate interaction records</td><td>Comprehensive (exact count not stated in abstract); sequence + structure</td><td><a href="https://drive.google.com/drive/folders/1-lfpKPhmf_P837UBfgUt_7R00_f45DtA?usp=drive_link" target="_blank">Google Drive</a></td></tr>
+        <tr><td>UniProt</td><td>Protein sequence annotation and embeddings</td><td>Global protein knowledge base</td><td><a href="https://www.uniprot.org" target="_blank">uniprot.org</a></td></tr>
+        <tr><td>BRENDA</td><td>Enzyme kinetics / substrate pairs</td><td>European ELIXIR core resource</td><td><a href="https://www.brenda-enzymes.org" target="_blank">brenda-enzymes.org</a></td></tr>
+        <tr><td>AlphaFold + AlphaFill</td><td>3D protein structure with ligands/cofactors</td><td>Proteome-scale predictions</td><td><a href="https://alphafill.eu" target="_blank">alphafill.eu</a></td></tr>
+        <tr><td>HaloS (in-house)</td><td>Wet-lab validation: halogenase substrates</td><td>8 enzymes &times; 78 substrates</td><td>Semi-automatic extraction; in paper</td></tr>
+        <tr><td>E. coli metabolites</td><td>Metabolite-enzyme pair prediction evaluation</td><td>34 target metabolites</td><td>Extended Data Fig. 1</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the exact size of ESIBank in terms of enzyme&#8211;substrate pair records is not specified in the publicly available abstract or figure captions; all other numbers above are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>SE(3)-equivariant graph neural network:</b> the enzyme active site is represented as a 3D molecular graph; an E(n)-equivariant GNN (following Satorras et al., 2021) processes it while preserving rotational and translational symmetry — crucial for capturing true 3D binding geometry.</li>
+      <li><b>Substrate molecular graph encoding:</b> substrates are featurized as molecular graphs using RDKit/Open Babel; graph-level representations are extracted and projected into a shared latent space with the enzyme encoder.</li>
+      <li><b>Cross-attention mechanism:</b> enzyme and substrate representations interact via cross-attention (inspired by Vaswani et al., 2017), allowing each modality to query the other — learning which enzyme residues are important for which substrate functional groups.</li>
+      <li><b>Pre-trained protein language model fine-tuning:</b> sequence embeddings from a pre-trained protein language model (ESM-2 / evolutionary-scale model, Lin et al., Science 2023) are fine-tuned with parameter-efficient adapters (following Ding et al., Nat. Mach. Intell. 2023), contributing a complementary sequence-level signal.</li>
+      <li><b>Comprehensive ESIBank training:</b> trained on the purpose-built ESIBank database; evaluated on a held-out unknown-substrate/enzyme database and seven protein family benchmarks.</li>
+      <li><b>Docking-score comparison baseline:</b> AutoDock Vina used as a representative physics-based baseline to contextualize EZSpecificity's advantage (29% vs. 20% top-5% recall for metabolite-enzyme prediction; 91.7% vs. 58.3% for halogenase substrate identification).</li>
+      <li><b>Biosynthetic gene cluster (BGC) retrieval:</b> enzyme retrieval within two BGCs (clavulanic acid and albonoursin) as a pathway-scale generalization test.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig1.png" target="_blank">
+        <img src="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig1.png" alt="Fig.1 The machine learning architecture of EZSpecificity" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The machine learning architecture of EZSpecificity — cross-attention between SE(3)-equivariant enzyme graph and substrate graph encoders.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig2.png" target="_blank">
+        <img src="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig2.png" alt="Fig.2 Construction of the ESIBank database" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Construction of the comprehensive enzyme&#8211;substrate interaction (ESIBank) database — data sources, curation pipeline, and coverage.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig3.png" target="_blank">
+        <img src="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig3.png" alt="Fig.3 Evaluation of EZSpecificity on ESIBank dataset" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Evaluation of EZSpecificity on the ESIBank dataset — comparison with existing ML models for substrate specificity prediction.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig4.png" target="_blank">
+        <img src="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig4.png" alt="Fig.4 In silico evaluation across six enzyme families" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> In silico evaluation using six representative enzyme families — generalization across structurally diverse protein classes.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig5.png" target="_blank">
+        <img src="assets/enzyme-specificity-prediction-using-cross-attention-graph-neural-networks__s41586-025-09697-2/fig5.png" alt="Fig.5 In silico and in vitro validation on HaloS halogenase dataset" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> In silico and in vitro experimental validation on the HaloS halogenase dataset — 91.7% accuracy across 8 enzymes and 78 substrates.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary Information contains Supplementary Texts 1&#8211;7, Figs. 1&#8211;52, and Tables 1&#8211;13.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, physics-informed graph learning, facility accessibility).</p>
+
+    <div class="idea">
+      <h3>&#9312; Elevate EZSpecificity's molecular graph encoder to a contrastive pre-training paradigm</h3>
+      <p><span class="lab paper">Extending this paper</span>EZSpecificity learns substrate representations from labeled enzyme&#8211;substrate pairs in a supervised fashion. A direct extension: pre-train the substrate molecular graph encoder using <strong>contrastive self-supervised learning</strong> on the vast pool of unlabeled small molecules (from ChEMBL, PubChem, etc.), then fine-tune on ESIBank. This would address the class-imbalance and data-scarcity challenge the paper acknowledges, since ESIBank coverage is sparser for rare enzyme families. Contrastive molecular graph pre-training has already been shown to generalize effectively across molecular property tasks.</p>
+      <p><span class="lab mine">Added value to my research</span>The contrastive graph pre-training framework is directly transferable to geospatial contexts: I can pre-train a <strong>spatiotemporal graph encoder</strong> on unlabeled mobility or POI graph data (urban regions as nodes, flows as edges), then fine-tune for downstream GeoAI tasks such as spatial health outcome prediction or facility accessibility modeling — the same self-supervised strategy, a different graph domain.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks &mdash; <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Replace ESIBank's static protein structures with a dynamic ensemble representation</h3>
+      <p><span class="lab paper">Extending this paper</span>EZSpecificity uses AlphaFold-predicted 3D structures (enriched with AlphaFill ligands/cofactors) as fixed inputs. However, enzyme active sites exhibit conformational flexibility that governs their specificity — a single predicted structure misses this dynamics. A direct extension: incorporate multiple structural conformations generated by molecular dynamics or AlphaFold 3 co-prediction, feeding an <strong>ensemble of active-site graphs</strong> into the SE(3)-equivariant encoder. The cross-attention mechanism can then learn substrate-specific conformational preferences across the ensemble. AlphaFold 3's biomolecular interaction structure predictions (cited in the paper, doi:10.1038/s41586-024-07487-w) provide a natural source of interaction-aware structures.</p>
+      <p><span class="lab mine">Added value to my research</span>The principle of replacing a single static representation with a dynamic ensemble maps to my spatiotemporal work: instead of a fixed spatial weight matrix in MGWR/GWR, I can encode <strong>temporal snapshots of spatial relationships</strong> as an ensemble graph, letting a cross-attention module learn which time slice is most predictive for each health outcome. This operationalizes the spatiotemporal non-stationarity I currently handle with bandwidth tuning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Targeting protein&#8211;ligand neosurfaces with a generalizable deep learning tool &mdash; <a href="https://doi.org/10.1038/s41586-024-08435-4" target="_blank">10.1038/s41586-024-08435-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Convert EZSpecificity's predictions into explainable active-site attribution maps</h3>
+      <p><span class="lab paper">Extending this paper</span>EZSpecificity reports prediction accuracy but does not expose <em>which</em> active-site residues or substrate functional groups drive its specificity calls. A direct extension: add gradient-based attribution (GradCAM or attention-rollout over the cross-attention weights) to produce per-residue and per-atom importance scores. These maps would let biochemists understand why the model predicts a given substrate as reactive — enabling rational enzyme engineering guided by predicted specificity determinants, rather than black-box screening. The MISATO protein&#8211;ligand dataset (with quantum-mechanical energy labels per atom) provides a ready benchmark for testing whether the attributions align with known binding-energy hotspots.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the core of my <strong>explainable GeoAI</strong> agenda: the cross-attention attribution framework is directly applicable to spatial prediction models where I need to explain <em>which spatial features and which neighboring locations</em> drive a health or accessibility outcome. An attention-weight-based spatial explainability module — analogous to the residue-attribution map here — would be a principled replacement for post-hoc SHAP analysis I currently use.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein&#8211;ligand complexes for structure-based drug discovery &mdash; <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Scale EZSpecificity to pathway-level multi-enzyme specificity prediction via graph-of-graphs</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper applies EZSpecificity enzyme-by-enzyme; its BGC evaluation (clavulanic acid, albonoursin) hints at pathway-scale deployment but treats each enzyme independently. A direct extension: represent a biosynthetic pathway as a <strong>graph-of-graphs</strong> — nodes are individual enzyme graphs, edges encode metabolite hand-off between reaction steps — and learn joint specificity constraints propagated along the pathway. The GNN protein refinement framework (which models residue&#8211;residue graphs with message passing) provides a template for this hierarchical graph architecture. This would enable prediction of the entire substrate flux through a multi-enzyme pathway, not just single-step specificity.</p>
+      <p><span class="lab mine">Added value to my research</span>The graph-of-graphs paradigm maps directly to my <strong>physics-informed graph learning</strong> work: a multi-scale urban graph where neighborhoods are nodes within city-graphs, which are in turn nodes in a regional network. Pathway-level flow constraints in biochemistry mirror my spatiotemporal flow conservation constraints in mobility/accessibility modeling. Implementing the hierarchical message-passing from this extension would advance my GeoAI architecture design.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Rapid protein model refinement by deep learning &mdash; <a href="https://doi.org/10.1038/s43588-021-00104-0" target="_blank">10.1038/s43588-021-00104-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Build a multimodal enzyme foundation model fine-tuned from EZSpecificity's dual-encoder</h3>
+      <p><span class="lab paper">Extending this paper</span>EZSpecificity combines a protein language model (sequence) with a structural GNN (3D graph) through cross-attention — effectively a dual-encoder multimodal architecture. A direct extension: treat this architecture as a <strong>pre-trained foundation model for enzyme biology</strong>, fine-tuning it for additional tasks beyond substrate specificity — e.g., predicting promiscuity scores, reaction type, optimal pH/temperature, or directed evolution fitness. The multimodal molecular biology foundation model paradigm (integrating omics, sequence, and structure modalities) demonstrates that such multi-task transfer is feasible and dramatically reduces annotation requirements for new enzyme families.</p>
+      <p><span class="lab mine">Added value to my research</span>This extension directly informs my <strong>fine-tuning of geospatial foundation models</strong>: the parameter-efficient fine-tuning strategy used here (adapter layers on a frozen protein language model) is the same technique I apply to adapt geospatial foundation models (e.g., SatCLIP, GeoCLIP) to domain-specific spatial prediction tasks — predicting healthcare accessibility scores or digital-divide indices from multi-source geospatial embeddings. The dual-encoder + cross-attention template is a reusable architecture pattern across both domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Towards multimodal foundation models in molecular cell biology &mdash; <a href="https://doi.org/10.1038/s41586-025-08710-y" target="_blank">10.1038/s41586-025-08710-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

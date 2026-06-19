@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Towards accurate differential diagnosis with large language models — AI Digest</title>
+<meta name="description" content="AI Digest: Towards accurate differential diagnosis with large language models (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Differential Diagnosis</span>
+      <span class="tag">Large Language Models</span>
+      <span class="tag">Clinical AI</span>
+      <span class="tag">Human-AI Collaboration</span>
+    </div>
+    <h1>Towards accurate differential diagnosis with large language models</h1>
+    <div class="meta">
+      <span class="authors">Daniel McDuff &middot; Mike Schaekermann &middot; Tao Tu &middot; Anil Palepu &middot; Amy Wang &middot; Jake Garrison &middot; Karan Singhal &middot; Yash Sharma &middot; Shekoofeh Azizi &middot; Kavita Kulkarni &middot; Le Hou &middot; Yong Cheng &middot; Yun Liu &middot; S. Sara Mahdavi &middot; Sushant Prakash &middot; Anupam Pathak &middot; Christopher Semturs &middot; Shwetak Patel &middot; Dale R. Webster &middot; Ewa Dominowska &middot; Juraj Gottweis &middot; Joelle Barral &middot; Katherine Chou &middot; Greg S. Corrado &middot; Yossi Matias &middot; Jake Sunshine &middot; Alan Karthikesalingam &middot; Vivek Natarajan</span>
+      <span><b>Published</b> 2025-04-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-08869-4" target="_blank">10.1038/s41586-025-08869-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-08869-4" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>AMIE, a large language model fine-tuned for clinical diagnostic reasoning, <strong>outperformed unassisted board-certified physicians</strong> on 302 challenging NEJM case reports (top-10 accuracy 59.1% vs. 33.6%, P = 0.04). When used as an <strong>assistive tool</strong>, AMIE significantly improved the quality, comprehensiveness, and accuracy of clinicians' differential diagnosis lists compared to standard search tools (top-10 accuracy 51.7% vs. 44.4%, P = 0.03), without adding task time &mdash; suggesting strong potential to <strong>upskill clinicians and widen access to specialist-level reasoning</strong> in resource-limited settings.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First rigorous randomized evaluation of an LLM as a DDx assistant.</b> Prior work measured standalone LLM diagnostic accuracy; this study uses a two-stage, counterbalanced reader study to isolate the <em>assistive benefit</em> on real clinicians working real cases.</li>
+      <li><b>Clinically meaningful accuracy gains without efficiency costs.</b> AMIE-assisted clinicians spent the same time (~7.3 min) as search-assisted clinicians yet produced substantially more accurate and comprehensive differential lists &mdash; no productivity penalty.</li>
+      <li><b>Upskilling potential for low-resource and training settings.</b> The model raised the performance of generalist internists on rare-disease puzzle cases, pointing toward use in under-resourced healthcare systems and medical education.</li>
+      <li><b>Quantifies the human-AI gap honestly.</b> The study shows that standalone AMIE still outperforms AMIE-assisted clinicians, illuminating the roles of anchoring bias, trust calibration, and LLM suggestibility that must be addressed before full clinical deployment.</li>
+      <li><b>Establishes NEJM CPCs as a reproducible LLM benchmark.</b> The automated evaluation metric (Cohen's &#954; = 0.631 vs. human raters) and comparison against GPT-4 seed a scalable benchmarking infrastructure for future clinical LLMs.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>High-stakes societal impact:</b> diagnostic error is a leading cause of preventable patient harm &mdash; a controlled trial showing LLM-assisted improvement speaks directly to a global health priority.</li>
+      <li><b>Novel experimental paradigm:</b> the two-stage, randomized, blinded reader-study design goes well beyond prior LLM evaluations (multiple-choice benchmarks) to measure real assistive value in complex, open-ended clinical reasoning.</li>
+      <li><b>Dual contribution &mdash; model and methodology:</b> AMIE (the system) plus a validated automated DDx evaluation metric constitute both a scientific finding and reusable benchmarking infrastructure.</li>
+      <li><b>Broad cross-disciplinary resonance:</b> touches AI safety (hallucination, trust calibration), human factors, equity in healthcare access, and medical education &mdash; themes spanning multiple Nature-portfolio readerships.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary case corpus</dt><dd><strong>NEJM Clinicopathological Conferences (CPCs)</strong> &mdash; 326 published case reports considered; 302 retained after excluding 23 management-focused cases. Cases span June 2013 &ndash; August 2023 (per-year counts: 2013: 22; 2014: 34; 2015: 36; 2016: 35; 2017: 36; 2018: 16; 2020: 23; 2021: 36; 2022: 39; 2023: 26). Specialties: internal medicine (<em>n</em> = 159), neurology (<em>n</em> = 42), paediatrics (<em>n</em> = 33), psychiatry (<em>n</em> = 10), other. Licensed from NEJM; not redistributable.</dd>
+      <dt>Clinician evaluators</dt><dd>20 U.S. board-certified internal medicine physicians for DDx generation (Stage 1; median 9 years experience, mean 11.5, range 3&ndash;32); 19 U.S. board-certified specialists for DDx rating (Stage 2; median 14 years, mean 13.7, range 4&ndash;38; covering internal medicine, neurology, paediatrics, psychiatry, dermatology, obstetrics, emergency medicine).</dd>
+      <dt>LLM fine-tuning data</dt><dd><strong>MultiMedQA</strong>: MedQA USMLE (11,450 train / 1,273 test questions, with 191 expert-crafted reasoning examples); HealthSearchQA + LiveQA + MedicationQA (64 long-form expert responses); MedMCQA. Proprietary medical dialogue dataset: 218 dialogues, 102 unique diagnoses (mean turn length 98). Expert EHR note summaries from <strong>MIMIC-III</strong> (exact subset size not reported). No NEJM CPC data in fine-tuning.</dd>
+      <dt>Base model</dt><dd><strong>PaLM 2 Large</strong> &mdash; Google transformer LLM, fine-tuned with long-context capability for AMIE.</dd>
+      <dt>Comparison model</dt><dd><strong>GPT-4</strong> compared on a 70-case subset from Kanjee et al. (2023) using the automated metric (Med-PaLM 2, GPT-4, and AMIE as raters).</dd>
+      <dt>Case text length</dt><dd>HPI sections: median 1,031 words (mean 1,044, s.d. 296, range 378&ndash;2,428); median 6,619 characters.</dd>
+      <dt>Data availability</dt><dd>NEJM CPC texts from journal under license. Model code/weights not released. DDx output lists released as Supplementary Data (XLSX).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>NEJM Clinicopathological Conferences</td><td>Primary evaluation benchmark</td><td>302 cases, 2013&ndash;2023, multiple specialties</td><td><a href="https://www.nejm.org" target="_blank">nejm.org</a> (licensed)</td></tr>
+        <tr><td>MultiMedQA / MedQA USMLE</td><td>LLM fine-tuning &mdash; medical QA</td><td>11,450 train / 1,273 test questions</td><td><a href="https://github.com/Google-Research-Datasets/MultiMedQA" target="_blank">GitHub (public)</a></td></tr>
+        <tr><td>MIMIC-III EHR notes</td><td>LLM fine-tuning &mdash; note summarization</td><td>Expert-crafted subset (count not disclosed)</td><td><a href="https://physionet.org/content/mimiciii/1.4/" target="_blank">PhysioNet (credentialed)</a></td></tr>
+        <tr><td>Proprietary medical dialogue</td><td>LLM fine-tuning &mdash; clinical conversation</td><td>218 dialogues, 102 unique diagnoses</td><td>Not public</td></tr>
+        <tr><td>AMIE DDx output lists</td><td>Reproducibility release</td><td>302 DDx lists</td><td><a href="https://www.nature.com/articles/s41586-025-08869-4" target="_blank">Supplementary (XLSX)</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: AMIE received only the text body of HPI sections; clinicians also had access to admission images and lab tables. MIMIC-III subset size is not specified in the article. The 70-case GPT-4 comparison subset is drawn from Kanjee et al. (2023), not a new collection.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Model architecture:</b> AMIE builds on <strong>PaLM 2 Large</strong> &mdash; a transformer LLM &mdash; fine-tuned with long-context capacity on a multi-task mixture of medical QA, dialogue, and EHR summarization; contamination experiments verify no CPC data leakage from pre-training.</li>
+      <li><b>Zero-shot prompting:</b> AMIE is given standardized prompts requesting top-10 differential diagnoses with a minimum diversity constraint; clinicians interacted via a pre-populated chat interface (mean 2.92 questions per case, mean response 237.6 words).</li>
+      <li><b>Two-stage randomized reader study:</b> Stage 1 &mdash; 20 generalist physicians generate unassisted DDx then re-do with either Search (Condition I) or AMIE (Condition II), cases assigned via 10 experience-matched clinician pairs. Stage 2 &mdash; 19 specialists blind-evaluate all DDx lists with full case access.</li>
+      <li><b>Multi-dimensional DDx evaluation:</b> (1) top-<em>n</em> accuracy (n = 1&ndash;10); (2) Bond et al. quality score (5-point); (3) appropriateness score (5-point Likert); (4) comprehensiveness score (4-point). All scored by blinded specialists.</li>
+      <li><b>Automated metric:</b> Med-PaLM 2 judges diagnosis-level correctness; Cohen's &#954; = 0.631 vs. human raters (substantial agreement), enabling 10-trial repeated evaluation and cross-model comparison.</li>
+      <li><b>Statistical tests:</b> McNemar's test for paired proportions (quality/comprehensiveness); paired t-test and Wilcoxon signed-rank test for continuous scores (appropriateness).</li>
+      <li><b>Qualitative component:</b> semi-structured interviews with 5 clinicians; inductive thematic analysis with peer debriefing on anchoring bias, LLM suggestibility, and trust calibration themes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig1.png" target="_blank">
+        <img src="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig1.png" alt="Fig.1 DDx quality, comprehensiveness, and appropriateness scores" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> DDx quality, comprehensiveness, and appropriateness scores across all conditions (302 cases) &mdash; AMIE and AMIE-assisted clinicians score highest on all three scales.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig2.png" target="_blank">
+        <img src="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig2.png" alt="Fig.2 Top-n accuracy via human and automated evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Top-<em>n</em> accuracy curves (n = 1&ndash;10) comparing all conditions by human (left) and automated (right) evaluation; shaded areas show &plusmn;1 s.d. across 10 trials.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig3.png" target="_blank">
+        <img src="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig3.png" alt="Fig.3 Sankey diagram of assistance effect on DDx accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Sankey diagram of the assistance effect &mdash; AMIE rescued the correct diagnosis in 73 previously missed cases vs. only 37 for Search assistance.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig4.png" target="_blank">
+        <img src="assets/towards-accurate-differential-diagnosis-with-large-language-models__s41586-025-08869-4/fig4.png" alt="Fig.4 Top-n accuracy: AMIE vs GPT-4" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> AMIE vs. GPT-4 top-<em>n</em> accuracy on a 70-case subset &mdash; AMIE outperforms GPT-4 for n &gt; 1 under automated evaluation with three independent rater models.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables &mdash; Table 1 (overall top-1 and top-10 accuracy with and without AMIE/Search assistance) and Table 2 (top-1 and top-10 accuracy broken down by medical specialty).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization, digital health equity).</p>
+
+    <div class="idea">
+      <h3>&#9312; Spatial equity of LLM-assisted diagnosis: mapping access to AI expertise</h3>
+      <p><span class="lab paper">Extending this paper</span>AMIE is evaluated on a homogeneous pool of 20 U.S. board-certified internists with mean 11.5 years of experience. The paper itself speculates that assistive benefits may be largest for less-trained providers in resource-limited or LMIC settings, but this is never measured. A direct extension: recruit or simulate clinicians from rural, low-resource, or lower-middle-income contexts and map <strong>where</strong> the diagnostic accuracy gain from AMIE is largest &mdash; producing a <em>geographic equity profile</em> of assistive LLM benefit, using the same 302-case framework as the scaffold.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps directly onto my <strong>health geography and accessibility</strong> agenda. AMIE can be conceptualized as a virtual specialist: the accessibility question becomes whether a clinician in a remote setting gains specialist-level DDx capability via an LLM interface &mdash; extending my 2SFCA/R2SFCA frameworks into a novel <em>digital supply-of-expertise</em> dimension. Combining physical clinic access metrics with LLM performance data would yield a two-layer health equity map linking spatial proximity to facilities and AI-assisted diagnostic quality.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Large language model diagnostic assistance for physicians in a lower-middle-income country: a randomized controlled trial &mdash; <a href="https://doi.org/10.1038/s44360-025-00007-8" target="_blank">10.1038/s44360-025-00007-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Hallucination detection as a clinical safety layer for AMIE's DDx outputs</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most critical open problem &mdash; explicitly named by participating clinicians &mdash; is LLM confabulation: convincingly wrong suggestions that could mislead rather than assist. Human specialist review is the current safety backstop, which is not scalable. A direct extension: integrate a <strong>semantic entropy-based hallucination detector</strong> applied per diagnosis item in the DDx list, automatically flagging high-uncertainty suggestions before the clinician sees them. This would convert the paper's qualitative safety concern into a quantitative, deployable signal and also tighten the automated evaluation metric beyond its current Cohen's &#954; = 0.631.</p>
+      <p><span class="lab mine">Added value to my research</span>In my data-science and reproducibility work, uncertainty quantification is central to trustworthy explainable ML. Semantic entropy applied to geospatial LLM outputs &mdash; place-name disambiguation, POI categorization, spatial query answering &mdash; provides the same safety layer for GeoAI pipelines that ingest noisy open-data sources. A shared uncertainty-aware inference module would serve both the clinical DDx setting and geospatial foundation model fine-tuning, and would directly address FAIR data quality in multi-source data fusion pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy &mdash; <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; From assistive chat to agentic diagnostic pathways: multi-step autonomous reasoning</h3>
+      <p><span class="lab paper">Extending this paper</span>AMIE is deployed in a few-turn chat interface: the clinician asks a question, AMIE answers, and the DDx is updated. The paper acknowledges that real clinical DDx formation is a <em>multi-step, goal-directed</em> process &mdash; history taking, targeted test ordering, iterative hypothesis revision. The natural next step for this paper: an <strong>autonomous medical AI agent</strong> that plans its own information-acquisition trajectory, decides which lab values or imaging findings to "order," and updates its DDx list accordingly &mdash; transforming the paper's static evaluation into a sequential decision-making benchmark with a full agentic loop.</p>
+      <p><span class="lab mine">Added value to my research</span>Agentic planning architectures directly inform my physics-informed graph learning work: the clinical diagnostic agent's multi-step query strategy is structurally analogous to an agent navigating a spatiotemporal graph to resolve spatial uncertainty (e.g., iteratively querying mobile-phone traces to localize an epidemic source under a SIR model). Borrowing AMIE's human-AI interaction design patterns &mdash; pre-populated context, suggested initial prompts, free-form follow-up &mdash; would accelerate the interface design of my own multi-agent spatiotemporal GeoAI frameworks.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Towards autonomous medical artificial intelligence agents &mdash; <a href="https://doi.org/10.1038/s41586-026-10675-5" target="_blank">10.1038/s41586-026-10675-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Reliability and calibration of medical LLMs as a function of case rarity</h3>
+      <p><span class="lab paper">Extending this paper</span>The NEJM CPCs are by design rare, "puzzle" cases &mdash; the paper deliberately targets hard cases where assistive LLMs have the most room to add value. A critical extension: systematically measure how AMIE's accuracy and confidence calibration degrade as cases become more common (low rarity) or radically out-of-distribution relative to the fine-tuning data &mdash; mapping <strong>performance vs. case rarity</strong> using ICD prevalence as an axis. The paper's per-specialty Table 2 is the entry point; adding a disease-rarity dimension reveals where foundation model reliability breaks down and where human oversight must remain primary.</p>
+      <p><span class="lab mine">Added value to my research</span>This reliability-vs-rarity framework transfers directly to my <strong>explainable ML for spatial prediction</strong> work: spatial ensemble models suffer performance degradation in low-data-density regions (analogous to rare diseases). A shared evaluation framework &mdash; calibration error as a function of local training-data scarcity &mdash; would unify evaluation across clinical LLMs and geospatial ML models, informing where and how human oversight or Monte Carlo uncertainty estimates should be prioritized in GeoAI pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation models in healthcare require rethinking reliability &mdash; <a href="https://doi.org/10.1038/s42256-024-00924-5" target="_blank">10.1038/s42256-024-00924-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; LLM-powered chatbots for primary-care triage as a scalable digital front door</h3>
+      <p><span class="lab paper">Extending this paper</span>AMIE is evaluated exclusively with trained physicians as end users. The paper speculates that its assistive benefit may extend to less-trained providers and education, but does not test this. A direct extension: adapt AMIE's interface and DDx generation pipeline for <strong>patient-facing or community health worker triage</strong> &mdash; where the "clinician" is a nurse practitioner or community health worker &mdash; and rigorously evaluate whether AMIE-generated DDx suggestions reduce unnecessary emergency escalation, improve triage accuracy, and are safe for non-specialist use at the primary-care front door.</p>
+      <p><span class="lab mine">Added value to my research</span>My telehealth and digital-divide research examines who <em>cannot</em> access primary care due to geographic or socio-demographic barriers. An LLM-powered primary-care chatbot is precisely the <em>digital supply side</em> of the healthcare accessibility equation. Combining my 2SFCA spatial-access metrics with uptake and accuracy data from a community-codesigned LLM chatbot would produce a hybrid physical-digital accessibility model &mdash; quantifying whether AI tools genuinely close or instead reproduce and spatially re-encode existing health inequities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A community-codesigned LLM-powered chatbot for primary care: a randomized controlled trial &mdash; <a href="https://doi.org/10.1038/s44360-025-00021-w" target="_blank">10.1038/s44360-025-00021-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

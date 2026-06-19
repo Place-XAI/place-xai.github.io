@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merlin: a computed tomography vision–language foundation model and dataset — AI Digest</title>
+<meta name="description" content="AI Digest: Merlin: a computed tomography vision–language foundation model and dataset (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">CT Foundation Model</span>
+      <span class="tag">Vision-Language Model</span>
+      <span class="tag">Medical AI</span>
+      <span class="tag">Radiology</span>
+    </div>
+    <h1>Merlin: a computed tomography vision–language foundation model and dataset</h1>
+    <div class="meta">
+      <span class="authors">Louis Blankemeier · Ashwin Kumar · Joseph Paul Cohen · Jiaming Liu · Longchao Liu · Dave Van Veen · Syed Jamal Safdar Gardezi · Hongkun Yu · Magdalini Paschali · Zhihong Chen · Jean-Benoit Delbrouck · Eduardo Reis · Robbie Holland · Cesar Truyts · Christian Bluethgen · Yufu Wu · Long Lian · Malte Engmann Kjeldskov Jensen · Sophie Ostmeier · Maya Varma · Jeya Maria Jose Valanarasu · Zhongnan Fang · Zepeng Huo · Zaid Nabulsi · Diego Ardila · Wei-Hung Weng · Edson Amaro Junior · Neera Ahuja · Jason Fries · Nigam H. Shah · Greg Zaharchuk · Marc Willis · Adam Yala · Andrew Johnston · Robert D. Boutin · Andrew Wentland · Curtis P. Langlotz · Jason Hom · Sergios Gatidis · Akshay S. Chaudhari</span>
+      <span><b>Published</b> 2026-03-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10181-8" target="_blank">10.1038/s41586-026-10181-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10181-8" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Merlin is a <strong>3D vision–language foundation model</strong> for abdominal CT interpretation trained on over 6 million images, 1.8 million diagnosis codes, and 6 million text tokens from 15,331 CT scans — without additional manual annotation. Evaluated on <strong>752 tasks</strong> across 6 task types, Merlin outperforms 2D VLMs, CT-specific foundation models, and off-the-shelf radiology models on diagnostic, prognostic, and quality tasks. External validation on <strong>44,098 CT scans</strong> across 3 independent clinical sites confirms strong generalization. The authors publicly release trained models, code, and a dataset of <strong>25,494 CT–report pairs</strong>, creating an open-science resource for future biomarker discovery and disease risk stratification.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First 3D VLM for abdominal CT at scale.</b> Prior medical vision–language models are constrained to 2D images and short reports; Merlin processes full volumetric scans alongside EHR codes and free-text reports — matching clinical reality.</li>
+      <li><b>Annotation-free pretraining.</b> The multistage framework requires no additional manual labels beyond routine clinical data (CPT codes, DICOM series, radiology reports), making it directly deployable from existing hospital data pipelines.</li>
+      <li><b>Breadth of evaluation unprecedented in medical AI.</b> 752 individual tasks spanning zero-shot classification, phenotype detection, chronic disease prediction, report generation, and 3D segmentation provide a rigorous, multi-domain benchmark.</li>
+      <li><b>Open release of model and data.</b> The 25,494-scan dataset, trained weights, and code (GitHub, HuggingFace, PyPI) significantly lower the barrier for follow-on research in CT-based biomarker discovery and clinical decision support.</li>
+      <li><b>Directly addresses radiologist workforce shortage.</b> By automating interpretation of abdominal/pelvis CTs (among the highest-volume exam types), Merlin addresses a concrete and growing public-health bottleneck.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Landmark-scale dataset and model release:</b> releasing 25,494 paired scans and trained 3D VLM weights constitutes an infrastructure contribution at Nature's expected impact level.</li>
+      <li><b>Methodological novelty with broad field impact:</b> the multistage 3D pretraining framework, scaling-law analysis, and ablation studies advance the science of medical foundation models beyond a single application.</li>
+      <li><b>Strong external generalization across institutions and anatomies:</b> multi-site validation on over 44,000 held-out CT scans is statistically robust and clinically credible.</li>
+      <li><b>Societal urgency:</b> addressing the radiologist shortage with a system that demonstrably outperforms existing AI tools aligns with Nature's editorial emphasis on science with immediate societal benefit.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>Merlin Abdominal CT Dataset</strong> (Stanford AIMI Center) — 25,494 scans of 18,317 unique patients, each paired with its radiology report. Exams are abdominal and pelvis CTs identified via CPT codes 72192–74178, selected through the <strong>STARR</strong> (Stanford Medicine Research Data Repository) tool. DICOM series de-identified and converted to NIfTI format. Hosted at <a href="https://stanfordaimi.azurewebsites.net/datasets/60b9c7ff-877b-48ce-96c3-0194c8205c40" target="_blank">Stanford AIMI</a> under data-use agreement.</dd>
+      <dt>Training corpus</dt><dd>&gt;6 million CT images from 15,331 scans; &gt;1.8 million ICD diagnosis codes; &gt;6 million report tokens. Internal test split: 5,137 CT scans.</dd>
+      <dt>External validation</dt><dd>44,098 CT scans from <strong>3 independent clinical sites</strong> (identities not disclosed for privacy reasons) plus 2 public datasets; covers both abdominal and chest CT.</dd>
+      <dt>Public benchmarks</dt><dd><strong>VerSe</strong> vertebral segmentation dataset (Open Science Framework, <a href="https://osf.io/nqjyw/" target="_blank">osf.io/nqjyw</a>); <strong>TotalSegmentator</strong> multi-organ segmentation dataset (<a href="https://github.com/wasserth/TotalSegmentator" target="_blank">GitHub</a>) — used for 3D segmentation evaluation across 20 organs.</dd>
+      <dt>EHR phenotypes</dt><dd>692 phenotype classifiers (EHR-derived), plus 6 chronic disease endpoints for 5-year prediction; 30 radiology findings for zero-shot classification.</dd>
+      <dt>Time period</dt><dd>Clinical dataset period not explicitly stated in the public abstract; de-identification removes timestamps from DICOM metadata.</dd>
+      <dt>Access</dt><dd>Primary dataset: data-use agreement required at Stanford AIMI portal. Code: <a href="https://github.com/StanfordMIMI/Merlin" target="_blank">GitHub</a>, <a href="https://huggingface.co/stanfordmimi/Merlin" target="_blank">HuggingFace</a>, <a href="https://pypi.org/project/merlin-vlm" target="_blank">PyPI</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Merlin Abdominal CT Dataset (Stanford AIMI)</td><td>Primary training &amp; internal test set; each scan paired with radiology report</td><td>25,494 scans, 18,317 unique patients; training subset: 15,331 scans, &gt;6 M images</td><td><a href="https://stanfordaimi.azurewebsites.net/datasets/60b9c7ff-877b-48ce-96c3-0194c8205c40" target="_blank">Stanford AIMI (DUA)</a></td></tr>
+        <tr><td>VerSe (vertebral segmentation)</td><td>Public benchmark for 3D segmentation evaluation</td><td>Multi-site vertebrae dataset; exact CT count not restated in abstract</td><td><a href="https://osf.io/nqjyw/" target="_blank">osf.io/nqjyw</a></td></tr>
+        <tr><td>TotalSegmentator</td><td>Public benchmark for multi-organ segmentation (20 organs)</td><td>Open-source multi-organ CT segmentation dataset</td><td><a href="https://github.com/wasserth/TotalSegmentator" target="_blank">GitHub</a></td></tr>
+        <tr><td>3 external clinical sites (undisclosed)</td><td>External validation of zero-shot &amp; adapted tasks</td><td>37,885 abdominal CTs total across the 3 sites (from Extended Data Fig. 6)</td><td>Not public — accessed under institutional DUAs</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper's Extended Data and Supplementary tables contain per-organ and per-site breakdowns not reproduced here. The exact clinical data collection time window is not stated in the public abstract; scan timestamps were removed during de-identification.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>3D image encoder (I3D inflation):</b> 2D ImageNet-pretrained convolutional weights are inflated to 3D using the I3D strategy, enabling volumetric CT processing without training 3D encoders from scratch.</li>
+      <li><b>Multistage pretraining framework:</b> Stage 1 aligns CT volumes with EHR diagnosis codes (contrastive learning); Stage 2 aligns CT volumes with free-text radiology reports (CLIP-style image–text contrastive learning using Clinical Longformer for text encoding). No additional manual annotation required.</li>
+      <li><b>Vision–language alignment:</b> OpenCLIP-style contrastive learning extended to 3D; embeddings from the CT encoder and Clinical Longformer text encoder are aligned in joint latent space.</li>
+      <li><b>Task adaptation:</b> Zero-shot tasks use off-the-shelf cosine similarity (no fine-tuning); adapted tasks (disease prediction, report generation, 3D segmentation) add lightweight heads or decoders trained on downstream data.</li>
+      <li><b>Report generation:</b> Merlin encoder embeddings are projected and fed into a language model via a projection layer; reports are generated section-by-section with anatomical-section prompts.</li>
+      <li><b>3D semantic segmentation:</b> Merlin encoder is extended with a decoder and skip connections within the nnUNet framework; evaluated across 20 abdominal organs in both full-data and 10%-data (low-label) regimes.</li>
+      <li><b>Scaling laws and ablation:</b> Systematic scaling-law experiments vary pretraining dataset size; ablations study I3D initialization, multi-task vs. staged training, EHR vs. report-only pretraining, and text-splitting strategies.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig1.png" target="_blank">
+        <img src="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig1.png" alt="Fig.1 Overview of Merlin training and evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of Merlin training and evaluation — the multistage pretraining pipeline, task taxonomy, and evaluation framework.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig2.png" target="_blank">
+        <img src="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig2.png" alt="Fig.2 Zero-shot classification of findings" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Zero-shot classification of findings — performance across 30 radiology findings vs. baselines, internal and external cohorts.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig3.png" target="_blank">
+        <img src="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig3.png" alt="Fig.3 Phenotype classification" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Phenotype classification — Merlin accuracy across 692 EHR-derived phenotypes at 10% and 100% data regimes.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig4.png" target="_blank">
+        <img src="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig4.png" alt="Fig.4 Alternative architecture experiments" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Alternative architecture experiments — systematic comparison of encoder choices, pretraining strategies, and scaling laws.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig5.png" target="_blank">
+        <img src="assets/merlin-a-computed-tomography-vision-language-foundation-model-and-dataset__s41586-026-10181-8/fig5.png" alt="Fig.5 External validation on abdominal and chest CT scans" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> External validation on abdominal and chest CT scans — cross-site and cross-anatomy generalization across 44,098 external CTs.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables; Supplementary Information contains Tables 1–9 and additional supplementary figures. Extended Data contains 6 extended figures with per-organ and per-site breakdowns.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, healthcare accessibility, explainable &amp; physics-informed machine learning, geospatial foundation model fine-tuning).</p>
+
+    <div class="idea">
+      <h3>① Adapt Merlin's multistage pretraining to geospatial foundation model fine-tuning for health facility detection</h3>
+      <p><span class="lab paper">Extending this paper</span>Merlin's multistage framework — Stage 1 aligning volumetric images with structured codes, Stage 2 aligning with free-text reports — is designed for clinical data but its architecture is general: any paired (image, structured label, free-text) triplet could be consumed. A direct extension is to replace CT volumes with <strong>satellite or street-view imagery</strong>, EHR diagnosis codes with <strong>POI/facility-type codes</strong>, and radiology reports with <strong>community health narratives</strong>, producing a geospatial vision–language model pre-trained without manual annotation. The corpus paper on multimodal generative AI for medical image interpretation demonstrates that such generalist approaches produce transferable representations far superior to task-specific models.</p>
+      <p><span class="lab mine">Added value to my research</span>My geospatial foundation model fine-tuning agenda gains a concrete recipe: replicate Merlin's annotation-free multistage pretraining over satellite imagery paired with Open Data Kit (ODK) facility audits and WHO SARA reports to build a zero-shot healthcare facility classifier, feeding directly into my spatial accessibility (2SFCA/R2SFCA) supply estimation without costly ground surveys.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multimodal generative AI for medical image interpretation — <a href="https://doi.org/10.1038/s41586-025-08675-y" target="_blank">10.1038/s41586-025-08675-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use Merlin's 752-task evaluation benchmark design to build a standardized health-accessibility evaluation suite</h3>
+      <p><span class="lab paper">Extending this paper</span>Merlin's evaluation philosophy — 6 task types, 752 individual tasks, zero-shot vs. adapted regimes, internal vs. multi-site external validation — is itself a methodological contribution separable from the model. Extending the paper: apply the same evaluation taxonomy (zero-shot retrieval, zero-shot classification, phenotype classification, outcome prediction, generation, segmentation) to <strong>geographic health tasks</strong> — where "segmentation" becomes service-area delineation, "phenotype classification" becomes population health stratum assignment, and "report generation" becomes automated health equity narrative generation. The companion corpus paper on multi-task learning for medical foundation models provides a complementary framework for how to share representations across heterogeneous health tasks.</p>
+      <p><span class="lab mine">Added value to my research</span>Designing a comparable multi-task benchmark for spatial health AI would let me rigorously compare my MGWR-ML ensembles, R2SFCA variants, and spatiotemporal KDE models on consistent held-out folds — moving my methods from one-off ablations toward the kind of benchmark-driven science that Nature considers reproducible.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-task learning for medical foundation models — <a href="https://doi.org/10.1038/s43588-024-00658-9" target="_blank">10.1038/s43588-024-00658-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply Merlin's scaling-law analysis to predict the data volume needed for telehealth and digital-divide models</h3>
+      <p><span class="lab paper">Extending this paper</span>Merlin explicitly computes scaling laws: pretraining dataset size vs. downstream task performance. The paper finds that larger training sets monotonically improve retrieval, segmentation, and classification — but the inflection points differ by task. Extending this analysis to <strong>cross-modal health AI more broadly</strong>, and specifically to settings where labeled data is scarce (rare diseases, low-income countries), would quantify how much additional data collection is needed before model quality saturates. The companion corpus paper on a foundation model for breast and lung cancer screening using non-contrast CT provides an independent data point on scaling behavior in a different CT modality.</p>
+      <p><span class="lab mine">Added value to my research</span>I can apply the same scaling-law framework to my telehealth/digital-divide models: fit power-law curves of model performance vs. mobile-phone or EHR sample size to determine the minimum data collection burden for statistically reliable spatial predictions — a practical argument for open health data policy that I can now quantify rather than assert.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for breast and lung cancer screening using non-contrast computed tomography — <a href="https://doi.org/10.1038/s44360-026-00055-8" target="_blank">10.1038/s44360-026-00055-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Pair Merlin's zero-shot cross-modal retrieval with spatial indexing for population-level disease risk mapping</h3>
+      <p><span class="lab paper">Extending this paper</span>Merlin performs zero-shot image-to-findings and image-to-impression retrieval using cosine similarity in a shared embedding space. Extending the paper: geotag each CT scan with the patient's residential census tract (already possible under de-identified data frameworks) and aggregate Merlin's embedding-derived findings scores into <strong>spatially referenced disease burden estimates</strong> — essentially a VLM-powered disease surveillance layer. The existing 44,098-scan external validation already spans multiple sites and could support small-area estimation if geo-linkage were retained. A vision–language foundation model for precision oncology (in corpus) demonstrates similar spatial generalization potential for histopathology.</p>
+      <p><span class="lab mine">Added value to my research</span>This extends my spatiotemporal kernel density estimation and health geography methods: Merlin-derived radiology findings become a <strong>novel outcome variable</strong> for spatial regression, allowing me to model disease risk surfaces from imaging rather than diagnosis codes alone — and to overlay them with my R2SFCA accessibility surfaces to quantify whether low-access areas have higher undetected disease burden.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A vision–language foundation model for precision oncology — <a href="https://doi.org/10.1038/s41586-024-08378-w" target="_blank">10.1038/s41586-024-08378-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Translate Merlin's annotation-free EHR pretraining into an equity-aware clinical AI that corrects for spatial access bias in training data</h3>
+      <p><span class="lab paper">Extending this paper</span>Merlin's training corpus is drawn from a single academic medical center (Stanford), introducing a <strong>geographic and socioeconomic selection bias</strong>: patients who could access Stanford AIMI-linked care are over-represented. The paper validates externally across 3 sites but does not stratify performance by patient income, insurance status, or neighborhood deprivation. Extending the paper: apply Merlin's embedding space to measure <strong>representation gaps</strong> by census-tract deprivation index, and retrain with importance weighting or domain-adversarial objectives to correct spatial selection bias. The corpus paper on foundation models in healthcare requiring rethinking reliability provides the theoretical framework for this reliability concern.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly connects to my spatial equity and health accessibility agenda: I can use MGWR/GWR to decompose where Merlin's zero-shot performance degrades spatially, then attribute the degradation to access barriers (distance to academic medical centers, insurance rates) using my 2SFCA service-area framework — producing an explainable spatial audit of clinical AI equity, a novel intersection of GeoAI and medical foundation model evaluation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation models in healthcare require rethinking reliability — <a href="https://doi.org/10.1038/s42256-024-00924-5" target="_blank">10.1038/s42256-024-00924-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

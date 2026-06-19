@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovery Learning predicts battery cycle life from minimal experiments — AI Digest</title>
+<meta name="description" content="AI Digest: Discovery Learning predicts battery cycle life from minimal experiments (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Battery lifetime prediction</span>
+      <span class="tag">Active learning</span>
+      <span class="tag">Physics-guided ML</span>
+      <span class="tag">Zero-shot learning</span>
+    </div>
+    <h1>Discovery Learning predicts battery cycle life from minimal experiments</h1>
+    <div class="meta">
+      <span class="authors">Zhang, Jiawei · Zhang, Yifei · Yi, Baozhao · Ren, Yao · Jiao, Qi · Bai, Hanyu · Jiang, Weiran · Song, Ziyou</span>
+      <span><b>Published</b> 2026-02-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09951-7" target="_blank">10.1038/s41586-025-09951-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09951-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>Discovery Learning</strong> — a scientific machine learning framework uniting active learning, physics-guided learning, and zero-shot learning in a human-like reasoning loop — predicts the <strong>cycle life of entirely new lithium-ion battery designs from only the first 50 cycles of 51% of prototypes</strong>, achieving <strong>7.2% test error</strong> while saving an estimated <strong>98% of testing time and 95% of energy</strong> compared with conventional full-life cycling. Trained exclusively on public datasets of different cell chemistries, it generalises to industrial-grade large-format pouch cells without requiring lifetime labels for the target design — demonstrating that <strong>zero-shot transfer + physics-guided features can replace years of destructive testing</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the prototyping bottleneck.</b> Battery development has historically required full-lifetime cycling of every new design — a process taking months to years. Discovery Learning compresses this to the first 50 cycles of about half the prototypes, enabling rapid design iteration critical for EV and grid storage markets.</li>
+      <li><b>Generalises across cell chemistries without target-specific labels.</b> By combining zero-shot learning with physics-guided features, the framework predicts cycle life of a new design class using only historical data from different chemistries — the first demonstration of this capability at industrial scale with large-format pouch cells.</li>
+      <li><b>Quantifies massive resource savings.</b> Under conservative assumptions, 98% time savings and 95% energy savings per design evaluation translate to dramatic reductions in battery development cost — making faster sustainable-energy transitions economically feasible.</li>
+      <li><b>Introduces a new paradigm: discovery-inspired ML.</b> Drawing on educational psychology's Discovery Learning theory, the paper proposes a general human-like reasoning loop for scientific machine learning, with implications beyond batteries for any complex physical system with expensive experimental feedback.</li>
+      <li><b>Releases open data and code.</b> The 123-cell industrial dataset and full codebase are available via Zenodo and Code Ocean, enabling community benchmarking and replication.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-level advance, not incremental:</b> the fusion of active learning, physics-guided learning, and zero-shot learning into a single human-inspired loop is a conceptual leap — exactly the kind of novel framework Nature prizes over incremental accuracy improvement.</li>
+      <li><b>Industrial validation at scale:</b> 123 large-format pouch cells spanning diverse chemistries and cycling protocols provides credibility beyond lab-scale coin cells, signalling readiness for real-world deployment.</li>
+      <li><b>Cross-disciplinary appeal:</b> the work bridges battery electrochemistry, educational psychology (Discovery Learning theory), and machine learning — a combination resonating across Nature's broad readership.</li>
+      <li><b>Societal urgency:</b> accelerating battery development directly supports energy-transition timelines for EVs and grid storage — a high-impact application domain Nature has prioritised.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Industrial dataset</dt><dd><strong>123 large-format lithium-ion pouch cells</strong> cycled by the authors — industrial-grade, spanning diverse material–design combinations and charging/discharging protocols. This is the primary test set.</dd>
+      <dt>Public training data</dt><dd>Six publicly available cell datasets of different chemistries used as training sources (no target-design lifetime labels required). Institutions and cell types are listed below.</dd>
+      <dt>A123-M1A &amp; LG-HG2</dt><dd>From <strong>Sandia National Laboratories</strong> — cylindrical cells from public battery-ageing studies. Exact cell counts not stated in the abstract; available on request from SNL.</dd>
+      <dt>Sony-VTC5A</dt><dd>From <strong>Technical University of Munich</strong> — cycling data for Sony 18650 VTC5A cells.</dd>
+      <dt>LG-MJ1</dt><dd>From <strong>Flemish Institute for Technological Research (VITO)</strong> — LG MJ1 cylindrical cell ageing data.</dd>
+      <dt>Sony-VTC6</dt><dd>From <strong>Carnegie Mellon University</strong> — Sony VTC6 cell dataset.</dd>
+      <dt>Samsung-25R</dt><dd>From <strong>Karlsruhe Institute of Technology</strong> — Samsung INR18650-25R cycling data.</dd>
+      <dt>Code &amp; data repo</dt><dd>Full reproduction data at <a href="https://doi.org/10.5281/zenodo.17654407" target="_blank">Zenodo (doi:10.5281/zenodo.17654407)</a>; code at <a href="https://doi.org/10.24433/CO.5569470.v1" target="_blank">Code Ocean (doi:10.24433/CO.5569470.v1)</a>.</dd>
+      <dt>Observation window</dt><dd>First <strong>50 cycles</strong> used for prediction; only <strong>51% of cell prototypes</strong> require any cycling measurement under the active-learning query strategy.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Authors' industrial dataset</td><td>Primary test set</td><td>123 large-format Li-ion pouch cells; diverse chemistries &amp; protocols</td><td><a href="https://doi.org/10.5281/zenodo.17654407" target="_blank">Zenodo</a></td></tr>
+        <tr><td>A123-M1A / LG-HG2</td><td>Public training source</td><td>Cylindrical cells; exact N not stated</td><td>Sandia National Laboratories (on request)</td></tr>
+        <tr><td>Sony-VTC5A</td><td>Public training source</td><td>18650 cylindrical; exact N not stated</td><td>Technical University of Munich (on request)</td></tr>
+        <tr><td>LG-MJ1</td><td>Public training source</td><td>Cylindrical; exact N not stated</td><td>VITO / Flemish Institute (on request)</td></tr>
+        <tr><td>Sony-VTC6</td><td>Public training source</td><td>Cylindrical; exact N not stated</td><td>Carnegie Mellon University (on request)</td></tr>
+        <tr><td>Samsung-25R</td><td>Public training source</td><td>INR18650; exact N not stated</td><td>Karlsruhe Institute of Technology (on request)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact cell counts for each public dataset are not reported in the abstract or data-availability statement; the stated 123 cells refer only to the authors' own industrial test set. Figures 2 provides further dataset breakdown.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Discovery Learning loop:</b> a three-component reasoning system — an <em>Interpreter</em> (physics-guided feature extraction from early cycles), an <em>Oracle</em> (zero-shot lifetime predictor trained on historical designs), and a <em>Learner</em> (active-learning module that selects which prototypes to cycle further) — operated in both open-loop and closed-loop modes.</li>
+      <li><b>Physics-guided feature engineering:</b> electrochemical and degradation-physics features extracted from the first 50 charge/discharge cycles, encoding capacity fade trajectories, internal resistance, differential capacity analysis, and other physically meaningful signals that transfer across cell chemistries.</li>
+      <li><b>Zero-shot learning:</b> the model is trained exclusively on public datasets of cell designs different from the industrial target; no lifetime labels for the target design class are required, enabling pre-prototyping predictions.</li>
+      <li><b>Active learning query strategy:</b> the Learner selects the most informative prototypes to physically cycle, reducing required measurements to 51% of the prototype set while maintaining prediction accuracy.</li>
+      <li><b>Validation:</b> 7.2% test error (mean absolute percentage error) on industrial-grade 123-cell dataset; savings of 98% time and 95% energy estimated under conservative assumptions against conventional full-life testing.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig1.png" target="_blank">
+        <img src="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig1.png" alt="Fig.1 Discovery Learning framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Discovery Learning — overview of the Interpreter-Oracle-Learner reasoning loop and its conceptual grounding in educational psychology.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig2.png" target="_blank">
+        <img src="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig2.png" alt="Fig.2 Industrial-grade battery ageing data overview" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Overview of industrial-grade large-format battery ageing data and public datasets — design combinations, cycling protocols, and dataset statistics.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig3.png" target="_blank">
+        <img src="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig3.png" alt="Fig.3 Open-loop Discovery Learning results" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Open-loop results from Interpreter and Oracle (without active Learner) — showing zero-shot prediction accuracy across chemistry transfers.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig4.png" target="_blank">
+        <img src="assets/discovery-learning-predicts-battery-cycle-life-from-minimal-experiments__s41586-025-09951-7/fig4.png" alt="Fig.4 Closed-loop Discovery Learning results" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Closed-loop results with active Learner — prototype selection queries, final prediction accuracy (7.2% error), and estimated time/energy savings.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); supplementary material contains detailed performance comparisons and ablation results.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, explainable ML for spatial prediction, physics-informed graph learning, spatiotemporal analysis, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Transfer Discovery Learning's zero-shot chemistry transfer to spatial domain-shift prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most striking achievement is that its model — trained on cylindrical public cells — generalises zero-shot to a different class (large-format industrial pouch cells) by leveraging physics-guided features that are invariant across chemistries. A direct extension: test whether this zero-shot transfer survives across <em>manufacturing batches, temperature regimes, and geographic deployment contexts</em> (e.g., cold-climate vs. tropical EV fleets). The active-learning Learner could adaptively select not which prototypes to cycle, but which deployment contexts to sample, generalising the closed-loop to in-field adaptation. This would transform Discovery Learning from a lab tool into a deployable fleet-monitoring system, drawing on the closed-loop transfer framework demonstrated in chemical knowledge discovery.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly parallels the domain-shift challenge I face in GeoAI: spatiotemporal models trained in data-rich cities must generalise to data-sparse regions. The paper's combination of physics-guided invariant features + active-learning sample selection maps cleanly onto my goal of reducing labelling burden in telehealth and 2SFCA accessibility models — where "cycling a prototype" analogises to "conducting a costly household survey." Implementing an active-query strategy for spatial prediction would make my R2SFCA service-area models data-efficient.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Closed-loop transfer enables artificial intelligence to yield chemical knowledge — <a href="https://doi.org/10.1038/s41586-024-07892-1" target="_blank">10.1038/s41586-024-07892-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace fixed physics features with a learnable physics-informed graph encoder</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Interpreter relies on <em>hand-crafted electrochemical features</em> (capacity fade, differential capacity analysis, internal resistance trajectories) extracted from the first 50 cycles. While grounded in domain knowledge, these features encode degradation physics through fixed transformations decided a priori. A natural extension: replace the Interpreter with a <strong>physics-informed graph neural network</strong> that treats a battery cell as a graph of electrochemical processes (electrode surfaces, electrolyte interfaces, current collector contacts) and learns latent representations that respect thermodynamic and kinetic constraints as soft losses — potentially discovering non-obvious degradation signatures beyond hand-crafted features. The graph structure provides an inductive bias that could improve zero-shot transfer by encoding structural similarity across cell geometries.</p>
+      <p><span class="lab mine">Added value to my research</span>This connects to my physics-informed graph learning agenda: designing GNN architectures where physical laws (conservation, symmetry, decay constraints) are embedded as architectural priors rather than regularisation losses. For urban analytics, the same approach encodes spatial interaction laws (gravity, Tobler's first law) into the graph operator — yielding spatially transferable predictions. The battery graph analogy is intellectually fruitful for designing interpretable spatial encoders.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Scale the active-learning Oracle to a multi-fidelity experimental design loop</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's active Learner selects <em>which prototypes to cycle</em> under a single-fidelity query model — you either cycle a cell for 50 cycles or you don't. In practice, battery testing has multiple fidelity levels: impedance spectroscopy (minutes), short-cycle aging (days), and full-life cycling (months). Extending Discovery Learning to a <strong>multi-fidelity Bayesian active learning</strong> setting — where the Learner decides not only which cell to measure but at what fidelity level — would further shrink the experimental budget. Uncertainty estimates from each fidelity tier would feed the Oracle's prior, enabling dynamic cost-accuracy trade-offs across the design space.</p>
+      <p><span class="lab mine">Added value to my research</span>This multi-fidelity active learning concept translates to spatial data collection: I routinely fuse satellite imagery (low-resolution, global coverage), mobile phone data (medium fidelity), and survey data (high fidelity, sparse). Casting multi-source spatial data fusion as a multi-fidelity active query problem would let me optimise data collection strategies for urban health models — selecting which areas to deploy expensive field surveys given cheap remote-sensing priors.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply the Discovery Learning loop to spatial accessibility prediction with minimal survey data</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's fundamental insight is that a reasoning loop — interpret physical signals, predict with physics-guided zero-shot oracle, actively query minimal experiments — can collapse an intractable measurement problem into a tractable one. This architecture is domain-agnostic. An extension: apply it to urban facility-access measurement, where "cycling a cell" maps to "conducting a travel-time survey," the "Interpreter" extracts features from OpenStreetMap/remote sensing, and the "Oracle" uses a cross-city trained accessibility model. The active Learner selects which neighbourhoods to field-survey. This would enable city-wide accessibility mapping from <strong>minimal ground-truth surveys</strong>, directly paralleling the 51%-of-prototypes efficiency gain.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct research agenda item: my 2SFCA/R2SFCA accessibility models require travel-time impedance ground truth that is expensive to collect. Framing accessibility model calibration as an active-learning problem — where the oracle is a physics-informed GeoAI model and the learner selects survey locations — would dramatically reduce field data requirements for healthcare accessibility mapping in data-sparse regions, including rural and LMIC contexts directly relevant to my telehealth/digital-divide work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Taking a deep dive with active learning for drug discovery — <a href="https://doi.org/10.1038/s43588-024-00704-6" target="_blank">10.1038/s43588-024-00704-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Add explainability to the Oracle: which physics features drive lifetime transfer?</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reports 7.2% test error but does not explain <em>which</em> physics-guided features of the first 50 cycles drive successful cross-chemistry transfer. A SHAP or integrated-gradients attribution over the Oracle's inputs would reveal whether differential capacity analysis, capacity fade slope, or internal resistance changes dominate prediction — and whether this ranking shifts across chemistries. This explainability layer would both validate the physics and identify which measurements are most information-rich, potentially reducing the 50-cycle window to fewer cycles for specific feature classes. Such an explainability study would strengthen the science case that physics-guided features carry genuine mechanistic meaning rather than being correlational shortcuts.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainability of spatial ML models is central to my work — MGWR/GWR provides spatial non-stationarity attribution, and SHAP-over-ensemble methods are a core tool in my GeoAI pipeline. The battery explainability problem is structurally identical to asking which spatiotemporal features drive health outcome predictions across neighbourhoods. Developing a SHAP-for-time-series approach for early-cycle battery features would have direct methodological transfer to my spatiotemporal kernel density and accessibility explanations, contributing to my broader open-science/FAIR reproducibility agenda via the paper's Zenodo/Code Ocean release.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Artificial intelligence tools expand scientists' impact but contract science's focus — <a href="https://doi.org/10.1038/s41586-025-09922-y" target="_blank">10.1038/s41586-025-09922-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

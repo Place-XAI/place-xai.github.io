@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A foundation model to predict and capture human cognition — AI Digest</title>
+<meta name="description" content="AI Digest: A foundation model to predict and capture human cognition (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Cognitive Foundation Model</span>
+      <span class="tag">Human Behaviour</span>
+      <span class="tag">LLM Fine-tuning</span>
+      <span class="tag">Computational Cognition</span>
+    </div>
+    <h1>A foundation model to predict and capture human cognition</h1>
+    <div class="meta">
+      <span class="authors">Marcel Binz · Elif Akata · Matthias Bethge · Franziska Brändle · Fred Callaway · Julian Coda-Forno · Peter Dayan · Can Demircan · Maria K. Eckstein · Noémi Éltető · Thomas L. Griffiths · Susanne Haridi · Akshay K. Jagadish · Li Ji-An · Alexander Kipnis · Sreejan Kumar · Tobias Ludwig · Marvin Mathony · Marcelo Mattar · Alireza Modirshanechi · Surabhi S. Nath · Joshua C. Peterson · Milena Rmus · Evan M. Russek · Tankred Saanum · Johannes A. Schubert · Luca M. Schulze Buschoff · Nishad Singhi · Xin Sui · Mirko Thalmann · Fabian J. Theis · Vuong Truong · Vishaal Udandarao · Konstantinos Voudouris · Robert Wilson · Kristin Witte · Shuchen Wu · Dirk U. Wulff · Huadong Xiong · Eric Schulz</span>
+      <span><b>Published</b> 2025-07-02</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09215-4" target="_blank">10.1038/s41586-025-09215-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09215-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>Centaur</strong>, a large language model fine-tuned on <strong>Psych-101</strong> — a dataset of 10+ million human choices from 160 psychological experiments and 60,000+ participants — can <strong>predict and simulate human behaviour across virtually any cognitive domain expressible in natural language</strong>. Centaur outperforms both the base LLM and domain-specific cognitive models in almost every experiment, generalizes to unseen cover stories, novel task structures, and entirely new domains, and its internal representations become <strong>more aligned with human neural activity</strong> after fine-tuning — all without being explicitly trained on neuroscience data. A case study demonstrates how Centaur enables <strong>model-guided scientific discovery</strong> of new interpretable cognitive theories.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First domain-general computational model of human cognition at scale.</b> Existing cognitive models are domain-specific (e.g., prospect theory for decision-making, reinforcement learning for bandit tasks). Centaur is the first single model that generalizes across all of these simultaneously — representing a paradigm shift in cognitive science.</li>
+      <li><b>Unprecedented dataset enabling the community.</b> Psych-101 — 160 experiments, 60,092 participants, 10,681,650 choices, 253,597,411 text tokens — is publicly released on HuggingFace. This enables benchmark-style progress tracking and reproducibility in cognitive science analogous to how ImageNet enabled computer vision.</li>
+      <li><b>Neural alignment for free.</b> Fine-tuning purely on behavioural data — with no neuroscience supervision — produces internal representations that better predict human fMRI activity. This suggests deep connections between behavioural simulation and neural computation.</li>
+      <li><b>Accelerates in silico cognitive science.</b> Centaur enables researchers to prototype experiments, estimate effect sizes, and guide theory development without collecting new human data — broadening scientific regret minimization from large-N settings to small datasets (&lt;100 participants).</li>
+      <li><b>Open infrastructure, not just analysis.</b> The model is publicly available on HuggingFace; a lightweight Minitaur (Llama 3.1 8B) runs on free Google Colab GPUs, democratizing access across resource-constrained research settings.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Establishes a new field-defining benchmark:</b> the cognitive decathlon framing and Psych-101 dataset set a universal standard for comparing models of the human mind — analogous to how Nature papers establishing ImageNet or AlphaFold benchmarks shaped entire research trajectories.</li>
+      <li><b>Cross-disciplinary scope:</b> bridges machine learning, cognitive psychology, and systems neuroscience, making it relevant to Nature's broad science audience rather than a single specialist community.</li>
+      <li><b>Dual contribution — model + dataset:</b> provides both a working computational artefact (Centaur) and a large-scale public dataset (Psych-101), satisfying Nature's preference for high-impact, reusable infrastructure.</li>
+      <li><b>Surprising mechanistic finding:</b> the emergent alignment of Centaur's representations with human fMRI data — not targeted during training — constitutes the kind of unexpected discovery that characterizes Nature's top-tier publications.</li>
+      <li><b>Timely and societally significant:</b> as LLMs are increasingly deployed in consequential settings, understanding the extent to which they can model human cognition carries immediate ethical and scientific weight.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>Psych-101</strong> — curated by the authors from 160 published psychological experiments, covering domains including multi-armed bandits, decision-making, memory, supervised learning, Markov decision processes, logical reasoning, moral decision-making, and economic games. All experiments were manually transcribed into natural language by the authors.</dd>
+      <dt>Scale</dt><dd><strong>60,092 participants</strong> making <strong>10,681,650 choices</strong>, yielding <strong>253,597,411 text tokens</strong>. 90% of participants per experiment used for training; 10% held out for evaluation.</dd>
+      <dt>fMRI data (neural alignment)</dt><dd>Two-step task fMRI from <strong>94 participants</strong>, each making 300 choices (from ref. 37, a previously published dataset). Sentence-reading fMRI from <strong>5 participants</strong> reading 1,000 sentences across 20 runs and 2 scanning sessions (from ref. 38).</dd>
+      <dt>Base model</dt><dd><strong>Llama 3.1 70B</strong> (Meta AI, open-source) — fine-tuned using QLoRA (quantized low-rank adaptation, rank r = 8) for one epoch on an A100 80 GB GPU over approximately 5 days. A smaller <strong>Minitaur</strong> (Llama 3.1 8B) is also released.</dd>
+      <dt>Out-of-distribution tests</dt><dd>6 additional evaluation paradigms not in training: moral decision-making, economic games, naturalistic category and reward learning, behavioural propensities, and a deep sequential decision task — all published previously by other groups.</dd>
+      <dt>Response times</dt><dd>Nearly <strong>4,000,000 response times</strong> extracted from a subset of Psych-101 experiments for auxiliary temporal analysis.</dd>
+      <dt>Data availability</dt><dd>Psych-101 training set: <a href="https://huggingface.co/datasets/marcelbinz/Psych-101" target="_blank">HuggingFace (CC-BY)</a>. Test set: gated repository under CC-BY-ND-4.0 at <a href="https://huggingface.co/datasets/marcelbinz/Psych-101-test" target="_blank">HuggingFace</a>. Centaur adapter: <a href="https://huggingface.co/marcelbinz/Llama-3.1-Centaur-70B-adapter" target="_blank">HuggingFace</a>. Code: <a href="https://github.com/marcelbinz/Llama-3.1-Centaur-70B" target="_blank">GitHub</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Psych-101</td><td>Fine-tuning corpus (human behavioural trials in natural language)</td><td>160 experiments; 60,092 participants; 10,681,650 choices; 253,597,411 tokens</td><td><a href="https://huggingface.co/datasets/marcelbinz/Psych-101" target="_blank">HuggingFace</a></td></tr>
+        <tr><td>Psych-101-test</td><td>Held-out evaluation set (gated)</td><td>10% of participants per experiment; CC-BY-ND-4.0</td><td><a href="https://huggingface.co/datasets/marcelbinz/Psych-101-test" target="_blank">HuggingFace</a></td></tr>
+        <tr><td>Two-step task fMRI (ref. 37)</td><td>Neural alignment — whole-brain fMRI during decision task</td><td>94 participants, 300 choices each; Schaefer 2018 atlas, 100 ROIs</td><td>Previously published dataset</td></tr>
+        <tr><td>Sentence-reading fMRI (ref. 38)</td><td>Neural alignment — language network encoding</td><td>5 participants; 1,000 sentences; 20 runs; 2 sessions</td><td>Publicly available code/data</td></tr>
+        <tr><td>CogBench (ref. 33)</td><td>Out-of-distribution benchmark (10 behavioural metrics)</td><td>7 cognitive psychology experiments</td><td>Published benchmark</td></tr>
+        <tr><td>metabench (ref. 34)</td><td>ML benchmark stability check</td><td>ARC, GSM8K, HellaSwag, MMLU, Winogrande, TruthfulQA</td><td>Published benchmark</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all numerical counts above are taken verbatim from the article. The fMRI datasets were collected by third parties and used with permission; Psych-101 was assembled by manually transcribing 160 publicly available trial-level datasets.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Dataset construction (Psych-101):</b> 160 published psychological experiment datasets were transcribed into a common natural-language format by the authors, encoding each trial's instructions and participant responses as text prompts up to 32,768 tokens.</li>
+      <li><b>Fine-tuning with QLoRA:</b> Llama 3.1 70B was fine-tuned using quantized low-rank adaptation (4-bit quantized base, rank-8 LoRA adapters on all linear layers of attention and feedforward networks, adding 0.15% new parameters). Loss was masked to human-response tokens only; training ran for one epoch using AdamW-8bit optimizer, batch size 32, learning rate 5×10<sup>−5</sup>.</li>
+      <li><b>Behavioural evaluation:</b> goodness-of-fit measured by negative log-likelihood averaged over responses; one-sided t-tests used throughout (directional hypotheses). Open-loop simulations (model outputs fed back as inputs) provide a stronger falsification test.</li>
+      <li><b>Generalization probes:</b> three levels of out-of-distribution evaluation — (1) modified cover stories, (2) structural task modifications (two-armed to three-armed bandits), (3) entirely new domains (logical reasoning). Additionally validated on 6 further unseen paradigms.</li>
+      <li><b>Neural alignment:</b> regularized linear regression from model residual-stream representations (PCA-reduced to 95% variance) to ROI-averaged fMRI betas; repeated per participant and region; Schaefer 2018 100-ROI atlas; fMRI preprocessed with fMRIPrep 24.0.</li>
+      <li><b>Model-guided scientific discovery:</b> scientific regret minimization pipeline — DeepSeek-R1 generates verbal hypotheses from Psych-101 data, formalized as computational models, then refined by identifying responses Centaur predicts well but the candidate model does not; evaluated with AIC and protected exceedance probability (group-level model selection).</li>
+      <li><b>Response-time prediction:</b> linear mixed-effects models predicting log response times from log response entropies derived from each model; conditional R<sup>2</sup> used to compare Centaur, Llama, and domain-specific models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig1.png" target="_blank">
+        <img src="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig1.png" alt="Fig.1 Overview of Psych-101 and Centaur" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of Psych-101 and Centaur — dataset composition across 160 experiments and domains, and the QLoRA fine-tuning architecture adding low-rank adapters to Llama 3.1 70B.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig2.png" target="_blank">
+        <img src="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig2.png" alt="Fig.2 Goodness-of-fit on Psych-101" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Goodness-of-fit on Psych-101 — Centaur vs. Llama vs. domain-specific cognitive models; open-loop simulations on horizon task, two-step task, and social prediction game.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig3.png" target="_blank">
+        <img src="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig3.png" alt="Fig.3 Evaluation in different held-out settings" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Evaluation in held-out settings — generalization to modified cover stories (magic carpets), structural modifications (three-armed bandit), and entirely new domains (LSAT logical reasoning).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig4.png" target="_blank">
+        <img src="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig4.png" alt="Fig.4 Human alignment" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Human alignment — CogBench multidimensional scaling; Pearson correlations of Centaur representations with fMRI activity in two-step task and sentence-reading task across layers.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig5.png" target="_blank">
+        <img src="assets/a-foundation-model-to-predict-and-capture-human-cognition__s41586-025-09215-4/fig5.png" alt="Fig.5 Model-guided scientific discovery" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Model-guided scientific discovery — AIC comparison across cognitive model generations; DeepSeek-R1-generated strategy; scientific regret minimization refinement to a weighted heuristic model.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0 in main text); Extended Data Table 1 reports Psych-101 per-experiment metrics.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable ML, physics-informed graph learning, urban health policy).</p>
+
+    <div class="idea">
+      <h3>① Build a "GeoSocial-101" to extend Psych-101 into spatially situated human decisions</h3>
+      <p><span class="lab paper">Extending this paper</span>Psych-101's 160 experiments are almost entirely from laboratory paradigms with no geographic context. Yet many real-world human decisions — choosing a healthcare provider, selecting a transit route, evaluating a neighbourhood's safety — are fundamentally spatial. A direct extension of this paper: curate a spatially situated behavioural corpus ("GeoSocial-101") of human decisions drawn from mobility trajectories, facility-choice experiments, and urban field studies, transcribed in natural language with place-context injected as text (e.g., "You are at [location]; the nearest hospital is 12 minutes away"). Fine-tuning Centaur on this corpus would test whether the foundation model's generalization ability extends to geographic cognition and spatial heuristics — a domain entirely absent from current Psych-101.</p>
+      <p><span class="lab mine">Added value to my research</span>This extension maps directly onto my agenda in spatial accessibility and health geography. A Centaur variant fine-tuned on spatially framed decisions could serve as a <strong>surrogate patient decision model</strong> — predicting which healthcare facility an individual would realistically choose under different access conditions. This would make my 2SFCA/R2SFCA accessibility metrics behaviourally grounded rather than purely geometric, connecting the supply-side accessibility measure to revealed demand-side preference. It also aligns with my interest in digital divides: telehealth adoption is a choice governed by cognitive and situational factors that Centaur could model.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Discovering cognitive strategies with tiny recurrent neural networks — <a href="https://doi.org/10.1038/s41586-025-09142-4" target="_blank">10.1038/s41586-025-09142-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use Centaur's scientific regret minimization to discover interpretable urban accessibility heuristics</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that Centaur + scientific regret minimization can uncover new, interpretable cognitive models in decision science — specifically discovering a weighted heuristic combination no prior study had formalized. The same pipeline is domain-agnostic: given any human behavioural dataset expressible in natural language, Centaur acts as a black-box oracle and the regret-minimization loop identifies where a parsimonious model fails. Extending the paper: apply this pipeline to urban mobility and service-choice experiments, where participants decide which facility to visit (e.g., primary-care clinic, transit stop, grocery store). Centaur would surface the implicit heuristics people actually use for spatial accessibility decisions — not the theoretical models researchers assume.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work focuses on post-hoc attribution (SHAP, MGWR) of spatial prediction models. Centaur's regret-minimization pipeline offers a <strong>complementary, theory-discovery approach</strong>: instead of explaining a trained ML model, it generates candidate cognitive theories of spatial behaviour directly from data. This could validate or challenge the distance-decay assumptions embedded in my R2SFCA service-area delineation — if Centaur reveals that real accessibility heuristics are non-monotonic in distance (e.g., people ignore facilities beyond a salience threshold regardless of proximity), that finding would fundamentally reshape how I parametrize catchment areas.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-timescale reinforcement learning in the brain — <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Probe Centaur's representations to map neural correlates of spatial decision-making</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that Centaur's internal representations, although trained only on behaviour, align with human fMRI activity in decision-relevant regions (accumbens, medial PFC, motor cortex). This alignment is stronger than domain-specific cognitive models and holds across unrelated tasks (sentence reading). Extending it: run Centaur on spatial navigation and facility-choice experiments where participants make route-planning or location-selection decisions while undergoing fMRI, then decode the resulting neural activity from Centaur's residual stream layer by layer. This would identify which layers encode spatial distance, which encode option salience, and which encode the eventual choice — providing a neural map of cognitive geography that purely behavioural models cannot offer.</p>
+      <p><span class="lab mine">Added value to my research</span>This bridges my spatiotemporal kernel density estimation work with neuroscience: if Centaur's intermediate layers best predict activation in hippocampal and entorhinal cortex — the brain's spatial computation hub — that would suggest that the spatially-sensitive layers of a behavioural foundation model implicitly learn place-cell-like representations. Such a finding would motivate incorporating <strong>cognitive map priors</strong> into my physics-informed graph learning framework, replacing ad hoc spatial autocorrelation assumptions with neurally plausible spatial encoding structures.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Domain generality is an emergent, not inherent, property of metacognition — <a href="https://doi.org/10.1038/s41562-026-02443-2" target="_blank">10.1038/s41562-026-02443-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Fine-tune a Minitaur on urban survey and mobility data to simulate socio-demographic heterogeneity in accessibility research</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper acknowledges a major limitation: Psych-101 is heavily biased toward WEIRD (Western, Educated, Industrialized, Rich, Democratic) populations, and individual-difference covariates (age, personality, socioeconomic status) are largely absent from its prompts. The authors explicitly plan to include such information in future iterations. Extending the paper in the urban-health direction: construct a socio-demographically stratified supplement to Psych-101 using urban survey instruments (transport surveys, facility-satisfaction questionnaires, health-seeking behaviour interviews) that include participant demographics, and fine-tune Minitaur on it. Minitaur's lower compute footprint (Llama 3.1 8B, free Colab GPU) makes this feasible without institutional HPC.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on telehealth digital divides and mental health accessibility routinely grapples with how socio-demographic factors modulate effective access — not just physical proximity. A demographically aware Centaur/Minitaur could serve as a <strong>synthetic population simulator</strong>: given a proposed facility-siting plan, it would predict uptake stratified by age, income, and digital literacy — enabling equity-aware facility-location optimization beyond the geometric accessibility scores my 2SFCA models currently produce. This directly complements my Monte Carlo and agent-based modeling methods with a behaviourally realistic demand layer.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Language models transmit behavioural traits through hidden signals in data — <a href="https://doi.org/10.1038/s41586-026-10319-8" target="_blank">10.1038/s41586-026-10319-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Evaluate Centaur's moral competence on equity-relevant urban decision scenarios</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper includes moral decision-making as one of its out-of-distribution evaluations (Extended Data Fig. 4a), and Centaur significantly outperforms Llama (t(181,388) = −103.54, P ≤ 0.0001). However, the moral scenarios evaluated are abstract trolley-problem-style dilemmas disconnected from distributive justice or resource allocation. Extending the paper: subject Centaur to equity-relevant urban decision scenarios — e.g., "Should a new clinic be sited in an affluent area with high demand or an underserved area with low baseline access?" — and compare its responses to both human participants and domain-specific equity models. A roadmap for systematically evaluating such competence already exists in the corpus, providing an evaluation methodology to adopt directly.</p>
+      <p><span class="lab mine">Added value to my research</span>My EV charging station and healthcare accessibility work explicitly trades off efficiency against equity. Centaur's moral competence probe, applied to urban resource-allocation scenarios, would reveal whether foundation models encode distributive preferences that align with — or conflict with — the utilitarian objectives embedded in my optimization algorithms. If Centaur's implicit preferences systematically favour equity over efficiency in health scenarios, it could serve as a <strong>value-aligned constraint generator</strong>: generating verbal policy principles from behavioural data that can be formalized into multi-objective optimization constraints, grounding my spatial optimization work in human values rather than externally imposed welfare weights.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A roadmap for evaluating moral competence in large language models — <a href="https://doi.org/10.1038/s41586-025-10021-1" target="_blank">10.1038/s41586-025-10021-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

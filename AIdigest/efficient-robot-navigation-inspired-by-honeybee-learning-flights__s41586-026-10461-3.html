@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efficient robot navigation inspired by honeybee learning flights — AI Digest</title>
+<meta name="description" content="AI Digest: Efficient robot navigation inspired by honeybee learning flights (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Bio-inspired robotics</span>
+      <span class="tag">Visual homing</span>
+      <span class="tag">Tiny neural networks</span>
+      <span class="tag">Path integration</span>
+    </div>
+    <h1>Efficient robot navigation inspired by honeybee learning flights</h1>
+    <div class="meta">
+      <span class="authors">Dequan Ou · Jesse J. Hagenaars · Maciej R. Jankowski · Michiel V. M. Firlefyn · Christophe De Wagter · Florian T. Muijres · Jacqueline Degen · Guido C. H. E. de Croon</span>
+      <span><b>Published</b> 2026-05-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10461-3" target="_blank">10.1038/s41586-026-10461-3</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10461-3" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>"Bee-Nav" is a <strong>highly efficient robot navigation strategy</strong> inspired by honeybee learning flights: a tiny onboard neural network (3.4–42.3 kB) is self-supervised on omnidirectional images during a brief learning flight, learning to map visual scenes directly to home vectors via path integration. In real-world indoor and outdoor experiments, a small drone returned to within <strong>0.5 m of home in 100% of 30–110 m flights</strong> and 70% of 200–600 m flights under windy conditions — achieving navigation at <strong>three orders of magnitude lower memory</strong> than state-of-the-art map-based methods while requiring only 0.25–10% of the total flight area for the learned homing area.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Democratizes long-range autonomous navigation.</b> State-of-the-art map-based navigation requires high-end GPUs or laptops; Bee-Nav runs on a Raspberry Pi 4 with a 3.4 kB network, making centimetre-precision homing feasible for ultra-lightweight drones.</li>
+      <li><b>Closes the gap between biological efficiency and robotic capability.</b> Honeybees navigate kilometres with a brain of about 1 million neurons; Bee-Nav formalizes the dual path-integration + view-memory architecture computationally and demonstrates it in hardware.</li>
+      <li><b>Self-supervised, infrastructure-free, and open.</b> Training uses only onboard odometry as labels — no GPS, no external positioning — and the full codebase is released at <a href="https://github.com/tudelft/Bee-Nav" target="_blank">github.com/tudelft/Bee-Nav</a>.</li>
+      <li><b>Opens biological questions.</b> The paper's theoretical result — that imperfect path-integration targets predict tortuous visual homing trajectories — provides a falsifiable hypothesis about insect neuroethology and the formation of cognitive maps.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Genuinely cross-disciplinary:</b> the work bridges aerospace engineering, animal behaviour (neuroethology), and machine learning in a single hardware-demonstrated system — a hallmark of Nature-level contributions.</li>
+      <li><b>Landmark performance numbers:</b> three orders of magnitude memory reduction and 100% homing success in real outdoor tests represent clear, reproducible advances over the prior state of the art.</li>
+      <li><b>Biological insight beyond robotics:</b> the analysis of learning-induced trajectory tortuosity provides a new hypothesis about insect navigation mechanisms, giving the paper dual impact in biology and engineering.</li>
+      <li><b>Fully open science:</b> code and all robotic experimental data deposited at 4TU.ResearchData and GitHub, meeting Nature's open-data expectations.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulation data</dt><dd><strong>NVIDIA Isaac Sim</strong> — visually realistic simulator with 10 randomly generated forest environments (40 trees each in a 50 × 50 m area); 1,000 simulated foraging flights per noise setting; 800 visual homing runs (16 runs × 5 radius factors × 10 environments). Simplified numerical simulator for path-integration drift statistics.</dd>
+      <dt>Robot experimental data</dt><dd>All robotic flight data deposited at <strong>4TU.ResearchData</strong> (<a href="https://doi.org/10.4121/a0217a20-0443-48b2-8a04-9609ac267029" target="_blank">doi:10.4121/a0217a20-0443-48b2-8a04-9609ac267029</a>). Includes flights across 6 environments: CyberZoo (10 × 10 m, TU Delft), two indoor hangars (30 × 40 m and 30 × 25 m), one outdoor tennis court (35 × 20 m, Sardinia), and one large outdoor field (400 × 500 m permissible area, Unmanned Valley Valkenburg).</dd>
+      <dt>Ground-truth systems</dt><dd>OptiTrack motion capture (indoor, CyberZoo); Holybro F9P GPS module (outdoor). Onboard odometry via PMW3901 optical flow + TFmini-S LiDAR + Pixhawk 6C Mini EKF.</dd>
+      <dt>Biological reanalysis</dt><dd>Reanalysis of published honeybee learning and foraging flight data (source cited in paper; raw biological data available from corresponding authors on request).</dd>
+      <dt>Satellite basemap</dt><dd><strong>Esri World Imagery</strong> (sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP) used for background map visualization in Fig. 4.</dd>
+      <dt>Codebase</dt><dd>All simulation, onboard, training and evaluation code: <a href="https://github.com/tudelft/Bee-Nav" target="_blank">github.com/tudelft/Bee-Nav</a>.</dd>
+      <dt>Neural network sizes</dt><dd>Compact network: 868 parameters, 3.4 kB. Attention network: 10,820 parameters, 42.3 kB. Input: 3 × 192 × 1,800-pixel omnidirectional panoramic images.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>NVIDIA Isaac Sim</td><td>Visually realistic simulation environment</td><td>10 forest environments, 800 homing runs</td><td><a href="https://developer.nvidia.com/isaac-sim" target="_blank">NVIDIA Isaac</a></td></tr>
+        <tr><td>4TU.ResearchData repository</td><td>All robotic experimental flight data</td><td>6 environments, 30–600 m flights</td><td><a href="https://doi.org/10.4121/a0217a20-0443-48b2-8a04-9609ac267029" target="_blank">4TU doi</a></td></tr>
+        <tr><td>Bee-Nav GitHub codebase</td><td>Simulation, onboard robot, training &amp; evaluation</td><td>Full pipeline, open source</td><td><a href="https://github.com/tudelft/Bee-Nav" target="_blank">github.com/tudelft</a></td></tr>
+        <tr><td>Esri World Imagery</td><td>Satellite basemap for flight trajectory visualization</td><td>Fig. 4 outdoor area map</td><td><a href="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" target="_blank">ArcGIS Online</a></td></tr>
+        <tr><td>Biological honeybee flight data</td><td>Reanalysis to validate path-integration learning hypothesis</td><td>Published dataset; details on request</td><td>Corresponding authors</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact trial counts are taken verbatim from the article. The paper reports no single census/country dataset; data are robotic sensor logs and simulation outputs.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Self-supervised visual learning:</b> during a brief "learning flight" around the home location, a convolutional neural network is trained to map omnidirectional camera images directly to a 2D home vector, using path-integration-derived odometry as the training target — no external labels required.</li>
+      <li><b>Path integration with Gaussian noise modelling:</b> heading drift modelled as <em>N</em>(0, t·σ²_ψ) accumulated over time; distance noise as <em>N</em>(0, d·σ²_d); parameters fit to real robot odometry, then tested across scaled variants and literature-reported insect values.</li>
+      <li><b>Learned homing area (LHA) analysis:</b> simulation of 1,000 outbound flights to characterize the 99th-percentile inbound end-point distribution; ratio of LHA area to total flight area quantified across noise levels and compass/compass-less configurations.</li>
+      <li><b>Compact and attention convolutional architectures:</b> compact network — 4 convolutional layers + 1 fully connected, 868 parameters; attention network — 2 custom Inception modules with spatial attention + 2 convolutional + 2 fully connected layers, 10,820 parameters; both take 3 × 192 × 1,800 panoramic input.</li>
+      <li><b>Virtual rotation data augmentation:</b> each captured panoramic image is horizontally shifted in 1° increments, generating 360 synthetic training samples with recomputed labels — enabling a small number of physical captures to train effectively.</li>
+      <li><b>Wind correction:</b> model-based (pitch/roll from EKF → unwarping centre offset) and vision-based (horizon detection) methods dynamically correct camera tilt-induced image distortions during outdoor high-wind conditions.</li>
+      <li><b>Comparison baselines:</b> snapshot-based homing (exhaustive rotational image matching against a single home snapshot) and a "perfect memory" method (exhaustive matching against all 147 learning-flight snapshots); additionally compared with a mushroom-body-inspired bioplausible network.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig1.png" target="_blank">
+        <img src="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig1.png" alt="Fig.1 Illustration of Bee-Nav strategy inspired by honeybee learning flights" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Illustration of Bee-Nav — the four-phase navigation strategy (learning flight, outbound, inbound, visual homing) compared with honeybee foraging behaviour.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig2.png" target="_blank">
+        <img src="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig2.png" alt="Fig.2 Simulations of homing flights showing efficiency and effectiveness" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Simulation results — LHA-to-total-area ratio as a function of path-integration noise; visual homing success across 10 forest environments with 800 runs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig3.png" target="_blank">
+        <img src="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig3.png" alt="Fig.3 Real-world visual homing experiments in CyberZoo" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> CyberZoo indoor experiments — 48 homing flights across 6 learning configurations; angular and distance prediction errors per step.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig4.png" target="_blank">
+        <img src="assets/efficient-robot-navigation-inspired-by-honeybee-learning-flights__s41586-026-10461-3/fig4.png" alt="Fig.4 Full navigation strategy experiments in diverse environments" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Full-pipeline real-world experiments — indoor hangar time-lapse, GPS trajectory in 400 × 500 m outdoor field, and homing success rates across all environments.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 in main text (Extended Data Table 1 compares learning set-ups and navigation performance; available as extended data).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal accessibility, explainable &amp; physics-informed graph learning, spatial agent-based modelling).</p>
+
+    <div class="idea">
+      <h3>① Replace the fixed learning-flight trajectory with a reinforcement-learned exploration policy</h3>
+      <p><span class="lab paper">Extending this paper</span>Bee-Nav uses a pre-programmed wasp-like spiral pattern for the learning flight, which the authors acknowledge does not replicate actual honeybee trajectories. This is a significant limitation: the learning data distribution is entirely determined by trajectory geometry. A direct extension of the paper is to treat the learning flight itself as a <strong>decision process</strong> — where the drone actively selects waypoints to maximise the informativeness of the training set (information gain about home vectors given current odometry uncertainty) via a learned or model-based policy. Such active learning of the exploration trajectory would mirror the adaptive nature of real honeybee learning flights, likely reducing the required LHA size further and improving homing robustness for a given number of images. The corpus's microrobot RL work shows that model-based RL with compact world models can drive efficient navigation in constrained settings analogous to this problem.</p>
+      <p><span class="lab mine">Added value to my research</span>In urban accessibility modelling, the analogous challenge is <strong>active survey design</strong>: where should a mobile sensing unit (drone, vehicle, field worker) sample to maximally reduce uncertainty in a spatial accessibility surface? The Bee-Nav framework — self-supervised learning of a spatial quantity (home vector) from an optimized exploration trajectory — directly maps onto spatiotemporal sampling strategies for my R2SFCA and MGWR models, where the "home vector" becomes a service-access estimate and the "learning flight" becomes an optimised field-data collection route.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Model-based reinforcement learning for ultrasound-driven autonomous microrobots — <a href="https://doi.org/10.1038/s42256-025-01054-2" target="_blank">10.1038/s42256-025-01054-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Transfer Bee-Nav's self-supervised odometry-to-label paradigm to GPS-denied urban sensing</h3>
+      <p><span class="lab paper">Extending this paper</span>Bee-Nav's core innovation is self-supervised learning: the drone labels its own training images using onboard odometry, achieving GPS independence. The paper demonstrates this in controlled indoor and outdoor environments, but does not address scenarios with rich, structured visual environments at urban scale. An extension of the paper is to deploy Bee-Nav-style drones for <strong>autonomous infrastructure inspection in GPS-challenged urban canyons</strong> (street canyons, parking structures, underground facilities), where the compact network's low memory footprint would allow operation on microcontrollers embedded in sensor nodes. The paper's wind-correction algorithm and the path-integration noise model would need to be extended for the multi-path RF and vibration noise typical of urban canyon environments. The fiber-optic urban sensing corpus paper provides a complementary passive sensing perspective that such active drone sensing could augment.</p>
+      <p><span class="lab mine">Added value to my research</span>My research on urban sensing and multi-source data fusion (mobile phone, remote sensing, GPS trajectories) could incorporate <strong>autonomous drone surveys using Bee-Nav-style edge inference</strong> as a new data collection modality. Rather than relying solely on static sensors or crowd-sourced mobility traces, tiny navigating drones with onboard visual processing could deliver high-spatial-resolution snapshots of POI states (open/closed, queue length, accessibility conditions) to feed my 2SFCA service-area delineation models in near-real time — without cloud connectivity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Urban sensing using existing fiber-optic networks — <a href="https://doi.org/10.1038/s41467-025-57997-y" target="_blank">10.1038/s41467-025-57997-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Scale Bee-Nav from a single home to a multi-place cognitive map with vector arithmetic</h3>
+      <p><span class="lab paper">Extending this paper</span>The authors themselves identify as future work the extension from a single home-vector to a multi-place map, noting that if two places are stored in a global home-centred frame, "simple vector subtraction" suffices to compute place-to-place shortcuts. The paper provides the computational foundation — a compact network that regresses a 2D Cartesian home vector — but stops short of the multi-place case. A concrete extension: train one compact network per landmark place of interest simultaneously during a single extended learning flight that visits several locations, using the same self-supervised path-integration labelling. Vector subtraction then yields novel shortcuts. The corpus paper on bio-inspired gait strategies for quadruped locomotion demonstrates how biological locomotion principles can be encoded into learnable, modular neural policies — the same principle applies here to modular multi-place navigation networks.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-place vector-map architecture directly parallels my agent-based modelling of <strong>job-housing network flows</strong> and facility accessibility: multiple "home locations" (workplaces, healthcare facilities, schools) connected by learned transition vectors form an implicit spatial graph. Encoding this as a Bee-Nav-style network would give an <strong>edge-deployable, real-time spatial accessibility estimator</strong> that operates on visual feeds without any GIS server infrastructure — highly relevant for low-resource healthcare facility navigation in data-sparse settings.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning to adapt through bio-inspired gait strategies for versatile quadruped locomotion — <a href="https://doi.org/10.1038/s42256-025-01065-z" target="_blank">10.1038/s42256-025-01065-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Link Bee-Nav's tortuous homing trajectories to hippocampal cognitive-map theory</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's theoretical analysis predicts that self-supervised learning on imperfect path-integration targets produces tortuous visual homing trajectories — a finding it preliminarily validates against published honeybee data but does not experimentally isolate as a causal mechanism. A deeper extension of the paper: design a <strong>closed-loop neuroethology experiment</strong> in which the path-integration system of tethered bees is pharmacologically or optogenetically perturbed during learning flights, and the resulting inbound trajectories are compared with the Bee-Nav model's predictions for the corresponding noise level. The corpus paper on learning producing an orthogonalized state machine in the hippocampus provides the theoretical framing: if the hippocampus encodes place as orthogonalized state-machine transitions, Bee-Nav's home-vector network can be interpreted as a minimal implementation of that principle in silicon, allowing quantitative comparison between neural and artificial representations.</p>
+      <p><span class="lab mine">Added value to my research</span>This neuroscience-robotics bridge has a direct methodological analogue in my <strong>spatiotemporal kernel density estimation</strong> work: the "drift" in path integration is structurally identical to the bandwidth uncertainty in KDE — both are models of how a continuous estimate degrades as one moves away from observed data points. Formalizing this link would allow me to borrow Bee-Nav's theoretical analysis of drift-induced tortuosity as a principled framework for <strong>quantifying how far from training observations a spatial KDE or MGWR model can be trusted to extrapolate</strong>.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning produces an orthogonalized state machine in the hippocampus — <a href="https://doi.org/10.1038/s41586-024-08548-w" target="_blank">10.1038/s41586-024-08548-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply Bee-Nav's lightweight model philosophy to equitable spatial planning via swarm drones</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper envisions swarms of small Bee-Nav drones for crop monitoring and warehouse inventory. An extension of the paper that addresses a more socially consequential application: <strong>equity-aware swarm deployment</strong> for distributed mapping of service accessibility in underserved areas (informal settlements, peri-urban regions, disaster zones). The key question this paper leaves open is how Bee-Nav's single-home-centric strategy scales to multi-robot coordination where robots must partition a large area, share learned visual maps, and jointly cover the space without redundancy. Adding a lightweight inter-robot communication protocol (inspired by bee waggle-dance communication) that broadcasts compact network weights rather than raw images would reduce total communication overhead dramatically. The spatial planning deep-RL corpus paper provides the algorithmic framework for jointly optimising the spatial distribution of such a drone swarm across a target area.</p>
+      <p><span class="lab mine">Added value to my research</span>My EV charging-station efficiency-versus-equity optimization work and public-facility accessibility studies face a core challenge: identifying underserved locations requires data that are themselves spatially biased toward areas with existing infrastructure. A swarm of Bee-Nav-style drones conducting systematic visual surveys of POI presence and condition in data-sparse areas — guided by a deep-RL spatial planner — would provide the <strong>unbiased ground-truth accessibility observations</strong> that my 2SFCA and explainable ML models need to reduce spatial data inequality and produce fairer urban health policy recommendations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning — <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

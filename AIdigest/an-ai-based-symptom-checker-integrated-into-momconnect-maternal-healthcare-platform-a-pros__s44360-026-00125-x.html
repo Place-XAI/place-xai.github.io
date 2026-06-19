@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An AI-based symptom checker integrated into MomConnect — AI Digest</title>
+<meta name="description" content="AI Digest: An AI-based symptom checker integrated into MomConnect maternal healthcare platform (Nature Health, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Health</span>
+      <span class="tag">mHealth</span>
+      <span class="tag">Maternal Health</span>
+      <span class="tag">Clinical AI</span>
+      <span class="tag">Health Equity</span>
+    </div>
+    <h1>An AI-based symptom checker integrated into MomConnect maternal healthcare platform: a prospective, observational mixed-methods study</h1>
+    <div class="meta">
+      <span class="authors">Marcel Schmude · Stephen Gilbert · Caroline Moor Larsson · Noxolo Gqada · Kris Lemon · Lauren Kotze · Reza Omar · Ebrahim January · Doreen Schlagenhauf · Hila Azadzoy · Tauseef Mehrali · Leo Wolansky · Jane Sebidi · Vedika Kundi · François Bergey · Asmaa Foda · Fabienne Cotte</span>
+      <span><b>Published</b> 2026-06-16</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s44360-026-00125-x" target="_blank">10.1038/s44360-026-00125-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s44360-026-00125-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Integrating a Bayesian-network Diagnostic Decision Support System (DDSS) into South Africa's government WhatsApp maternal health platform <strong>MomConnect</strong> was associated with clinically safe advice in <strong>98.4% of 184 physician-reviewed cases</strong> and meaningfully improved health-seeking behaviour: 44.6% of users changed care-seeking intentions after use, safe behaviours rose by 18.1 percentage points, and the proportion who ultimately sought care climbed from 17.0% to 43.0% at one-week follow-up — even among the 86.3% of participants facing multiple barriers to care. Half of those who received treatment had not initially planned to seek it.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First large-scale, safety-rated evaluation of a patient-facing DDSS on a government LMIC platform.</b> A meta-analysis of 87 maternity clinical decision support studies found the evidence base to be almost entirely provider-facing; this is among the first prospective studies of a symptom-assessment tool given directly to patients in a low- and middle-income country.</li>
+      <li><b>Reaches the hardest-to-reach.</b> By embedding in WhatsApp — pre-installed, low-data, familiar — the study enrolled 968 women with high unemployment (64%), very low incomes (50% below ~US$97/month), and significant spatial/financial barriers; 86.3% faced three or more structural barriers to care.</li>
+      <li><b>Demonstrates behaviour change, not just intention change.</b> Unlike most mHealth trials that report only usage or intention shifts, this study tracks actual care-seeking at 1-week follow-up, showing 53.3% of treatment recipients had not initially planned to seek care — suggesting the DDSS surfaces genuinely unrecognized need.</li>
+      <li><b>Quantifies the gap between decision support and access.</b> Lower-income participants were significantly less likely to act safely (AOR 2.68 for higher income, P = 0.013) despite safe intentions, revealing financial constraints as the binding bottleneck — an important policy signal beyond the tool itself.</li>
+      <li><b>Policy-embedded and scalable.</b> The study is conducted within SA's National Department of Health MomConnect platform, which registers pregnancies nationally and serves over 250,000 queries per year — making adoption at scale a natural next step rather than a separate challenge.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Health (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Mixed-methods rigor in a hard-to-study population:</b> combines a physician panel safety benchmark, quantitative behaviour-change analysis, multivariable logistic regression, and thematic qualitative interviews — unusual depth for an mHealth LMIC study.</li>
+      <li><b>Directly addresses an SDG target:</b> South Africa's MMR of 127 per 100,000 exceeds the SDG 3 target of 70; the study frames clinical AI as a concrete policy instrument on that path.</li>
+      <li><b>Bridges clinical AI safety and public health equity:</b> Nature Health's scope sits at this intersection — the paper evaluates not just whether the tool works but for whom and under what structural constraints it fails to translate safe advice into safe action.</li>
+      <li><b>Government-industry collaboration model:</b> the NDOH–Ada Health–Reach partnership demonstrates how medical device companies can embed validated AI into existing public-health infrastructure — a governance and implementation model with broader applicability.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Study population</dt><dd><strong>968 pregnant women and mothers</strong> enrolled May–June 2023 via MomConnect/WhatsApp, across South Africa (9 provinces). Participants aged 18–47 years (mean 26.9 years). 68.4% pregnant at assessment; 65.1% first-time pregnancies.</dd>
+      <dt>Geographic scope</dt><dd>All 9 South African provinces; 36.8% from Gauteng. Mapping used administrative boundaries from the <strong>Humanitarian Data Exchange</strong> (OCHA, <a href="https://data.humdata.org/dataset/cod-ab-zaf" target="_blank">data.humdata.org</a>). Location data available for 94.7% (917/968); participant locations geomasked via random spatial displacement for privacy.</dd>
+      <dt>Socioeconomic index</dt><dd><strong>International Wealth Index (IWI)</strong> (Smits &amp; Steendijk, 2015; <a href="https://globaldatalab.org/wealth/" target="_blank">Global Data Lab</a>) — asset-based measure of household economic status calculated via principal component analysis from survey responses.</dd>
+      <dt>Health system data</dt><dd><strong>District Health Barometer 2022/23</strong> (Health Systems Trust, <a href="https://www.hst.org.za/" target="_blank">hst.org.za</a>) — district-level indicators for all 52 South African districts: antenatal first-visit coverage, MMR in facilities, early neonatal mortality, physician density per 100,000 uninsured, hospital bed availability per 10,000 population.</dd>
+      <dt>Reference data</dt><dd>South Africa provincial MMR from World Bank World Development Indicators 2024 (<a href="https://data.worldbank.org/country/south-africa" target="_blank">data.worldbank.org</a>). National unemployment rate from Statista.</dd>
+      <dt>DDSS platform</dt><dd>Ada Health Diagnostic Decision Support System — Bayesian network with peer-reviewed medical knowledge base; integrated within MomConnect/WhatsApp. The system uses information-theoretical question selection to optimize diagnostic information gain.</dd>
+      <dt>Follow-up</dt><dd>1-week phone/WhatsApp follow-up survey; stratified phone subsample (n = 99): 50% random + 25% serious symptoms + 25% care-intention changers.</dd>
+      <dt>Physician panel</dt><dd>3 senior physicians (gynaecology/family medicine) reviewed a random subset of 184 cases in duplicate (third resolves disagreements).</dd>
+      <dt>Analysis tools</dt><dd>Python v3.12 and Microsoft Excel v16.92. Analysis scripts available from corresponding author on request. Individual participant data available upon signed data-sharing agreement from Ada Health (science@ada.com).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MomConnect platform surveys</td><td>Primary data — health-seeking intentions &amp; behaviour, socioeconomic baseline</td><td>968 enrolled; 785 at 1-week follow-up</td><td>Ada Health (upon request)</td></tr>
+        <tr><td>Physician panel ratings</td><td>Safety &amp; appropriateness benchmark for DDSS advice</td><td>184 randomly sampled cases, duplicate review</td><td>Ada Health (upon request)</td></tr>
+        <tr><td>District Health Barometer 2022/23</td><td>District-level health system capacity indicators (52 SA districts)</td><td>52 districts, South Africa</td><td><a href="https://www.hst.org.za/" target="_blank">hst.org.za</a></td></tr>
+        <tr><td>Humanitarian Data Exchange (OCHA)</td><td>South Africa subnational administrative boundaries for mapping</td><td>Province/district polygons, SA</td><td><a href="https://data.humdata.org/dataset/cod-ab-zaf" target="_blank">humdata.org</a></td></tr>
+        <tr><td>International Wealth Index (IWI)</td><td>Asset-based household wealth score for socioeconomic stratification</td><td>Global Data Lab, accessed 2026</td><td><a href="https://globaldatalab.org/wealth/" target="_blank">globaldatalab.org</a></td></tr>
+        <tr><td>World Bank WDI 2024</td><td>South Africa MMR and national reference statistics</td><td>National, 2024</td><td><a href="https://data.worldbank.org/country/south-africa" target="_blank">data.worldbank.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all socioeconomic and geographic figures above are taken verbatim from the article; no population-level geospatial raster datasets (e.g., WorldPop, remote sensing) were used — the study is a clinical/survey study embedded in an existing mHealth platform.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Prospective, observational mixed-methods design:</b> quantitative pre-/post-DDSS intention and behaviour measurement plus thematic analysis of phone interview transcripts, with embedded physician panel validation.</li>
+      <li><b>Bayesian network DDSS:</b> Ada Health's symptom-assessment engine derives disease probabilities via approximate inference, selecting follow-up questions by information-theoretical gain; outputs an eight-level urgency advice mapped to four levels for analysis.</li>
+      <li><b>Composite barrier score:</b> 0–9 point index combining five district-level health system indicators (from the District Health Barometer) and four individual-level socioeconomic variables, dichotomized against national averages; participants classified as minimal (0–2), moderate (3–5), or severe (6–9) barriers.</li>
+      <li><b>Primary endpoint — safety:</b> one-sample exact binomial test (Clopper–Pearson 95% CI) testing whether physician-rated unsafe advice rate is significantly below a 10% threshold (n = 184, power = 0.8, α = 0.05).</li>
+      <li><b>Behaviour change analysis:</b> Stuart–Maxwell test for paired categorical shifts; chi-squared tests for alignment between intention and behaviour; Fisher's exact tests for barrier subgroup comparisons with relative risk and Newcombe–Wilson CIs.</li>
+      <li><b>Multivariable logistic regression:</b> three models — upward change in urgency category vs. rest, downward change vs. rest, and safe behaviour — with predictors including baseline intent, DDSS urgency level, income, pregnancy status, employment, age, distance and cost to care; complete-case analysis with sensitivity checks.</li>
+      <li><b>IWI calculation:</b> principal component analysis on asset ownership items from the phone survey, consistent with Global Data Lab methodology.</li>
+      <li><b>Geographic mapping:</b> choropleth visualization of participant distribution overlaid with provincial MMR, IWI, and barrier scores using OCHA administrative boundaries.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/an-ai-based-symptom-checker-integrated-into-momconnect-maternal-healthcare-platform-a-pros__s44360-026-00125-x/fig1.png" target="_blank">
+        <img src="assets/an-ai-based-symptom-checker-integrated-into-momconnect-maternal-healthcare-platform-a-pros__s44360-026-00125-x/fig1.png" alt="Fig.1 STROBE-style participant flow diagram" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> STROBE-style participant flow diagram — recruitment, inclusion, follow-up and analysis samples with exclusion reasons and proportions.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/an-ai-based-symptom-checker-integrated-into-momconnect-maternal-healthcare-platform-a-pros__s44360-026-00125-x/fig2.png" target="_blank">
+        <img src="assets/an-ai-based-symptom-checker-integrated-into-momconnect-maternal-healthcare-platform-a-pros__s44360-026-00125-x/fig2.png" alt="Fig.2 Geographical distribution of study participants" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Choropleth maps showing participant distribution by South African province alongside provincial MMR, IWI, and composite barrier scores.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/an-ai-based-symptom-checker-integrated-into-momconnect-maternal-healthcare-platform-a-pros__s44360-026-00125-x/fig3.png" target="_blank">
+        <img src="assets/an-ai-based-symptom-checker-integrated-into-momconnect-maternal-healthcare-platform-a-pros__s44360-026-00125-x/fig3.png" alt="Fig.3 Sankey diagram for changes in care-seeking behaviour" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Sankey diagrams showing transitions from pre-DDSS care-seeking intention to actual behaviour at 1-week follow-up, with and without indeterminate responses.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 3 main-text tables (Table 1 — demographics; Table 2 — follow-up and treatment outcomes; Table 3 — intentions before/after DDSS and reported behaviour). Extended Data: 5 figures (screenshots, socioeconomic distribution, barrier histogram, contingency table, condition dot plots). Supplementary: Tables 1–7.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, spatial health equity, explainable ML, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>① Map the spatial inequality in DDSS impact using a barrier-informed accessibility model</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper's composite barrier score (0–9, combining district health system indicators and individual socioeconomics) captures heterogeneity but is treated as a single covariate in regression — it is never spatially modelled. A direct extension: treat each participant's barrier score and post-DDSS behaviour change as geospatial observations and fit a <strong>geographically weighted regression (GWR)</strong> to detect where DDSS impact is highest and lowest across South Africa's 52 districts. This would move the paper's finding — "income predicts unsafe behaviour, not intent" — from a global odds ratio to a spatially varying effect, pinpointing which provincial health systems the DDSS compensates for and which it cannot overcome alone.</p>
+      <p><span class="lab mine">Added value to my research</span> This is a canonical application of my <strong>MGWR/GWR</strong> toolkit to healthcare digital-divide mapping. The IWI and District Health Barometer provide ready-made covariates for a spatially non-stationary model of mHealth effectiveness. The resulting bandwidth maps translate directly into my telehealth/digital-divide accessibility agenda — identifying where AI decision support is a genuine substitute for proximity to primary care and where structural inequities dominate.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unequal spatial patterns and differentiated city roles in the intercity telemedicine system — <a href="https://doi.org/10.1038/s44284-026-00442-y" target="_blank">10.1038/s44284-026-00442-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace the fixed follow-up survey with a spatiotemporal kernel density model of care-seeking timing</h3>
+      <p><span class="lab paper">Extending this paper</span> The 1-week follow-up is the study's most important limitation — it cannot distinguish a rapid DDSS-triggered care visit (hours) from a slow, marginally-motivated one (days), nor can it capture relapses or additional symptoms that emerge later. Extending the paper: instrument a longitudinal cohort that logs care contact via electronic health records or clinic check-ins and apply <strong>spatiotemporal kernel density estimation</strong> to the resulting event streams, characterizing the temporal decay of DDSS influence on care-seeking as a function of urgency level and geographic distance to facility. This would replace the binary "sought care by Day 7" with a continuous, time-resolved dose-response curve.</p>
+      <p><span class="lab mine">Added value to my research</span> Spatiotemporal KDE on healthcare contact events is a direct extension of my spatiotemporal analysis methods. The decay function estimated from this data would provide an empirical, LMIC-calibrated version of the distance-decay parameters I currently assume in 2SFCA models — grounding catchment delineation in observed behavior rather than administrative radii.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Access to care affects electronic health record reliability and AI-driven disease prediction — <a href="https://doi.org/10.1038/s44360-026-00054-9" target="_blank">10.1038/s44360-026-00054-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Build a trust-stratified DDSS routing model using LLM-based natural language understanding</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper finds that 98.1% of users found the DDSS useful, but qualitative feedback reveals that trust in government clinics/hospitals (37%) and trustworthiness (17.4%) are what participants want most from health information. Yet the Bayesian DDSS does not adapt its communication style to trust level. A direct extension: integrate an <strong>LLM layer</strong> that reads the DDSS output and re-frames urgency recommendations with culturally appropriate motivational framing calibrated to the user's reported financial barrier level — analogous to the corpus study that co-designed an LLM chatbot for primary care with community input (randomized controlled trial).</p>
+      <p><span class="lab mine">Added value to my research</span> For my GeoAI research, this raises the question of how to <strong>fine-tune geospatial foundation models</strong> on local health-seeking behavior corpora. The MomConnect dataset (968 participants, multilevel barrier data, qualitative transcripts) is exactly the kind of culturally grounded, spatially tagged interaction log that could anchor a domain-specific fine-tuning of an LLM health agent for Sub-Saharan Africa — connecting my fine-tuning agenda to health equity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A community-codesigned LLM-powered chatbot for primary care: a randomized controlled trial — <a href="https://doi.org/10.1038/s44360-025-00021-w" target="_blank">10.1038/s44360-025-00021-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use explainable ML to decode why income dominates DDSS non-compliance, not geography</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper's logistic regression finds that household income (AOR 2.68, P = 0.013) — not distance to facility, not pregnancy trimester, not employment — predicts safe behaviour after DDSS use. This is a striking finding that the paper cannot fully explain. An extension: apply <strong>SHAP-based explainable ML</strong> to a richer feature matrix (including interaction terms between income × distance, income × urgency level, and income × barrier score) to decompose the pathway — does income moderate financial cost of travel, cognitive burden of acting on advice, or social network support? The District Health Barometer's district-level indicators can be cross-matched to individual data to add supply-side features.</p>
+      <p><span class="lab mine">Added value to my research</span> This is a direct application of my <strong>explainable machine learning for spatial prediction</strong> agenda to a health behaviour outcome. SHAP spatial interaction plots (SHAP values × geographic coordinate) would reveal whether the income effect is spatially uniform or concentrated in specific provinces — linking explainability to my GWR/MGWR spatial non-stationarity toolkit and generating policy-relevant heterogeneity maps.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A global survey on trust, digital health literacy and health information quality — <a href="https://doi.org/10.1038/s44360-026-00102-4" target="_blank">10.1038/s44360-026-00102-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Extend the safety-rating framework into an LLM clinical decision support benchmark for African primary care</h3>
+      <p><span class="lab paper">Extending this paper</span> The physician-panel safety framework (three blinded physicians, duplicated review, 8-level to 4-level urgency mapping) is a validated, replicable evaluation protocol for patient-facing diagnostic AI. The paper applies it to Ada Health's Bayesian DDSS; it can be directly extended to evaluate newer <strong>large language model-based clinical decision support systems</strong> in the same African primary care setting — the corpus contains a concurrent study doing exactly this in African primary care, offering a natural head-to-head comparison. Extending it: apply an identical protocol across DDSS architectures (Bayesian network vs. LLM), symptom categories, and language/literacy strata, producing a multi-arm comparative safety benchmark.</p>
+      <p><span class="lab mine">Added value to my research</span> For my <strong>open science / FAIR data</strong> agenda, the physician-panel protocol and the MomConnect barrier composite score represent reusable evaluation infrastructure: codifying them as an open benchmark would enable rigorous comparison of AI health tools in LMIC settings. This connects to my multi-source data fusion work — fusing electronic health records, survey data, and spatially referenced barrier scores into a FAIR dataset that other researchers can use to train and validate health AI for Sub-Saharan Africa.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Safety of a large language model-based clinical decision support system in African primary healthcare — <a href="https://doi.org/10.1038/s44360-026-00082-5" target="_blank">10.1038/s44360-026-00082-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

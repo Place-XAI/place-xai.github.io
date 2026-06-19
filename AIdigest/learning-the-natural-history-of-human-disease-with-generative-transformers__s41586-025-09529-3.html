@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning the natural history of human disease with generative transformers — AI Digest</title>
+<meta name="description" content="AI Digest: Learning the natural history of human disease with generative transformers (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Disease progression</span>
+      <span class="tag">Generative transformer</span>
+      <span class="tag">Multimorbidity</span>
+      <span class="tag">Explainable AI</span>
+    </div>
+    <h1>Learning the natural history of human disease with generative transformers</h1>
+    <div class="meta">
+      <span class="authors">Artem Shmatko · Alexander Wolfgang Jung · Kumar Gaurav · Søren Brunak · Laust Hvas Mortensen · Ewan Birney · Tom Fitzgerald · Moritz Gerstung</span>
+      <span><b>Published</b> 2025-09-17</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09529-3" target="_blank">10.1038/s41586-025-09529-3</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09529-3" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A GPT-based model called <strong>Delphi-2M</strong>, trained on <strong>402,799 UK Biobank participants</strong>, simultaneously predicts the rates of <strong>more than 1,000 diseases</strong> with accuracy matching single-disease clinical models. Its generative capacity enables sampling of <strong>synthetic future health trajectories for up to 20 years</strong>, enabling population-scale disease burden estimation and privacy-preserving AI training. Explainable AI (SHAP) reveals clusters of co-morbidities and their time-dependent consequences, but also exposes systematic biases inherited from UK Biobank's data-collection heterogeneity — underscoring that such models are powerful complements, not yet replacements, for clinical pipelines.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First population-scale, pan-disease generative health model.</b> Delphi-2M is the first transformer model to simultaneously predict rates across the <strong>full ICD-10 spectrum (&gt;1,000 diagnoses)</strong> for every individual, at every age — a qualitative leap beyond single-disease risk tools.</li>
+      <li><b>Generative trajectories unlock new use cases.</b> By sampling future health sequences, the model produces <strong>synthetic cohorts from birth</strong> that preserve population-level co-morbidity statistics without exposing personal data — directly enabling privacy-safe AI development.</li>
+      <li><b>Cross-national transferability without retraining.</b> Delphi-2M trained on UK data achieves AUC 0.67 on <strong>1.93 million Danish individuals</strong> with zero parameter changes — demonstrating that learned disease patterns generalize across healthcare systems.</li>
+      <li><b>Temporal XAI for epidemiology.</b> SHAP analysis at scale quantifies how each past diagnosis modulates future disease rates over time — revealing, for instance, that cancer elevates mortality for years while septicaemia's effect decays within 5 years.</li>
+      <li><b>Honest bias disclosure.</b> The paper explicitly characterizes "immortality bias," healthy-volunteer selection, data-source missingness artifacts, and demographic disparities — setting a transparency standard for health AI.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Broad scientific scope:</b> the work covers computational science, disease biology, and AI methodology simultaneously — matching Nature's cross-disciplinary mandate.</li>
+      <li><b>Population scale with rigorous external validation:</b> training on ~400 k individuals and validating on ~1.9 million from a different country with unchanged parameters is a rare methodological bar for biological AI papers.</li>
+      <li><b>Genuinely new capability:</b> generative sampling of synthetic health futures is a novel contribution to epidemiology, not an incremental improvement over existing risk tools.</li>
+      <li><b>Dual translational impact:</b> results feed directly into precision medicine (personalized risk stratification) <em>and</em> healthcare planning (projected disease burden at population level).</li>
+      <li><b>Open-science posture:</b> code (GitHub: <a href="https://github.com/gerstung-lab/delphi" target="_blank">gerstung-lab/delphi</a>) and model checkpoint are publicly released, matching Nature's reproducibility expectations.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training cohort</dt><dd><strong>UK Biobank</strong> — 502,538 participants recruited 2006–2010, aged 37–73 at recruitment. Delphi-2M used <strong>402,799 (80%)</strong> for training and <strong>100,639 (20%)</strong> for validation. Data span birth-to-2020; longitudinal testing on 471,057 alive participants up to July 2022. Restricted access: <a href="http://www.ukbiobank.ac.uk/using-the-resource/" target="_blank">ukbiobank.ac.uk</a>.</dd>
+      <dt>External validation</dt><dd><strong>Danish national registries</strong> (Danish National Patient Registry + Danish Register of Causes of Death) — <strong>1.93 million individuals</strong>, aged 50–80 on 1 January 2016, with disease records from <strong>1978 to 2018</strong>. Restricted access via Danish Health Data Authority: <a href="https://sundhedsdatastyrelsen.dk/da/english/health_data_and_registers/research_services/apply" target="_blank">sundhedsdatastyrelsen.dk</a>.</dd>
+      <dt>Disease vocabulary</dt><dd><strong>1,256–1,258 distinct ICD-10 level-3 codes</strong> covering chapters I–XVII plus neoplasms (chapter II from cancer registry); lifestyle tokens (sex, BMI, smoking, alcohol) add 12 further tokens.</dd>
+      <dt>Disease token volume</dt><dd>Danish dataset alone contributed <strong>11.51 million disease tokens</strong> across 796 ICD-10 codes (each with ≥25 cases); predictions evaluated on <strong>0.96 million tokens</strong>.</dd>
+      <dt>UK Biobank sub-sources</dt><dd>First-occurrence data assembled from primary care (cat. 3000), inpatient hospital admissions (cat. 2000), death registry (fields 40001/40002), self-report questionnaires (field 20002), and cancer registry (fields 40005/40006).</dd>
+      <dt>Comparison models</dt><dd>QRisk3, Score2, Prevent, Framingham (CVD); UKBDRS (dementia); Charlson/Elixhauser (death); MILTON (67-biomarker ML panel, 410 diseases); LLama3.1(8B); AutoPrognosis v2.0.</dd>
+      <dt>Availability</dt><dd>UK Biobank: restricted access by application. Danish registries: secure environment by application. Source data and code available publicly (see above).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>UK Biobank (UKB)</td><td>Model training &amp; internal validation</td><td>~503 k participants, 1978–2022; 402,799 training / 100,639 validation</td><td><a href="http://www.ukbiobank.ac.uk/using-the-resource/" target="_blank">ukbiobank.ac.uk</a></td></tr>
+        <tr><td>Danish National Patient Registry (LPR)</td><td>External cross-national validation</td><td>1.93 M individuals, 50–80 yrs, 1978–2018; 11.51 M disease tokens</td><td><a href="https://sundhedsdatastyrelsen.dk/da/english/health_data_and_registers/research_services/apply" target="_blank">sundhedsdatastyrelsen.dk</a></td></tr>
+        <tr><td>Danish Register of Causes of Death</td><td>Mortality ground truth (external)</td><td>National, since 1970, linked via CPR number</td><td><a href="https://sundhedsdatastyrelsen.dk/da/english/health_data_and_registers/research_services/apply" target="_blank">sundhedsdatastyrelsen.dk</a></td></tr>
+        <tr><td>ICD-10 code system (WHO)</td><td>Disease tokenization vocabulary</td><td>1,256 level-3 codes, chapters I–XVII + neoplasms</td><td>Open standard</td></tr>
+        <tr><td>UK Office for National Statistics (ONS)</td><td>Mortality reference for bias assessment</td><td>National UK population mortality rates</td><td><a href="https://www.ons.gov.uk/" target="_blank">ons.gov.uk</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: participant counts are taken verbatim from the article. The Danish data extract covers individuals aged 50–80 on 2016-01-01; the exact total Danish population size is 1.93 million as stated in the Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Modified GPT-2 architecture (Delphi):</b> replaces discrete positional encoding with <strong>continuous age encoding</strong> (sine/cosine basis), adds an <strong>exponential waiting-time output head</strong> for inter-event timing (competing-exponentials model), and amends causal attention masks to exclude same-time co-occurring tokens.</li>
+      <li><b>Multi-disease incidence prediction:</b> autoregressive next-token prediction across 1,258 states (ICD-10 codes + lifestyle + padding) yields calibrated per-day rate estimates for each disease, evaluated by age–sex-stratified AUC (average ≈ 0.76 internal; 0.67 external).</li>
+      <li><b>Generative trajectory sampling:</b> iterative sampling of (token, time) pairs from the competing-exponential model generates full synthetic health timelines, starting from birth or any partial history, for up to 20 years.</li>
+      <li><b>Scaling-law hyperparameter screen:</b> systematic grid over embedding dimensions, layers, and heads confirms optimal model size of ~2.2 M parameters for the UKB dataset size.</li>
+      <li><b>SHAP-based explainability:</b> PartitionExplainer SHAP applied to all 100,639 validation trajectories to quantify how each past diagnosis token shifts future disease rates — producing a 778 × 778 influence matrix per time horizon.</li>
+      <li><b>Bias and fairness analysis:</b> immortality/recruitment bias characterization, data-source missingness analysis, ethnic-background and deprivation-index stratified AUC, DeLong's method for CI estimation, and Bonferroni-corrected subgroup testing.</li>
+      <li><b>Cross-national zero-shot transfer:</b> UKB-trained weights applied to Danish data without parameter adjustment, with ICD-8-to-ICD-10 code mapping for pre-1995 Danish records.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig1.png" target="_blank">
+        <img src="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig1.png" alt="Fig.1 Delphi architecture and model design" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Delphi's modified GPT-2 architecture — health trajectory schematic, data splits, continuous-age encoding, scaling laws, and ablation results.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig2.png" target="_blank">
+        <img src="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig2.png" alt="Fig.2 Multi-disease incidence prediction accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Delphi-2M's accuracy across &gt;900 diseases — predicted rates for nine exemplary diagnoses, sex-stratified AUC curves, ICD-10 chapter breakdown, and comparison against MILTON and clinical risk scores.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig3.png" target="_blank">
+        <img src="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig3.png" alt="Fig.3 Generative modelling of future trajectories" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Generative modelling — trajectory simulation from age 60, incidence recapitulation at ages 70–75, lifestyle subgroup fold-changes, and synthetic-data training experiment.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig4.png" target="_blank">
+        <img src="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig4.png" alt="Fig.4 Explainable AI and disease progression insights" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Explainable AI insights — UMAP of token embeddings colored by ICD-10 chapter, individual SHAP trajectory example (pancreatic cancer 19×), full co-morbidity SHAP matrix, and time-decay of mortality influence.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig5.png" target="_blank">
+        <img src="assets/learning-the-natural-history-of-human-disease-with-generative-transformers__s41586-025-09529-3/fig5.png" alt="Fig.5 Epidemiological biases in UK Biobank" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Epidemiological biases — UKB vs Danish AUC comparison, immortality/selection bias in mortality estimates, data-source UpSet plot, and hospital-record missingness effects on Delphi predictions.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables (Tables = 0); Supplementary contains Tables 1–5 (cross-entropy ablations, all-disease AUCs, method comparison, subgroup biases, UKB field IDs) and Supplementary Figs. 1–12.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal accessibility, explainable ML, spatial equity, mobile-phone data fusion).</p>
+
+    <div class="idea">
+      <h3>① Fuse spatial access-to-care signals into Delphi's trajectory prompt</h3>
+      <p><span class="lab paper">Extending this paper</span>Delphi-2M conditions predictions on past ICD-10 tokens and a handful of lifestyle variables, but ignores the <strong>spatial context of care access</strong> — a patient's distance to a GP, specialist, or hospital. The paper itself shows that data-source missingness (GP records absent vs. present) creates systematic biases in predicted rates (Fig. 5e,f). A direct extension: add a <strong>geocoded care-access token</strong> (derived from each participant's residential area) to Delphi's input vocabulary, so the model can disentangle true disease risk from reporting artifacts caused by poor access. This turns the paper's acknowledged bias limitation into a solved modeling problem.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the precise intersection of health geography and disease-progression AI. My 2SFCA/R2SFCA accessibility measures — typically used to flag spatial gaps in primary care — become <strong>input features for a population health forecasting model</strong>, creating a bidirectional link: access measures drive disease-trajectory predictions, and trajectory outputs indicate future service demand. This operationalizes my accessibility research as a component in clinical AI rather than a standalone spatial analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Access to care affects electronic health record reliability and AI-driven disease prediction — <a href="https://doi.org/10.1038/s44360-026-00054-9" target="_blank">10.1038/s44360-026-00054-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use mobile-phone mobility data to generate spatial disease-burden maps from Delphi's synthetic trajectories</h3>
+      <p><span class="lab paper">Extending this paper</span>Delphi-2M predicts cumulative disease burden at the <em>individual level</em>. The paper explicitly suggests that aggregating individual predictions "may provide substantial system-wide modelling benefits, particularly in projecting the expected disease burden at local, regional and national levels." However, UK Biobank participants are not a spatially representative sample — they are geographically clustered and have "healthy volunteer" bias. Extending the paper: weight Delphi's synthetic cohort trajectories by <strong>mobile-phone-derived mobility patterns and population distributions</strong> to produce spatially disaggregated, bias-corrected disease burden maps at sub-regional scale.</p>
+      <p><span class="lab mine">Added value to my research</span>Mobile-phone records are a central data stream in my GeoAI agenda. This extension gives me a concrete use case: mobile-phone data anchor the spatial downscaling of a health-AI model's outputs. The resulting fine-grained disease maps would directly feed my healthcare facility access analyses (where is demand likely to surge?) and public-health policy work on spatially heterogeneous morbidity burdens — connecting my spatiotemporal kernel density methods to clinical AI outputs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Mobile phone data show spatial and socioeconomic inequalities in hospital utilization — <a href="https://doi.org/10.1038/s44360-026-00100-6" target="_blank">10.1038/s44360-026-00100-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Introduce algorithmic fairness constraints into Delphi's training objective</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper devotes an entire figure (Fig. 5) to documenting biases related to ethnicity, deprivation, and data-source availability, and acknowledges they are "learnt from training data." Yet Delphi-2M's loss function (cross-entropy + exponential waiting time) has no fairness term. An extension of the paper: reformulate the objective with a <strong>demographic-parity or equalized-odds regularizer</strong>, or adopt a post-hoc deep reinforcement-learning bias-mitigation strategy, and evaluate whether Delphi-2M's already-documented disparities (e.g., differential AUC across deprivation groups) can be reduced without degrading overall predictive accuracy.</p>
+      <p><span class="lab mine">Added value to my research</span>Algorithmic fairness is directly relevant to my equity-focused GeoAI agenda, especially for healthcare accessibility. If Delphi-derived disease-burden predictions are spatially disaggregated (idea above), ensuring demographic fairness in those predictions becomes a prerequisite for equitable resource allocation. This links my explainable ML methods (MGWR capturing spatial non-stationarity in health outcomes) to the model's internal fairness constraints.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Algorithmic fairness and bias mitigation for clinical machine learning with deep reinforcement learning — <a href="https://doi.org/10.1038/s42256-023-00697-3" target="_blank">10.1038/s42256-023-00697-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Pre-train a multi-task medical foundation model using Delphi's architecture as one task head</h3>
+      <p><span class="lab paper">Extending this paper</span>Delphi-2M is a specialist model: it encodes health trajectories via ICD-10 tokens but cannot ingest imaging or genomics. The paper's Discussion explicitly calls for "multimodal extensions" adding imaging, metabolomics, and wearable data via the same embedding layer. A structured extension: treat Delphi as one branch of a <strong>multi-task medical foundation model</strong> — sharing transformer layers across diagnosis-sequence prediction (Delphi's task), medical image classification, and biomarker regression — so that each modality can inform the others through shared representations, rather than sequential integration.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-task foundation model architecture maps directly to my interest in fine-tuning geospatial foundation models. Just as geospatial foundation models pre-trained on remote sensing data can be fine-tuned for urban health tasks, a medical foundation model pre-trained on EHR + imaging + genomics could be fine-tuned with spatial access features — creating a <em>spatially-aware health foundation model</em> where my GeoAI expertise adds a novel input modality not currently present in the medical AI literature.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-task learning for medical foundation models — <a href="https://doi.org/10.1038/s43588-024-00658-9" target="_blank">10.1038/s43588-024-00658-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use Delphi's SHAP co-morbidity matrix as a structured prior for spatial disease-clustering models</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 4c of the paper is a 778 × 778 matrix of SHAP influence values between disease tokens — essentially a learned, continuous-time co-morbidity graph. Currently, this matrix is used only for qualitative interpretation. Extending the paper: feed the SHAP matrix as a <strong>learned adjacency prior</strong> into a graph neural network that predicts spatial disease clusters — encoding the known temporal influence of one disease on another (e.g., mental disorders on each other, cancers on mortality) as structural inductive biases for community-level disease mapping.</p>
+      <p><span class="lab mine">Added value to my research</span>This bridges my physics-informed graph learning agenda with clinical epidemiology: the Delphi SHAP matrix becomes the "physics" (known disease co-progression rules) embedded in a spatial GNN. Applied to my work on urban health, this means a spatiotemporal model of disease incidence across census tracts could use Delphi-derived temporal co-morbidity weights as edge attributes — integrating the clinical knowledge of disease interactions with the spatial structure of healthcare accessibility and deprivation that I routinely measure.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Improving the quality of machine learning in health applications and clinical research — <a href="https://doi.org/10.1038/s42256-020-00239-1" target="_blank">10.1038/s42256-020-00239-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

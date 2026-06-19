@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optimizing generative AI by backpropagating language model feedback — AI Digest</title>
+<meta name="description" content="AI Digest: Optimizing generative AI by backpropagating language model feedback (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">LLM Optimization</span>
+      <span class="tag">Backpropagation</span>
+      <span class="tag">Agentic AI</span>
+      <span class="tag">Generative AI</span>
+    </div>
+    <h1>Optimizing generative AI by backpropagating language model feedback</h1>
+    <div class="meta">
+      <span class="authors">Mert Yuksekgonul · Federico Bianchi · Joseph Boen · Sheng Liu · Pan Lu · Zhi Huang · Carlos Guestrin · James Zou</span>
+      <span><b>Published</b> 2025-03-19</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-08661-4" target="_blank">10.1038/s41586-025-08661-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-08661-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>TextGrad</strong> is a general automatic-optimization framework for compound AI systems that replaces hand-tuning with <strong>backpropagation through natural language</strong>: an LLM acts as the "gradient engine," critiquing each component's output in text and propagating those critiques upstream to refine prompts, code, molecules, or treatment plans. Across five heterogeneous domains — PhD-level science QA, radiotherapy planning, molecular design, coding, and multi-agent orchestration — TextGrad consistently <strong>outperforms strong baselines without any gradient-based parameter update</strong>, demonstrating that the backpropagation abstraction extends seamlessly from numerical to linguistic computation.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the "automatic optimization" gap for compound AI.</b> While individual neural networks are optimized by gradient descent, the broader pipelines that orchestrate LLMs, tools, and simulators are still hand-crafted. TextGrad is the first principled, task-agnostic solution.</li>
+      <li><b>Language is the gradient.</b> By encoding feedback as natural language rather than a scalar signal, the method is immediately interpretable — each "gradient" message tells a practitioner <em>why</em> a component underperformed, not just that it did.</li>
+      <li><b>Cross-domain generality is empirically proven.</b> The same algorithmic skeleton — define a loss, backpropagate critique, update component — works across molecular biology, radiotherapy, competitive programming, and reasoning benchmarks.</li>
+      <li><b>Open-source platform, not just a paper.</b> TextGrad is released as a Python library (<a href="https://github.com/zou-group/textgrad" target="_blank">github.com/zou-group/textgrad</a>), lowering the barrier for scientists who are not ML specialists to build optimized AI pipelines.</li>
+      <li><b>Sets a precedent for LLM-as-optimizer.</b> TextGrad formalizes a new paradigm — using one LLM to improve another system — that is increasingly recognized as central to agentic AI research.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Foundational abstraction with broad reach:</b> the backpropagation analogy is a first-principles contribution spanning computer science, biology, and medicine — squarely Nature's scope.</li>
+      <li><b>Multi-domain empirical breadth:</b> demonstrating the framework on radically different tasks (radiotherapy dose optimization, molecular QED/vina scores, PhD science questions, LeetCode) satisfies Nature's demand for universal claims backed by diverse evidence.</li>
+      <li><b>Societal and scientific leverage:</b> automatic optimization of treatment plans and drug molecules carries direct clinical relevance, aligning with Nature's emphasis on translational impact.</li>
+      <li><b>Platform contribution:</b> the open-source library lowers barriers for non-ML domain scientists, constituting infrastructure as well as methodology.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>PhD-level QA</dt><dd><strong>GPQA (Graduate-Level Google-Proof QA)</strong> benchmark — a set of expert-validated, PhD-level multiple-choice science questions spanning biology, chemistry, and physics. Used to evaluate solution optimization.</dd>
+      <dt>Math reasoning</dt><dd><strong>GSM8k</strong> (Grade School Math 8K) — 8,500 grade-school math word problems used for prompt optimization experiments.</dd>
+      <dt>Coding</dt><dd><strong>LeetCode Hard</strong> problems — a subset of competitive programming challenges used to benchmark code optimization. Results reported across five random seeds (standard deviation provided).</dd>
+      <dt>Radiotherapy</dt><dd><strong>Five clinical radiotherapy treatment plans</strong> (prostate cancer) obtained from a clinical oncology setting. Metrics: PTV dose coverage (mean, minimum, D95), and mean dose to organs at risk (OAR). No public dataset URL; clinical plans provided by collaborating institution.</dd>
+      <dt>Molecular design</dt><dd><strong>29 protein receptor targets</strong> (extended to 58 in Extended Data) with <strong>three initial molecular fragments</strong> each. Properties optimized: QED (druglikeness) and Vina docking score. Compared against clinically approved molecules for the same targets. Fragment/receptor data from public cheminformatics resources (exact sources described in Supplementary).</dd>
+      <dt>Code &amp; availability</dt><dd>All benchmark data publicly accessible; access instructions at <a href="https://github.com/zou-group/textgrad" target="_blank">github.com/zou-group/textgrad</a>. Code archived at <a href="https://doi.org/10.5281/zenodo.14497017" target="_blank">zenodo.14497017</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>GPQA</td><td>PhD-level science QA evaluation</td><td>Expert-validated, discipline-spanning MCQs</td><td><a href="https://github.com/idavidrein/gpqa" target="_blank">github.com/idavidrein/gpqa</a></td></tr>
+        <tr><td>GSM8k</td><td>Math reasoning / prompt optimization</td><td>8,500 grade-school math problems</td><td><a href="https://github.com/openai/grade-school-math" target="_blank">github.com/openai/grade-school-math</a></td></tr>
+        <tr><td>LeetCode Hard</td><td>Code optimization benchmark</td><td>Competitive programming subset; 5 seeds</td><td><a href="https://leetcode.com" target="_blank">leetcode.com</a></td></tr>
+        <tr><td>Clinical radiotherapy plans</td><td>Treatment plan optimization</td><td>5 prostate cancer plans (clinical institution)</td><td>Not publicly released</td></tr>
+        <tr><td>Protein receptor targets</td><td>Molecular design (QED + Vina)</td><td>29 targets (58 in Extended Data); 3 fragments each</td><td><a href="https://github.com/zou-group/textgrad" target="_blank">zou-group/textgrad</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: data volumes and dataset names are taken verbatim from the article's Extended Data figure captions and Supplementary notes. The exact GPQA split size and the precise protein-receptor dataset provenance are described in Supplementary Notes but are not detailed in the publicly available abstract or article.txt.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Textual backpropagation (TextGrad):</b> defines a computation graph over AI-system components; a powerful LLM (the "gradient engine") generates natural-language critique of each component's output, which is backpropagated upstream to refine prompts, code, or molecular representations.</li>
+      <li><b>Textual Gradient Descent (TGD):</b> the update rule — analogous to stochastic gradient descent — applies the textual gradient to each variable, iteratively improving it over multiple rounds.</li>
+      <li><b>Task-agnostic computation graph:</b> any differentiable (in the textual sense) pipeline — retriever + LLM, multi-agent system, molecule editor — can be inserted into the TextGrad graph, making the optimizer modular.</li>
+      <li><b>Evaluation:</b> solution optimization (zero-shot QA), prompt optimization (GSM8k instruction + in-context demos), code optimization (LeetCode Hard pass rates), radiotherapy plan optimization (PTV/OAR dose metrics), and molecular optimization (QED + Vina across 29–58 receptor targets).</li>
+      <li><b>Baselines compared:</b> few-shot prompting, chain-of-thought, DSPy (automated prompt optimizer), and random/greedy search for molecules.</li>
+      <li><b>LLMs used:</b> GPT-4o as gradient engine; GPT-3.5-turbo as the optimized model in prompt experiments; results reported with standard deviations over multiple seeds.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig1.png" target="_blank">
+        <img src="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig1.png" alt="Fig. 1: Overview of TextGrad" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of TextGrad — the computation graph abstraction and the role of the LLM gradient engine across different task domains.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig2.png" target="_blank">
+        <img src="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig2.png" alt="Fig. 2: Illustrative implementation of TGD and TextGrad backpropagation" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Illustrative implementation of TGD and TextGrad's backpropagation — how textual gradients flow through a concrete compound AI system.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig3.png" target="_blank">
+        <img src="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig3.png" alt="Fig. 3: Radiotherapy treatment plan optimization" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Radiotherapy treatment plan optimization — TextGrad-optimized plans versus clinical baselines on PTV coverage and OAR sparing metrics across five cases.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig4.png" target="_blank">
+        <img src="assets/optimizing-generative-ai-by-backpropagating-language-model-feedback__s41586-025-08661-4/fig4.png" alt="Fig. 4: Optimizing compound AI systems" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Optimizing compound AI systems — performance of TextGrad on multi-agent and agentic pipeline benchmarks relative to hand-tuned and other automated baselines.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0); Supplementary contains Tables 1–3 (ablations for prompt optimization) and Figs. 1–4 with extended molecular and code-optimization details.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, spatial accessibility, explainable ML, physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Apply TextGrad to optimize geospatial AI pipelines end-to-end</h3>
+      <p><span class="lab paper">Extending this paper</span>TextGrad's core claim is task-agnostic — any system expressible as a computation graph can be optimized. Yet the paper's five domains (QA, radiotherapy, molecules, coding, multi-agent) are all text-native. A natural extension: plug <strong>geospatial foundation model pipelines</strong> — a spatial encoder, a retrieval-augmented LLM, and a downstream classifier — into TextGrad's graph, and backpropagate textual gradients to refine both the prompt templates and the spatial query construction. This would stress-test TextGrad's generality on structured/heterogeneous data types and potentially close the gap between LLM reasoning and spatial intelligence.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models is one of my explicit research directions. TextGrad offers a <strong>prompt-level optimization path that requires no weight updates</strong> — I could use it to automatically refine the instruction templates and chain-of-thought prompts that steer a GeoFM toward spatial accessibility tasks (2SFCA catchment description, POI relevance ranking), without retraining the model weights.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Synthesizing scientific literature with retrieval-augmented language models — <a href="https://doi.org/10.1038/s41586-025-10072-4" target="_blank">10.1038/s41586-025-10072-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use textual gradients as human-readable explainability signals</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper highlights that TextGrad's gradients are natural-language critiques — but treats this primarily as an engineering convenience. A deeper extension: <strong>mine the gradient messages themselves as an explainability corpus</strong>. Across many optimization iterations and tasks, the LLM's critiques form a structured record of <em>why</em> a component failed. Aggregating and clustering these messages could reveal systematic failure modes in AI systems — turning the optimizer's side-channel into an automatic auditing tool.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable machine learning for spatial prediction is a core theme of my work. TextGrad's textual gradients could serve as a <strong>natural-language analogue of SHAP values</strong>: when an LLM pipeline predicts a spatial health outcome, the gradient critique provides a human-readable attribution ("the model over-weighted distance to hospital and ignored transit access") that complements numerical feature importances from MGWR or gradient boosting.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy — <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ TextGrad for automatic optimization of molecular and clinical decision criteria</h3>
+      <p><span class="lab paper">Extending this paper</span>The radiotherapy and molecule experiments show TextGrad optimizing <strong>structured scientific objectives</strong> defined by clinical guidelines and docking scores. A direct extension: apply TextGrad to <strong>multi-objective clinical treatment planning</strong> — simultaneously optimizing tumor control probability and normal-tissue complication probability (NTCP) using LLM-generated critiques that incorporate radiobiological knowledge. The gradient engine could be prompted with clinical protocol text, grounding optimization in domain constraints that are difficult to encode numerically.</p>
+      <p><span class="lab mine">Added value to my research</span>My urban analytics work on EV charging stations frames efficiency-vs-equity as a multi-objective optimization problem. The same <strong>TextGrad scaffold — define a multi-criteria loss, backpropagate critiques, update placement proposals</strong> — could be applied to spatial facility location: an LLM critiques a proposed EV station layout using accessibility and equity metrics phrased in natural language, iteratively improving the layout without requiring a differentiable simulator.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein–ligand complexes for structure-based drug discovery — <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Combine TextGrad with evolutionary search for discrete spatial optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>TextGrad's TGD is a local iterative optimizer — analogous to gradient descent, it can converge to local optima. The paper does not study the combination with <strong>population-based global search</strong>. An extension: use TextGrad as the <em>local refinement step</em> within an evolutionary or combinatorial optimizer, where the population proposes diverse system configurations and TextGrad polishes each candidate. This would give TextGrad globally guaranteed optimality properties while keeping each local update interpretable.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal methods include Monte Carlo simulation and network community detection for regional collaboration analysis. TextGrad's critique loop could serve as a <strong>smart perturbation operator</strong> inside a Monte Carlo tree search over spatial policy configurations — for example, iteratively refining a healthcare facility siting proposal by having an LLM critique it against equity and accessibility criteria.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-enabled globally guaranteed evolutionary computation — <a href="https://doi.org/10.1038/s42256-023-00642-4" target="_blank">10.1038/s42256-023-00642-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ TextGrad as an automatic benchmark for LLM reliability in scientific tasks</h3>
+      <p><span class="lab paper">Extending this paper</span>TextGrad relies on a powerful LLM as the gradient engine, but the paper does not systematically study what happens when the engine model <strong>hallucinates or produces overconfident critiques</strong>. A critical extension: pair TextGrad with uncertainty-aware LLM evaluation — flagging gradient messages that are semantically uncertain (high entropy across paraphrases) before applying them. This would make TextGrad robust to unreliable gradient signals and is especially important in safety-critical domains like radiotherapy.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on data science and reproducibility (FAIR, multi-source fusion) requires <strong>quality-controlled AI-assisted pipelines</strong>. A TextGrad loop that validates each critique for semantic consistency before application would be directly useful when I use LLMs to assist in spatial data labeling, POI classification, or automated code generation for GIS workflows — preventing silent propagation of hallucinated "improvements."</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy — <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Language model-guided anticipation and discovery of mammalian metabolites — AI Digest</title>
+<meta name="description" content="AI Digest: Language model-guided anticipation and discovery of mammalian metabolites (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Chemical Language Model</span>
+      <span class="tag">Metabolomics</span>
+      <span class="tag">Generative AI</span>
+      <span class="tag">Mass Spectrometry</span>
+    </div>
+    <h1>Language model-guided anticipation and discovery of mammalian metabolites</h1>
+    <div class="meta">
+      <span class="authors">Hantao Qiang · Fei Wang · Wenyun Lu · Xi Xing · Hahn Kim · Sandrine A. M. Mérette · Lucas B. Ayres · Eponine Oler · Jenna E. AbuSalim · Asael Roichman · Michael Neinast · Ricardo A. Cordova · Won Dong Lee · Ehud Herbst · Vishu Gupta · Samuel L. Neff · Mickel Hiebert-Giesbrecht · Adamo Young · Vasuk Gautam · Siyang Tian · Bo Wang · Hannes Röst · Jatinder Baidwan · Russell Greiner · Li Chen · Chad W. Johnston · Leonard J. Foster · Aaron M. Shapiro · David S. Wishart · Joshua D. Rabinowitz · Michael A. Skinnider</span>
+      <span><b>Published</b> 2026-01-14</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09969-x" target="_blank">10.1038/s41586-025-09969-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09969-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>DeepMet, a chemical language model trained on 2,046 known human metabolite structures, can <strong>anticipate and discover previously unrecognized mammalian metabolites</strong> by sampling from learned metabolite-like chemical space. Integrating DeepMet with mass spectrometry (MS/MS) and a meta-learning classifier achieves <strong>70% annotation accuracy</strong> in mouse tissue profiling. Applied to 29.1 million MS/MS spectra from 4,510 human blood metabolomic analyses, the model substantially expands the fraction of detectable peaks that can be structurally annotated — revealing <strong>several dozen structurally diverse new mammalian metabolites</strong> including potential disease biomarkers.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Illuminates metabolic "dark matter."</b> Mass spectrometry routinely detects thousands of molecular peaks in human tissues, yet the <em>majority</em> remain structurally unidentified. DeepMet provides a systematic, generative route to assign candidates to these unknowns.</li>
+      <li><b>Demonstrates prospective discovery power.</b> DeepMet successfully generated 252 of 313 (81%) metabolites added to HMDB version 5.0 after training concluded — showing genuine predictive ability, not just database coverage.</li>
+      <li><b>Reaches 70% annotation accuracy in a real dataset.</b> Combined with CFM-ID MS/MS prediction and a meta-learning classifier integrating retention time and isotope patterns, the pipeline achieves 70% correct structure assignment in 23 mouse tissues.</li>
+      <li><b>Expands annotatable human blood metabolome.</b> Searching 29.1 million MS/MS spectra from 4,510 blood metabolomic studies against a DeepMet-augmented library markedly increases the proportion of spectra linked to a chemical structure at every similarity threshold.</li>
+      <li><b>Biomarker discovery proof-of-concept.</b> N1-methyl-imidazolelactic acid, discovered via DeepMet re-annotation of a public dataset, separates sepsis patients from healthy controls — demonstrating clinical translational potential.</li>
+      <li><b>Open platform.</b> The web application at <a href="http://deepmet.org" target="_blank">deepmet.org</a> and a Snakemake pipeline on GitHub allow any lab to query or retrain the model for other compound classes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm shift, not incremental improvement:</b> the paper recasts metabolite discovery from rule-based biotransformation enumeration to generative language-model inference — a conceptual leap comparable to protein language models transforming proteomics.</li>
+      <li><b>Broad disciplinary impact:</b> the approach crosses biochemistry, analytical chemistry, machine learning, and clinical medicine; Nature's remit covers exactly such cross-cutting breakthroughs.</li>
+      <li><b>Scale and validation:</b> 1 billion sampled SMILES strings, 29.1 million MS/MS spectra from 4,510 human blood analyses, and experimental validation of 17 new metabolites in human biofluids satisfy Nature's demand for rigorous, large-scale evidence.</li>
+      <li><b>Platform contribution:</b> an open web application plus a reusable Snakemake pipeline constitute infrastructure for the entire metabolomics community, adding lasting value beyond a single finding.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training set</dt><dd><strong>2,046 known human metabolites</strong> experimentally detected in human tissues or biofluids, represented as SMILES strings. Pre-training used drug-like structures from <strong>ChEMBL version 28</strong> (available at <a href="https://doi.org/10.6019/CHEMBL.database.28" target="_blank">doi:10.6019/CHEMBL.database.28</a>).</dd>
+      <dt>Validation set</dt><dd><strong>HMDB (Human Metabolome Database)</strong>, versions 4.0 and 5.0. Version 5.0 added 313 metabolites withheld from training used for prospective testing. Freely available at <a href="https://hmdb.ca/downloads" target="_blank">hmdb.ca/downloads</a>.</dd>
+      <dt>Generated corpus</dt><dd><strong>1 billion SMILES strings</strong> sampled from DeepMet; 2.4 million unique structures retained for MS/MS prediction by CFM-ID. Raw generated structures deposited to <strong>Zenodo</strong> (<a href="https://doi.org/10.5281/zenodo.16813151" target="_blank">doi:10.5281/zenodo.16813151</a>).</dd>
+      <dt>Human blood metabolomics</dt><dd><strong>4,510 metabolomic analyses</strong> of human blood from public repositories, yielding <strong>29.1 million MS/MS spectra</strong>. Used to test whether DeepMet structures expand spectral annotation coverage.</dd>
+      <dt>Mouse tissue profiling</dt><dd>LC–MS/MS metabolomics of <strong>23 mouse tissues and biofluids</strong>; 4,814 presumptive metabolite peaks detected. MS data deposited to <strong>MassIVE</strong> (accession <code>MSV000097536</code>, <a href="https://massive.ucsd.edu/ProteoSAFe/QueryMSV?id=MSV000097536" target="_blank">massive.ucsd.edu</a>).</dd>
+      <dt>Chemical standards</dt><dd>Chemical standards synthesized or purchased for <strong>80 putative metabolites</strong> (from top-10,000 DeepMet structures); 17 confirmed in human biofluids by LC–MS/MS retention time + MS/MS match. Standards for 97 known metabolites purchased to corroborate mouse-tissue annotations (58 of 97 confirmed, 60%).</dd>
+      <dt>Agilent MS/MS library</dt><dd>Positive-mode spectra used for held-out metabolite benchmarking; exact count not stated in the article.</dd>
+      <dt>Code &amp; pipeline</dt><dd>Snakemake pipeline available at <a href="https://github.com/skinniderlab/clm" target="_blank">github.com/skinniderlab/clm</a> and Zenodo (<a href="https://doi.org/10.5281/zenodo.14917571" target="_blank">doi:10.5281/zenodo.14917571</a>). Web application: <a href="http://deepmet.org" target="_blank">deepmet.org</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ChEMBL v28</td><td>Pre-training (drug-like structures)</td><td>Large-scale drug compound library</td><td><a href="https://doi.org/10.6019/CHEMBL.database.28" target="_blank">doi:10.6019/CHEMBL</a></td></tr>
+        <tr><td>HMDB v4.0 / v5.0</td><td>Training metabolites + prospective validation</td><td>2,046 training; 313 withheld from v5.0</td><td><a href="https://hmdb.ca/downloads" target="_blank">hmdb.ca</a></td></tr>
+        <tr><td>DeepMet generated structures (Zenodo)</td><td>Candidate metabolite library</td><td>1 billion SMILES; 2.4 million unique structures</td><td><a href="https://doi.org/10.5281/zenodo.16813151" target="_blank">Zenodo</a></td></tr>
+        <tr><td>MassIVE MSV000097536</td><td>Mouse tissue LC–MS/MS data</td><td>23 mouse tissues; 4,814 peaks detected</td><td><a href="https://massive.ucsd.edu/ProteoSAFe/QueryMSV?id=MSV000097536" target="_blank">MassIVE</a></td></tr>
+        <tr><td>Human blood metabolomics (public)</td><td>Large-scale annotation benchmark</td><td>4,510 analyses; 29.1 million MS/MS spectra</td><td>Various public repositories (Supplementary Table 4)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact count of held-out metabolites with positive-mode Agilent spectra is stated as n = 558 in Fig. 4d. Exact number of clinical/forensic sample analyses is not disclosed; investigators should contact the corresponding author (aaron.shapiro1@phsa.ca).</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Chemical language model (LSTM):</b> a long short-term memory network trained to generate SMILES strings, pre-trained on ChEMBL drug-like structures, then fine-tuned on 2,046 human metabolites. Generates metabolite-like structures from learned chemical grammar without explicit biochemical rules.</li>
+      <li><b>Sampling-frequency scoring:</b> 1 billion SMILES strings are drawn from the trained model; the frequency with which each unique structure appears serves as a confidence/plausibility score — structures generated more frequently are considered more metabolite-like.</li>
+      <li><b>MS/MS prediction and integration (CFM-ID):</b> CFM-ID predicts in silico MS/MS spectra for 2.4 million DeepMet structures; dot-product cosine similarity between predicted and experimental spectra is combined with DeepMet sampling frequency for joint ranking.</li>
+      <li><b>Meta-learning classifier:</b> a random forest trained in cross-validation integrates multiple signals — DeepMet confidence score, MS/MS cosine similarity, MS1 isotope pattern match, and predicted vs. measured retention time — achieving 70% annotation accuracy on held-out mouse-tissue metabolites.</li>
+      <li><b>Benchmarking baselines:</b> DeepMet is compared against AddCarbon (a simple structure enumeration heuristic), training-set search, and random structure generation; evaluated by top-1/top-k accuracy and Tanimoto coefficient to the true structure.</li>
+      <li><b>Dimensionality reduction and chemical-space visualization:</b> UMAP used to visualize overlap between generated molecules and known metabolites; ClassyFire chemical ontology applied to assign superclasses.</li>
+      <li><b>Biotransformation recapitulation test:</b> BioTransformer (rule-based) used to enumerate expected enzymatic products of known metabolites; proportion recapitulated by DeepMet measured to assess biochemical fidelity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig1.png" target="_blank">
+        <img src="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig1.png" alt="Fig.1 Learning the language of metabolism" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> DeepMet overview — UMAP chemical-space visualization, ROC curve distinguishing generated from known metabolites, and enzymatic biotransformation recapitulation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig2.png" target="_blank">
+        <img src="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig2.png" alt="Fig.2 Anticipation and discovery of human metabolites" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Sampling frequency analysis, HMDB 5.0 prospective validation, and examples of newly confirmed human urinary metabolites (N-carbamyl-proline, N-succinyl-tryptophan, N-lactoyl-glutamine).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig3.png" target="_blank">
+        <img src="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig3.png" alt="Fig.3 Mass spectrometry-guided structure prioritization" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Accurate-mass-guided structure prioritization — top-1/top-k accuracy, confidence score calibration, and serotonin rediscovery example with 2,818 candidate structures.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig4.png" target="_blank">
+        <img src="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig4.png" alt="Fig.4 Integration of DeepMet and MS/MS" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> DeepMet + CFM-ID MS/MS integration — top-k accuracy, annotation expansion of the human blood metabolome (29.1 M spectra), and N1-methyl-imidazolelactic acid sepsis biomarker.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig5.png" target="_blank">
+        <img src="assets/language-model-guided-anticipation-and-discovery-of-mammalian-metabolites__s41586-025-09969-x/fig5.png" alt="Fig.5 Metabolite discovery in mouse tissues" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Mouse-tissue discovery — meta-learning classifier performance (70% accuracy), and confirmed new metabolites across 23 tissues (3-(methylthio)acryloyl-glycine, N-carbamyl-taurine, S-sulfocysteinylglycine, etc.).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 in main text); supplementary contains Tables 1–4 and Extended Data Figs. 1–5.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, health geography, explainable ML, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Extend DeepMet's generative paradigm from chemistry to geospatial feature space</h3>
+      <p><span class="lab paper">Extending this paper</span>DeepMet's core insight is that a language model trained on known structures can <strong>anticipate uncharacterized structures</strong> by learning the grammar of a constrained chemical space. The paper restricts itself to SMILES strings for metabolites; a natural extension is to apply the same principle to other constrained molecular-like representations — for instance, extending DeepMet to secondary metabolites from the microbiome or environmental xenobiotics by pre-training on broader chemical databases (e.g., PubChem) and fine-tuning on tissue-specific detected compounds. The exhaustive transformer-based chemical-space neighbor enumeration approach could complement DeepMet by mapping the local neighborhood of each predicted metabolite for systematic structure validation.</p>
+      <p><span class="lab mine">Added value to my research</span>The sampling-frequency principle — "generate many times; rank by frequency; frequency = plausibility prior" — is directly transferable to <strong>spatial feature imputation</strong> in GeoAI. In my spatiotemporal kernel density estimation and multi-source data fusion work, observations are sparse and heterogeneous. Training a spatial language model (e.g., a sequence model over geographic tokens or POI sequences) to assign plausibility scores to unobserved spatial configurations could improve prediction in data-sparse regions — a geospatial analogue of anticipating unmapped metabolites. This links to my FAIR open-science agenda: a community-accessible "spatial DeepMet" trained on global mobility or POI databases.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Exhaustive local chemical space exploration using a transformer model — <a href="https://doi.org/10.1038/s41467-024-51672-4" target="_blank">10.1038/s41467-024-51672-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace CFM-ID's rule-based MS/MS prediction with a graph neural network for MS/MS spectra</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper pairs DeepMet (structure generation) with CFM-ID (MS/MS prediction), which is itself a machine-learning model but requires a separate training pipeline. A direct extension: replace CFM-ID with a <strong>local-neighborhood graph neural network</strong> (as in FIORA) that predicts MS/MS fragment intensities from molecular substructures, enabling end-to-end differentiable training of generation + spectrum prediction jointly. This could propagate gradient signal from experimental spectra all the way back into the generative model — effectively making DeepMet spectrometry-aware during generation, not just at retrieval time. The meta-learning stage (Fig. 5) could then be replaced by a single unified model.</p>
+      <p><span class="lab mine">Added value to my research</span>This end-to-end architecture mirrors my <strong>physics-informed graph learning</strong> line of work: baking domain constraints (here, fragmentation chemistry; there, spatial interaction laws) into the graph architecture rather than treating them as post-hoc corrections. The technical problem of training a differentiable joint generation–scoring model is the same whether the scoring signal comes from MS/MS spectra or from spatial autocorrelation residuals, making FIORA-style graph approaches a methodological crossover.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> FIORA: Local neighborhood-based prediction of compound mass spectra from single fragmentation events — <a href="https://doi.org/10.1038/s41467-025-57422-4" target="_blank">10.1038/s41467-025-57422-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply DeepMet's meta-learning confidence calibration to explainable health-outcome prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's meta-learning classifier (Fig. 5) is elegant: a random forest aggregates multiple heterogeneous signals (generative confidence, spectral similarity, isotope match, retention time) into a single calibrated probability of annotation correctness. This calibration is the key contribution — the classifier is trustworthy precisely because its predicted probabilities match empirical accuracy rates (Fig. 5b). The paper could extend this to a Bayesian or conformal prediction wrapper that propagates uncertainty through the full pipeline — from structure generation through to biomarker-level clinical associations — giving clinicians quantified uncertainty on putative biomarkers like the sepsis N1-methyl-imidazolelactic acid finding.</p>
+      <p><span class="lab mine">Added value to my research</span>Calibrated multi-signal ensembling is exactly the challenge in my <strong>explainable machine learning for spatial health prediction</strong>: I combine remote sensing, mobile phone, POI, and social media signals to predict health outcomes, and each source has different reliability across space. DeepMet's meta-learning recipe — train a secondary classifier to integrate primary model outputs from heterogeneous sources — is directly applicable as a <strong>spatial reliability calibrator</strong> for multi-source GeoAI models, especially for digital divide and telehealth accessibility predictions where data quality is spatially heterogeneous.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Link DeepMet's tissue-resolved metabolome atlas to spatial multi-omics</h3>
+      <p><span class="lab paper">Extending this paper</span>DeepMet profiles 23 mouse tissues and identifies metabolites with strong tissue-specificity (Fig. 5c–g shows how MS1 intensity of each new metabolite varies markedly across tissues). The paper stops at the list of discovered metabolites; a natural extension is to integrate this untargeted discovery pipeline with <strong>spatial transcriptomics or spatial proteomics</strong> to co-localize metabolite abundance with gene expression or protein profiles at cellular resolution. This would transform DeepMet from a metabolite discovery tool into a spatial metabolome mapper — discovering which metabolic pathways are active where in a tissue, not just which metabolites exist.</p>
+      <p><span class="lab mine">Added value to my research</span>The concept of spatially resolved heterogeneity in an omics signal directly parallels <strong>geographically weighted regression (GWR/MGWR)</strong> — the key idea that a global model misses local variation. Applying MGWR-style spatially varying coefficient models to the metabolite abundance data across 23 tissues would quantify where each metabolite's tissue-level "effect" is locally strong or weak. This creates an analytical bridge between my spatial statistics toolkit and biomedical omics data, opening a new application domain for my MGWR methods beyond urban health.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A mass spectrum-oriented computational method for ion mobility-resolved untargeted metabolomics — <a href="https://doi.org/10.1038/s41467-023-37539-0" target="_blank">10.1038/s41467-023-37539-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Re-interrogate public metabolomic repositories as a model for open-data science and health surveillance</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that 4,510 existing human blood metabolomic analyses — already deposited in public repositories — can be systematically re-annotated with DeepMet to reveal previously invisible metabolites and biomarkers (sepsis association in Fig. 4k). This "re-interrogation" model — where a new generative tool is applied to an existing data corpus without re-collecting samples — is highly powerful but relies critically on the FAIR-ness of those deposited datasets. Extending the paper: a systematic audit of metadata completeness, analytical method standardization, and batch-effect correction across all 4,510 analyses would quantify how much additional discovery is constrained not by the model's chemical coverage but by data quality heterogeneity across repositories.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly aligns with my <strong>open science/FAIR and multi-source data fusion</strong> research theme. My work on fusing mobile phone records, social media, and remote sensing faces exactly the same challenge: heterogeneous data quality, inconsistent metadata, and repository fragmentation limit downstream analysis. The DeepMet paper's approach — use a powerful generative prior to cope with partially annotated, heterogeneous corpora — is a model for how to handle the same problem in geospatial data fusion. Translating the "annotation enrichment via generative model" idea into a <strong>spatial gap-filling framework</strong> for under-surveyed health regions would extend my data fusion work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Ion mobility collision cross-section atlas for known and unknown metabolite annotation in untargeted metabolomics — <a href="https://doi.org/10.1038/s41467-020-18171-8" target="_blank">10.1038/s41467-020-18171-8</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

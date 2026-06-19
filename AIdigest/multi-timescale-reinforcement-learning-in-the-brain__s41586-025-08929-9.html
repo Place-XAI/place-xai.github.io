@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-timescale reinforcement learning in the brain — AI Digest</title>
+<meta name="description" content="AI Digest: Multi-timescale reinforcement learning in the brain (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Reinforcement Learning</span>
+      <span class="tag">Dopaminergic Neurons</span>
+      <span class="tag">Temporal Discounting</span>
+      <span class="tag">Computational Neuroscience</span>
+    </div>
+    <h1>Multi-timescale reinforcement learning in the brain</h1>
+    <div class="meta">
+      <span class="authors">Paul Masset · Pablo Tano · HyungGoo R. Kim · Athar N. Malik · Alexandre Pouget · Naoshige Uchida</span>
+      <span><b>Published</b> 2025-06-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-08929-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Biological reinforcement learning is <strong>not governed by a single discount factor</strong>: dopaminergic neurons in mice each encode reward prediction errors using their own distinct temporal horizon. This <strong>cell-specific discount factor</strong> is stable across two very different behavioural tasks, enabling the population collectively to decode reward timing. The multi-timescale architecture provides concrete <strong>computational advantages over single-timescale agents</strong> and mechanistically explains both cue-evoked transient responses and slow dopamine ramps — opening new design principles for more efficient artificial RL algorithms.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves a 30-year puzzle about dopaminergic heterogeneity.</b> Classical RL theory predicts all midbrain dopamine neurons should respond identically to reward prediction errors; this work shows their diversity is <em>functional</em> — each neuron encodes a different discount horizon, collectively spanning temporal scales.</li>
+      <li><b>Provides a mechanistic explanation for non-exponential discounting in behaviour.</b> Humans and animals are known to discount future rewards in a hyperbolic — not exponential — manner. A population of cells with diverse exponential discount factors naturally produces this aggregate hyperbolic curve.</li>
+      <li><b>Bridges neuroscience and AI algorithm design.</b> Demonstrating computational benefits of multi-timescale learning suggests practical prescriptions for building more efficient RL systems with a diversity of discount factors rather than a single one.</li>
+      <li><b>Establishes discount factor as a stable cell-intrinsic property.</b> The cross-task correlation in inferred discount factor per neuron shows this is not a transient state — it is a fixed property of individual dopamine cells, implying a persistent biological substrate for temporal preference.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-level claim:</b> re-frames the canonical temporal-difference learning model of dopamine — arguably the most influential neuro-AI bridge of the past 30 years — as a special case of a more general multi-timescale framework.</li>
+      <li><b>Cross-disciplinary impact:</b> findings simultaneously advance computational neuroscience (understanding dopaminergic diversity), experimental neuroscience (ramps explained), and machine learning (new algorithm design principles).</li>
+      <li><b>Rigorous experimental support:</b> two independent behavioural paradigms in mice, with single-neuron electrophysiological recordings and cross-task validation of the inferred cell-specific discount factor.</li>
+      <li><b>Broad resonance:</b> the phenomenon of hyperbolic discounting spans economics, psychology, and biology — the paper provides a unifying neural mechanism with implications well beyond the lab.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Species &amp; subjects</dt><dd>Mice (<em>Mus musculus</em>); the exact number of animals is not stated in the abstract. The Extended Data reports data from at least two named mice (m3044 and m3054) recorded across both tasks, with the maximum neurons per session being 4 in each task.</dd>
+      <dt>Neural recordings</dt><dd>Single-unit electrophysiological recordings of dopaminergic neurons in the midbrain (ventral tegmental area / substantia nigra). Two tasks: (1) a <strong>cued delay task</strong> with four reward delays (0.6 s, 1.5 s, 3.75 s, 9.375 s); (2) a <strong>virtual-reality (VR) spatial task</strong> in which mice navigate to a reward location. Neurons recorded across both tasks: n = 50 selected neurons plus n = 23 non-selected neurons reported in Extended Data Fig. 3.</dd>
+      <dt>Raw data archive</dt><dd><strong>DANDI Archive</strong> — raw electrophysiological data at <a href="https://dandiarchive.org/dandiset/000251" target="_blank">dandiarchive.org/dandiset/000251</a>.</dd>
+      <dt>Curated data &amp; code</dt><dd><strong>Mendeley Data</strong> (ref. 72) — curated electrophysiological data and analysis code at <a href="https://doi.org/10.17632/tc43t3s7c5.1" target="_blank">10.17632/tc43t3s7c5.1</a>.</dd>
+      <dt>Simulation code</dt><dd>GitHub repository at <a href="https://github.com/pablotano8/multi_timescale_RL" target="_blank">github.com/pablotano8/multi_timescale_RL</a> — temporal-difference simulations for multi- vs single-timescale agents across four computational tasks.</dd>
+      <dt>Computational tasks</dt><dd>Four synthetic MDP tasks used to demonstrate advantages of multi-timescale RL: reward-time decoding, myopic-learning-bias evaluation, Lunar Lander (OpenAI Gym), and multi-reward branching — not external open datasets.</dd>
+      <dt>Availability note</dt><dd>All raw neural data and curated analysis data are publicly deposited. Exact animal counts and full session metadata are detailed in the Methods section of the original article.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>DANDI Archive dandiset/000251</td><td>Raw electrophysiological recordings</td><td>Mice; midbrain dopamine neurons; two behavioural tasks</td><td><a href="https://dandiarchive.org/dandiset/000251" target="_blank">dandiarchive.org</a></td></tr>
+        <tr><td>Mendeley Data (ref. 72)</td><td>Curated neural data + analysis code</td><td>Same recordings, processed; code for all figures</td><td><a href="https://doi.org/10.17632/tc43t3s7c5.1" target="_blank">10.17632/tc43t3s7c5.1</a></td></tr>
+        <tr><td>GitHub simulation code</td><td>Multi-timescale RL agent simulations</td><td>TD-learning across four synthetic MDP tasks</td><td><a href="https://github.com/pablotano8/multi_timescale_RL" target="_blank">github.com</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact animal counts and per-session neuron numbers are described in the Methods of the original article and Extended Data Fig. 10e. Numbers above are taken from stated figures in the Extended Data captions.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Temporal-difference (TD) learning with multiple discount factors:</b> RL agents trained in parallel with a spectrum of discount factors γ; their value estimates collectively encode reward timing through a learnable decoder (regularized pseudo-inverse of the discount matrix).</li>
+      <li><b>Single-neuron fitting:</b> each recorded dopamine neuron's cue-evoked response is fit to an exponential model V<sub>γ</sub>(s) = α · γ<sup>t</sup> + b with gain α, baseline b, and discount factor γ — three free parameters fit via maximum-likelihood with bootstrap validation.</li>
+      <li><b>Model comparison:</b> exponential vs. hyperbolic discounting models compared on held-out test data across 100 bootstraps; exponential model provides better fits for most reward delays.</li>
+      <li><b>Cross-task correlation:</b> discount factors inferred independently from the cued-delay task and the VR task for neurons recorded in both; Spearman rank correlation used to test whether γ is cell-specific.</li>
+      <li><b>Common reward expectation model:</b> a mechanistic circuit model in which each dopamine neuron shares a common estimate of time-to-reward (a folded normal distribution updated by proximity) but uses its individual γ — naturally reproduces the observed diversity of dopamine ramps.</li>
+      <li><b>Distributed RL model with value mixing:</b> a circuit model with a shared common value signal (mixing parameter λ) alongside individual value loops; even small λ creates ramping prediction errors while preserving temporal decoding.</li>
+      <li><b>Decoding:</b> regularized pseudo-inverse decoder applied to the discount matrix (neurons × discount factors) recovers the timing of upcoming rewards from cue-period population activity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig1.png" target="_blank">
+        <img src="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig1.png" alt="Fig.1 Computational advantages of multi-timescale RL" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Computational advantages of multi-timescale RL — four synthetic tasks demonstrating that diversity of discount factors enables decoding of reward timing, avoids myopic biases, and improves performance.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig2.png" target="_blank">
+        <img src="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig2.png" alt="Fig.2 Dopaminergic neurons exhibit diversity of discount factors" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Dopaminergic neurons exhibit a diversity of discount factors — cue-evoked responses fit to exponential model, showing heterogeneous γ values and population-level reward-time decoding.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig3.png" target="_blank">
+        <img src="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig3.png" alt="Fig.3 Diversity of discount factors explains ramping activity" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Discount factor diversity explains qualitatively different ramping — neurons with small γ show downward ramps while large-γ neurons ramp up; the VR-task model reproduces the spectrum.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig4.png" target="_blank">
+        <img src="assets/multi-timescale-reinforcement-learning-in-the-brain__s41586-025-08929-9/fig4.png" alt="Fig.4 Discount factors correlated across behavioural contexts" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Discount factors of single neurons are correlated across behavioural contexts — cross-task Spearman correlation confirms γ is a stable, cell-intrinsic property rather than a state-dependent one.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Extended Data includes 10 extended figures with quantitative panels (fits, correlations, decoding matrices).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, accessibility modelling, physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Extend multi-timescale RL from biological to autonomous algorithmic discovery</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper demonstrates that a <strong>population of TD-learning agents with diverse γ values</strong> outperforms any single-timescale agent across four tasks. A direct extension: treat γ itself as a meta-learnable hyperparameter and let an outer loop <em>discover</em> the optimal distribution of discount factors rather than assuming a fixed grid. The corpus paper "Discovering state-of-the-art reinforcement learning algorithms" (Masset et al.'s companion work in the RL-algorithm-discovery space) shows that automated search can find novel update rules — applying that search to the γ-distribution of a multi-timescale agent could yield biologically-inspired RL variants with performance exceeding hand-tuned grids.</p>
+      <p><span class="lab mine">Added value to my research</span>The meta-learning of timescales maps naturally onto <strong>spatiotemporal kernel bandwidth selection</strong> in my spatiotemporal kernel density estimation work: instead of cross-validating a single spatial bandwidth, a portfolio of kernels at multiple spatial resolutions — each learned to be useful — could be aggregated, yielding a multi-scale density estimator analogous to this paper's multi-γ population code.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Discovering state-of-the-art reinforcement learning algorithms — <a href="https://doi.org/10.1038/s41586-025-09761-x" target="_blank">10.1038/s41586-025-09761-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② From cell-specific discount factors to node-specific temporal horizons in graph RL</h3>
+      <p><span class="lab paper">Extending this paper</span>A key finding is that γ is a <strong>cell-intrinsic, anatomically unstructured property</strong> — it is uncorrelated with medio-lateral implant position (Extended Data Fig. 7c-e). This raises the question: could a graph-structured circuit, where each node (neuron or region) carries a distinct γ, propagate information more efficiently than a fully homogeneous network? Extending the paper: embed the multi-timescale TD update into a <strong>graph neural network</strong> where each node's γ is learned, and test whether the resulting network autonomously develops the opponent push-pull circuit architecture documented for distributional RL in the striatum.</p>
+      <p><span class="lab mine">Added value to my research</span>This feeds directly into my <strong>physics-informed graph learning</strong> agenda: temporal discounting as a node-level physics prior in a GNN. For spatiotemporal prediction (e.g., disease spread or traffic flow), assigning different "temporal horizons" to nodes (neighbourhoods, hospitals) mirrors this paper's per-neuron γ and could improve multi-step ahead predictions by allowing short-horizon and long-horizon nodes to specialize.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> An opponent striatal circuit for distributional reinforcement learning — <a href="https://doi.org/10.1038/s41586-024-08488-5" target="_blank">10.1038/s41586-024-08488-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Multi-timescale value aggregation as a model for non-exponential temporal decay in accessibility</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central mechanistic insight is that a <strong>mixture of exponential discounters produces a hyperbolic aggregate</strong> — the population value function V(s) = ∑<sub>i</sub> V<sub>γi</sub>(s) is non-exponential even when each component is perfectly exponential. This mathematical result has implications beyond neuroscience: it shows that any system modelled with a single exponential decay kernel is a restrictive special case. An extension of the paper could derive the full class of aggregate discount curves achievable by varying the distribution over γ, and link this to the empirical literature on hyperbolic discounting in economic choice.</p>
+      <p><span class="lab mine">Added value to my research</span>In <strong>2SFCA/R2SFCA spatial accessibility</strong> modelling, the distance-decay function is conventionally a single Gaussian or power function — exactly the "single timescale" assumption this paper refutes for the brain. Replacing it with a <em>mixture of exponential decay kernels</em>, each with its own spatial bandwidth γ<sub>i</sub>, would yield a learnable, non-exponential decay — more faithful to observed travel-behaviour heterogeneity across population subgroups (elderly, car-free, rural). This directly upgrades my 2SFCA methodology using the biological analogy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reinforcement learning in artificial and biological systems — <a href="https://doi.org/10.1038/s42256-019-0025-4" target="_blank">10.1038/s42256-019-0025-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Reward magnitude and timescale interaction: implications for health-behaviour incentive design</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper holds reward magnitude roughly constant across conditions to isolate temporal discounting. A natural extension: vary both reward magnitude and delay jointly (as the companion Science paper "Reward magnitude determines reinforcement learning efficiency" does), and ask whether neurons with different γ values are differentially sensitive to magnitude — i.e., whether high-γ (patient) neurons are also high-magnitude detectors. This would link the two axes of reward learning into a unified 2D map of dopaminergic cell types.</p>
+      <p><span class="lab mine">Added value to my research</span>In <strong>health geography and accessibility</strong>, healthcare-seeking behaviour depends jointly on travel time (the temporal discount axis) and perceived benefit (the magnitude axis). A computational model borrowing this paper's multi-γ framework could represent heterogeneous patient populations — each with their own implicit discount on travel time — and predict how incentive programmes (e.g., telehealth subsidies) differentially attract short-horizon vs. long-horizon patients, informing spatially targeted policy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reward magnitude determines reinforcement learning efficiency — <a href="https://doi.org/10.1126/science.aeb0813" target="_blank">10.1126/science.aeb0813</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Unsupervised temporal structure learning as a pre-training step for spatiotemporal models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that <strong>the diversity of γ values allows population-level decoding of reward timing</strong> from cue-period activity alone — a form of temporal representation learning that is unsupervised in the sense that no explicit timing label was given during training. This parallels the finding that biological neural networks can pre-train temporal representations before task-specific learning. A direct extension: test whether pre-training a multi-timescale RL agent on an unsupervised temporal prediction objective (predict when the next reward will arrive) improves subsequent learning speed on a novel task — a biologically motivated form of self-supervised pre-training.</p>
+      <p><span class="lab mine">Added value to my research</span>For <strong>fine-tuning geospatial foundation models</strong>, this suggests a biologically grounded pre-training strategy: train a multi-scale spatiotemporal encoder where each head predicts outcomes at a different future horizon (1 week, 1 month, 1 year — analogous to different γ values), then fine-tune on sparse labelled health/urban outcomes. The multi-horizon pre-training enriches representations with temporal structure before supervised fine-tuning — a principled alternative to standard masked-autoencoder pre-training for geospatial time series.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unsupervised pretraining in biological neural networks — <a href="https://doi.org/10.1038/s41586-025-09180-y" target="_blank">10.1038/s41586-025-09180-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Determining structures of RNA conformers using AFM and deep neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Determining structures of RNA conformers using AFM and deep neural networks (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">RNA Structure</span>
+      <span class="tag">Atomic Force Microscopy</span>
+      <span class="tag">Deep Neural Networks</span>
+      <span class="tag">Single-Molecule Biophysics</span>
+    </div>
+    <h1>Determining structures of RNA conformers using AFM and deep neural networks</h1>
+    <div class="meta">
+      <span class="authors">Maximilia F. S. Degenhardt · Hermann F. Degenhardt · Yuba R. Bhandari · Yun-Tzai Lee · Jienyu Ding · Ping Yu · William F. Heinz · Jason R. Stagno · Charles D. Schwieters · Norman R. Watts · Paul T. Wingfield · Alan Rein · Jinwei Zhang · Yun-Xing Wang</span>
+      <span><b>Published</b> 2024-12-18</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-07559-x" target="_blank">10.1038/s41586-024-07559-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-07559-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>HORNET — a novel pipeline combining <strong>atomic force microscopy (AFM), unsupervised machine learning, and deep neural networks</strong> — can determine 3D topological structures of <strong>individual heterogeneous RNA conformers</strong> in solution without signal averaging. Applied to six benchmark RNAs (≈56 million trajectory models), RNase P RNA (three distinct conformers, ≈10 million models), and the HIV-1 Rev response element (five conformers), HORNET achieves top-model accuracies consistently below 6 Å r.m.s.d., <strong>directly addressing a long-standing gap</strong> in structural biology left by NMR, crystallography, and cryo-EM, which cannot resolve highly flexible RNA molecules in distinct conformational states.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the signal-averaging bottleneck.</b> All existing high-resolution structural methods (NMR, crystallography, cryo-EM) average over many molecules; HORNET is the <strong>first demonstrated method to determine 3D structure from a single-molecule AFM image</strong>, making heterogeneous and flexible RNAs tractable.</li>
+      <li><b>Fills the RNA structural gap left by AlphaFold.</b> The lack of a large RNA structure database and the absence of a clear sequence-to-structure correlation mean AlphaFold-style prediction does not transfer to RNA; HORNET provides an orthogonal, experiment-driven route using individual-molecule topographic restraints.</li>
+      <li><b>Resolves a long-standing HIV-1 structural debate.</b> HORNET directly visualizes five distinct conformational states of the HIV-1 RRE RNA, unambiguously confirming an A-like topology and identifying the Rev-binding site geometry — opening a new route to anti-viral drug design via structural complementarity.</li>
+      <li><b>Generalizes across RNA families without retraining.</b> A DNN trained solely on RNase P RNA catalytic domain trajectories (3.5 million models) successfully estimates structural accuracy for entirely different RNAs (cobalamin riboswitch, group II intron), demonstrating broad transferability.</li>
+      <li><b>Provides quantitative accuracy estimation without a known reference.</b> Unlike conventional structure determination, HORNET estimates r.m.s.d. from an unknown ground truth, giving researchers a built-in confidence metric — analogous to AlphaFold's pLDDT score but for experimental single-molecule data.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Fundamental methodological advance:</b> HORNET introduces an entirely new paradigm for structure determination — from single molecules — rather than incrementally improving an existing one, fitting Nature's preference for breakthrough methods.</li>
+      <li><b>Cross-disciplinary synthesis:</b> the work integrates biophysical instrumentation (AFM), molecular dynamics, unsupervised clustering, and supervised deep learning into a coherent pipeline, spanning multiple communities that Nature can uniquely address.</li>
+      <li><b>Biomedical relevance at scale:</b> RNA is central to gene regulation, RNA therapeutics (mRNA vaccines, siRNA), and viral replication; a method unlocking its conformational landscape has immediate broad impact.</li>
+      <li><b>Open data + reproducibility:</b> all benchmark data, PDB structures, and code are deposited at the NCI institutional site and Zenodo, meeting Nature's data-sharing standards and enabling community replication.</li>
+      <li><b>Pairs mechanism with application:</b> the structural discovery of RRE conformers directly motivates a novel branched-peptide therapeutic design demonstrated in the same paper — mechanism and translational proof-of-concept in a single report.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Pseudo-structure database (psDatabase)</dt><dd>≈<strong>3.5 million continuous trajectory models</strong> of the RNase P RNA (RPR) catalytic domain, generated by coarse-grained Langevin molecular dynamics with AFM topographic restraints (CafeMol). Used 80% for DNN training, 20% for training-validation.</dd>
+      <dt>Benchmark trajectories</dt><dd>Six benchmarks (BM0–BM5) totalling ≈<strong>56 million trajectory models</strong>. Individual counts: BM1 ~10M, BM2 ~11M, BM3 ~7M, BM4 ~2M, BM5 ~13M (BM0 contributes 3.5M + additional noise levels). RNAs span 210–417 nt (cobalamin riboswitch, group II intron, RPR catalytic domain, full-length RPR).</dd>
+      <dt>Experimental AFM data</dt><dd>Single-particle AFM images of full-length RPR (417 nt; particles P1, P2, P3) and HIV-1 RRE RNA (5 conformers C0–C4), acquired at 4 °C under near-physiological solution conditions (50 mM MES pH 6.8, 10–100 mM KCl, 1–10 mM MgCl2) using a Cypher VRS AFM at 1 Hz scan rate. Resolution: 11–12.5 Å. RRE trajectory models per conformer: 1.2–2.8 million (total ~9 million).</dd>
+      <dt>Known crystal structures (ground truth)</dt><dd>PDB: <code>3DHS</code> (RPR catalytic domain), <code>2A64</code> (full-length RPR, partial, 298 nt), <code>4GMA</code> (cobalamin riboswitch), <code>4E8K</code> (group II intron). Used to benchmark DNN r.m.s.d. estimation but NOT available to the algorithm during blind tests.</dd>
+      <dt>Structure prediction inputs</dt><dd>FARFAR2 (Rosetta) generated 10,000 models of RPR catalytic domain for selecting starting conformations (BM1, BM2); SAXS-derived RS3D models for BM4 and BM5; ARES geometric deep learning scores for initial model ranking.</dd>
+      <dt>Code and data availability</dt><dd>All software and scripts: <a href="https://zenodo.org/records/10637777" target="_blank">Zenodo 10637777</a>. Benchmark energies, PDBs, and AFM images: <a href="https://home.ccr.cancer.gov/csb/pnai/data/HorNet/" target="_blank">NCI institutional site (HorNet)</a>. RRE results: same NCI site.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>psDatabase (RPR catalytic domain trajectories)</td><td>DNN training &amp; validation</td><td>3.5 million structure models, 210–298 nt RNAs</td><td><a href="https://home.ccr.cancer.gov/csb/pnai/data/HorNet/" target="_blank">NCI HorNet</a></td></tr>
+        <tr><td>Benchmark trajectories (BM0–BM5)</td><td>Method benchmarking (UML + DNN)</td><td>~56 million models, 6 RNAs, 3 RNA families, 210–417 nt</td><td><a href="https://home.ccr.cancer.gov/csb/pnai/data/HorNet/AFM_For_BenchMarks.tar.gz" target="_blank">NCI HorNet</a></td></tr>
+        <tr><td>Experimental AFM images (RPR P1–P3; RRE C0–C4)</td><td>Real-world single-molecule structure determination</td><td>3 RPR particles; 5 RRE conformers; ~19 million total models</td><td><a href="https://home.ccr.cancer.gov/csb/pnai/data/HorNet/P1_P2_P3_data.tar.gz" target="_blank">NCI HorNet (P1–P3)</a> / <a href="https://home.ccr.cancer.gov/csb/pnai/data/HorNet/RRE_data_results.tar.gz" target="_blank">RRE results</a></td></tr>
+        <tr><td>Crystal structure PDB entries (3DHS, 2A64, 4GMA, 4E8K)</td><td>Ground-truth benchmarks</td><td>4 crystal structures, 210–417 nt</td><td><a href="https://www.rcsb.org" target="_blank">RCSB PDB</a></td></tr>
+        <tr><td>HORNET software (CafeMol + DNN + UML scripts)</td><td>Reproducible pipeline</td><td>All code &amp; scripts</td><td><a href="https://zenodo.org/records/10637777" target="_blank">Zenodo 10637777</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all numbers above are taken verbatim from the paper's Methods and figure captions. No exact count of individual AFM images acquired is stated for the full RRE dataset beyond the five selected conformers.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>AFM-restrained coarse-grained molecular dynamics:</b> Langevin dynamics (CafeMol) with a weighted <em>AFM topographic pseudo-potential</em> that restrains trajectory models to match the 3D height map of a single-molecule AFM image (5 Å/pixel). Go-model energetics maintain hierarchical RNA folding.</li>
+      <li><b>Unsupervised machine learning (UML) pipeline:</b> three-stage process — (1) energy outlier filtering; (2) PCA of all energy terms (Go, local, total) + CC<sub>AFM</sub> with successive clustering to select the lowest-energy cluster; (3) cohort selection combining lowest energies with highest topographic fit. Achieves average top-10 r.m.s.d. ~5 Å across all benchmarks.</li>
+      <li><b>Supervised deep neural network (DNN) for accuracy estimation:</b> 3-hidden-layer network (128→64→16 neurons, ELU activation, ~11 k parameters) trained on the psDatabase to predict r.m.s.d. from the unknown ground truth using energy terms + CC<sub>AFM</sub> as inputs. Pearson r = 0.95 on training-validation; generalizes to unseen RNA families.</li>
+      <li><b>DNN architecture optimization:</b> random search over number of layers (1–10), neurons per layer (8–256, multiples of 8), activations (relu/leaky-relu/elu/gelu/selu), regularization (L2 ridge regression + dropout ~20%), batch size 128, Huber loss, Adam optimizer (lr=0.001). Trained on NVIDIA V100/K80 GPUs (NIH HPC Biowulf).</li>
+      <li><b>Non-convergence detection and recovery:</b> HORNET monitors DNN-estimated accuracy distribution; if top-model r.m.s.d. exceeds 7 Å, the pipeline triggers re-fitting with a different initial model or unconstrained MD escape from local minima, followed by UML without AFM restraints.</li>
+      <li><b>Image resolution assessment:</b> auto-correlation value (ACV) method using 2D FFT low-pass Fourier ring filtering to estimate effective AFM image resolution (11–12.5 Å for experimental particles); images upsampled to 4096×4096 pixels using SPIP/MountainsSPIP software.</li>
+      <li><b>All-atom conversion:</b> top 10 coarse-grained models selected by DNN are converted to full atomic coordinates for downstream structural analysis and drug design.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig1.png" target="_blank">
+        <img src="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig1.png" alt="Fig.1 HORNET overall workflow" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overall HORNET pipeline — from AFM topography input through dynamic fitting, UML/DNN clustering, to 3D structure output; psDatabase composition (3.5M models) and benchmark partitioning (~56M total).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig2.png" target="_blank">
+        <img src="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig2.png" alt="Fig.2 RNA structures from AFM images" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Raw and processed AFM particle images of RPR (P1–P3) with resolution estimation (ACV), cross-correlation to crystal structure, and noise characterization at 7 Gaussian noise levels (5–50%).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig3.png" target="_blank">
+        <img src="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig3.png" alt="Fig.3 UML benchmarks" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> UML pipeline benchmarks (BM0–BM5): PCA cluster plots, energy contours, violin plots of energies and CC<sub>AFM</sub>, r.m.s.d. progression through selection stages, and lowest-energy structures colored by r.m.s.f.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig4.png" target="_blank">
+        <img src="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig4.png" alt="Fig.4 Supervised DNN performance" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> DNN performance: true vs. estimated r.m.s.d. scatter plots for BM1–BM5 (Pearson r = 0.77–0.95), loss curves vs. epoch, UML vs. DNN comparison violin plots, and r.m.s.e. uncertainty across ~5.4 million independent structures.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig5.png" target="_blank">
+        <img src="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig5.png" alt="Fig.5 RPR three conformer structures" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Three experimental RPR conformers (P1–P3): energy–CC<sub>AFM</sub> contour maps, top recapitulated molecular surface models (estimated accuracy 4–6 Å), DNN accuracy distributions, and r.m.s.f. profiles per residue.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig6.png" target="_blank">
+        <img src="assets/determining-structures-of-rna-conformers-using-afm-and-deep-neural-networks__s41586-024-07559-x/fig6.png" alt="Fig.6 HIV-1 RRE conformers" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> HIV-1 RRE five conformers (C0–C4): AFM images and HORNET-recapitulated 3D structures, Rev-binding site distances (45–70 Å range), r.m.s.f. per residue, branched peptide design with lysine linkage, and electrophoretic mobility shift assay.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables. Supplementary contains Tables 1–10 plus Extended Data Figs. 1–10 with detailed benchmarking, noise estimation, and structure-calculation results.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, open science).</p>
+
+    <div class="idea">
+      <h3>① Replace the fixed DNN with a conformational generative model for RNA</h3>
+      <p><span class="lab paper">Extending this paper</span>HORNET's DNN is a <strong>discriminative accuracy estimator</strong>: given a candidate structure, it predicts r.m.s.d. from the ground truth. It does not generate structures — those come from Langevin MD starting from hand-picked initial models. A direct extension: recast the generative step as a <strong>3D molecular generative model</strong> conditioned on the AFM topographic surface, so that new conformer proposals are drawn from a learned distribution over topologically consistent RNA folds rather than from FARFAR2 or MD. This would substantially reduce the dependence on expensive trajectory sampling (~10 million models per benchmark) and could generate physically plausible initial structures for any RNA given only its AFM image and secondary structure. The corpus paper on learning on topological surfaces and geometric structures for 3D molecular generation provides an immediate methodological bridge.</p>
+      <p><span class="lab mine">Added value to my research</span>The workflow of "AFM surface → conditional generative model → 3D structure" is formally analogous to "remote sensing image → conditional generative model → building/terrain 3D model" — a problem space directly relevant to geospatial foundation models and multi-source data fusion. The technical insight that a topographic constraint can substitute for large training databases when combined with a well-designed generative prior maps cleanly onto urban data-scarce settings, informing how physics-informed priors can reduce annotation requirements in fine-tuning geospatial foundation models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning on topological surface and geometric structure for 3D molecular generation — <a href="https://doi.org/10.1038/s43588-023-00530-2" target="_blank">10.1038/s43588-023-00530-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend HORNET's accuracy-estimation DNN to a conformational-ensemble predictor</h3>
+      <p><span class="lab paper">Extending this paper</span>HORNET's DNN currently estimates the r.m.s.d. of a <em>single</em> candidate model from an unknown ground-truth structure. A key limitation acknowledged in the paper is that accuracy estimation degrades beyond ~7.5 Å r.m.s.d. A direct extension: reformulate the DNN as a <strong>probabilistic conformational ensemble predictor</strong> — instead of a point estimate of r.m.s.d., output a full distribution over possible conformers, analogous to AlphaFold's pLDDT or predicted aligned error. This requires augmenting the psDatabase with conformational diversity metrics and training with uncertainty-aware losses (e.g., evidential regression). The corpus paper on learning conformational flexibility of immune receptors provides a direct blueprint for how deep learning can model the <em>ensemble</em> of accessible conformations, rather than a single structure.</p>
+      <p><span class="lab mine">Added value to my research</span>Uncertainty quantification over predicted structures is methodologically equivalent to uncertainty quantification in spatial prediction — a central challenge in explainable ML for spatial analysis. The transition from point r.m.s.d. estimation to full probability distributions over conformational states is the structural-biology analogue of quantile regression or conformal prediction in GWR/MGWR models, directly informing how I design uncertainty-aware explainable models for spatiotemporal health outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning conformational flexibility of immune receptors — <a href="https://doi.org/10.1038/s42256-025-01133-4" target="_blank">10.1038/s42256-025-01133-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace CafeMol Langevin dynamics with a graph neural network-based surrogate force field</h3>
+      <p><span class="lab paper">Extending this paper</span>The most computationally intensive step of HORNET is coarse-grained molecular dynamics: each RNA particle requires 10–60 million simulation steps (~2.7 µs). A direct extension of the paper: train a <strong>graph neural network force field</strong> — with RNA residues as nodes and covalent/stacking contacts as edges — to replace the CafeMol Go + AFM potential, enabling <em>orders-of-magnitude faster trajectory generation</em>. Because the input features (energy terms, topographic CC) are already graph-structured by chemical connectivity, this is architecturally natural. The corpus paper on rapid protein model refinement by deep learning via a graph-neural-network framework provides exactly this template for bio-macromolecular structures.</p>
+      <p><span class="lab mine">Added value to my research</span>The concept of a GNN force field — where nodes are entities, edges encode physical interactions, and message passing replaces explicit simulation — maps directly onto my physics-informed graph learning agenda for spatiotemporal systems. Specifically, replacing numerical PDE solvers with GNN surrogates (as HORNET could replace MD with a GNN) is the structural-biology analogue of replacing agent-based epidemic simulations with graph neural ODEs in disease transmission modeling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Rapid protein model refinement by deep learning — <a href="https://doi.org/10.1038/s43588-021-00104-0" target="_blank">10.1038/s43588-021-00104-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend experimental data integration to complementary low-resolution probes (SAXS, ion mobility)</h3>
+      <p><span class="lab paper">Extending this paper</span>HORNET currently uses AFM topography as its sole experimental restraint. The paper itself uses SAXS-derived RS3D models as starting structures (BM4, BM5), but does not integrate SAXS intensities as a live restraint during fitting. A direct extension: build a <strong>multi-modal restraint engine</strong> that simultaneously satisfies AFM topography, SAXS scattering curves, and ion mobility collision cross-sections within the Langevin dynamics framework. This would provide orthogonal global shape information, reducing conformational ambiguity at the current ~7.5 Å accuracy limit. The corpus paper on protein shape from ion mobility mass spectrometry shows that shape information from a low-resolution probe can consistently improve structural predictions when integrated with sequence-based methods.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-modal data fusion — integrating structurally complementary sensors to reduce uncertainty below what any single source can achieve — is the defining challenge of my multi-source data fusion agenda (mobile phone + remote sensing + social media + POIs). The HORNET extension principle that "each probe reduces a different axis of conformational ambiguity" is a precise analogue of how orthogonal urban data streams reduce spatial prediction uncertainty in ensemble geospatial models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Protein shape sampled by ion mobility mass spectrometry consistently improves protein structure prediction — <a href="https://doi.org/10.1038/s41467-022-32075-9" target="_blank">10.1038/s41467-022-32075-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Build a universal RNA conformational atlas from HORNET-processed large AFM image datasets</h3>
+      <p><span class="lab paper">Extending this paper</span>HORNET currently processes one RNA particle at a time, producing structures for specific molecules of biological interest. A transformative extension: apply HORNET at scale to <strong>population-level AFM imaging campaigns</strong> across a diversity of RNA types, building a <em>RNA Conformational Atlas</em> — a community resource of experimentally-grounded 3D structure ensembles analogous to the Protein Data Bank but for flexible conformational states. This would require automating the pipeline (particle detection → HORNET → atlas deposition) and defining standardized quality metrics for conformational entries. The corpus paper on clustering single-cell RNA-seq data with a model-based deep learning approach demonstrates that unsupervised deep learning can identify biologically meaningful clusters from high-throughput single-molecule data at population scale, providing a direct methodological template for RNA conformational population analysis.</p>
+      <p><span class="lab mine">Added value to my research</span>The vision of an open, community-curated atlas built from standardized computational pipelines applied to heterogeneous experimental data is directly parallel to the open science and FAIR data principles central to my research on multi-source data fusion and reproducible geospatial analysis. The challenge of defining what constitutes a "canonical conformer" in a heterogeneous population mirrors the challenge of defining what constitutes a representative spatial unit in spatially heterogeneous urban systems — both require robust clustering + quality-filtering pipelines deployable at scale.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Clustering single-cell RNA-seq data with a model-based deep learning approach — <a href="https://doi.org/10.1038/s42256-019-0037-0" target="_blank">10.1038/s42256-019-0037-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controlling diverse robots by inferring Jacobian fields with deep networks — AI Digest</title>
+<meta name="description" content="AI Digest: Controlling diverse robots by inferring Jacobian fields with deep networks (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Robot control</span>
+      <span class="tag">Neural scene representation</span>
+      <span class="tag">Self-supervised learning</span>
+      <span class="tag">Soft robotics</span>
+    </div>
+    <h1>Controlling diverse robots by inferring Jacobian fields with deep networks</h1>
+    <div class="meta">
+      <span class="authors">Sizhe Lester Li · Annan Zhang · Boyuan Chen · Hanna Matusik · Chao Liu · Daniela Rus · Vincent Sitzmann</span>
+      <span><b>Published</b> 2025-06-25</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09170-0" target="_blank">10.1038/s41586-025-09170-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09170-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Deep neural networks can learn a <strong>visuomotor Jacobian field</strong> — a dense 3D map of how every point on a robot's body responds to actuator commands — from a single camera, trained entirely self-supervised on random-command videos. The method makes <strong>no assumptions about materials, actuation or embedded sensing</strong>, and achieves accurate closed-loop control across a diverse set of robots including soft pneumatic hands, handed-shearing-auxetic platforms, a 16-DoF rigid hand, and a low-cost 3D-printed arm. By decoupling hardware design from manual modelling expertise, the approach <strong>substantially broadens the design space of controllable robots</strong> and lowers the barrier to robotic automation.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the rigid-robot bottleneck.</b> Conventional robot control requires precision-engineered parts and embedded per-joint sensors. This work removes both requirements, enabling control of soft, hybrid and compliant robots that are mechanically inaccessible to classical modelling.</li>
+      <li><b>Zero expert customization.</b> Training uses only random commands observed through commodity RGB-D cameras — no annotation, no URDF file, no hand-crafted kinematic model. Replacing a month-long expert modelling process with 2–3 hours of data collection is a practical step-change.</li>
+      <li><b>Universal across actuation physics.</b> Pneumatic, motor-driven, auxetic and electrically actuated systems are handled by a single framework, demonstrating genuine generality rather than task-specific engineering.</li>
+      <li><b>Single-camera deployment.</b> At inference time, only one consumer camera is needed — removing expensive motion-capture infrastructure (OptiTrack, VICON, Qualisys) from the control loop.</li>
+      <li><b>Open data and code.</b> Training data on HuggingFace and full source code on GitHub (<a href="https://github.com/sizhe-li/neural-jacobian-field" target="_blank">sizhe-li/neural-jacobian-field</a>) lower the barrier for follow-on research and reproducibility.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Fundamental advance, not incremental engineering:</b> unifying the control of mechanically disparate robots under a single differentiable representation is a conceptual breakthrough — exactly the kind of generalization Nature favors.</li>
+      <li><b>Broad societal impact:</b> lowering the cost and expertise needed for robotic automation connects directly to industrial, medical and domestic robotics applications at scale.</li>
+      <li><b>Interdisciplinary synthesis:</b> the work fuses continuum mechanics (Jacobian linearization), neural scene representation (NeRF/pixelNeRF), differentiable rendering and model predictive control — spanning computer vision, robotics and materials science.</li>
+      <li><b>Demonstrated generality:</b> four hardware platforms with radically different physics are benchmarked rigorously, providing the cross-system evidence Nature expects for universal claims.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd>Self-collected multi-view video datasets for each robot platform: <strong>2–3 hours of video</strong> per robot, captured by <strong>12 Intel RealSense D415 RGB-D cameras</strong> observing random-command executions. Publicly available at <a href="https://huggingface.co/datasets/sizhe-lester-li/neural-jacobian-field/tree/main" target="_blank">HuggingFace</a>.</dd>
+      <dt>Robot platforms</dt><dd>Four physically diverse manipulation systems: (1) 3D-printed hybrid soft–rigid pneumatic hand (15 pneumatic channels, ~US$300); (2) Handed Shearing Auxetics (HSA) parallel manipulator (4 DoF); (3) Allegro Hand (16 DoF, commercial); (4) Poppy Ergo Jr 6-DoF arm (open-source, low-cost, substantial backlash).</dd>
+      <dt>Data collection</dt><dd>Random command sampling from a safe per-channel range; each data sample captures a steady-state image tuple before and after a commanded motor delta across all 12 cameras. No human annotation required.</dd>
+      <dt>Optical flow</dt><dd>Off-the-shelf <strong>RAFT</strong> optical flow computed between consecutive multi-view frames; <strong>TAPIR</strong> used for 2D point tracking at test time; segmentation masks from <strong>Segment Anything</strong>.</dd>
+      <dt>Geometry supervision</dt><dd>RGB-D depth from Intel RealSense cameras; camera poses calibrated with <strong>3-cm AprilTags</strong>. Depth loss is optional — pure RGB training is also feasible.</dd>
+      <dt>Code &amp; data</dt><dd>Full code: <a href="https://github.com/sizhe-li/neural-jacobian-field" target="_blank">github.com/sizhe-li/neural-jacobian-field</a>. Training data: HuggingFace dataset above. All conclusions reproducible from the paper or Extended Data.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Tool</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Neural Jacobian Field dataset (HuggingFace)</td><td>Training multi-view RGB-D videos per robot</td><td>4 robots, 2–3 hrs each, 12 cameras</td><td><a href="https://huggingface.co/datasets/sizhe-lester-li/neural-jacobian-field/tree/main" target="_blank">HuggingFace</a></td></tr>
+        <tr><td>RAFT optical flow</td><td>2D motion supervision signal for Jacobian training</td><td>Applied to all camera pairs per timestep</td><td><a href="https://github.com/princeton-vl/RAFT" target="_blank">GitHub</a></td></tr>
+        <tr><td>TAPIR point tracking</td><td>Extracting reference point tracks for 2D control</td><td>Video-based, per deployment robot</td><td>DeepMind public release</td></tr>
+        <tr><td>Segment Anything (SAM)</td><td>Robot foreground segmentation for domain randomization</td><td>Applied during training augmentation</td><td><a href="https://segment-anything.com" target="_blank">Meta AI</a></td></tr>
+        <tr><td>Drake physics simulator</td><td>Analytical Jacobian baseline for Allegro hand validation</td><td>Allegro hand URDF kinematic model</td><td><a href="https://drake.mit.edu" target="_blank">drake.mit.edu</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: training data volume (hours, camera count) is taken verbatim from the Methods section. No pre-existing external geospatial or population datasets are used — all data are robotics-lab collected or tool-derived.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Visuomotor Jacobian field:</b> a deep neural network maps a single RGB image I to a 3D spatial field J(x, I) = ∂x/∂u, encoding how every 3D point x moves under actuator command change δu. Generalizes the classical system Jacobian to a continuous, vision-conditioned spatial representation.</li>
+      <li><b>Neural radiance field (NeRF) backbone:</b> both the Jacobian field and a radiance field (geometry + appearance) are predicted jointly from one image using the pixelNeRF architecture — bilinear-interpolated 2D feature volumes projected to 3D via sinusoidal positional encoding.</li>
+      <li><b>Self-supervised training via differentiable rendering:</b> predicted 3D motion fields are volume-rendered to optical flow and compared with RAFT-computed flows; radiance field is rendered to RGB-D and compared with camera captures. No human labels needed.</li>
+      <li><b>Model predictive control (MPC):</b> at inference, the Jacobian field is queried to solve for the actuator command minimizing L2 distance to 2D pixel-space waypoints (or Wasserstein-1 distance for 3D point-cloud tracking). Runs at approximately 12 Hz.</li>
+      <li><b>Inductive biases:</b> the Jacobian parameterization enforces linearity, spatial locality and compositionality — properties of real mechanical systems — which are shown to improve generalization over direct scene-flow prediction baselines.</li>
+      <li><b>Domain randomization:</b> robot foregrounds are overlaid on random natural-scene backgrounds during training (using SAM masks) to improve robustness to occlusion and background change at deployment.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig1.png" target="_blank">
+        <img src="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig1.png" alt="Fig.1 Visuomotor Jacobian field overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> System overview: (a) Jacobian field reconstruction and 3D motion prediction from a single image; (b) closed-loop control pipeline running at ~12 Hz.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig2.png" target="_blank">
+        <img src="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig2.png" alt="Fig.2 Reconstruction of robot geometry and kinematics" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Jacobian and radiance field reconstructions across all four robot platforms — colours encode per-actuator motion sensitivity learned without supervision.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig3.png" target="_blank">
+        <img src="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig3.png" alt="Fig.3 Closed-loop control of diverse robots" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Closed-loop control demonstrations: pneumatic hand grasping, Allegro fist formation, HSA wrist motion, UR5-mounted hand tool use, and Poppy arm letter-drawing.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig4.png" target="_blank">
+        <img src="assets/controlling-diverse-robots-by-inferring-jacobian-fields-with-deep-networks__s41586-025-09170-0/fig4.png" alt="Fig.4 Quantitative analysis and resilience test" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Quantitative results: HSA robustness to 350 g weight perturbation; Allegro joint and fingertip errors over time; Poppy trajectory tracking; Jacobian vs. analytical simulation comparison.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables; 4 Extended Data Tables (visuomotor control, 3D reconstruction, Jacobian vs. neural flow baseline, Jacobian vs. analytical simulation).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Transfer the Jacobian field's self-supervised 3D field representation to spatiotemporal urban sensing</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper learns a dense 3D sensitivity field entirely from raw video and random commands, with no labeled data. This self-supervised regime is powerful because it encodes causal structure (which actuator moves which part) without annotation. A direct extension would replace the robot's actuator commands with <strong>policy interventions</strong> — for example, transit schedule changes — and define the "Jacobian" as the sensitivity of urban flow fields to those interventions, training from GPS or mobile-phone mobility streams. The paper's volume-rendering supervision could be replaced by spatiotemporal kernel density rendering of observed mobility trajectories.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal kernel density estimation and GPS trajectory work use fixed bandwidth parameters. The Jacobian-field formulation would let me learn a <strong>mobility sensitivity field</strong>: how does the density of healthcare visits or transit ridership at every spatial grid cell respond to accessibility interventions? This turns my static accessibility metrics (2SFCA, R2SFCA) into a causal intervention operator, directly supporting policy counterfactual analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Model-based reinforcement learning for ultrasound-driven autonomous microrobots — <a href="https://doi.org/10.1038/s42256-025-01054-2" target="_blank">10.1038/s42256-025-01054-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend the Jacobian's "physics without a model" concept to physics-informed graph learning for urban networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core insight is that the linearization J(x, I) = ∂x/∂u — the local sensitivity of any 3D point to any actuator — can be learned directly from observations, bypassing the need to solve the governing PDE (continuum mechanics of soft materials). The same idea applies to urban network dynamics: rather than solving a traffic flow PDE or an epidemic SIR system from scratch, one could learn a <strong>network Jacobian field</strong> that maps node-level interventions to system-wide state changes. The paper's differentiable-rendering training loop directly inspires a <strong>differentiable network simulation</strong> layer as training supervision.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning agenda seeks to encode conservation and flow priors into GNNs for urban systems. The Jacobian-field formulation offers a concrete architecture: encode the network graph as the "camera" projection (the spatial prior), learn the Jacobian of node-level outcomes (disease incidence, transit ridership) with respect to facility placements, and supervise using observed spatiotemporal outcomes via differentiable aggregation — a physics-inspired, annotation-free GNN for health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Self-supervised learning of hologram reconstruction using physics consistency — <a href="https://doi.org/10.1038/s42256-023-00704-7" target="_blank">10.1038/s42256-023-00704-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use the paper's causal structure discovery to build explainable ML for spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates a striking property: the Jacobian field <em>automatically discovers</em> which command channels actuate which parts of the robot, without any supervision (Fig. 2 colour coding). This unsupervised causal structure discovery is not limited to robots — it is fundamentally an unsupervised identification of causal pathways from a multivariate intervention-and-observe dataset. Extending the paper: apply the same architecture to multi-channel interventional data in biology or social systems, where "actuators" are policy levers and "robot geometry" is the state of a spatial system.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work uses post-hoc methods (SHAP, MGWR) to attribute spatial predictions to features. A Jacobian-field-style formulation would be <em>intrinsically</em> explainable: the learned J(x, feature) directly encodes how each input feature influences each spatial output location, giving a spatially-varying, causal feature-attribution map — moving from post-hoc explanation to architecture-level explainability for GeoAI models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning of causal structures in high dimensions under data limitations — <a href="https://doi.org/10.1038/s42256-023-00744-z" target="_blank">10.1038/s42256-023-00744-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply the paper's generalization across robot morphologies to foundation-model transfer for geospatial domains</h3>
+      <p><span class="lab paper">Extending this paper</span>A key result is that a single algorithm — with no per-robot specialization — generalizes across radically different morphologies (soft pneumatic, auxetic, rigid, backlash-prone). This is morphological generalization. The paper achieves it by operating in a common representation space (3D Jacobian field) rather than robot-specific state encodings. Extending this: train a single Jacobian-field-style model across a large library of robot types, and study whether a foundation Jacobian model emerges that zero-shots new robot morphologies — the robot analogy of a geospatial foundation model generalizing to unseen city types.</p>
+      <p><span class="lab mine">Added value to my research</span>I work on fine-tuning geospatial foundation models to new urban contexts. The morphological generalization principle suggests that a <strong>spatiotemporal foundation model</strong> trained across diverse city types could similarly learn a "city Jacobian" — how spatial accessibility metrics respond to interventions in different urban morphologies — enabling zero-shot policy evaluation for cities not in the training set.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning to adapt through bio-inspired gait strategies for versatile quadruped locomotion — <a href="https://doi.org/10.1038/s42256-025-01065-z" target="_blank">10.1038/s42256-025-01065-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Adopt the paper's MPC-over-Jacobian-field paradigm for real-time healthcare facility access optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's closed-loop controller works by: (1) query the Jacobian field to predict how a command changes the state; (2) solve for the command that minimizes distance to the goal waypoint; (3) execute and observe. This predict-and-optimize loop runs at 12 Hz for robots. Extending the paper: replace "robot command" with "facility opening/closure decision," replace "Jacobian field" with a learned accessibility sensitivity field, and replace "waypoint" with a target equity-accessibility distribution. The result is a real-time, data-driven facility-location optimizer that closes the loop on observed population outcomes.</p>
+      <p><span class="lab mine">Added value to my research</span>My healthcare accessibility work (2SFCA/R2SFCA, EV-charging optimization) currently solves open-loop facility location. A Jacobian-field-based MPC layer would enable <strong>closed-loop, adaptive facility allocation</strong>: as real-world mobility data updates the sensitivity field (which areas respond most to new facilities), the optimizer continuously refines facility placements — a live, spatially-aware healthcare accessibility controller grounded in the paper's visuomotor control paradigm.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A deep-learning framework reveals whole-body perturbations at cell level — AI Digest</title>
+<meta name="description" content="AI Digest: A deep-learning framework reveals whole-body perturbations at cell level (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Biomedical Imaging</span>
+      <span class="tag">Obesity</span>
+      <span class="tag">Foundation Model</span>
+    </div>
+    <h1>A deep-learning framework reveals whole-body perturbations at cell level</h1>
+    <div class="meta">
+      <span class="authors">Doris Kaltenecker · Izabela Horvath · Rami Al-Maskari · Ying Chen · Zeynep Ilgin Kolabas · Luciano Hoeher · Mihail Todorov · David-Paul Minde · Saketh Kapoor · Sena Gül Turhan · Louis B. Kuemmerle · et al. · Ali Ertürk</span>
+      <span><b>Published</b> 2026-05-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10535-2" target="_blank">10.1038/s41586-026-10535-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10535-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MouseMapper, a <strong>foundation-model-based deep-learning suite</strong>, enables the first <strong>automated, whole-body quantification</strong> of peripheral nerves, immune cells, and 31 organs and tissues in the entire mouse body. Applied to diet-induced obesity, it revealed a <strong>previously unknown structural impairment</strong> of the infraorbital trigeminal nerve — reducing its network complexity by ~58% — linked to functional sensory deficits, and confirmed by conserved proteomic signatures in <strong>obese human trigeminal ganglia</strong>. The framework's zero-shot generalizability across different imaging resolutions, labelling strategies, and species establishes a <strong>scalable blueprint for systemic disease mapping</strong> from animal models to clinical translation.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First whole-body AI atlas of nerves and immune cells.</b> MouseMapper segments elongated peripheral nerve fibres over centimetre lengths and single immune-cell clusters simultaneously across the entire mouse body — a capability that did not exist before.</li>
+      <li><b>Closes a major bottleneck in systems disease biology.</b> Advanced tissue-clearing (vDISCO) can image entire mouse bodies, but analysis has been done manually or organ by organ; MouseMapper automates the pipeline end-to-end for any organ.</li>
+      <li><b>Uncovers a new obesity-linked neuropathy.</b> Diet-induced obesity reduces infraorbital nerve endings, edges, and vertices by ~58–61%, and this structural loss translates into measurable sensory deficits — a finding invisible without whole-body context.</li>
+      <li><b>Bridges mouse to human pathology.</b> Proteomic pathways dysregulated in the trigeminal ganglion of obese mice (axon remodelling, complement, actin cytoskeleton) are conserved in post-mortem human tissue from individuals with obesity — providing direct translational relevance.</li>
+      <li><b>Open science by design.</b> Whole-body scan maps are browsable online (<a href="https://discotechnologies.org/MouseMapper/" target="_blank">discotechnologies.org/MouseMapper</a>), code is on GitHub, and mass-spectrometry data are deposited to PRIDE/ProteomeXchange — enabling broad community reuse.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-setting technical contribution:</b> introduces the first AI pipeline for whole-body 3D segmentation of both elongated neuronal structures and immune cells simultaneously across a mammalian body — a methodological milestone matching Nature's appetite for field-defining tools.</li>
+      <li><b>Discovery tied to the tool:</b> the biological finding (trigeminal neuropathy in obesity) is only discoverable via the new framework, exemplifying the "method enables discovery" narrative Nature prioritizes.</li>
+      <li><b>Multi-scale biological insight:</b> connects nanometre-scale axon morphology, organ-level inflammation maps, and mass-spectrometry proteomics into a single integrated study — cross-scale integration is a hallmark of high-impact Nature papers.</li>
+      <li><b>Translational evidence:</b> mouse findings are directly validated in post-mortem human samples; this mouse-to-human axis is essential for Nature's biomedical audience.</li>
+      <li><b>Generalizability claim backed by data:</b> cross-dataset Dice scores (0.69–0.79) across transgenic reporters, antibody labels, and species demonstrate robust robustness — not just a one-off result.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Animal cohort</dt><dd>19 mice total (10 HFD-fed, 9 chow-fed): 9 Uchl1-eGFP mice (4 chow, 5 HFD) imaged at 1× for whole-body nerve mapping; 10 Cd68-eGFP mice (5 chow, 5 HFD) for whole-body immune mapping. Additional subsets imaged at 4× (higher resolution ventral/dorsal scans).</dd>
+      <dt>Imaging data volume</dt><dd>1× Uchl1-eGFP scans: 105,948 z-slices, ~10.9 trillion voxels, <strong>9.42 TB</strong> (ZARR compressed). 4× UCHL1 scans: 64,968 z-slices, ~54.9 trillion voxels, <strong>56.1 TB</strong>. 1× Cd68-eGFP scans: 112,515 z-slices, ~10.8 trillion voxels, <strong>7.48 TB</strong>. 4× Cd68-eGFP: 11,706 z-slices, ~9.7 trillion voxels, <strong>9.8 TB</strong>.</dd>
+      <dt>Organs segmented</dt><dd><strong>31 organs and tissues</strong> automatically mapped by the Tissue-Module (27 organs + fat, muscle, bone, bone marrow), far exceeding previous LSFM methods (e.g., AIMOS: 6 organs).</dd>
+      <dt>Annotation effort</dt><dd>Nerve-Module: <strong>72 GB</strong> of VR-annotated data (84 small + 8 large subvolumes, 1,217 patches). Immune-Module: <strong>350 MB</strong> VR-annotated patches. Tissue-Module: <strong>10 GB</strong> organ annotations + <strong>46 GB</strong> tissue (fat/muscle/bone) annotations.</dd>
+      <dt>Human samples</dt><dd>Trigeminal ganglia from <strong>9 post-mortem donors</strong> (5 lean BMI &lt;25, 4 obese BMI &gt;30); 3 regions of interest per ganglion; proteomic profiling by LC-MS/MS. Data at PRIDE: PXD054819 (mouse), PXD071172 (human).</dd>
+      <dt>External validation dataset</dt><dd>Publicly available human embryo (post-conception week 7) stained for β3-tubulin from <a href="https://hudeca.com" target="_blank">hudeca.com</a> (CC BY-NC 4.0); Thy1-eGFP and antibody-labelled (UCHL1, CGRP, TH) wildDISCO mouse datasets.</dd>
+      <dt>Computing resources</dt><dd>~500 GPU hours (training), ~265 GPU hours (1× inference), ~550 GPU hours per 4× scan, ~330 CPU hours (graph extraction/1× scans). HPC cluster at Helmholtz Zentrum München.</dd>
+      <dt>Code &amp; data availability</dt><dd>Code: <a href="https://github.com/erturklab/mouseMapper" target="_blank">github.com/erturklab/mouseMapper</a>. Whole-body maps: <a href="https://discotechnologies.org/MouseMapper/" target="_blank">discotechnologies.org/MouseMapper</a>. Proteomics: ProteomeXchange PXD054819 &amp; PXD071172.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Uchl1-eGFP + vDISCO whole-mouse scans</td><td>Peripheral nerve mapping, Nerve-Module training &amp; validation</td><td>9 mice (4 chow, 5 HFD); 9.42 TB ZARR</td><td><a href="https://discotechnologies.org/MouseMapper/" target="_blank">discotechnologies.org</a></td></tr>
+        <tr><td>Cd68-eGFP + vDISCO whole-mouse scans</td><td>Immune cell mapping, Immune-Module training &amp; validation</td><td>10 mice (5 chow, 5 HFD); 7.48 TB ZARR</td><td><a href="https://discotechnologies.org/MouseMapper/" target="_blank">discotechnologies.org</a></td></tr>
+        <tr><td>VesselFM (pre-trained foundation model)</td><td>Transfer learning base for Nerve- and Immune-Modules</td><td>Large-scale 3D vessel dataset (pre-trained); Zenodo</td><td><a href="https://doi.org/10.5281/zenodo.5719536" target="_blank">zenodo.5719536</a></td></tr>
+        <tr><td>Human embryo β3-tubulin LSFM (hudeca.com)</td><td>Cross-species generalizability validation of Nerve-Module</td><td>Post-conception week 7 human embryo; CC BY-NC 4.0</td><td><a href="https://hudeca.com" target="_blank">hudeca.com</a></td></tr>
+        <tr><td>Mouse trigeminal ganglion proteomics</td><td>Spatial proteomics — molecular mechanisms of neuropathy</td><td>12 samples (3 mice × 2 ganglia × 2 groups); DIA-MS</td><td><a href="http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD054819" target="_blank">PRIDE PXD054819</a></td></tr>
+        <tr><td>Human trigeminal ganglion proteomics</td><td>Translational validation in lean vs. obese humans</td><td>9 donors (5 lean, 4 obese); 3 ROIs/ganglion; DIANN v2.0</td><td><a href="http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD071172" target="_blank">PRIDE PXD071172</a></td></tr>
+        <tr><td>MouseMapper codebase</td><td>Nerve-, Immune- and Tissue-Module inference pipeline</td><td>PyTorch; ZARR/DASK whole-body inference</td><td><a href="https://github.com/erturklab/mouseMapper" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: All sample sizes are taken verbatim from the article. The study is primarily an animal model study with a small human post-mortem validation cohort (n=9 donors total); generalizability to human populations at scale remains to be established.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>vDISCO whole-body tissue clearing and light-sheet fluorescence microscopy (LSFM):</b> Uchl1-eGFP and Cd68-eGFP reporter mice undergo chemical clearing followed by LSFM at 1.1× (5.9 µm/voxel, whole-body) and 4× (1.62 µm/voxel, high-resolution) objectives, generating multiterabyte 3D volumes.</li>
+      <li><b>Foundation model fine-tuning (VesselFM → Nerve/Immune Modules):</b> VesselFM (pre-trained for 3D blood vessel segmentation) is adapted to nerve segmentation via <em>learning without forgetting</em> (LwF) and to immune cell detection by freezing the encoder and fine-tuning the decoder. Nerve-Module achieves voxel Dice 0.7494; Immune-Module 0.7878, outperforming all competing baselines.</li>
+      <li><b>Whole-body sliding-window inference:</b> ZARR file format and DASK parallel computing framework enable lazy loading and multiprocessing across multiterabyte whole-body scans; true 3D sliding-window inference (not 2D projections or pre-cropped volumes).</li>
+      <li><b>3D UNet Tissue-Module:</b> 27 organs annotated in 12 downsampled whole-mouse scans; ensemble of 5 networks (3D UNet selected as best) segments organs, then full-resolution tissue model handles fat, muscle, bone. Final Tissue-Module covers 31 anatomical units — the largest reported for LSFM.</li>
+      <li><b>Graph extraction and quantification:</b> Nerve segmentation binary masks are skeletonized and converted to graphs; node (vertex), edge, and leaf-node (nerve ending) counts and radii extracted for comparative morphometry between chow and HFD conditions.</li>
+      <li><b>Spatial proteomics (DIA-MS/timsTOF SCP):</b> Trigeminal ganglion needle-punch biopsies from mice and humans analysed by data-independent acquisition mass spectrometry; >6,000 proteins identified per sample; pathway enrichment via KEGG/Reactome.</li>
+      <li><b>Multiplex immunofluorescence (MACSima):</b> Five immune-cell markers on ViscAT sections; pixel-level segmentation using a 30×30 self-organizing map + Leiden clustering; spatial proximity analysis of macrophage co-localization patterns.</li>
+      <li><b>Virtual Reality (VR) annotation pipeline:</b> syGlass software used to manually annotate ground-truth training data in 3D for all three modules — critical for enabling supervised training at whole-body scale.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig1.png" target="_blank">
+        <img src="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig1.png" alt="Fig.1 Direct visualization of nerves and macrophages in obesity at the whole-body scale" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Direct visualization of peripheral nerves (Uchl1-eGFP) and macrophages (Cd68-eGFP) in lean vs. obese whole-mouse bodies via vDISCO clearing and LSFM.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig2.png" target="_blank">
+        <img src="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig2.png" alt="Fig.2 Development of an ensemble of deep-learning methods — MouseMapper architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> MouseMapper architecture: Nerve-Module, Immune-Module, and Tissue-Module, with foundation model fine-tuning (VesselFM) and VR-based annotation pipeline.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig3.png" target="_blank">
+        <img src="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig3.png" alt="Fig.3 Whole-body nerve segmentation reveals structural changes in the infraorbital nerve in obesity" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Whole-body nerve density maps; infraorbital nerve graph extraction shows ~58–61% reductions in nerve endings, edges, and vertices in obese mice.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig4.png" target="_blank">
+        <img src="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig4.png" alt="Fig.4 Structural changes in the infraorbital nerve associated with trigeminal ganglion proteome changes" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Sensory deficit in whisker stimulation; spatial proteomics of trigeminal ganglia (230 differentially regulated proteins) in mice and conserved pathways in obese humans.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig5.png" target="_blank">
+        <img src="assets/a-deep-learning-framework-reveals-whole-body-perturbations-at-cell-level__s41586-026-10535-2/fig5.png" alt="Fig.5 Whole-body-wide inflammation in obesity — Cd68+ immune cluster maps" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Whole-body Cd68-eGFP immune cell cluster size maps (small/medium/large) across organs; quantification of inflammation shifts in liver, ViscAT, ScAT, and muscle in HFD mice.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 in main text). Methods and supplementary information contain 13+ supplementary tables (e.g., Supplementary Tables 1–13 covering Dice scores by architecture, organ coverage, cohort demographics, and differentially regulated proteins).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, spatial accessibility and public health).</p>
+
+    <div class="idea">
+      <h3>① Extend MouseMapper's foundation model from anatomy to spatial omics integration</h3>
+      <p><span class="lab paper">Extending this paper</span>MouseMapper segments anatomical structures (nerves, immune cells, organs) but treats molecular data (proteomics) as a separate downstream analysis. A direct extension of the paper is to co-register the spatial proteomics needle-punch locations with the 3D LSFM segmentation maps, creating a <strong>multi-modal spatial atlas</strong> where each voxel has both an anatomical label and a molecular profile. The paper already identifies "hotspots" (e.g., trigeminal ganglia) by structural change; integrating spatial omics would let the framework automatically discover molecular hotspots without pre-defining regions of interest. The SWITCH framework for spatial multi-omics integration from the corpus provides a methodological blueprint for this fusion.</p>
+      <p><span class="lab mine">Added value to my research</span>This multi-modal spatial fusion is a direct analog of the <strong>multi-source data fusion</strong> challenge in GeoAI (mobile phone + remote sensing + POIs). MouseMapper's approach to aligning multi-terabyte 3D imaging data across modalities parallels my need to spatially co-register heterogeneous urban data layers at varying resolutions — the ZARR/DASK lazy-loading pipeline is directly transferable to large-scale spatiotemporal data handling for city-scale analyses.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrative deep learning of spatial multi-omics with SWITCH — <a href="https://doi.org/10.1038/s43588-025-00891-w" target="_blank">10.1038/s43588-025-00891-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Apply MouseMapper's generalizability benchmarking framework to medical imaging at clinical scale</h3>
+      <p><span class="lab paper">Extending this paper</span>MouseMapper demonstrates zero-shot transfer across imaging resolutions (1.1× to 4×), antibody labels (eGFP, UCHL1, CGRP, TH), and species (mouse to human embryo) without retraining — achieving Dice scores of 0.69–0.79. The paper benchmarks this systematically but in the controlled context of LSFM. Extending it: apply the same VesselFM-based fine-tuning paradigm to clinical CT/MRI volumes for peripheral nerve mapping, especially for diagnosing neuropathies in obese patients where currently no non-invasive whole-body nerve imaging exists. The corpus's fully open AI foundation model for chest radiography demonstrates that this clinical translation pipeline is tractable, and its open-weight approach mirrors MouseMapper's open-code commitment.</p>
+      <p><span class="lab mine">Added value to my research</span>The generalizability evaluation methodology — Dice scores across heterogeneous labelling conditions, cross-dataset transfer without retraining — is directly applicable to my work fine-tuning <strong>geospatial foundation models</strong>. MouseMapper's learning-without-forgetting (LwF) strategy for domain adaptation offers a principled approach to adapting pre-trained geospatial models (e.g., satellite imagery encoders) to new downstream tasks (e.g., urban health indicator mapping) without catastrophic forgetting of general geospatial features.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A fully open AI foundation model applied to chest radiography — <a href="https://doi.org/10.1038/s41586-025-09079-8" target="_blank">10.1038/s41586-025-09079-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use MouseMapper's 3D inflammation maps as spatial priors for single-cell perturbation modelling</h3>
+      <p><span class="lab paper">Extending this paper</span>MouseMapper characterizes Cd68+ macrophage cluster sizes across 31 tissues, revealing tissue-specific inflammation patterns (e.g., larger clusters in ViscAT and liver vs. ScAT in obesity). The current analysis stops at the cluster-level (small/medium/large) with multiplex immunofluorescence on selected sections. Extending it: use the 3D whole-body cluster density maps as <strong>spatial context features</strong> for generalized single-cell perturbation modelling — predicting how a pharmacological intervention (e.g., anti-inflammatory drug) would reshape the spatial distribution of immune clusters across tissues simultaneously. The Conditional Monge Gap framework for generalizable single-cell perturbation modelling provides an optimal-transport-based method to learn such interventional responses.</p>
+      <p><span class="lab mine">Added value to my research</span>The conceptual shift from "detecting existing states" to "predicting intervention responses" mirrors my interest in using spatiotemporal models to forecast how urban health interventions (e.g., adding primary care facilities, expanding telehealth access) would reshape the spatial distribution of health service utilization. MouseMapper's tissue-specific inflammation quantification is analogous to my <strong>spatial accessibility heterogeneity analyses</strong>, where local supply-demand imbalances vary across neighborhood types.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Conditional Monge Gap enables generalizable single-cell perturbation modelling — <a href="https://doi.org/10.1038/s42256-026-01242-8" target="_blank">10.1038/s42256-026-01242-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Replace per-scan VR annotation with physics-informed active learning for training data generation</h3>
+      <p><span class="lab paper">Extending this paper</span>MouseMapper's training required <strong>72 GB of manually VR-annotated nerve data</strong> — a massive labelling effort that is the main scalability bottleneck if the framework is extended to new diseases, mouse lines, or organs. The paper uses iterative annotation expansion for the Tissue-Module (inference on unannotated patches + manual correction), but this remains human-in-the-loop intensive. Extending it: integrate physics-based constraints (nerve topology continuity, biological plausibility of branching angles) as <strong>physics-informed uncertainty estimates</strong> to prioritize which patches most urgently need human annotation — an active learning loop grounded in the biology. The corpus's physics-based ML for subcellular segmentation demonstrates this approach in the fluorescence microscopy domain with limited ground truth.</p>
+      <p><span class="lab mine">Added value to my research</span>The challenge of annotation scarcity in large spatial datasets is directly relevant to my work on <strong>spatiotemporal kernel density estimation and agent-based modeling</strong> calibrated from sparse GPS trajectories or social media data. MouseMapper's iterative annotation strategy — train, infer, correct high-uncertainty patches — is a reusable template for semi-supervised calibration of spatial models from sparse ground-truth observations, applicable to any GeoAI pipeline where labeled data is expensive.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Physics-based machine learning for subcellular segmentation in living cells — <a href="https://doi.org/10.1038/s42256-021-00420-0" target="_blank">10.1038/s42256-021-00420-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Adapt MouseMapper's modular multi-system architecture to multi-domain urban health risk mapping</h3>
+      <p><span class="lab paper">Extending this paper</span>MouseMapper's power lies in its <strong>modular tri-module architecture</strong>: Nerve-Module (structural connectivity), Immune-Module (cellular distribution), and Tissue-Module (anatomical context). These three modules produce outputs that are meaningfully combined — nerve density is interpreted in its organ/tissue context; immune cluster composition is mapped onto specific anatomical regions. Extending the paper: design a <strong>fourth Dynamics-Module</strong> that tracks temporal changes in nerve and immune distributions over disease progression (e.g., obesity developing over 4, 8, 16, 18 weeks), moving from a cross-sectional to a longitudinal whole-body atlas. This would require a temporal registration framework aligning 3D mouse volumes across timepoints, enabling trajectory-based analysis of systemic disease.</p>
+      <p><span class="lab mine">Added value to my research</span>MouseMapper's modular decomposition — structural layer, cellular layer, anatomical context layer — maps cleanly onto a <strong>multi-domain urban health risk framework</strong> I am developing: a built-environment layer (land use, POI accessibility), a population-flow layer (mobile phone trajectories, commute networks), and a contextual layer (neighborhood socioeconomics). The Tissue-Module's role as a "common reference framework" for localizing cellular findings is analogous to my use of spatial administrative units as reference frames for co-interpreting heterogeneous urban data. MouseMapper's ZARR/DASK multi-terabyte inference architecture also directly informs scalable spatiotemporal data processing pipelines for city-scale analyses across hundreds of urban areas.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multi-task learning strategy to pretrain models for medical image analysis — <a href="https://doi.org/10.1038/s43588-024-00666-9" target="_blank">10.1038/s43588-024-00666-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

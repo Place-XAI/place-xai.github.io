@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training of physical neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Training of physical neural networks (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Physical Neural Networks</span>
+      <span class="tag">Analogue Computing</span>
+      <span class="tag">Hardware-Aware AI</span>
+      <span class="tag">Backpropagation-Free Training</span>
+    </div>
+    <h1>Training of physical neural networks</h1>
+    <div class="meta">
+      <span class="authors">Ali Momeni · Babak Rahmani · Benjamin Scellier · Logan G. Wright · Peter L. McMahon · Clara C. Wanjura · Yuhang Li · Anas Skalli · Natalia G. Berloff · Tatsuhiro Onodera · Ilker Oguz · Francesco Morichetti · Philipp del Hougne · Manuel Le Gallo · Abu Sebastian · Azalia Mirhoseini · Cheng Zhang · Danijela Marković · Daniel Brunner · Christophe Moser · Sylvain Gigan · Florian Marquardt · Aydogan Ozcan · Julie Grollier · Andrea J. Liu · Demetri Psaltis · Andrea Alù · Romain Fleury</span>
+      <span><b>Published</b> 2025-09-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09384-2" target="_blank">10.1038/s41586-025-09384-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09384-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Physical neural networks (PNNs) — analogue systems performing neural computations in the physical domain — represent a credible pathway to AI models that are <strong>orders of magnitude larger</strong> and more energy-efficient than digital counterparts, and to <strong>private edge-device inference</strong>. Both backpropagation-based and backpropagation-free training strategies are now being actively developed for PNNs, but <strong>no approach yet matches digital backpropagation at scale</strong>. A diverse and rapidly evolving ecosystem of training techniques — spanning equilibrium propagation, forward-mode training, local learning rules, and in situ gradient extraction — is converging on solutions that could eventually make large-scale, efficient analogue AI practical.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Charts the path beyond the digital scaling wall.</b> The energy and silicon-area costs of digital AI training are approaching fundamental limits; PNNs leverage the native physics of optical, spintronic, mechanical, and acoustic substrates to perform matrix operations at near-zero marginal energy cost — potentially enabling trillion-parameter models that are physically unrealizable digitally today.</li>
+      <li><b>Unifies a fragmented field.</b> This review is the first authoritative synthesis of the full PNN training landscape — in situ backpropagation, direct feedback alignment, forward-forward, equilibrium propagation, contrastive Hebbian learning, and reinforcement-based approaches — giving the community a shared vocabulary and taxonomy for cross-substrate comparison.</li>
+      <li><b>Identifies the central bottleneck explicitly.</b> By mapping out trade-offs between training strategies, the paper pinpoints that <strong>scalable gradient propagation through the physical substrate</strong>, not forward-pass capacity, is the primary unsolved challenge — directing future research and investment more productively than incremental single-substrate demonstrations.</li>
+      <li><b>Connects to edge AI and data privacy.</b> PNNs performing inference locally without digitizing intermediate states offer a fundamentally different privacy model for sensitive on-device applications — a policy-relevant implication with direct relevance to healthcare, autonomous systems, and consumer IoT.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Field-defining synthesis at a pivotal moment:</b> photonic and neuromorphic hardware are transitioning from proof-of-concept to scalability challenges — exactly when a comprehensive review shapes community direction, a strong fit for Nature's preference for timely, field-framing work.</li>
+      <li><b>Cross-disciplinary breadth:</b> spans physics, photonics, materials science, electrical engineering, and machine learning theory — matching Nature's appetite for contributions that transcend single-discipline journals and require flagship platform for visibility across all affected communities.</li>
+      <li><b>Societal and technological urgency:</b> directly addresses the energy sustainability of AI scaling, a topic of broad societal concern and increasing policy attention worldwide — reinforcing Nature's mission to publish science with clear public significance.</li>
+      <li><b>Community consensus document:</b> 28 co-authors spanning leading groups in photonics, spintronics, mechanical networks, and quantum hardware signal an unusually broad author consortium, elevating this above single-group perspective to a community-endorsed synthesis — the kind of authoritative, multi-voice statement Nature reviews are designed to carry.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>Review article — no primary experimental dataset; draws on the published literature (<strong>104 cited references</strong>) spanning photonic, spintronic, mechanical, acoustic, and quantum PNN demonstrations from 1985 through 2025.</dd>
+      <dt>Physical substrates surveyed</dt><dd>Optical diffractive networks, integrated photonic circuits (silicon, InP), free-space optical systems, phase-change memory (PCM) and memristive crossbar arrays, spintronic oscillators, elastic and mechanical networks, polariton condensates, acoustic resonators, and Ising/quantum annealing machines.</dd>
+      <dt>Training approaches covered</dt><dd>In situ backpropagation (optical adjoint, homodyne gradient extraction), direct/random feedback alignment, forward-forward algorithm, equilibrium propagation, contrastive Hebbian learning, perturbation-based methods (SPSA / multiplexed gradient descent), reinforcement-learning-based training, and self-learning (decentralized / coupled-learning) approaches.</dd>
+      <dt>Benchmark tasks referenced</dt><dd>Image classification (MNIST, CIFAR-10 implied across cited studies), speech/temporal signal tasks (reservoir computing), and combinatorial optimization (Ising machines). No new benchmark measurements are introduced in this review.</dd>
+      <dt>Key foundational citations</dt><dd>Wright et al. <em>Nature</em> 601 (2022) — deep PNNs with backpropagation; Momeni et al. <em>Science</em> 382 (2023) — backpropagation-free PNN training; Pai et al. <em>Science</em> 380 (2023) — in situ optical backpropagation; Scellier &amp; Bengio <em>Front. Comput. Neurosci.</em> 2017 — equilibrium propagation; Dillavou et al. <em>PNAS</em> 121 (2024) — machine learning without a digital processor.</dd>
+      <dt>Data availability</dt><dd>No new primary data generated. The paper's data_availability field is empty (consistent with review type). All underlying data belong to cited primary experimental studies.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Source / Domain</th><th>Role in Review</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Photonic PNN literature</td><td>Primary substrate class (diffractive, integrated, free-space)</td><td>~40+ primary studies cited</td><td>Via DOIs in article references</td></tr>
+        <tr><td>Electronic / memristive PNN literature</td><td>PCM, RRAM, spintronic, and CMOS neuromorphic demonstrations</td><td>~25+ primary studies cited</td><td>Via DOIs in article references</td></tr>
+        <tr><td>Mechanical / acoustic / polariton literature</td><td>Elastic networks, polariton condensates, coupled-learning systems</td><td>~15+ primary studies cited</td><td>Via DOIs in article references</td></tr>
+        <tr><td>LLM / foundation model scaling literature</td><td>Digital AI baseline targets (LLaMA, GPT-4, PaLM, Gemini, CLIP)</td><td>~8 key papers / preprints cited</td><td>Public ArXiv / JMLR</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: study counts per category are approximate based on reference-list analysis. No new experimental data or benchmark measurements are introduced in this review article; all quantitative claims derive from cited primary studies.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Two-branch training taxonomy:</b> organizes all PNN training approaches into <strong>backpropagation-based</strong> methods (in situ adjoint, homodyne gradient extraction, surrogate gradients, direct/random feedback alignment) versus <strong>backpropagation-free</strong> methods (equilibrium propagation, contrastive Hebbian learning, forward-forward algorithm, node/weight perturbation, SPSA, RL-based, decentralized coupled-learning), enabling structured comparison across hardware requirements and scalability.</li>
+      <li><b>Hardware-physics constraint analysis:</b> frames each training method through substrate-specific constraints — non-reciprocity limits for optical in situ backpropagation, noise floors for perturbation methods, measurement overhead for equilibrium-state readout, locality requirements for coupled-learning — connecting algorithm design directly to physical realizability.</li>
+      <li><b>Equilibrium propagation (EP):</b> an energy-based backpropagation-free method where the network settles to a free-phase equilibrium; an external nudge toward the target produces a clamped-phase equilibrium; the gradient is estimated from the difference — hardware-native because no backward signal needs to be routed through the physical medium.</li>
+      <li><b>Perturbation-based gradient estimation:</b> SPSA and node/weight perturbation methods estimate gradients from pairs of scalar loss measurements, avoiding any structured backward-signal routing through the physical substrate at the cost of higher sample complexity.</li>
+      <li><b>Scalability assessment and roadmap:</b> evaluates each approach against the question of whether it can scale to "analogue large models" (Fig. 3) — systems with parameter counts comparable to current foundation models — identifying scalable gradient propagation as the central obstacle and projecting pathways toward it.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/training-of-physical-neural-networks__s41586-025-09384-2/fig1.png" target="_blank">
+        <img src="assets/training-of-physical-neural-networks__s41586-025-09384-2/fig1.png" alt="Fig.1 Physical neural networks" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Physical neural networks — overview of the diverse physical substrates (photonic, spintronic, mechanical, acoustic, quantum) that implement PNN hardware and how they map onto neural-network layers and computational operations.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/training-of-physical-neural-networks__s41586-025-09384-2/fig2.png" target="_blank">
+        <img src="assets/training-of-physical-neural-networks__s41586-025-09384-2/fig2.png" alt="Fig.2 Training methods for PNNs" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Training methods for PNNs — taxonomy and comparison of backpropagation-based versus backpropagation-free training approaches, showing their hardware requirements, gradient fidelity, and scalability trade-offs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/training-of-physical-neural-networks__s41586-025-09384-2/fig3.png" target="_blank">
+        <img src="assets/training-of-physical-neural-networks__s41586-025-09384-2/fig3.png" alt="Fig.3 Analogue large models" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Analogue large models — projection of how PNN training methods and substrates might scale toward foundation-model sizes, and what algorithmic and hardware advances are needed to close the gap with digital deep learning.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Supplementary Information is available as a separate PDF document.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, spatial accessibility &amp; urban health).</p>
+
+    <div class="idea">
+      <h3>① Replace in situ gradient loops with fully analogue reinforcement learning for hardware-native PNN training</h3>
+      <p><span class="lab paper">Extending this paper</span>The review identifies in situ backpropagation as the most gradient-faithful PNN training method but notes it requires reciprocal physical substrates and precise bidirectional signal routing that is difficult to implement across substrates. A direct extension: replace the gradient-signal loop with a <strong>fully analogue RL policy</strong> — as demonstrated for memristor networks — that adjusts physical parameters (phase shifters, memristive weights, spin orientations) using only scalar reward signals measured at the output. This sidesteps the reciprocity and signal-routing constraints while keeping the weight update inside the physical substrate, directly addressing the paper's central bottleneck of hardware-compatible gradient propagation. The paper discusses RL briefly (Refs. 38–39) but does not position it as the scalable alternative to in situ backpropagation it may be.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work for spatial prediction relies on gradient-based attribution (SHAP, LIME), which assumes differentiable digital pipelines. If PNN-style analogue computing is eventually applied to spatial models, RL-based attribution — where sensitivity is estimated from reward differences under input perturbation — would become the necessary framework. This motivates developing <strong>reward-signal-compatible spatial explanation tools</strong> that do not require gradient access, extending my explainable GeoAI toolkit toward hardware-agnostic attribution methods applicable to both digital and analogue spatial inference pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fully analogue reinforcement learning with memristors — <a href="https://doi.org/10.1038/s42256-025-01157-w" target="_blank">10.1038/s42256-025-01157-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Benchmark equilibrium propagation and reservoir computing jointly on structured spatiotemporal tasks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper taxonomizes equilibrium propagation (EP) and reservoir computing as separate backpropagation-free training families with distinct trade-offs, but never compares them empirically on a common task. A direct extension: design a benchmark suite of <strong>structured temporal tasks with spatial correlation</strong> — which neither MNIST nor CIFAR captures — and measure gradient quality, convergence rate, and noise robustness for EP versus reservoir training across photonic and memristive substrates. This would transform the paper's qualitative taxonomy (Fig. 2) into a data-driven selection guide for practitioners who must choose training methods based on their physical substrate's dynamics. The paper's own call for comparative studies (implicit in the trade-off discussion) would be answered.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal kernel density estimation and mobile-phone trajectory analysis involve high-volume, time-sequenced data streams with strong spatial autocorrelation — exactly the task structure missing from current PNN benchmarks. Understanding which training method best handles <strong>spatially correlated temporal inputs</strong> directly informs whether future GeoAI inference pipelines (real-time urban mobility monitoring, disease spread estimation) can be offloaded to analogue neuromorphic accelerators, reducing cloud dependency for privacy-sensitive location data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Energy-efficient multimodal zero-shot learning using in-memory reservoir computing — <a href="https://doi.org/10.1038/s43588-024-00762-w" target="_blank">10.1038/s43588-024-00762-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Couple on-chip photonic backpropagation with physics-informed graph architectures for spatial inference</h3>
+      <p><span class="lab paper">Extending this paper</span>The review positions in situ optical backpropagation (citing Pai et al. <em>Science</em> 2023) as promising but limited to small photonic MLP architectures. An on-chip photonic neural network with full backpropagation training now exists (cross-ref). A direct extension of the paper: apply on-chip photonic backpropagation to <strong>graph-structured PNN architectures</strong> — where the mesh connectivity encodes a spatial or relational graph — and test whether the physical wave-propagation dynamics naturally implement approximate message passing, potentially enabling backpropagation-trained photonic GNNs without a separate digital graph module. The paper's hardware taxonomy (Fig. 1) describes mesh-based photonic networks but does not connect them to graph learning.</p>
+      <p><span class="lab mine">Added value to my research</span>Physics-informed GNNs for spatial accessibility modeling require iterative message-passing on dense urban graphs — computationally expensive operations that currently demand significant GPU memory. If PI-GNN inference can be offloaded to an on-chip photonic network trained with backpropagation, this opens a pathway to <strong>real-time, energy-efficient spatial accessibility computation at edge nodes</strong> (e.g., city-level IoT infrastructure), directly enabling my GeoAI models to run locally in deployed urban systems without cloud latency.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrated photonic neural network with on-chip backpropagation training — <a href="https://doi.org/10.1038/s41586-026-10262-8" target="_blank">10.1038/s41586-026-10262-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Exploit forward-only PNN training for privacy-preserving geospatial inference on edge devices</h3>
+      <p><span class="lab paper">Extending this paper</span>The review highlights forward-mode and forward-forward training as backpropagation-free strategies particularly suited to physical systems where signal reversal is impractical. The "fully forward mode" for optical NNs (cross-ref) demonstrates competitive task performance with no backward pass. An extension: analyze whether forward-only PNN training can maintain accuracy when the input distribution is <strong>spatially structured and non-i.i.d.</strong> — as in real-world geospatial datasets — since all existing evaluations use i.i.d. image benchmarks. This would expose a critical gap: the paper's forward-mode methods are validated exclusively on tasks where spatial autocorrelation is absent, which is the opposite of the regime where they would be most useful for location-sensitive applications.</p>
+      <p><span class="lab mine">Added value to my research</span>Privacy is a central concern in health geography and telehealth: patient location data, mental-health utilization records, and GPS trajectories cannot be transmitted to cloud servers without de-identification risk. Forward-only PNN inference — where raw analogue inputs never leave the edge device and no backpropagation signal encodes sensitive spatial patterns — offers a <strong>hardware-level privacy guarantee</strong> complementary to differential privacy algorithms. This directly motivates my interest in analogue edge hardware for 2SFCA-style accessibility calculations on private location data, and positions forward-only PNNs as the privacy-preserving layer beneath a GeoAI accessibility stack.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fully forward mode training for optical neural networks — <a href="https://doi.org/10.1038/s41586-024-07687-4" target="_blank">10.1038/s41586-024-07687-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Ground the analogue-large-model roadmap with flexible compute-in-memory chips for urban health monitoring</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Fig. 3 ("Analogue large models") projects PNN scaling toward foundation-model sizes but remains largely conceptual — the projection is not grounded in a near-term deployable platform. A concrete extension: quantify the current scalability gap using a <strong>flexible compute-in-memory chip</strong> (cross-ref) as the evaluation substrate, measuring energy-per-operation and effective parameter density for the paper's training methods in a wearable/edge-deployable form factor. This grounds the paper's scaling projections in a hardware-realizable near-term platform rather than idealized photonic substrates and provides a milestones roadmap: how many PNN parameters are trainable today, in two years, and in five years on a flexible chip.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban health monitoring — tracking physical activity, air-quality exposure, and neighborhood-level mobility for public health research — increasingly relies on wearable sensors that must perform on-device inference to protect user privacy. Flexible compute-in-memory chips capable of running PNN-style inference trained with the methods reviewed here could enable <strong>real-time spatiotemporal health indicators at the body scale</strong>, complementing my population-level GeoAI models with individual physiological sensing — bridging the micro–macro gap in health geography and creating a new data layer for 2SFCA demand estimation based on real-time behavioral and environmental exposures.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A flexible digital compute-in-memory chip for edge intelligence — <a href="https://doi.org/10.1038/s41586-025-09931-x" target="_blank">10.1038/s41586-025-09931-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A cell atlas foundation model for scalable search of similar human cells — AI Digest</title>
+<meta name="description" content="AI Digest: A cell atlas foundation model for scalable search of similar human cells (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Foundation Model</span>
+      <span class="tag">Single-cell RNA-seq</span>
+      <span class="tag">Cell Atlas</span>
+      <span class="tag">Metric Learning</span>
+    </div>
+    <h1>A cell atlas foundation model for scalable search of similar human cells</h1>
+    <div class="meta">
+      <span class="authors">Graham Heimberg · Tony Kuo · Daryle J. DePianto · Omar Salem · Tobias Heigl · Nathaniel Diamant · Gabriele Scalia · Tommaso Biancalani · Shannon J. Turley · Jason R. Rock · Héctor Corrada Bravo · Josh Kaminker · Jason A. Vander Heiden · Aviv Regev</span>
+      <span><b>Published</b> 2024-11-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-08411-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>SCimilarity is a <strong>metric-learning foundation model</strong> that embeds single-cell RNA-seq profiles into a unified 128-dimensional space, enabling rapid similarity search across a <strong>23.4-million-cell, 412-study atlas</strong>. Applied to interstitial lung disease, it retrieved fibrosis-associated macrophage states across multiple fibrotic diseases and tissues in seconds, and — without any prior hypothesis about lung biology — identified a 3D hydrogel PBMC culture system as the top <em>in vitro</em> hit, which was experimentally validated. The model outperforms existing single-cell foundation models (scGPT, scFoundation) on cell querying while matching dedicated integration methods on batch correction.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Scales cell search to tens of millions of profiles.</b> Previous single-cell tools were designed for integration and annotation, not for rapid querying at atlas scale. SCimilarity searches 23.4 million cells in 0.05 s, whereas a conventional gene-signature scan of the same set takes nearly 3 hours.</li>
+      <li><b>Creates a universal, annotation-free cell similarity metric.</b> The learned metric does not require curated gene lists, cell type labels, or fine-tuning on new data — enabling cross-study, cross-tissue, cross-disease comparison out of the box.</li>
+      <li><b>Bridges <em>in vivo</em> and <em>in vitro</em> biology computationally.</b> By embedding both tissue and culture system data in the same space, SCimilarity can predict which laboratory models recapitulate specific disease cell states — a powerful hypothesis-generation engine that was experimentally confirmed.</li>
+      <li><b>Interpretability via Integrated Gradients.</b> Unlike black-box models, SCimilarity attributes similarity scores to specific genes, recovering known and novel markers of the queried cell state without pre-specified gene panels.</li>
+      <li><b>Open and reproducible.</b> Model weights, k-NN indices, embeddings and code are deposited at Zenodo and GitHub under permissive licenses, directly enabling reuse and extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Pan-body foundation model, not a single-tissue tool:</b> the framework is trained and validated across 30 human tissues and hundreds of diseases, matching Nature's preference for universal and broadly significant findings.</li>
+      <li><b>Experimental validation closes the computational loop:</b> the paper does not merely predict — it replicates the top <em>in vitro</em> hit in the laboratory, providing the kind of mechanistic confirmation Nature demands alongside computational contributions.</li>
+      <li><b>Addresses a key bottleneck in the Human Cell Atlas program:</b> by enabling scalable similarity search across the growing atlas, the work directly advances one of biomedical science's flagship international initiatives.</li>
+      <li><b>Outperforms existing large-scale foundation models</b> (scGPT, scFoundation) on the specific task of cell state retrieval — a concrete, benchmark-supported superiority claim.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training corpus</dt><dd><strong>412 human sc/snRNA-seq studies</strong> comprising <strong>23,381,150 cell profiles</strong> from <strong>5,142 tissue samples</strong>. Covers <strong>184 unique Tissue Ontology terms</strong> and <strong>132 Disease Ontology terms</strong>. Sourced primarily from <strong>Gene Expression Omnibus (GEO)</strong> (334 studies downloaded programmatically) and <strong>CELLxGENE</strong> (additional 66 studies plus large consortia). All data restricted to 10x Genomics Chromium droplet-based sc/snRNA-seq to minimise platform confounding.</dd>
+      <dt>Training / test split</dt><dd>Training set: <strong>56 studies, 7,886,247 cells</strong> with author-provided Cell Ontology annotations (203 terms). Test set: <strong>15 held-out studies, 1,415,962 cells</strong> — entire studies withheld, not random cells.</dd>
+      <dt>Triplet sampling</dt><dd><strong>50,000,000 semi-hard triplets</strong> sampled from the training corpus, weighted by study and cell type. Hard triplet mining used to focus on the most informative comparisons.</dd>
+      <dt>Query reference</dt><dd>A <strong>23.4-million-cell</strong> approximate k-NN index (hnswlib) — searched in 0.05 s for top 10,000 nearest neighbours, or 2 s for exhaustive comparison of 2.5 million monocytes/macrophages.</dd>
+      <dt>Validation experiment</dt><dd>New <em>in vitro</em> scRNA-seq data generated in this study (3D hydrogel PBMC culture, <strong>3 donors, day 8</strong>) deposited in GEO under accession <code>GSE280632</code>.</dd>
+      <dt>Time window</dt><dd>Public data aggregation cutoff: <strong>23 March 2021</strong>. Validation experiment data generated de novo for this study.</dd>
+      <dt>Availability</dt><dd>Model weights, embeddings, k-NN graphs: <a href="https://doi.org/10.5281/zenodo.10685499" target="_blank">Zenodo 10685499</a>. Code: <a href="https://github.com/Genentech/scimilarity" target="_blank">github.com/Genentech/scimilarity</a> (Apache 2.0). Code snapshot: <a href="https://doi.org/10.5281/zenodo.14087552" target="_blank">Zenodo 14087552</a>. Accession numbers for all 412 public studies: Supplementary Table 1.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Gene Expression Omnibus (GEO)</td><td>Primary source of sc/snRNA-seq studies</td><td>334 studies, ~13.4 M cells (programmatic download)</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">ncbi.nlm.nih.gov/geo</a></td></tr>
+        <tr><td>CELLxGENE (CZI)</td><td>Additional curated studies and large consortia</td><td>66 studies / large atlases (manually ingested)</td><td><a href="https://cellxgene.cziscience.com" target="_blank">cellxgene.cziscience.com</a></td></tr>
+        <tr><td>Tabula Sapiens</td><td>Annotated training data source</td><td>Pan-human tissue atlas with Cell Ontology annotations</td><td><a href="https://tabula-sapiens-portal.ds.czbiohub.org" target="_blank">tabula-sapiens</a></td></tr>
+        <tr><td>Human Lung Cell Atlas</td><td>Annotated training data source (lung)</td><td>Included in training (56 annotated datasets)</td><td><a href="https://www.lungcellatlas.org" target="_blank">lungcellatlas.org</a></td></tr>
+        <tr><td>GEO GSE280632 (this study)</td><td>Validation — new <em>in vitro</em> scRNA-seq data</td><td>3 donors, day-8 3D hydrogel PBMC culture</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE280632" target="_blank">GEO GSE280632</a></td></tr>
+        <tr><td>Zenodo 10685499</td><td>Model weights, embeddings, k-NN indices</td><td>23.4 M cell embeddings + pre-built ANN indices</td><td><a href="https://doi.org/10.5281/zenodo.10685499" target="_blank">zenodo.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the 23.4-million-cell reference includes both the 412-study annotated + unannotated corpus. The training set (56 studies) and test set (15 studies) are strict disjoint subsets. Numbers taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Deep metric learning with combined triplet + reconstruction loss:</b> a fully connected encoder (28,231 genes → 1,024 → 1,024 → 1,024 → 128 dimensions, unit-hypersphere normalized) is trained jointly with a triplet loss (to place similar cells near each other across studies) and an MSE reconstruction loss (to preserve intra-type variation). The weighting parameter β = 0.001 balances query sensitivity and integration performance.</li>
+      <li><b>Ontology-aware triplet sampling:</b> cell triplets are constructed using Cell Ontology ancestor-descendant relationships to exclude ambiguous (ancestor/descendant) pairings and focus only on unambiguously similar or dissimilar cell pairs — enabling seamless cross-study training without manual annotation harmonization.</li>
+      <li><b>Approximate nearest-neighbour indexing (hnswlib):</b> a pre-built k-NN index over 23.4 million embeddings enables queries in 0.05 s (top 10,000 cells) versus 2 h 46 min for exhaustive gene-signature scoring.</li>
+      <li><b>Integrated Gradients explainability:</b> an extended Integrated Gradients method computes per-gene attribution scores by measuring how each gene's expression along an interpolation path from a background cell to a query cell affects the latent-space distance — identifying the most discriminating genes for any queried cell state without pre-defined signatures.</li>
+      <li><b>Cell type annotation via distance-weighted k-NN classification:</b> query cells are annotated by retrieving the 50 nearest neighbours in a 7.9-million-cell annotated reference and tallying weighted votes — taking 0.02 s per cell.</li>
+      <li><b>Benchmarking against dedicated integration methods:</b> SCimilarity's representations are compared to Harmony, scVI, Scanorama, and scArches using ontology-aware ASW, ARI, NMI, and graph connectivity metrics on four held-out integration tasks.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig1.png" target="_blank">
+        <img src="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig1.png" alt="Fig.1 SCimilarity metric learning enables cell search in large human scale atlases" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> SCimilarity architecture — cell querying workflow (left) and triplet loss training setup with Cell Ontology-aware sampling (right).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig2.png" target="_blank">
+        <img src="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig2.png" alt="Fig.2 SCimilarity learns a universal representation that generalizes to new datasets" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> The 23.4-million-cell reference corpus (bubble chart by tissue/disease/study) and integration benchmarking against Harmony, scVI, Scanorama, and scArches.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig3.png" target="_blank">
+        <img src="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig3.png" alt="Fig.3 SCimilarity accurately annotates cell types across the human body" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Cell type annotation accuracy — UMAP embeddings, confusion matrix for kidney dataset, and F1 score comparison across 15 held-out test datasets.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig4.png" target="_blank">
+        <img src="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig4.png" alt="Fig.4 SCimilarity cell search reveals FMs across ILD and other diseases" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Fibrosis-associated macrophage (FM) search across 1,041 samples and 143 studies — SCimilarity scores, tissue/disease distribution, and Integrated Gradients gene attributions.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig5.png" target="_blank">
+        <img src="assets/a-cell-atlas-foundation-model-for-scalable-search-of-similar-human-cells__s41586-024-08411-y/fig5.png" alt="Fig.5 SCimilarity cell search identifies in vitro cells matching an in vivo FM state" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Identification and experimental validation of FM-like cells in a 3D hydrogel culture system — SCimilarity scores, marker gene expression, and UMAP across donors and days.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (tables = 0); Supplementary Tables 1–7 describe training/test datasets, tissue atlases, Cell Ontology terms, query results, and gene attribution scores.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable ML, physics-informed graph learning, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Extend SCimilarity's metric-learning paradigm to geospatial place embeddings</h3>
+      <p><span class="lab paper">Extending this paper</span>SCimilarity's core insight is that a <strong>contrastive triplet loss over a biological ontology</strong> produces a universal similarity metric for cells — bypassing the need for domain-specific feature engineering. The paper's model is limited to the cell modality and the Cell Ontology hierarchy. A direct extension: apply the same triplet-loss framework to <strong>multi-source geospatial representations</strong> (POIs, demographics, mobility flows, remote sensing) using a Place Ontology (e.g., urban land-use hierarchy or spatial administrative hierarchy) as the source of positive/negative pairs — creating a universal "SCimilarity for places" that retrieves spatially and functionally similar neighborhoods across cities worldwide.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly advances my agenda of fine-tuning geospatial foundation models: a contrastive place encoder trained on multi-source urban data would produce transferable place embeddings for downstream tasks (health access prediction, telehealth gap detection, facility-location optimization) without requiring task-specific labeled data — mirroring how SCimilarity annotates unseen cells without retraining.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> The Human Cell Atlas from a cell census to a unified foundation model — <a href="https://doi.org/10.1038/s41586-024-08338-4" target="_blank">10.1038/s41586-024-08338-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use SCimilarity's Integrated Gradients explainability as a template for spatial attribution in GeoAI models</h3>
+      <p><span class="lab paper">Extending this paper</span>SCimilarity's explainability framework extends Integrated Gradients to a <strong>distance-based latent space</strong>, attributing cell similarity to individual genes rather than to classification outputs. This is methodologically novel but untested beyond genomics. A direct extension of the paper: apply the same distance-attribution formulation to <strong>multi-omics embeddings</strong> (e.g., spatial transcriptomics from SWITCH or similar tools) to attribute tissue-level spatial variation to specific molecular features — turning a query-result explanation into a spatially resolved biological map.</p>
+      <p><span class="lab mine">Added value to my research</span>The distance-based Integrated Gradients formulation is directly transferable to my explainable GeoAI pipeline: instead of attributing model output to input features, I can attribute <em>neighborhood similarity</em> in a place-embedding space to specific spatial variables (e.g., facility density, green space, transit access) — yielding a locally interpretable, spatially smooth attribution map analogous to MGWR coefficients but grounded in the learned embedding geometry.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Partially shared multi-modal embedding learns holistic representation of cell state — <a href="https://doi.org/10.1038/s43588-025-00948-w" target="_blank">10.1038/s43588-025-00948-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Bridge SCimilarity's <em>in vitro</em>/<em>in vivo</em> retrieval to cross-context health facility benchmarking</h3>
+      <p><span class="lab paper">Extending this paper</span>One of SCimilarity's most striking uses is querying across the <em>in vivo</em>–<em>in vitro</em> boundary: it identifies which laboratory model best recapitulates an <em>in vivo</em> cell state, enabling targeted experimental design. This cross-context retrieval idea can be extended to <strong>spatial health data</strong>: treat administrative health records (real-world outcomes) and modeled service-area delineations (theoretical access) as two distinct "modalities" and train a cross-context retrieval model that identifies which catchment-area model best reproduces observed utilization patterns across different geographies and health systems.</p>
+      <p><span class="lab mine">Added value to my research</span>For my 2SFCA/R2SFCA work, this would transform the distance-decay calibration problem: instead of fitting a Gaussian or power-law kernel, a <strong>retrieval-based approach would find the existing service-area model (from the corpus of studied cities/health systems) most similar to a new study area</strong> — providing both a best-fit decay function and a confidence score analogous to SCimilarity's query coherence metric.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply SCimilarity's ontology-aware training strategy to spatial disease surveillance</h3>
+      <p><span class="lab paper">Extending this paper</span>SCimilarity avoids manual annotation harmonization by using the <strong>Cell Ontology's ancestor-descendant structure</strong> to automatically determine which cell pairs are unambiguously similar or dissimilar — a principled solution to label granularity mismatch across studies. This strategy has not been applied to epidemiological disease ontologies. A direct extension: use the <strong>ICD/SNOMED disease hierarchy</strong> as the training signal for a similarity model over spatial disease burden profiles (e.g., county-level multi-morbidity patterns from EHR or claims data), enabling cross-region retrieval of areas with similar disease landscapes without requiring harmonized diagnostic coding across health systems.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly addresses the data fragmentation problem in my health geography work: different cities and health systems use incompatible coding granularities for primary care and mental health diagnoses. An ontology-aware contrastive encoder for spatial health profiles would enable retrieval of comparable regions for benchmarking 2SFCA accessibility gaps — without forcing coarse label harmonization that discards clinically meaningful distinctions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Clustering single-cell RNA-seq data with a model-based deep learning approach — <a href="https://doi.org/10.1038/s42256-019-0037-0" target="_blank">10.1038/s42256-019-0037-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Scale SCimilarity's query-coherence quality control to spatiotemporal mobility data curation</h3>
+      <p><span class="lab paper">Extending this paper</span>SCimilarity includes a practical quality-control mechanism: it sub-clusters the user's query cells into 10 subsets, runs independent searches from each subcluster centroid, and reports the <strong>mean overlap in query results as a "query coherence" score</strong>. High coherence (e.g., 94.7% for the FM query) validates that the query population is homogeneous enough to yield meaningful, reproducible results. This self-assessing query framework is absent from most large-scale data mining tools. A direct extension of the paper: apply the same coherence diagnostic to multi-study meta-analyses — automatically flagging when a pooled cell population is too heterogeneous for a single centroid query, and suggesting optimal sub-population splits.</p>
+      <p><span class="lab mine">Added value to my research</span>The coherence framework maps directly onto a key challenge in my multi-source data fusion work: when aggregating GPS trajectories or mobile phone records from multiple cities or time periods, it is unclear whether the pooled mobility signature is homogeneous enough to train a shared model. Adapting SCimilarity's sub-cluster overlap metric to <strong>spatiotemporal mobility embeddings</strong> would provide a principled "data fusion quality score" — identifying when urban-mobility datasets from different cities or seasons are too dissimilar to merge, and guiding city-stratified or season-stratified modeling decisions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Scaling and quantization of a foundational deep learning model for network biology — <a href="https://doi.org/10.1038/s43588-026-00990-2" target="_blank">10.1038/s43588-026-00990-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

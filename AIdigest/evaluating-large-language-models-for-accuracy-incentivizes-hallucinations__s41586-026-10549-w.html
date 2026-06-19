@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluating large language models for accuracy incentivizes hallucinations — AI Digest</title>
+<meta name="description" content="AI Digest: Evaluating large language models for accuracy incentivizes hallucinations (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">LLM Hallucination</span>
+      <span class="tag">Evaluation Design</span>
+      <span class="tag">AI Reliability</span>
+    </div>
+    <h1>Evaluating large language models for accuracy incentivizes hallucinations</h1>
+    <div class="meta">
+      <span class="authors">Adam Tauman Kalai · Ofir Nachum · Santosh S. Vempala · Edwin Zhang</span>
+      <span><b>Published</b> 2026-04-22</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10549-w" target="_blank">10.1038/s41586-026-10549-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10549-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>LLM hallucinations are not merely a modelling failure — they are a <strong>structural incentive problem</strong>. Next-word pretraining creates unavoidable statistical pressure toward guessing for rare, non-recurring facts; and dominant accuracy-based evaluations <strong>reward confident wrong answers over honest abstention</strong>. The authors propose <strong>"open rubric" evaluations</strong> that explicitly state error penalties, demonstrating across four frontier models (Gemini 3 Pro, GPT-5, Grok 4, Claude Opus 4.5) on the 4,326-question SimpleQA benchmark that open rubrics align guessing incentives with reliability, reversing the hallucination-adoption barrier without requiring new models.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Reframes hallucination as mechanism design, not engineering failure.</b> Rather than treating hallucination as a training deficiency, this paper shows that <em>how we evaluate</em> LLMs is the hidden driver — a paradigm shift from debugging models to redesigning evaluation systems.</li>
+      <li><b>Provides a learning-theoretic lower bound on unavoidable hallucination.</b> Using the "is-it-valid" (IIV) binary-classification reduction, the authors prove that any pretrained LLM must hallucinate at a rate proportional to the fraction of "singleton" facts in training data — grounding empirical phenomena in formal theory.</li>
+      <li><b>Demonstrates a practical, zero-extra-cost fix.</b> Open rubrics require no new model training: they augment existing benchmark questions with a stated scoring rubric, measurably shifting frontier-model behavior in a controlled experiment.</li>
+      <li><b>Challenges the entire LLM leaderboard ecosystem.</b> Meta-evaluation of widely cited benchmarks (MMLU-Pro, GPQA, HLE, SWE-bench, WildBench) reveals that the overwhelming majority use binary grading that structurally rewards guessing — a systemic finding affecting the whole field.</li>
+      <li><b>Unifies disparate explanations of hallucination.</b> Pretraining pressure (statistical complexity + model misspecification), alignment shortcuts, and evaluation design are shown to be facets of a single incentive-misalignment story rather than independent causes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Theory + experiment in one work:</b> formal learning-theoretic proofs (Theorems 1–4, Observation 1) are validated by a large-scale empirical study across four state-of-the-art models — matching Nature's standard for depth and rigor.</li>
+      <li><b>Universal mechanism, not a single model fix:</b> the incentive-misalignment argument applies to any LLM evaluated with binary accuracy, making the finding broadly transferable across the field.</li>
+      <li><b>Societal urgency:</b> hallucinating LLMs in medical, legal, and scientific contexts carry real harms; a systemic diagnosis with a concrete fix carries policy-level significance appropriate for Nature's audience.</li>
+      <li><b>Infrastructure-type contribution:</b> the open-rubric framework and associated code (<a href="https://github.com/openai/hallucinations-paper-experiments" target="_blank">github.com/openai/hallucinations-paper-experiments</a>) constitute a reusable evaluation methodology, not just an analysis of one model.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary benchmark</dt><dd><strong>SimpleQA</strong> (OpenAI, 2024) — 4,326 short-answer factual questions spanning diverse domains. The evaluation script and questions are publicly available at <a href="https://github.com/openai/simple-evals" target="_blank">github.com/openai/simple-evals</a> and <a href="https://huggingface.co/datasets/OpenEvals/SimpleQA" target="_blank">HuggingFace/OpenEvals/SimpleQA</a>.</dd>
+      <dt>Models evaluated</dt><dd>Four frontier reasoning models accessed via OpenRouter in February 2026: Google Gemini 3 Pro (<code>google/gemini-3-pro-preview</code>), OpenAI GPT-5 (<code>openai/gpt-5</code>), xAI Grok 4 (<code>x-ai/grok-4</code>), Anthropic Claude Opus 4.5 (<code>anthropic/claude-opus-4.5</code>). For comparison, GPT-5-mini and o4-mini were also evaluated on SimpleQA under closed and open rubrics.</dd>
+      <dt>Grader model</dt><dd>OpenAI GPT-4.1 (via OpenRouter) was used as the judge to score SimpleQA responses as correct / no-answer / incorrect, following the standard SimpleQA protocol.</dd>
+      <dt>Meta-evaluation corpus</dt><dd>Ten widely used LLM evaluation benchmarks from four major leaderboards (HELM Capabilities, Open LLM Leaderboard, SWE-bench, HLE) were examined for their treatment of abstention. Named benchmarks include MMLU-Pro, GPQA, IFEval, WildBench, BigBench Hard, MATH Level 5, MuSR, Omni-MATH, SWE-bench (2,294 GitHub issues), and HLE (2,500 expert questions).</dd>
+      <dt>Experimental cost</dt><dd>Total experiment cost was US$2,778.56, reflecting the reasoning cost of frontier models over 4,326 × 4 model × 2 generations per question, with caching to reduce repeated calls. This is reported verbatim from the paper's Methods section.</dd>
+      <dt>Statistical testing</dt><dd>Paired permutation tests with 200,000 permutations were used to compute two-sided P values comparing baseline to mitigation performance per model.</dd>
+      <dt>Code availability</dt><dd>Full experiment code at <a href="https://github.com/openai/hallucinations-paper-experiments" target="_blank">github.com/openai/hallucinations-paper-experiments</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>SimpleQA</td><td>Primary factual QA evaluation benchmark</td><td>4,326 short-answer questions</td><td><a href="https://github.com/openai/simple-evals" target="_blank">github.com/openai/simple-evals</a></td></tr>
+        <tr><td>HuggingFace SimpleQA</td><td>Mirror / dataset hub</td><td>Same 4,326 questions</td><td><a href="https://huggingface.co/datasets/OpenEvals/SimpleQA" target="_blank">HuggingFace/OpenEvals/SimpleQA</a></td></tr>
+        <tr><td>SWE-bench</td><td>Programming benchmark (meta-evaluation)</td><td>2,294 GitHub software engineering issues</td><td><a href="https://www.swebench.com/" target="_blank">swebench.com</a></td></tr>
+        <tr><td>HLE (Humanity's Last Exam)</td><td>Expert-level QA (meta-evaluation)</td><td>2,500 questions across dozens of fields</td><td><a href="https://scale.com/leaderboard" target="_blank">scale.com/leaderboard</a></td></tr>
+        <tr><td>Hallucination experiment code</td><td>Reproducibility</td><td>Python, full pipeline</td><td><a href="https://github.com/openai/hallucinations-paper-experiments" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: pretraining data for the four frontier models are proprietary and not released; all numbers above reflect evaluation datasets and experiment metadata reported verbatim in the paper's Methods and Data Availability sections.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Is-It-Valid (IIV) reduction:</b> any LLM's generation process is reduced to a binary classification problem — distinguishing valid from erroneous outputs — enabling PAC/learning-theory error bounds to be translated directly into generative hallucination rate lower bounds (Theorem 1, 2).</li>
+      <li><b>Singleton-rate lower bound (Theorem 3):</b> in the "arbitrary facts" model, the hallucination rate is lower-bounded by the fraction of training prompts that appear exactly once (singletons), leveraging Turing's missing-mass estimator. This formalizes why rare facts produce unavoidable errors.</li>
+      <li><b>Multiple-choice tight bound (Theorem 4):</b> for pure multiple-choice settings (|V_c|=1), the hallucination rate lower bound becomes tight, expressed in terms of opt(G), the best achievable misclassification rate within the LLM family.</li>
+      <li><b>Incentive analysis (Observation 1):</b> formally proves that under any binary grader, abstention is a strictly dominated strategy — making guessing always optimal for expected score maximization, regardless of posterior beliefs.</li>
+      <li><b>Open rubric design:</b> existing benchmark questions are augmented with explicit scoring rubrics stating the abstention reward <em>t</em> (equivalently, error penalty <em>L</em> = t/(1-t)). Four thresholds t ∈ {0, 0.5, 0.75, 0.9} are tested, corresponding to L ∈ {0, 1, 3, 9}.</li>
+      <li><b>Consistency-based mitigation:</b> a prototypical hallucination-reduction pipeline — (1) generate two independent answers, (2) judge consistency with the same LLM, (3) output answer if consistent else abstain — is evaluated under both closed and open rubrics.</li>
+      <li><b>Meta-evaluation survey:</b> ten popular benchmarks from four leaderboards are reviewed to categorize their abstention-handling policy (binary / partial credit / IDK allowed).</li>
+      <li><b>Statistical significance:</b> paired permutation tests (200,000 permutations, two-sided) on per-question score differences between baseline and mitigation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/evaluating-large-language-models-for-accuracy-incentivizes-hallucinations__s41586-026-10549-w/fig1.png" target="_blank">
+        <img src="assets/evaluating-large-language-models-for-accuracy-incentivizes-hallucinations__s41586-026-10549-w/fig1.png" alt="Fig.1 Origins and persistence of hallucination across training and evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Origins and persistence of hallucination across training and evaluation — illustrates how pretraining pressure, alignment, and accuracy-based evaluation collectively incentivize guessing.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluating-large-language-models-for-accuracy-incentivizes-hallucinations__s41586-026-10549-w/fig2.png" target="_blank">
+        <img src="assets/evaluating-large-language-models-for-accuracy-incentivizes-hallucinations__s41586-026-10549-w/fig2.png" alt="Fig.2 Generative errors as IIV misclassification" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Generative errors as IIV misclassification — visually maps three error regimes (spelling, counting, arbitrary facts) onto the binary classifier view, motivating the learning-theory reduction.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluating-large-language-models-for-accuracy-incentivizes-hallucinations__s41586-026-10549-w/fig3.png" target="_blank">
+        <img src="assets/evaluating-large-language-models-for-accuracy-incentivizes-hallucinations__s41586-026-10549-w/fig3.png" alt="Fig.3 Accuracy as a barrier to hallucination reduction" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Accuracy as a barrier to hallucination reduction — shows that a consistency-based mitigation cuts incorrect responses but also lowers accuracy, creating the adoption barrier that open rubrics resolve (n = 4,326 per model).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1: closed vs. open rubric mean scores at L = 0, 1 across four models) plus 3 Extended Data Tables (benchmark meta-evaluation; rubric strings; full penalized scores L ∈ {0,1,3,9}) and 2 Extended Data Figures (prompt templates; abstention sensitivity).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Apply open-rubric evaluation design to geospatial LLM benchmarks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper proposes open rubrics as a universal fix for binary-grading incentives, but validates them only on SimpleQA — a domain-agnostic factual QA set. A direct extension: construct <strong>geospatial open-rubric benchmarks</strong> (questions about facility locations, travel times, census statistics, spatial relationships) where LLMs frequently hallucinate numeric facts, and test whether open rubrics similarly shift abstention behavior in spatially-grounded queries. The singleton-rate lower bound (Theorem 3) would predict higher hallucination on rare place-level facts (small towns, specific clinic addresses) than on frequently mentioned city names — an empirically testable spatial gradient.</p>
+      <p><span class="lab mine">Added value to my research</span>I work with geospatial foundation models and LLMs for urban analytics tasks (POI classification, address parsing, spatial query answering). The incentive-misalignment framework tells me that benchmarking my fine-tuned geospatial models on accuracy metrics is structurally unreliable: a model confidently hallucinating a hospital address outscores one that abstains. Adopting open-rubric evaluation for my geospatial LLM experiments would align benchmark scores with the real cost of spatial errors — particularly critical when downstream users are routing patients to care facilities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy — <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Integrate open rubrics into RLHF to train abstention-aware LLMs from scratch</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper treats open rubrics as an <em>evaluation</em> intervention applied post-hoc, but the same rubric structure could be used as the <strong>reward signal during RLHF</strong>: instead of rewarding binary correctness, train with a parameterized reward r(t) = 1 (correct) / t (abstain) / 0 (error). The paper shows that open rubrics empirically shift frontier model behavior even without retraining; using them as training-time signals could produce models with intrinsically calibrated abstention — testing whether the evaluation fix also works as a training fix. The corpus paper on optimizing generative AI via backpropagating language model feedback provides a differentiable framework through which such rewards could propagate.</p>
+      <p><span class="lab mine">Added value to my research</span>For spatial accessibility LLMs I use or fine-tune, an abstention-aware training objective would reduce the rate at which the model fabricates accessibility scores or catchment areas for healthcare facilities. This is especially important in R2SFCA applications where a wrong confidence interval for a service area may misdirect public health resources. Embedding uncertainty quantification into the reward function rather than relying on post-hoc calibration would strengthen reproducibility claims.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Optimizing generative AI by backpropagating language model feedback — <a href="https://doi.org/10.1038/s41586-025-08661-4" target="_blank">10.1038/s41586-025-08661-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use the singleton-rate bound to diagnose training data gaps in domain-specific corpora</h3>
+      <p><span class="lab paper">Extending this paper</span>Theorem 3 establishes that the hallucination lower bound equals the singleton rate — the fraction of prompts appearing exactly once in pretraining data. Extending this: for a given domain corpus (e.g., medical literature, urban planning documents), <strong>compute the empirical singleton rate as a hallucination risk forecast</strong> before deploying a fine-tuned model. This turns Theorem 3 into a <em>data audit tool</em> — if 30% of fine-tuning samples are singletons, expect at least 30% hallucination on the corresponding query class. The paper on training LLMs on narrow tasks causing broad misalignment complements this: narrow fine-tuning concentrates singletons while amplifying distributional shift.</p>
+      <p><span class="lab mine">Added value to my research</span>When fine-tuning foundation models on geospatial corpora (remote sensing reports, census tables, POI databases), I can now apply the singleton-rate estimate as a principled data quality check: flag entity mentions that appear only once (a specific clinic, a rural road segment) as high-hallucination-risk queries and either enrich the training set or flag those queries for abstention in deployment. This connects data science reproducibility — a core theme of my work — to LLM reliability theory.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training large language models on narrow tasks can lead to broad misalignment — <a href="https://doi.org/10.1038/s41586-025-09937-5" target="_blank">10.1038/s41586-025-09937-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Combine open-rubric LLM outputs with retrieval-augmented generation for spatial fact queries</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's analysis shows that retrieval and tool use are known hallucination mitigations but are themselves not evaluated under aligned incentives. An extension: apply <strong>open rubrics to RAG pipelines</strong> — where the LLM must decide whether to trust retrieved content, synthesize across sources, or abstain. The penalty structure can reflect retrieval reliability: lower penalty for abstaining when retrieved documents are few or low-confidence, higher penalty when multiple consistent sources agree. Testing whether open rubrics improve RAG reliability on factual citation tasks would extend the scope of the paper's contribution beyond raw QA.</p>
+      <p><span class="lab mine">Added value to my research</span>I use multi-source data fusion (mobile phone records, social media, remote sensing) to answer spatial queries, and LLM-assisted synthesis is an emerging component of my pipeline. Open-rubric scoring provides an evaluation framework for comparing retrieval-augmented geospatial LLMs fairly: a model that abstains when spatial evidence is thin should be rewarded rather than penalized, aligning evaluation with real-world data-quality heterogeneity across census geographies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Synthesizing scientific literature with retrieval-augmented language models — <a href="https://doi.org/10.1038/s41586-025-10072-4" target="_blank">10.1038/s41586-025-10072-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Audit LLM-based spatial decision support systems for hallucination incentives in healthcare access</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's meta-evaluation framework — systematically reviewing benchmark grading policies for abstention handling — can be directly applied to LLM-based clinical or public-health decision support systems. Extending the paper: audit the evaluation rubrics of LLM-assisted triage, diagnostic, and healthcare access tools for their implicit guessing incentives, and apply open-rubric variants to measure whether abstention-aware scoring changes which models rank highest. This is especially urgent given that healthcare LLM benchmarks rarely penalize confident wrong answers.</p>
+      <p><span class="lab mine">Added value to my research</span>My research on healthcare spatial accessibility (2SFCA, telehealth, digital divide) increasingly encounters LLM-based tools used to answer patient queries about facility locations or service availability. The hallucination incentive framework tells me that accuracy-evaluated clinical LLMs likely overstate their reliability: a model that confidently gives a wrong clinic address outscores one that says "I am not certain of this facility's current hours." Adopting open-rubric evaluation in my health-geography research pipeline — and advocating for it in clinical deployment benchmarks — would directly reduce harm from spatial misinformation in healthcare access.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A roadmap for evaluating moral competence in large language models — <a href="https://doi.org/10.1038/s41586-025-10021-1" target="_blank">10.1038/s41586-025-10021-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

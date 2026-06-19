@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unsupervised pretraining in biological neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Unsupervised pretraining in biological neural networks (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Unsupervised Learning</span>
+      <span class="tag">Visual Cortex</span>
+      <span class="tag">Neural Plasticity</span>
+      <span class="tag">Representation Learning</span>
+    </div>
+    <h1>Unsupervised pretraining in biological neural networks</h1>
+    <div class="meta">
+      <span class="authors">Lin Zhong · Scott Baptista · Rachel Gattoni · Jon Arnold · Daniel Flickinger · Carsen Stringer · Marius Pachitariu</span>
+      <span><b>Published</b> 2025-06-18</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09180-y" target="_blank">10.1038/s41586-025-09180-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09180-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Most neural plasticity in the mouse visual cortex after task learning is in fact driven by <strong>unsupervised learning</strong>: unrewarded exposure to the same stimuli replicates nearly all the cortical changes seen in task-trained mice. The plasticity is highest in medial higher visual areas (HVAs) and follows <strong>visual rather than spatial</strong> coding rules. A distinct reward-prediction signal, exclusive to supervised training, appears in anterior HVAs. Critically, unsupervised pretraining with naturalistic stimuli <strong>accelerates subsequent task learning</strong> in behavioural experiments, bridging biological and artificial neural network pretraining principles.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves a decades-long ambiguity.</b> Perceptual learning has been studied for decades, but whether it stems from supervised or unsupervised mechanisms was unknown. This is the first direct, large-scale experimental test separating the two in the same animals with identical stimuli.</li>
+      <li><b>Population-scale evidence.</b> Simultaneous recordings of up to 90,000 neurons per session across multiple visual areas provide a level of statistical confidence and areal coverage not previously achieved in this context.</li>
+      <li><b>Validates the pretraining analogy to AI.</b> Just as unsupervised pretraining accelerates learning in deep networks, it demonstrably accelerates mice's task learning — establishing a biological parallel to a central tenet of modern AI.</li>
+      <li><b>Dissects regional specialization.</b> Medial HVAs implement unsupervised feature learning; anterior HVAs hold the task-specific reward-prediction signal. This areal decomposition constrains theories of supervised and reinforcement learning in cortex.</li>
+      <li><b>Behavioural prediction confirmed.</b> The neural findings make a testable prediction — pretraining should speed later task acquisition — that the authors validate in a dedicated cohort, closing the loop between neural mechanism and behaviour.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Broad conceptual advance:</b> reframes perceptual learning — a topic with decades of literature — by showing the dominant mechanism is unsupervised, a conclusion with immediate implications across systems neuroscience, cognitive science, and AI.</li>
+      <li><b>Methodological scale:</b> recording up to 90,000 neurons simultaneously via two-photon mesoscopy is a technical landmark; the resulting dataset (Janelia repository) is a community resource.</li>
+      <li><b>Cross-disciplinary resonance:</b> directly bridges biological and artificial neural network learning, placing the paper squarely at Nature's interface between neuroscience and machine intelligence.</li>
+      <li><b>Hypothesis-to-validation completeness:</b> the paper proposes a mechanistic hypothesis from neural data and validates it behaviourally — a self-contained arc that Nature favours over purely descriptive or purely computational contributions.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Animal subjects</dt><dd>19 GCaMP6s-expressing mice (TetO-GCaMP6s × CaMK2a-tTa) for imaging experiments; 23 C57 female mice for behaviour-only experiments (Fig. 5 cohort). 13 male + 6 female imaging mice, aged 2–11 months.</dd>
+      <dt>Imaging scale</dt><dd>89 recording sessions total. Simultaneous populations of <strong>20,547 to 89,577 neurons</strong> per session recorded with a custom two-photon mesoscope across primary visual cortex (V1) and higher visual areas (AL, LM, MMP, RL, RLL, RSP, PM, AM, MMA and retrosplenial cortex).</dd>
+      <dt>Experimental cohorts</dt><dd>Three imaging cohorts: task mice (n = 4–5), unsupervised mice exposed to naturalistic stimuli (n = 6–9), unsupervised mice exposed to gratings (n = 3). Three behaviour-only cohorts (Fig. 5): VR<sub>n</sub> pretrained (n = 11), VR<sub>g</sub> pretrained (n = 7), no pretraining (n = 5).</dd>
+      <dt>Visual stimuli</dt><dd>Naturalistic texture images (leaf, circle, rock, brick) cropped from large photographs; grating stimuli (0° and 45°) used as controls. Presented in 4 m virtual reality corridors via three LED tablet screens covering 270° field of view.</dd>
+      <dt>Imaging software</dt><dd><strong>Suite2p</strong> (<a href="https://github.com/MouseLand/suite2p" target="_blank">github.com/MouseLand/suite2p</a>) for motion correction, ROI detection, and spike deconvolution. <strong>Rastermap</strong> for neural visualization and population sorting.</dd>
+      <dt>Analysis stack</dt><dd>Python 3 with NumPy, scikit-learn, matplotlib, jupyter-notebook. Calcium imaging timescale of decay = 0.75 s. Retinotopic mapping via convolutional encoding model + kriging interpolation.</dd>
+      <dt>Data availability</dt><dd>Full dataset deposited on Janelia: <a href="https://doi.org/10.25378/janelia.28811129.v1" target="_blank">doi.org/10.25378/janelia.28811129.v1</a>. Code on GitHub: <a href="https://github.com/MouseLand/zhong-et-al-2025" target="_blank">MouseLand/zhong-et-al-2025</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Tool</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Two-photon mesoscope recordings</td><td>Primary neural population data</td><td>20,547–89,577 neurons/session; 89 sessions; 19 mice</td><td><a href="https://doi.org/10.25378/janelia.28811129.v1" target="_blank">Janelia repository</a></td></tr>
+        <tr><td>Suite2p</td><td>Calcium imaging preprocessing</td><td>Open-source; all 89 sessions processed</td><td><a href="https://github.com/MouseLand/suite2p" target="_blank">GitHub</a></td></tr>
+        <tr><td>Rastermap</td><td>Neural population sorting &amp; visualization</td><td>Open-source; applied to all large-scale recordings</td><td><a href="https://github.com/MouseLand/Rastermap" target="_blank">GitHub</a></td></tr>
+        <tr><td>Behaviour-only cohort</td><td>Validate pretraining hypothesis</td><td>23 C57 mice; 3 cohorts × 5 days task training</td><td>Deposited with full dataset</td></tr>
+        <tr><td>Naturalistic textures / VR corridors</td><td>Visual stimuli</td><td>4 texture categories; 4 m VR corridors; 270° visual field</td><td>Described in Methods; code available</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: This is a neuroscience experimental paper — data are in vivo calcium imaging recordings, not geographic or administrative datasets. Numbers above are taken verbatim from the Methods and figure legends.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Two-photon mesoscopy:</b> custom mesoscope enabling wide-field cellular-resolution imaging across multiple visual cortical areas simultaneously; temporal multiplexing approximately doubles recorded neuron counts.</li>
+      <li><b>Neural selectivity index (d'):</b> standardised effect-size metric computed from corridor response distributions; neurons with |d'| ≥ 0.3 classified as selective. Enables comparison of selectivity across cohorts, areas, and time points.</li>
+      <li><b>Coding direction analysis:</b> population-level linear readout axis defined by the difference between mean responses of top-5% leaf- and circle-selective neurons; similarity index quantifies how novel stimuli project onto this axis.</li>
+      <li><b>Reward-prediction index (d'<sub>late vs early</sub>):</b> novel discrimination index contrasting neural activity on early- vs. late-cue reward trials, isolating anticipatory/ramping signals from reward and stimulus drive.</li>
+      <li><b>Rastermap visualisation:</b> unsupervised neural reordering algorithm applied to large raster plots to discover structured population-level signals (e.g., the reward-prediction cluster in anterior HVAs).</li>
+      <li><b>Retinotopic mapping:</b> convolutional encoding model fit to responses to ~5,000 natural images; kriging interpolation aligns spatial maps across mice to a common reference atlas.</li>
+      <li><b>Sequence correlation analysis:</b> spatial tuning curves computed via odd/even trial splits; Pearson correlation between preferred positions in different corridors distinguishes visual vs. spatial coding.</li>
+      <li><b>Behavioural pretraining paradigm:</b> controlled cohort experiment (3 groups, 5-day task, with/without 10-day VR pretraining) measuring anticipatory lick rates as a performance metric.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig1.png" target="_blank">
+        <img src="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig1.png" alt="Fig.1 Plasticity in the visual cortex after supervised and unsupervised training" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Plasticity in the visual cortex — shows selectivity increases in medial HVAs for both task and unsupervised cohorts, with 2D areal distributions before and after learning.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig2.png" target="_blank">
+        <img src="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig2.png" alt="Fig.2 Comparing visual and spatial coding on test stimuli" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Visual vs. spatial coding — coding direction and similarity index analyses demonstrate representations follow visual category, not corridor position.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig3.png" target="_blank">
+        <img src="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig3.png" alt="Fig.3 Responses to novel and adapted stimuli and neural orthogonalization" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Novelty, adaptation, and orthogonalization — novel stimuli drive V1 and lateral HVAs; extended learning orthogonalizes leaf1 and leaf2 representations in medial HVAs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig4.png" target="_blank">
+        <img src="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig4.png" alt="Fig.4 A reward-prediction signal in supervised training only" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Reward-prediction signal — ramping anticipatory signal in anterior HVAs found only in task mice; absent in unsupervised cohort, identified via Rastermap and d'<sub>late vs early</sub>.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig5.png" target="_blank">
+        <img src="assets/unsupervised-pretraining-in-biological-neural-networks__s41586-025-09180-y/fig5.png" alt="Fig.5 Unsupervised pretraining accelerates subsequent task learning" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Pretraining accelerates task learning — VR<sub>n</sub>-pretrained mice (naturalistic) learn the task significantly faster on days 1–2; VR<sub>g</sub>-pretrained (gratings) and no-pretraining cohorts lag behind.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Extended Data contains 9 additional figures covering retinotopy, running speed, coding directions, and within-day learning analyses.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, spatial accessibility methods).</p>
+
+    <div class="idea">
+      <h3>① Build a compact neural encoding model from the paper's mesoscope recordings</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper identifies which visual areas change and what they encode, but does not build a predictive model of neural responses to arbitrary stimuli. A natural extension is to fit a <strong>compact deep convolutional model</strong> to the paper's population recordings — both the task and unsupervised cohorts — asking whether the same model architecture can predict responses in both conditions, and whether the divergence in anterior HVAs (reward-prediction) requires task-specific modules. The paper's retinotopic mapping pipeline (convolutional encoding model, step 1 of Methods) is already a stepping stone toward this goal.</p>
+      <p><span class="lab mine">Added value to my research</span> My work on geospatial foundation models involves pretraining on large unlabelled spatial datasets before fine-tuning on specific urban tasks — directly analogous to the unsupervised-then-supervised paradigm proven here. The finding that naturalistic (not grating) pretraining is critical mirrors debates in geospatial AI about whether pretraining on generic imagery (Sentinel-2) versus domain-specific imagery (street-view, POI maps) transfers better to urban health predictions. This paper provides a biological proof-of-concept that the <em>content structure</em> of the pretraining domain matters.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Compact deep neural network models of the visual cortex — <a href="https://doi.org/10.1038/s41586-026-10150-1" target="_blank">10.1038/s41586-026-10150-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use the paper's d' selectivity framework as a transferable feature-quality metric for spatial embeddings</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper operationalises "representation quality" as the fraction of neurons with |d'| ≥ 0.3 discriminating two corridor identities — a clean, threshold-free measure of population-level feature selectivity. Extending it to artificial networks trained on the same VR stimuli would test whether state-of-the-art self-supervised visual models (DINO, SimCLR) develop similar areal hierarchies when their hidden units are mapped back to the stimulus space, creating a direct biological–artificial alignment benchmark.</p>
+      <p><span class="lab mine">Added value to my research</span> In explainable GeoAI, I need to measure how well a spatial embedding layer has learned to separate urban health outcomes across neighbourhoods. The d' framework can be adapted as an <strong>area-level feature selectivity index</strong>: for each spatial grid cell or community area, compute d' between high- and low-health-outcome zones from the embedding activations. This gives an interpretable, neuroscience-grounded diagnostic of whether a geospatial model has acquired the right spatial feature hierarchy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation model of neural activity predicts response to new stimulus types — <a href="https://doi.org/10.1038/s41586-025-08829-y" target="_blank">10.1038/s41586-025-08829-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Formalize the paper's pretraining benefit as a sample-efficiency law for biological and artificial learners</h3>
+      <p><span class="lab paper">Extending this paper</span> Figure 5 shows that VR<sub>n</sub>-pretrained mice learn faster, but the paper does not quantify how many supervised trials are "saved" or whether the benefit scales with pretraining duration. Extending it: vary pretraining duration (1, 5, 10, 20 days) and measure the number of supervised trials to criterion — fitting a <strong>sample-efficiency curve</strong> analogous to neural-scaling laws. Does 10 days of pretraining halve the supervised trials needed? Does the relationship saturate? This would produce a quantitative law connecting unsupervised experience to supervised efficiency in biological systems.</p>
+      <p><span class="lab mine">Added value to my research</span> My work on geospatial foundation model fine-tuning faces the same trade-off: how much labelled data (e.g., healthcare visit records, socioeconomic surveys) is needed to adapt a pretrained spatial encoder to a new city? A biological scaling-law analogue would justify a principled data-efficient fine-tuning strategy: pretrain on large unlabelled mobility or remote-sensing data, then fine-tune with only a small labelled set — with the pretraining-to-fine-tuning ratio guided by the biological law.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-task learning for medical foundation models — <a href="https://doi.org/10.1038/s43588-024-00658-9" target="_blank">10.1038/s43588-024-00658-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Dissect the reward-prediction signal's role in multi-timescale reinforcement learning</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper identifies a ramping reward-prediction signal in anterior HVAs that is exclusive to supervised training. However, it characterises this signal primarily at a single timescale (trial-level). Extending it: probe whether the anterior HVA signal carries <strong>multi-timescale reward predictions</strong> — immediate, episodic, and across-session — as predicted by temporal-difference models at different scales. The paper's d'<sub>late vs early</sub> index could be generalised to compare activity in early vs. late days of training, not just early vs. late within a trial.</p>
+      <p><span class="lab mine">Added value to my research</span> Healthcare and transportation accessibility decisions involve multi-timescale feedback: a new clinic opens (immediate), patient flows shift over weeks, and long-run population health changes unfold over years. A <strong>multi-timescale reward-prediction framework</strong> borrowed from neuroscience could inform agent-based models of healthcare-seeking behaviour: agents learn from immediate travel-cost feedback, medium-term outcome feedback (treatment success), and long-term population health signals — exactly the architecture uncovered in anterior HVAs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-timescale reinforcement learning in the brain — <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the neural orthogonalization finding to spatial representation disentanglement in GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span> One of the paper's most striking findings (Fig. 3) is that exposure to a new stimulus (leaf2) causes its neural representation to become <strong>orthogonal</strong> to the existing leaf1–circle1 coding axis — a form of representational disentanglement that emerges from unsupervised exposure alone. This "orthogonalization by exposure" could be tested in artificial networks: does contrastive self-supervised pretraining on naturalistic stimuli produce similarly orthogonal representations for semantically related but visually distinct categories, compared to pretraining on grating-like synthetic data?</p>
+      <p><span class="lab mine">Added value to my research</span> In spatiotemporal analysis of urban systems, I routinely face the challenge of disentangling correlated spatial signals — for instance, distinguishing healthcare accessibility from socioeconomic deprivation in neighborhood embeddings, where both signals co-vary strongly. The paper's unsupervised orthogonalization mechanism motivates a <strong>contrastive spatial pretraining strategy</strong>: expose a GeoAI model to many city configurations unsupervised, so that it develops orthogonal embeddings for accessibility, deprivation, and mobility — making downstream supervised tasks (e.g., predicting mental health outcomes) more sample-efficient and interpretable via the resulting disentangled representation space.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Federated disentangled representation learning for unsupervised brain anomaly detection — <a href="https://doi.org/10.1038/s42256-022-00515-2" target="_blank">10.1038/s42256-022-00515-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

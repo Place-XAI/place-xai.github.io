@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovering cognitive strategies with tiny recurrent neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Discovering cognitive strategies with tiny recurrent neural networks (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Cognitive modelling</span>
+      <span class="tag">Recurrent neural networks</span>
+      <span class="tag">Reinforcement learning</span>
+      <span class="tag">Interpretable AI</span>
+    </div>
+    <h1>Discovering cognitive strategies with tiny recurrent neural networks</h1>
+    <div class="meta">
+      <span class="authors">Li, Ji-An · Benna, Marcus K. · Mattar, Marcelo G.</span>
+      <span><b>Published</b> 2025-07-02</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09142-4" target="_blank">10.1038/s41586-025-09142-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09142-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Recurrent neural networks with as few as <strong>1–4 units</strong> consistently outperform classical cognitive models (Bayesian inference, model-free and model-based reinforcement learning) in predicting individual animal and human decisions across six reward-learning tasks — while remaining <strong>interpretable via dynamical systems analysis</strong>. A knowledge-distillation approach further enables accurate individual modelling even with as few as <strong>350 trials per participant</strong>, opening the framework to human cognitive neuroscience and computational psychiatry. This "tiny RNN" strategy offers a principled, data-driven route to discovering new cognitive strategies that handcrafted models systematically miss.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges flexibility and interpretability.</b> Prior work forced a choice between flexible large networks (hard to interpret) and sparse cognitive models (easy to interpret but often wrong). Tiny RNNs achieve <em>both</em> at once — they outperform classical models yet are fully analysable as discrete dynamical systems.</li>
+      <li><b>Discovers genuinely new cognitive strategies.</b> Phase-portrait analysis reveals mechanisms absent from decades of cognitive-model literature: state-dependent learning rates, reward-induced indifference, and novel forms of value updating — validated by targeted hypothesis testing.</li>
+      <li><b>Solves the data-scarcity problem for human studies.</b> Knowledge distillation from a multi-subject teacher network allows tiny student RNNs to surpass cognitive models with only a few hundred trials per person, matching the scale of typical human experiments.</li>
+      <li><b>Applicable to both biological and artificial agents.</b> The same framework dissects the decision strategy of meta-RL agents, showing they behave more like Bayesian inference than model-based RL — a finding that corrects a prevailing interpretation in the meta-RL literature.</li>
+      <li><b>Open science and reproducibility.</b> All six datasets and the complete codebase (<a href="https://github.com/jil095/tinyRNN" target="_blank">github.com/jil095/tinyRNN</a>) are publicly available, making the pipeline immediately adoptable.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Fundamental scientific advance:</b> resolves a long-standing tension in computational neuroscience between model expressivity and interpretability, a core question for Nature's readership spanning neuroscience, psychology, and AI.</li>
+      <li><b>Cross-species and cross-domain generality:</b> validated in monkeys, rats, mice, and thousands of humans across six distinct tasks — demonstrating universality rather than a one-off result.</li>
+      <li><b>Paradigm-level methodological shift:</b> replaces the handcrafted-model paradigm with a systematic data-driven discovery framework, with implications for cognitive science, computational psychiatry, and AI alignment.</li>
+      <li><b>High citation potential:</b> the tinyRNN codebase and knowledge-distillation approach provide a reusable infrastructure tool that research communities will build upon.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Animal datasets</dt><dd><strong>Monkey reversal learning</strong> (n = 2; Bartolo dataset): available at <a href="https://data.mendeley.com/datasets/p7ft2bvphx" target="_blank">Mendeley Data</a>. <strong>Rat two-stage task</strong> (n = 4; Miller dataset): available at <a href="https://doi.org/10.6084/m9.figshare.20449140" target="_blank">Figshare</a>. <strong>Mouse datasets</strong> (reversal learning, two-stage, transition-reversal two-stage; n = 10–17 per dataset; Akam dataset): available at <a href="https://osf.io/8jwhm" target="_blank">OSF</a>.</dd>
+      <dt>Human datasets</dt><dd><strong>Three-armed reversal learning</strong> (n = 1,010): <a href="https://github.com/psuthaharan/covid19paranoia" target="_blank">GitHub</a>. <strong>Four-armed drifting bandit</strong> (n = 918): <a href="https://osf.io/f3t2a" target="_blank">OSF</a>. <strong>Original two-stage task</strong> (n = 1,961): <a href="https://osf.io/usdgt" target="_blank">OSF</a>.</dd>
+      <dt>Task design</dt><dd>Six reward-learning tasks across species; 150–200 trials per human participant; thousands of trials per animal. Trial inputs: previous action, state, reward.</dd>
+      <dt>Classical models</dt><dd>More than 30 cognitive model variants implemented as benchmarks: model-free RL, model-based RL, Bayesian inference, plus extensions (perseveration, forgetting, choice biases).</dd>
+      <dt>Code availability</dt><dd>Full tinyRNN pipeline: <a href="https://github.com/jil095/tinyRNN" target="_blank">github.com/jil095/tinyRNN</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Bartolo monkey dataset</td><td>Reversal learning behaviour (animals)</td><td>n = 2 monkeys; ~190 blocks</td><td><a href="https://data.mendeley.com/datasets/p7ft2bvphx" target="_blank">Mendeley Data</a></td></tr>
+        <tr><td>Miller rat dataset</td><td>Two-stage task behaviour (animals)</td><td>n = 4 rats</td><td><a href="https://doi.org/10.6084/m9.figshare.20449140" target="_blank">Figshare</a></td></tr>
+        <tr><td>Akam mouse dataset</td><td>Reversal, two-stage, transition-reversal tasks (animals)</td><td>n = 10–17 mice per task</td><td><a href="https://osf.io/8jwhm" target="_blank">OSF</a></td></tr>
+        <tr><td>Suthaharan human dataset</td><td>Three-armed reversal learning (humans)</td><td>n = 1,010 participants</td><td><a href="https://github.com/psuthaharan/covid19paranoia" target="_blank">GitHub</a></td></tr>
+        <tr><td>Bahrami &amp; Navajas dataset</td><td>Four-armed drifting bandit (humans)</td><td>n = 918 participants</td><td><a href="https://osf.io/f3t2a" target="_blank">OSF</a></td></tr>
+        <tr><td>Gillan two-stage dataset</td><td>Original two-stage task (humans)</td><td>n = 1,961 participants</td><td><a href="https://osf.io/usdgt" target="_blank">OSF</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all datasets are publicly archived and openly licensed. Trial counts per dataset are those stated in the article; exact total trial counts per subject are not uniformly reported.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Gated recurrent units (GRU) with 1–4 hidden units</b> fitted to individual-subject choice sequences by maximum-likelihood (cross-entropy minimization).</li>
+      <li><b>Nested 10-fold cross-validation:</b> separates training, validation (hyperparameter tuning), and held-out test folds on consecutive trial blocks to prevent temporal leakage and avoid AIC/BIC bias.</li>
+      <li><b>Knowledge distillation:</b> a large multi-subject teacher network (with subject-ID embeddings) is first trained on all subjects; tiny student RNNs are then distilled per individual, enabling accurate fitting from as few as ~350 trials per participant.</li>
+      <li><b>Phase-portrait analysis (dynamical systems):</b> visualizes how action-preference logits evolve as a function of inputs and current state, identifying fixed points, attractors, and novel behavioural signatures in 1-D models.</li>
+      <li><b>Vector field analysis:</b> for d = 2 models, two-dimensional vector fields reveal trial-by-trial state updates and attractor geometry (e.g., drift-to-the-other patterns) not captured by classical models.</li>
+      <li><b>Dynamical regression:</b> approximates one-step state dynamics as a linear function of the current state to summarize higher-dimensional (d &gt; 2) model behaviour at the participant level.</li>
+      <li><b>Preference setpoint analysis:</b> computes normalized asymptotic preferences after repeated exposure to each input type — summarizing the directional effect of rewards and actions in a single interpretable quantity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig1.png" target="_blank">
+        <img src="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig1.png" alt="Fig.1 Model overview and performance on animal tasks" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Model overview and performance on animal tasks — architecture diagram, nested cross-validation scheme, and model comparison across monkey, rat, and mouse datasets.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig2.png" target="_blank">
+        <img src="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig2.png" alt="Fig.2 Model performance using knowledge distillation" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Knowledge distillation framework and human task performance — teacher/student architecture and model comparisons on three human tasks (n = 1,010 / 918 / 1,961 participants).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig3.png" target="_blank">
+        <img src="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig3.png" alt="Fig.3 Dynamical systems analysis of one-dimensional models" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Phase-portrait analysis of 1-D models — reveals state-dependent learning rates, perseveration, and reward-induced indifference absent from all classical models.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig4.png" target="_blank">
+        <img src="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig4.png" alt="Fig.4 Dynamical systems analysis of multi-dimensional models" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Vector field and dynamical regression analyses for 2-D and higher-dimensional models — uncovers drift-to-the-other forgetting and novel value-updating patterns in human tasks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig5.png" target="_blank">
+        <img src="assets/discovering-cognitive-strategies-with-tiny-recurrent-neural-networks__s41586-025-09142-4/fig5.png" alt="Fig.5 Logit analysis of meta-RL agent and cognitive models" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Meta-RL agent interpretation — logit-change phase portraits show the agent's strategy resembles Bayesian inference, not model-based RL, correcting a prior consensus.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); extensive supplementary figures and results accompany the paper.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, spatial accessibility, physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Transfer tiny-RNN cognitive discovery to interpretable spatial decision-making agents</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper fits tiny GRU networks to individual subjects in closed-loop reward-learning tasks. A direct extension: apply the same framework to <strong>sequential spatial decision problems</strong> — e.g., evacuation routing, neighborhood exploration, or facility choice — where human agents cycle through location-observation-reward loops analogous to the reversal tasks here. The phase-portrait interpretive toolkit would then expose <em>spatial</em> cognitive strategies (anchor bias, recency weighting of perceived safety) that handcrafted agent-based models routinely miss.</p>
+      <p><span class="lab mine">Added value to my research</span>My agent-based models of urban health behavior (e.g., telehealth adoption, facility-seeking) currently impose fixed utility functions. The tinyRNN framework would let me <strong>discover</strong> the actual update rules individuals use from observed mobility or facility-choice sequences — providing data-driven, interpretable ABM parameters rather than assumed ones, directly improving model validity for public-health policy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-timescale reinforcement learning in the brain — <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace the paper's nested cross-validation with spatial cross-validation for geo-behavioral data</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's nested 10-fold cross-validation splits on <em>consecutive trials</em> — appropriate for stationary laboratory tasks. Extending it to naturalistic geo-behavioral sequences (GPS traces, POI visit logs) requires <strong>spatiotemporal cross-validation</strong> that respects both temporal autocorrelation and spatial clustering, so that the distilled student RNN does not exploit local spatial regularities as shortcuts. This extension would also benchmark tiny RNNs against established spatiotemporal sequence models.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial cross-validation is a persistent methodological gap in my explainable-ML pipelines for GWR and MGWR. Formalizing it within the tinyRNN framework creates a <strong>unified evaluation protocol</strong> I can apply across healthcare-accessibility prediction, housing-price modeling, and spatiotemporal KDE of disease incidence — directly improving reproducibility and generalizability.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead — <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply knowledge distillation to heterogeneous multi-source geographic data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's knowledge-distillation solution to data scarcity — a large teacher trained on pooled multi-subject data, then small students per individual — maps cleanly onto a problem in geodata fusion: training a global teacher on dense, high-quality data (e.g., multi-source mobile phone + social media + remote sensing) and distilling city-specific or region-specific student models where any single source is sparse. The tinyRNN's teacher-student architecture would provide a principled, interpretable alternative to ad-hoc imputation.</p>
+      <p><span class="lab mine">Added value to my research</span>For my multi-source data fusion work (mobile phone records, social media, remote sensing), a teacher-student distillation scheme offers a <strong>theoretically grounded way to handle missing modalities</strong> in different cities or time periods — superior to standard imputation and directly applicable to fine-tuning geospatial foundation models on sparse local datasets.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Continual learning of context-dependent processing in neural networks — <a href="https://doi.org/10.1038/s42256-019-0080-x" target="_blank">10.1038/s42256-019-0080-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use phase-portrait interpretation to audit and de-bias spatial ML predictions</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's dynamical-systems interpretive framework (phase portraits, preference setpoints) reveals hidden mechanisms in trained networks. An extension: apply the same attractor/fixed-point analysis to <strong>recurrent spatial prediction networks</strong> (e.g., spatiotemporal GNNs predicting health outcomes over time) to detect whether the network has learned spurious spatial attractors (e.g., persistent over-prediction in deprived areas regardless of true covariates), enabling systematic bias auditing beyond feature-importance explanations.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable-ML work on spatial health prediction relies on post-hoc feature-importance methods (SHAP, LIME) that do not capture dynamic dependencies. The phase-portrait approach would let me <strong>characterize temporal stability of model predictions</strong> — identifying whether a model has stable attractor states in high-risk areas and whether those states are driven by legitimate predictors or spatial confounders, directly informing health-equity policy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Interpretability and implicit model semantics in biomedicine and deep learning — <a href="https://doi.org/10.1038/s42256-026-01177-0" target="_blank">10.1038/s42256-026-01177-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Estimate "behavioral dimensionality" of urban facility-choice to calibrate 2SFCA catchment size</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper uses the optimal number of RNN units as a principled estimate of <em>behavioral dimensionality</em> — the minimal number of summary variables needed to predict future choices. A direct extension: apply the same unit-count diagnostic to <strong>patient facility-choice sequences</strong> (repeated visits to primary care, mental health, or emergency services) to empirically estimate how many latent decision axes govern healthcare-seeking. The resulting dimensionality estimate constrains the complexity of subsequent catchment-area models.</p>
+      <p><span class="lab mine">Added value to my research</span>In my 2SFCA/R2SFCA work, catchment radii and supply-demand weights are set by analyst judgment or cross-validation on aggregate flows, not derived from individual decision dynamics. A tinyRNN-estimated dimensionality score per patient population would provide a <strong>principled, data-driven upper bound on catchment complexity</strong> — meaning I can adaptively set catchment geometry per facility type and demographic group rather than using a single universal threshold.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Loss of plasticity in deep continual learning — <a href="https://doi.org/10.1038/s41586-024-07711-7" target="_blank">10.1038/s41586-024-07711-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

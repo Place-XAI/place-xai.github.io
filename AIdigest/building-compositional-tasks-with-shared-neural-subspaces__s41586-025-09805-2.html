@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building compositional tasks with shared neural subspaces — AI Digest</title>
+<meta name="description" content="AI Digest: Building compositional tasks with shared neural subspaces (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Neural compositionality</span>
+      <span class="tag">Cognitive flexibility</span>
+      <span class="tag">Prefrontal cortex</span>
+      <span class="tag">Multi-task learning</span>
+    </div>
+    <h1>Building compositional tasks with shared neural subspaces</h1>
+    <div class="meta">
+      <span class="authors">Sina Tafazoli · Flora M. Bouchacourt · Adel Ardalan · Nikola T. Markov · Motoaki Uchimura · Marcelo G. Mattar · Nathaniel D. Daw · Timothy J. Buschman</span>
+      <span><b>Published</b> 2025-11-26</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09805-2" target="_blank">10.1038/s41586-025-09805-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09805-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The brain achieves <strong>cognitive flexibility by composing tasks from shared neural subspaces</strong>: the same low-dimensional subspaces in prefrontal cortex encode task-relevant sensory and motor information across multiple tasks, with each task selectively engaging and transforming these shared representations. Monkeys performing three compositionally related tasks updated an internal <strong>task belief</strong> that dynamically gated which shared subspaces were recruited — amplifying relevant and suppressing irrelevant sensory and motor dimensions — providing a neural mechanism for rapid adaptation to changing task demands without re-learning representations from scratch.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Neural basis of compositional intelligence identified.</b> The paper provides the first direct experimental evidence that the mammalian brain reuses representational subspaces across tasks — confirming in neural recordings a computational principle long assumed in artificial neural networks but not verified empirically.</li>
+      <li><b>Bridges AI and neuroscience.</b> By showing that the brain implements the same multi-task representational reuse found in trained deep networks, the work offers a biological grounding for compositional AI architectures and points toward more brain-plausible designs.</li>
+      <li><b>Explains how rapid task adaptation works without catastrophic forgetting.</b> The task-belief gating mechanism — amplifying relevant and suppressing irrelevant neural dimensions — gives a mechanistic account of continual learning without overwriting prior representations, addressing a central challenge for AI systems.</li>
+      <li><b>Generalizable to a broad behavioral repertoire.</b> Although tested with three tasks in two monkeys, the subspace-composition mechanism is theoretically combinatorial: sequencing N shared subcomponents can implement exponentially many behaviors, suggesting a scalable basis for general intelligence.</li>
+      <li><b>Open data and code.</b> Processed neural recordings are on FigShare (<a href="https://doi.org/10.6084/m9.figshare.30276238.v1" target="_blank">figshare.30276238.v1</a>) and MATLAB analysis code on Zenodo (<a href="https://doi.org/10.5281/zenodo.17274345" target="_blank">zenodo.17274345</a>), enabling direct replication and extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Answers a fundamental open question:</b> whether compositional task structure documented in ANNs exists in the brain — a question of broad interest to neuroscience, cognitive science, and AI.</li>
+      <li><b>Multi-modal scientific synthesis:</b> combines primate electrophysiology (five brain regions, two monkeys), population-level neural geometry, Bayesian task-belief inference, and computational modelling — an integrative scope that meets Nature's bar for novelty and technical depth.</li>
+      <li><b>Immediate AI relevance:</b> the findings inform continual learning, multi-task learning, and cognitive architectures — three of the most active engineering challenges in AI — ensuring broad readership beyond neuroscience.</li>
+      <li><b>Clear mechanistic narrative:</b> the paper moves from behaviour through neural representations to a mechanistic principle (task-belief gating of shared subspaces), following the cause-effect chain that Nature prizes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Animal subjects</dt><dd>Two adult rhesus macaques (monkeys "Si" and "Ch") trained to perform three compositionally related categorization tasks (S1, C1, C2).</dd>
+      <dt>Neural recordings</dt><dd>Simultaneous multi-electrode recordings from <strong>five cortical and subcortical regions</strong>: lateral prefrontal cortex (LPFC, 480 neurons), frontal eye fields (FEF, 149 neurons), parietal cortex (PAR, 64 neurons), anterior inferior temporal cortex (aIT, 239 neurons), and striatum/caudate nucleus (149 neurons). Total: <strong>1,081 neurons</strong> across sessions combined into pseudopopulations.</dd>
+      <dt>Task structure</dt><dd>Three tasks (S1, C1, C2) crossing two categorization subtasks (shape vs. colour) with two response axes (axis 1 vs. axis 2). Recordings included <strong>94 blocks of S1, 97 of C1, and 189 of C2</strong>. Task switched when performance ≥ 70%.</dd>
+      <dt>Stimulus design</dt><dd>Parametric morph stimuli in a 2-D feature space varying independently in <strong>shape</strong> (bunny–tee continuum) and <strong>colour</strong> (red–green continuum); four discrete saccade targets.</dd>
+      <dt>Analysis method</dt><dd>Linear classifiers (250 iterations, n = 40 randomly sampled trials each) for cross-task decoding; targeted dimensionality reduction (TDR); cross-temporal correlation; compression index (CPI) quantifying relative subspace separability; permutation tests for significance.</dd>
+      <dt>Processed data</dt><dd>Publicly available at <a href="https://doi.org/10.6084/m9.figshare.30276238.v1" target="_blank">FigShare (doi:10.6084/m9.figshare.30276238.v1)</a>.</dd>
+      <dt>Code</dt><dd>Custom MATLAB analysis functions at <a href="https://doi.org/10.5281/zenodo.17274345" target="_blank">Zenodo (doi:10.5281/zenodo.17274345)</a>.</dd>
+      <dt>No external datasets</dt><dd>All data were collected by the authors; no third-party population, geospatial, or administrative datasets were used. Volume reflects the recording sessions rather than a city/country count.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Neural recordings (LPFC, FEF, PAR, aIT, Striatum)</td><td>Primary experimental data — population-level neural activity during tasks</td><td>1,081 neurons, 2 monkeys, 380 task blocks</td><td><a href="https://doi.org/10.6084/m9.figshare.30276238.v1" target="_blank">FigShare</a></td></tr>
+        <tr><td>MATLAB analysis code</td><td>Custom functions for classifier training, cross-task decoding, TDR, CPI</td><td>Full analysis pipeline</td><td><a href="https://doi.org/10.5281/zenodo.17274345" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Parametric morph stimuli</td><td>2-D shape × colour stimulus space for task design</td><td>Continuous 2-D morph space, 4 saccade targets</td><td>Described in Methods; generated by authors</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact trial counts per monkey and per recording session are reported in Methods and Extended Data. Numbers here are taken verbatim from the article text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Cross-task linear classification:</b> trained classifiers on one task's neural activity to decode colour category, shape category, or motor response direction; tested on withheld trials from a different task to quantify subspace sharing (generalization accuracy above chance = shared subspace).</li>
+      <li><b>Cross-temporal decoding:</b> classifiers trained at one timepoint were tested across all timepoints to map the temporal dynamics of subspace engagement (cross-temporal generalization matrices, Figs. 2e,h).</li>
+      <li><b>Targeted dimensionality reduction (TDR):</b> projected population activity onto task-variable-encoding dimensions to visualize sensory-to-motor trajectory dynamics in a low-dimensional neural state space (Fig. 3f).</li>
+      <li><b>Task-belief decoding:</b> trained a classifier on late-block (last 75 trials) neural activity during fixation to track the monkey's internal task representation over time as it discovered the current task; correlated belief strength with shared subspace engagement trial-by-trial (Figs. 4b–h).</li>
+      <li><b>Compression index (CPI):</b> log-ratio of colour vs. shape subspace separability, quantifying dynamic gain modulation of task-relevant vs. task-irrelevant sensory dimensions (Fig. 5c–f).</li>
+      <li><b>Coefficient of partial determination (CPD):</b> estimated the proportion of variance in each neuron's activity uniquely explained by each task variable (colour, shape, task identity, reward, response direction), confirming mixed selectivity across all five regions.</li>
+      <li><b>Bayesian task-belief model:</b> iterative belief-updating framework (conceptually analogous to hidden Markov model inference) to formalize how monkeys inferred the current task from response feedback.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig1.png" target="_blank">
+        <img src="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig1.png" alt="Fig.1 The monkeys performed three compositional tasks" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Task design and neural encoding — shows task timeline, 2-D morph stimuli, task sequence, behavioural psychometrics, and CPD encoding of task variables across 5 brain regions.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig2.png" target="_blank">
+        <img src="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig2.png" alt="Fig.2 Colour category and response representations were shared across tasks" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Cross-task subspace sharing — demonstrates that colour category and motor response classifiers trained on one task generalize to decode the other task in LPFC.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig3.png" target="_blank">
+        <img src="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig3.png" alt="Fig.3 Shared representations were transformed into shared motor representations" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Sequential subspace transformation — cross-temporal correlations and TDR trajectories showing sensory-to-motor information flow within a task, selectively along the task-relevant response axis.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig4.png" target="_blank">
+        <img src="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig4.png" alt="Fig.4 Shared subspaces are dynamically engaged during task discovery" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Task belief dynamics — as monkeys discovered the current task, decoded task belief in LPFC predicted engagement of the shared colour subspace and suppression of shape representations.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig5.png" target="_blank">
+        <img src="assets/building-compositional-tasks-with-shared-neural-subspaces__s41586-025-09805-2/fig5.png" alt="Fig.5 Irrelevant sensory and motor representations were suppressed during flexible behaviour" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Gain modulation — CPI tracks suppression of task-irrelevant sensory dimensions; motor axis suppression occurs rapidly (within 3–6 trials) in contrast to the gradual sensory gating.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 in main text); Extended Data contains additional figures and tables.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed ML, agent-based and graph learning).</p>
+
+    <div class="idea">
+      <h3>① Map the paper's task-belief gating to an attention mechanism for spatial context switching in GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that the LPFC maintains a distributed "task belief" that selectively gates which shared subspaces are engaged — functionally equivalent to a soft attention over a fixed dictionary of task components. The paper currently characterises this mechanism purely in terms of neural decoding accuracy. A direct extension would formalise it as a <strong>dynamic attention-weighted combination of shared basis subspaces</strong>, train a recurrent network with the same architecture on the same three tasks, and compare the learned gating weights with the neural compression-index trajectories — turning a neural description into a testable computational model grounded in the observed data, drawing on the corpus paper on tiny recurrent networks for cognitive strategies.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatiotemporal GeoAI, spatial context changes continuously (urban vs. rural, weekday vs. weekend, healthy vs. underserved areas). This paper's gating principle directly motivates a <strong>context-belief attention layer</strong> in spatial prediction models: rather than training separate models per region type or relying on fixed geographically weighted regression bandwidths, a belief-state vector encoding local spatial context could selectively activate shared geographic subspaces (e.g., population density, land-use patterns, network topology) — a learnable analogue of my MGWR that infers the relevant spatial process from data rather than assuming it.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Discovering cognitive strategies with tiny recurrent neural networks — <a href="https://doi.org/10.1038/s41586-025-09142-4" target="_blank">10.1038/s41586-025-09142-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use the shared-subspace geometry to quantify representational overlap in geospatial foundation models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's key finding — that LPFC uses shared low-dimensional subspaces across tasks, while striatum and parietal cortex use more task-specific representations — implies a geometry-of-generalization principle: regions that generalise best have the most aligned subspaces. Extending this: apply the cross-task linear decoding protocol to embeddings extracted from a multi-task geospatial foundation model trained simultaneously on, for example, population density prediction, health outcome mapping, and mobility flow estimation, to measure how much representational geometry is actually shared versus task-specific at each layer — a direct application of the paper's classifier-based geometry analysis.</p>
+      <p><span class="lab mine">Added value to my research</span>I fine-tune geospatial foundation models for specific downstream tasks (spatial accessibility prediction, health geography). This paper's method gives me a <strong>quantitative probe</strong>: I can measure the cross-task decodability of spatial embeddings before and after fine-tuning to determine whether fine-tuning collapses the shared subspace (like task-specific representations in striatum) or preserves it (like LPFC) — providing a geometry-based diagnostic for transfer learning in GeoAI that goes beyond loss-curve comparisons.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unsupervised pretraining in biological neural networks — <a href="https://doi.org/10.1038/s41586-025-09180-y" target="_blank">10.1038/s41586-025-09180-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply the paper's continual-learning gating to prevent catastrophic forgetting in multi-city spatial models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that suppressing task-irrelevant representations during task discovery prevents interference — a biologically implemented solution to catastrophic forgetting. The paper's task-belief CPI (compression index) directly measures which subspace dimensions are actively suppressed. Extending this: implement a <strong>neural-inspired selective plasticity rule</strong> where only the dimensions with high current-task CPI are allowed to update during continual training on a sequence of cities or time periods, directly testing whether the brain's gating strategy translates into a practical continual-learning algorithm — benchmarked against the corpus paper on loss of plasticity in deep learning.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal models are retrained as new city data arrives (or as urban contexts shift), and they suffer from catastrophic forgetting of earlier patterns. The paper's mechanism suggests a <strong>CPI-guided selective fine-tuning</strong>: freeze the dimensions encoding task-invariant geographic priors (shared subspace analogue) and only update the city-specific projection heads — a biologically motivated continual-learning strategy for multi-city GeoAI models that maintains transferability while adapting locally.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Loss of plasticity in deep continual learning — <a href="https://doi.org/10.1038/s41586-024-07711-7" target="_blank">10.1038/s41586-024-07711-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Model task-belief updating as a spatial decision process for healthcare access inference</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's monkeys inferred the current task from reward feedback via an iterative belief-updating process that the authors liken to apparent learning / task inference. The belief converged faster when the previous task context was similar (C1 after C1 vs. C1 after S1). Extending this: formalise the belief-updating as a <strong>partially observable Markov decision process (POMDP)</strong> and compare the inferred belief-state trajectories with the empirical neural decoding curves — testing whether a POMDP normative model can predict not just final task performance but the within-block neural dynamics, linking the paper's neural findings to normative decision theory.</p>
+      <p><span class="lab mine">Added value to my research</span>In healthcare accessibility modelling, patients update their beliefs about service availability based on experienced access barriers (wait times, travel costs, digital barriers). The paper's belief-updating circuit — iteratively integrating evidence to infer which "task" (care pathway) is currently optimal — directly maps onto a <strong>POMDP model of patient care-seeking behaviour</strong>: I can adapt the belief-state framework to model dynamic service-area delineation in my R2SFCA, where catchment boundaries are not fixed but updated as patients learn which facilities are realistically accessible to them.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A thalamus–brainstem attractor network drives history-biased decisions — <a href="https://doi.org/10.1038/s41586-026-10623-3" target="_blank">10.1038/s41586-026-10623-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Translate the subspace-composition principle into a modular graph neural network for multi-domain spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that sequential composition of shared subspaces — first engaging the shared colour subspace, then transforming it into the task-specific motor subspace — implements arbitrarily complex behaviours from a small dictionary of components. Extending this: build a <strong>modular graph neural network</strong> where each module encodes one domain-specific subspace (e.g., transport network, land-use patterns, demographic structure) and a task-belief controller selects and sequences which modules to engage for each prediction target, testing whether subspace composition that works in primate prefrontal cortex also improves sample efficiency in multi-domain spatial learning — leveraging the orthogonal state-machine structure documented in the hippocampus corpus paper as a design principle for the module architecture.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning work trains separate models for each spatial prediction task (e.g., accessibility, health outcomes, mobility flows). This paper's subspace-composition principle suggests a <strong>shared-subspace GNN</strong> where geographic basis modules are shared across tasks and a lightweight task-belief controller routes computation — directly unifying my separate prediction pipelines into a single transferable GeoAI architecture that generalises across cities and spatial prediction targets, yielding better data efficiency and interpretable modularity (the task-belief gating weights become spatially explainable).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning produces an orthogonalized state machine in the hippocampus — <a href="https://doi.org/10.1038/s41586-024-08548-w" target="_blank">10.1038/s41586-024-08548-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

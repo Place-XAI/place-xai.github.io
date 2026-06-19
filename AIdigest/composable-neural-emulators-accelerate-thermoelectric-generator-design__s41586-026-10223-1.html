@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Composable neural emulators accelerate thermoelectric generator design — AI Digest</title>
+<meta name="description" content="AI Digest: Composable neural emulators accelerate thermoelectric generator design (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Neural Emulator</span>
+      <span class="tag">Thermoelectrics</span>
+      <span class="tag">AI-Accelerated Design</span>
+      <span class="tag">Surrogate Model</span>
+    </div>
+    <h1>Composable neural emulators accelerate thermoelectric generator design</h1>
+    <div class="meta">
+      <span class="authors">Li, Airan · Wu, Xinzhi · Wang, Longquan · Wu, Gang · Li, Jiankang · Hu, Zhao · Wang, Xinyuan · Mori, Takao</span>
+      <span><b>Published</b> 2026-04-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10223-1" target="_blank">10.1038/s41586-026-10223-1</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10223-1" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>TEGNet, a composable neural network emulator, predicts thermoelectric (TE) generator performance with <strong>greater than 99% accuracy</strong> while requiring only <strong>0.01% of the computational time</strong> of commercial finite-element solvers (COMSOL). Its key innovation is <strong>composability</strong>: material-specific emulators can be flexibly combined to simulate segmented legs and n–p paired generators without retraining, enabling rapid exploration of diverse device architectures. Guided by TEGNet, experimentally fabricated generators achieved conversion efficiencies of <strong>9.3%</strong> (MgAgSb/Bi₀.₄Sb₁.₆Te₃ segmented) and <strong>8.7%</strong> (Mg₃Bi₁.₄Sb₀.₆–MgAgSb n–p paired), ranking competitively high in the literature.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Orders-of-magnitude speedup with verified accuracy.</b> COMSOL requires ~2,237 s per material simulation; TEGNet delivers the same output in 0.25 s. The full n–p paired design space (which took COMSOL more than 5,800 s) was mapped by TEGNet in just 9 s, with R² ≥ 0.9993 throughout.</li>
+      <li><b>Composability unlocks architectural diversity.</b> Unlike monolithic surrogate models, TEGNet's unit-level emulators can be assembled at inference time — no retraining needed when new material combinations or three-segment designs are explored, exploiting the constant-current rule of TE circuitry.</li>
+      <li><b>Closes the gap between materials discovery and device-level realization.</b> Thermoelectric research has focused heavily on maximizing the figure of merit zT; TEGNet demonstrates that device geometry and architecture optimized jointly with materials can push efficiency significantly beyond what zT alone predicts.</li>
+      <li><b>Open-source and reproducible.</b> TEGNet is publicly available at <a href="https://github.com/airannims/TEGNet/" target="_blank">github.com/airannims/TEGNet</a>, enabling the TE community to train new material-specific emulators following the same workflow and compose them freely.</li>
+      <li><b>Experimental validation in the loop.</b> The paper goes beyond simulation: fabricated devices confirm the TEGNet-guided designs, with efficiencies independently ranked among the highest reported for the respective material systems.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Broad methodological contribution:</b> composable neural emulators are a general design principle applicable far beyond thermoelectrics — any multi-component physical system governed by shared conserved quantities (current, mass, momentum) is a candidate, giving the work a scope appropriate for Nature.</li>
+      <li><b>Verified impact, not a proof of concept:</b> the combination of >99% accuracy, orders-of-magnitude speed gain, and experimental validation with record-competitive efficiencies satisfies Nature's bar for significance and reproducibility simultaneously.</li>
+      <li><b>Advances AI for materials science:</b> TEGNet demonstrates that physics-constrained composability — rather than brute-force scale — is the right design axis for device-level AI surrogates, contributing a conceptual advance alongside the empirical results.</li>
+      <li><b>Energy and sustainability relevance:</b> waste-heat recovery through thermoelectrics is a globally important decarbonization technology; accelerating device design directly translates to faster deployment of energy-harvesting systems.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data source</dt><dd><strong>COMSOL Multiphysics</strong> finite-element simulations — the ground truth for all TEGNet training and validation. Data are generated in-house rather than from an external repository.</dd>
+      <dt>Sample sizes tested</dt><dd>300, 600, <strong>1,200</strong>, 1,800, and 2,400 per material; 1,200 selected as optimal (R² = 0.9997–0.9998 on unseen test sets for V₀ and Q₀).</dd>
+      <dt>Materials covered</dt><dd><strong>12 TE materials</strong>: MgAgSb, Bi₀.₄Sb₁.₆Te₃, Mg₃Bi₁.₄Sb₀.₆, Mg₃Sb₁.₅Bi₀.₅, NbFeSb, GeTe, PbTe, CoSb₃, AgCu(Te,S), Zintl phases, SnSe, and SnS — spanning low to high operating temperature ranges.</dd>
+      <dt>Input space</dt><dd>Leg dimensions (width <em>a</em>, depth <em>b</em>, length <em>c</em>: 1–12 mm) and boundary conditions (T<sub>h</sub>, T<sub>c</sub>, I) — sampled via <strong>Sobol sequences</strong> for space-filling coverage.</dd>
+      <dt>Data generation cost</dt><dd>~4 h for 1,200 samples per material; training ~79 s. These are one-time costs; once trained, TEGNet generates outputs in 0.25 s per query.</dd>
+      <dt>Code availability</dt><dd>Publicly available at <a href="https://github.com/airannims/TEGNet/" target="_blank">github.com/airannims/TEGNet</a> (PyTorch, Python 3.10). All data included in the published article and Supplementary Information.</dd>
+      <dt>Sampling method</dt><dd>Sobol quasi-random sequences for dimensions and temperatures; uniform sampling for current I bounded by material-specific physical limits to avoid non-convergent COMSOL cases.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>COMSOL Multiphysics simulations</td><td>Ground-truth training data for all TEGNet models</td><td>1,200 samples per material × 12 materials; 80/10/10 train/val/test split; 5 independent random splits</td><td>In-house generation; method described in Methods section</td></tr>
+        <tr><td>TEGNet trained models &amp; code</td><td>Open-source surrogate model package (PyTorch)</td><td>12 material-specific emulators; composable for segmented &amp; n–p architectures</td><td><a href="https://github.com/airannims/TEGNet/" target="_blank">github.com/airannims/TEGNet</a></td></tr>
+        <tr><td>Experimental measurements (Mini-PEM)</td><td>Experimental validation of TEGNet-guided device designs</td><td>2 TE generator prototypes; T<sub>h</sub> varied 373–593 K; measurements under vacuum</td><td>Included in article figures and Supplementary Information</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all training data are generated from COMSOL rather than drawn from an external public database. No geospatial or population datasets are involved; this is a computational materials science paper. Numbers above are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Multilayer perceptron (MLP) surrogate:</b> TEGNet is a fully connected feedforward network with 6 inputs (leg dimensions + boundary conditions), three hidden layers of 128 neurons each (SiLU activation), and 2 outputs (V₀, Q₀). MSE loss; Adam optimizer with CosineAnnealingLR scheduler; 6,000 training epochs.</li>
+      <li><b>Sobol sequence sampling:</b> inputs a, b, c, T<sub>c</sub>, T<sub>h</sub> sampled via quasi-random Sobol sequences to ensure space-filling coverage within physically valid bounds; current I sampled uniformly up to a material-dependent maximum.</li>
+      <li><b>Composable emulator assembly:</b> the constant-current rule of series-connected TE legs is exploited as a physical constraint — unit emulators are composed at inference time by iteratively satisfying energy conservation (Q₀_1 = Q₀_2 + I × V) to resolve interface temperatures, enabling segmented and n–p paired simulations without retraining.</li>
+      <li><b>Design space exploration:</b> TEGNet is used in a forward-prediction sweep over discrete grids of geometric parameters (leg length ratios, area ratios, heights) to extract optimal configurations — replacing the repeated PDE-solve loops of COMSOL with near-instantaneous neural forward passes.</li>
+      <li><b>Parasitic effects incorporation:</b> electrical contact resistivity ρ<sub>c</sub> and thermal contact resistivity r<sub>c</sub> are incorporated at inference time (Extended Data Figs. 2–3) without retraining, by modifying boundary condition inputs — demonstrating the generality of the trained emulator to practical device effects.</li>
+      <li><b>Experimental validation:</b> spark plasma sintering (SPS) for materials fabrication; contact resistance measured with resistance distribution instrument; generator efficiency measured with Mini-PEM system under vacuum, varying T<sub>h</sub> from 373 to 593 K.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig1.png" target="_blank">
+        <img src="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig1.png" alt="Fig.1 TEGNet architecture and model training" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> TEGNet architecture and model training — shows MLP schematic, training/validation loss curves, RMSE/MAE vs. sample size, and scatter plots of predicted vs. true V₀ and Q₀ (R² ≈ 0.9997–0.9998 at n = 1,200).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig2.png" target="_blank">
+        <img src="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig2.png" alt="Fig.2 Accurate and rapid TEGNet simulation" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Accurate and rapid TEGNet simulation — TEGNet vs. COMSOL comparison for V₀, Q₀, P, and η across 12 TE materials; computational time comparison (0.25 s vs. ~2,237 s per material).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig3.png" target="_blank">
+        <img src="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig3.png" alt="Fig.3 Segmented TE generator design and application" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Segmented TE generator design framework and application — MgAgSb/Bi₀.₄Sb₁.₆Te₃ length-ratio optimization, experimental contact resistance, power density, and 9.3% efficiency at 593 K.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig4.png" target="_blank">
+        <img src="assets/composable-neural-emulators-accelerate-thermoelectric-generator-design__s41586-026-10223-1/fig4.png" alt="Fig.4 n-p paired TE generator design and application" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> n–p paired TE generator design framework and application — 3D/2D contour maps of η<sub>max</sub> and P<sub>max</sub> vs. geometry; fabricated two-pair generator achieving 8.7% efficiency at 593 K; extension to additional material combinations.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Extended Data contains 3 additional figures (Figs. 1–3); Supplementary Information contains Figs. 1–26 and supplementary references.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Replace the forward-sweep grid search with gradient-based optimization through the emulator</h3>
+      <p><span class="lab paper">Extending this paper</span>TEGNet's current design workflow is a <strong>brute-force grid scan</strong> over discrete parameter values of leg dimensions and area ratios. Because TEGNet is a differentiable neural network, the gradient of efficiency with respect to geometry can be computed analytically, enabling gradient-based continuous optimization — directly analogous to what has been demonstrated for nanoparticle heterostructures. Extending TEGNet to include gradient flow through the composed emulator would let designers follow the loss landscape rather than discretely sample it, reaching the optimal configuration with far fewer forward passes and enabling simultaneous co-optimization of geometry, material choice, and contact resistivity in a single objective.</p>
+      <p><span class="lab mine">Added value to my research</span>The differentiable-surrogate paradigm maps cleanly onto my facility-location optimization work: replacing a non-differentiable combinatorial search (EV charging station placement, healthcare facility siting) with a continuous relaxation and gradient descent through a learned accessibility emulator. TEGNet's composability principle — that unit emulators obeying a conservation rule can be chained — is structurally analogous to my network accessibility models where cumulative catchment areas can be decomposed by zone and gradient-optimized jointly.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Gradient-based optimization of complex nanoparticle heterostructures enabled by deep learning on heterogeneous graphs — <a href="https://doi.org/10.1038/s43588-025-00917-3" target="_blank">10.1038/s43588-025-00917-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Upgrade material-specific emulators to physics-infused graph neural networks</h3>
+      <p><span class="lab paper">Extending this paper</span>TEGNet uses a standard MLP that treats leg geometry as a flat feature vector, learning thermoelectric physics implicitly through training data. The next architectural step: replace each material-specific MLP with a <strong>physics-infused graph neural network</strong> (PI-GNN) that encodes the spatial structure of the TE leg as a graph of material nodes and interface edges, embedding known physics — Seebeck coefficient, thermal conductance, electrical resistance — as node/edge attributes. This would allow TEGNet to generalize to materials outside its training distribution, reduce sample requirements, and handle heterogeneous multi-material legs without recomposing from scratch. The corpus paper on physics-infused heterogeneous GNNs for nanomaterials demonstrates exactly this strategy for complex spatially structured materials.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning agenda centers on encoding spatial conservation laws as soft constraints in GNNs for urban systems. TEGNet's constant-current composability rule is formally equivalent to flow conservation in a network — the same principle I use in graph-based accessibility models where cumulative demand must balance supply. Seeing this principle applied at the device physics scale reinforces the design pattern and provides a materials-science benchmark for testing transferability of physics-constrained GNNs across domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ From single-material emulators to a universal TE property surrogate via transfer learning</h3>
+      <p><span class="lab paper">Extending this paper</span>TEGNet trains one MLP per material — if a new material arrives, a new training campaign (4 h data generation + ~79 s training) is needed. The paper acknowledges that for "similar" materials a rough estimate can be borrowed, but this is informal. Extending it: train a <strong>universal surrogate</strong> that conditions on material descriptors (zT curve, Seebeck coefficient, conductivity profiles) as additional inputs, then fine-tune on a small material-specific set. This mirrors the materials-science trend of universal interatomic potentials (M3GNet, MACE) that cover the periodic table from a single pre-trained backbone. With a universal emulator, TEGNet's screening of n–p pair combinations (currently limited by the need to pre-train all candidates) would extend to any material in a descriptors database.</p>
+      <p><span class="lab mine">Added value to my research</span>This is analogous to fine-tuning geospatial foundation models: my work on adapting pre-trained geospatial models to downstream tasks (urban health, accessibility prediction) follows the same parameter-efficient fine-tuning logic. A universal TE surrogate pre-trained on broad material diversity and fine-tuned on local material properties is structurally the same pipeline as a geospatial FM pre-trained on remote sensing and fine-tuned on city-specific accessibility patterns — cross-domain insight for my foundation model work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table — <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Embed uncertainty quantification so TEGNet guides experiment with calibrated confidence</h3>
+      <p><span class="lab paper">Extending this paper</span>TEGNet currently produces point predictions — there is no estimate of predictive uncertainty attached to its V₀ and Q₀ outputs. In practice, when a designer scans thousands of configurations, not all predictions are equally reliable: extrapolation beyond the training temperature range, or geometries near the Sobol boundary, will carry higher uncertainty. Extending TEGNet with a <strong>Bayesian or deep ensemble uncertainty head</strong> would allow the design loop to be closed: the optimizer selects the next COMSOL simulation at the configuration where uncertainty is highest (Bayesian active learning), progressively building a dataset focused on the hardest regions of the design space. This directly addresses the paper's acknowledged limitation that TEGNet is not yet designed for extrapolation to entirely novel conditions.</p>
+      <p><span class="lab mine">Added value to my research</span>Calibrated uncertainty is a gap in my explainable ML for spatial prediction: my gradient-boosted ensembles and MGWR models produce feature attributions but not spatially varying confidence intervals. Adopting the active-learning loop from TEGNet — query COMSOL where uncertain, query field surveys where my model is uncertain — would make my data-collection campaigns for healthcare accessibility more efficient, directing measurement resources to the spatial zones where predictions are least reliable.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating the prediction of stable materials with machine learning — <a href="https://doi.org/10.1038/s43588-023-00536-w" target="_blank">10.1038/s43588-023-00536-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Generalize the composable-emulator principle to multi-scale urban energy systems</h3>
+      <p><span class="lab paper">Extending this paper</span>TEGNet's composability exploits one physical invariant: the constant current I shared by all TE legs in series. The same principle generalizes to any system where <strong>a conserved quantity couples sub-unit emulators</strong>. Extending beyond thermoelectrics: a building-scale energy model could compose room-level thermal emulators (coupled by heat flux conservation), a district heating network could compose pipe-segment emulators (coupled by mass flow), and a city-scale power grid could compose substation emulators (coupled by power balance). This would create a hierarchical, composable AI solver for urban energy infrastructure — precisely the kind of physics-constrained, multi-scale AI surrogate that is missing from current smart-city platforms.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal analysis of urban systems — mobility, public health, accessibility — operates at multiple nested scales (individual, neighborhood, city, region). TEGNet's composability principle is a template for building <strong>scale-composable GeoAI models</strong>: individual accessibility emulators (2SFCA catchment-zone scale) composed by conservation rules (total demand served = sum of facility supply) into city-scale models, which in turn compose into regional-scale health geography analyses. This is a concrete design pattern for multi-resolution GeoAI that my current models lack.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating the calculation of electron–phonon coupling strength with machine learning — <a href="https://doi.org/10.1038/s43588-024-00668-7" target="_blank">10.1038/s43588-024-00668-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

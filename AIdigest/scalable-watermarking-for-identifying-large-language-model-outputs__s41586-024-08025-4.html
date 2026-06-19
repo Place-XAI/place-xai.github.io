@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scalable watermarking for identifying large language model outputs — AI Digest</title>
+<meta name="description" content="AI Digest: Scalable watermarking for identifying large language model outputs (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">LLM Watermarking</span>
+      <span class="tag">AI Safety</span>
+      <span class="tag">Synthetic Text Detection</span>
+      <span class="tag">Responsible AI</span>
+    </div>
+    <h1>Scalable watermarking for identifying large language model outputs</h1>
+    <div class="meta">
+      <span class="authors">Sumanth Dathathri · Abigail See · Sumedh Ghaisas · Po-Sen Huang · Rob McAdam · Johannes Welbl · Vandana Bachani · Alex Kaskasoli · Robert Stanforth · Tatiana Matejovicova · Jamie Hayes · Nidhi Vyas · Majd Al Merey · Jonah Brown-Cohen · Rudy Bunel · Borja Balle · Taylan Cemgil · Zahra Ahmed · Kitty Stacpoole · Ilia Shumailov · Ciprian Baetu · Sven Gowal · Demis Hassabis · Pushmeet Kohli</span>
+      <span><b>Published</b> 2024-10-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-08025-4" target="_blank">10.1038/s41586-024-08025-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-08025-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>SynthID-Text is a <strong>production-ready generative text watermarking scheme</strong> that embeds a detectable statistical signature into LLM outputs by modifying only the <strong>token sampling procedure</strong> (Tournament sampling), without affecting model training or adding meaningful latency. Validated over <strong>nearly 20 million live Gemini responses</strong>, the scheme preserves text quality while providing <strong>superior watermark detectability</strong> compared with existing methods — and has been deployed at scale in Gemini and Gemini Advanced, constituting the first real-world deployment of a generative text watermark in a production LLM system serving millions of users.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First production-scale deployment of LLM text watermarking.</b> SynthID-Text moves watermarking from an academic exercise to a live, planet-scale system — proving that quality-preserving watermarking is not just theoretically possible but practically feasible.</li>
+      <li><b>Addresses a critical gap in the information ecosystem.</b> As LLMs produce increasingly indistinguishable synthetic text, watermarking offers a lightweight, privacy-respecting mechanism to identify AI-generated content without requiring a growing record of all interactions.</li>
+      <li><b>Quality-neutral by rigorous empirical proof.</b> Both a large-scale live A/B test (≈20 million responses) and controlled human preference studies across five quality dimensions confirm no degradation in user experience — eliminating the principal adoption barrier.</li>
+      <li><b>Speculative sampling integration unlocks practical deployment.</b> The proposed fast watermarked speculative sampling algorithm allows watermarking to be combined with the speed-optimization technique most commonly used in real production systems, with no measurable efficiency loss.</li>
+      <li><b>Open code and data.</b> SynthID-Text's generation and detection code, plus human evaluation data, are publicly released at <a href="https://github.com/google-deepmind/synthid-text" target="_blank">github.com/google-deepmind/synthid-text</a>, enabling independent research and adoption.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Societal urgency at planetary scale:</b> the integrity of the information ecosystem is one of the defining challenges of the AI era; this paper provides a concrete, deployed solution evaluated at a scale (20 million interactions) rarely seen in computer science research.</li>
+      <li><b>Empirical milestone, not incremental engineering:</b> the live Gemini deployment constitutes a first-of-kind scientific demonstration — transforming a theoretical watermarking concept into a validated production system serving millions of users.</li>
+      <li><b>Theoretical depth alongside engineering breadth:</b> the paper provides formal non-distortion proofs, complexity analyses, a Bayesian detection framework, and multi-language robustness evaluations — meeting Nature's standard for rigorous, multi-faceted contributions.</li>
+      <li><b>Interdisciplinary impact:</b> the work intersects cryptography, statistical signal detection, human factors, and AI governance, with implications for policy, copyright law, education, and misinformation research.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Live experiment</dt><dd><strong>Gemini production system</strong> (previously Bard) — approximately <strong>20 million</strong> watermarked and unwatermarked responses collected from real user interactions; user feedback measured via thumbs-up / thumbs-down ratings. The exact number of unique users is not stated.</dd>
+      <dt>Evaluation prompts</dt><dd><strong>ELI5 dataset</strong> (Fan et al., ACL 2019) — English explanatory long-form Q&amp;A. Non-distortionary experiments: 10,000 prompts each for development and test sets (disjoint). Distortionary experiments: 1,500 test prompts. Human evaluation: 3,000 ELI5 questions rated by human raters.</dd>
+      <dt>Evaluation models</dt><dd>Instruction-tuned variants of <strong>Gemma 2B-IT and Gemma 7B-IT</strong> (Google DeepMind) and <strong>Mistral 7B-IT v0.2</strong>. Models tested across temperatures of 0.5, 0.7 and 1.0 with top-<em>k</em> = 100 sampling.</dd>
+      <dt>Human annotation data</dt><dd>Model responses and human annotations from the controlled side-by-side quality evaluation are publicly released via <a href="https://github.com/google-deepmind/synthid-text" target="_blank">ref. 7 (SynthID-Text GitHub)</a>.</dd>
+      <dt>Hardware</dt><dd>Gemma 7B-IT latency benchmarked on <strong>4 v5e tensor processing units</strong> (Google Cloud TPUs); latency overhead of Tournament sampling is 0.57% (15.527 ms → 15.615 ms per token).</dd>
+      <dt>Availability</dt><dd>Code and human evaluation data: <a href="https://github.com/google-deepmind/synthid-text" target="_blank">github.com/google-deepmind/synthid-text</a> (open source). Live Gemini response data are not independently accessible.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Gemini live responses</td><td>Large-scale quality validation (A/B test)</td><td>~20 million responses; real user feedback</td><td>Internal (not public)</td></tr>
+        <tr><td>ELI5 dataset</td><td>Evaluation prompts for detectability &amp; quality benchmarks</td><td>~21,500 prompts across experiments; English long-form Q&amp;A</td><td><a href="https://facebookresearch.github.io/ELI5/" target="_blank">ELI5 (Fan et al., ACL 2019)</a></td></tr>
+        <tr><td>Gemma 2B-IT / 7B-IT</td><td>Primary evaluation LLMs; draft/target pair for speculative sampling</td><td>Open-weight models; 2B and 7B parameters</td><td><a href="https://arxiv.org/abs/2403.08295" target="_blank">arxiv.org/abs/2403.08295</a></td></tr>
+        <tr><td>Mistral 7B-IT v0.2</td><td>Cross-model detectability evaluation</td><td>7B parameter open model</td><td><a href="https://mistral.ai" target="_blank">mistral.ai</a></td></tr>
+        <tr><td>SynthID-Text code &amp; human eval data</td><td>Reproducibility; watermark generation and detection</td><td>Human annotations for 3,000 ELI5 responses</td><td><a href="https://github.com/google-deepmind/synthid-text" target="_blank">github.com/google-deepmind/synthid-text</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper does not provide a total number of training samples for SynthID-Text itself; the method modifies only sampling at inference time, not training data. The ~20 million figure refers exclusively to live production responses used for quality validation, not to a curated research dataset.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Tournament sampling (novel):</b> a new autoregressive token sampling algorithm that runs a multi-layer knockout tournament among candidate tokens, biasing selection toward tokens scoring highly under pseudorandom watermarking functions (g-values) derived from a sliding-window context hash and a secret key. Uses m = 30 tournament layers in production experiments.</li>
+      <li><b>Sliding-window random seed generator:</b> context window of H = 4 preceding tokens is hashed with the watermarking key to generate a per-step random seed; ensures watermark is context-specific and detection does not require access to the underlying LLM.</li>
+      <li><b>K-sequence repeated context masking:</b> suppresses watermarking on steps where the context window has been seen recently, preventing quality-degrading repetition loops while achieving formal K-sequence non-distortion guarantees.</li>
+      <li><b>Watermark detection — scoring functions:</b> multiple scoring functions including mean g-value score, weighted mean score, frequentist hypothesis-test scores (P values), and a learned Bayesian scoring function that improves detectability by training on watermarked and unwatermarked text examples.</li>
+      <li><b>Speculative sampling integration:</b> two algorithms — high-detectability and fast watermarked speculative sampling — combine Tournament sampling with a draft/target model pair, enabling production-speed watermarked generation; the fast variant theoretically preserves speculative sampling acceptance rates.</li>
+      <li><b>Non-distortion proofs:</b> formal proofs establish single-token non-distortion and (with repeated context masking) single-sequence non-distortion, guaranteeing statistical equivalence between watermarked and unwatermarked output distributions at specified levels.</li>
+      <li><b>Empirical evaluation metrics:</b> detectability measured by TPR@FPR=1% across text lengths, temperatures, and models; text quality measured by perplexity, standard benchmarks, and human side-by-side preference ratings; diversity measured by Self-BLEU.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/scalable-watermarking-for-identifying-large-language-model-outputs__s41586-024-08025-4/fig1.png" target="_blank">
+        <img src="assets/scalable-watermarking-for-identifying-large-language-model-outputs__s41586-024-08025-4/fig1.png" alt="Fig.1 Overview of LLM text generation and generative watermarking" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of LLM text generation and generative watermarking — contrasts standard autoregressive sampling with SynthID-Text's three-component scheme: random seed generator, Tournament sampling, and scoring function.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/scalable-watermarking-for-identifying-large-language-model-outputs__s41586-024-08025-4/fig2.png" target="_blank">
+        <img src="assets/scalable-watermarking-for-identifying-large-language-model-outputs__s41586-024-08025-4/fig2.png" alt="Fig.2 SynthID-Text's Tournament-based watermarking" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> SynthID-Text's Tournament-based watermarking — illustrates the m = 3 layer tournament: 8 sampled tokens compete pair-wise via g-values until one winner token is selected as the next output token.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/scalable-watermarking-for-identifying-large-language-model-outputs__s41586-024-08025-4/fig3.png" target="_blank">
+        <img src="assets/scalable-watermarking-for-identifying-large-language-model-outputs__s41586-024-08025-4/fig3.png" alt="Fig.3 Detection performance of SynthID-Text" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Detection performance — (a) TPR vs. text length for non-distortionary SynthID-Text vs. Gumbel; (b) selective prediction abstention rates; (c) detectability–quality trade-off for distortionary SynthID-Text vs. Soft Red List.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables. Extended Data Table 1 (human preference ratings for unwatermarked vs. watermarked responses) and Extended Data Figs. 1–4 (additional model/temperature combinations, diversity–detectability trade-offs, abstention rates) appear in the extended data section.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, accessibility, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Spatially-aware watermarking for LLM-generated geospatial content</h3>
+      <p><span class="lab paper">Extending this paper</span>SynthID-Text applies a single watermarking key universally across all prompts. A natural extension would introduce <strong>context-conditioned or domain-keyed watermarking</strong> — for example, using location-specific or domain-specific keys for geospatial, medical, or legal content. This would allow fine-grained provenance attribution: identifying not only that text is AI-generated, but which geographic or thematic domain it originated from, without storing interaction logs. The paper's Tournament sampling framework accommodates arbitrary key schemes by design, so this requires only a keying infrastructure change, not a new sampling algorithm.</p>
+      <p><span class="lab mine">Added value to my research</span>For GeoAI applications where LLMs are increasingly used to generate or summarize place descriptions, urban reports, and health narratives, domain-keyed watermarking would enable <strong>traceability of synthetic geodata</strong>. In multi-source data fusion pipelines (mobile phone, social media, remote sensing), identifying AI-generated versus human-generated textual annotations with spatial granularity would substantially improve data quality auditing for spatiotemporal models — directly supporting open science and FAIR data principles in my research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Language models transmit behavioural traits through hidden signals in data — <a href="https://doi.org/10.1038/s41586-026-10319-8" target="_blank">10.1038/s41586-026-10319-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Entropy-adaptive tournament depth for low-entropy structured output (code, coordinates, labels)</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly acknowledges that Tournament sampling's detectability degrades in low-entropy settings (e.g., deterministic code generation, factual single-token answers). A direct extension: develop an <strong>entropy-adaptive tournament depth</strong> that dynamically adjusts the number of layers m based on the on-the-fly entropy of the LLM's current token distribution — scaling up m when entropy is high and mixing watermarked with unwatermarked sampling when entropy is critically low. The paper already shows theoretically how entropy governs watermark strength; this extension would operationalize that insight into a self-tuning production mechanism.</p>
+      <p><span class="lab mine">Added value to my research</span>GeoAI models often output highly structured, low-entropy content: geographic coordinates, classification labels, route descriptions, and census-linked codes. An entropy-adaptive scheme would make watermarking tractable for <strong>LLM-assisted spatial data annotation</strong> — a growing practice in fine-tuning geospatial foundation models. Verifying that structured annotations were generated by a specific model version matters for reproducibility and FAIR data compliance in my spatiotemporal analysis pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy — <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Watermark-based provenance auditing for retrieval-augmented geospatial and health reports</h3>
+      <p><span class="lab paper">Extending this paper</span>SynthID-Text currently treats each generation independently. Extending it to a <strong>retrieval-augmented generation (RAG) setting</strong>: when LLM output synthesizes retrieved human-written passages with newly generated text, the Bayesian scoring function could be retrained on mixed-provenance text to compute per-span posterior probability of being watermarked — producing a sentence-level provenance map rather than a document-level binary verdict. The Bayesian scorer's learnable architecture makes this a direct, low-engineering-cost extension of the existing method.</p>
+      <p><span class="lab mine">Added value to my research</span>In public health and urban analytics, LLM-assisted synthesis of surveillance reports, clinical notes, or policy documents increasingly mixes AI-generated summaries with human-authored content. A RAG-aware watermark scorer would support <strong>digital provenance auditing in telehealth platforms and health geography research</strong>, where knowing whether a statistical finding or geographic claim is AI-synthesized versus cited from primary sources matters for clinical and policy trust.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Synthesizing scientific literature with retrieval-augmented language models — <a href="https://doi.org/10.1038/s41586-025-10072-4" target="_blank">10.1038/s41586-025-10072-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Watermark survival through fine-tuning: open-source LLM and domain-adaptation robustness</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper notes that open-source models present a fundamental challenge because watermarking cannot be enforced on decentralized deployments. An extension: study <strong>watermark transferability and survival through fine-tuning</strong> — does SynthID-Text's statistical signature persist when a watermarked base model is fine-tuned on domain-specific data? The paper's Bayesian scoring function (which learns from data) could be retrained on fine-tuned model outputs to assess how much detectability degrades as a function of fine-tuning steps, learning rate, and domain shift. This directly tests the robustness boundary the paper implies but does not measure.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models on domain-specific corpora (satellite imagery, mobility data, clinical records) is a central theme of my work. Understanding whether watermarks survive fine-tuning — and whether domain-adapted detectors can be retrained to maintain provenance tracking — would inform responsible deployment of adapted LLMs for <strong>spatial data generation and annotation pipelines</strong>. It also raises open-science questions about whether domain-adapted models should inherit or reset parent-model watermarks.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training large language models on narrow tasks can lead to broad misalignment — <a href="https://doi.org/10.1038/s41586-025-09937-5" target="_blank">10.1038/s41586-025-09937-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Watermark detectability as a fairness metric for AI-generated health and urban narratives</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper confirms cross-language robustness but does not audit whether detectability varies systematically by demographic or socioeconomic context of the prompt. An extension: audit TPR@FPR stratified by <strong>population subgroups</strong> — e.g., prompts about low-resource languages, minority demographic communities, or underserved urban areas — to identify whether watermark detectability is systematically lower for any group. The paper notes post hoc detectors have higher false-positive rates for non-native speakers; the same risk may exist for SynthID-Text's entropy-dependent scheme in culturally specific or code-switched language contexts. The per-token scoring structure makes such stratified audit straightforward to implement.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial equity and health geography are core themes of my work. If AI-generated content about disadvantaged communities or health-deprived areas is systematically harder to detect as synthetic — due to lower LLM entropy in those domains — this creates an equity risk in information systems. Integrating watermark detectability as a <strong>fairness metric alongside spatial accessibility indicators</strong> (e.g., R2SFCA scores, healthcare facility access maps) would create a new axis for digital equity assessment in telehealth and urban analytics, directly linking responsible AI to public health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Socio-demographic gaps in pain management guided by large language models — <a href="https://doi.org/10.1038/s44360-025-00017-6" target="_blank">10.1038/s44360-025-00017-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

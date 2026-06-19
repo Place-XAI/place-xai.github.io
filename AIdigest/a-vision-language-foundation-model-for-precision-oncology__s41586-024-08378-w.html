@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A vision–language foundation model for precision oncology — AI Digest</title>
+<meta name="description" content="AI Digest: A vision–language foundation model for precision oncology (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Foundation Model</span>
+      <span class="tag">Computational Pathology</span>
+      <span class="tag">Precision Oncology</span>
+      <span class="tag">Multimodal AI</span>
+    </div>
+    <h1>A vision–language foundation model for precision oncology</h1>
+    <div class="meta">
+      <span class="authors">Jinxi Xiang · Xiyue Wang · Xiaoming Zhang · Yinghua Xi · Feyisope Eweje · Yijiang Chen · Yuchen Li · Colin Bergstrom · Matthew Gopaulchan · Ted Kim · Kun-Hsing Yu · Sierra Willens · Francesca Maria Olguin · Jeffrey J. Nirschl · Joel Neal · Maximilian Diehn · Sen Yang · Ruijiang Li</span>
+      <span><b>Published</b> 2025-01-08</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-08378-w" target="_blank">10.1038/s41586-024-08378-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-08378-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MUSK (Multimodal transformer with Unified maSKed modeling) is a <strong>vision–language foundation model for pathology</strong> pretrained on 50 million pathology images and one billion text tokens that achieves <strong>state-of-the-art performance across 23 benchmarks</strong> — spanning retrieval, visual question answering, classification, and molecular biomarker prediction — with minimal or no fine-tuning. By fusing pathology images with clinical reports, MUSK demonstrates strong outcome prediction for <strong>melanoma relapse, pan-cancer prognosis, and immunotherapy response</strong> in lung and gastro-oesophageal cancers, pointing toward AI-assisted precision oncology.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves the annotation scarcity bottleneck.</b> Clinical AI models have historically required large, expertly labelled datasets. MUSK learns from <strong>50 million unlabelled pathology images and one billion unpaired text tokens</strong>, demonstrating that unlabelled, unpaired data can bootstrap a broadly capable pathology model.</li>
+      <li><b>Genuine multimodality, not just image-only.</b> Most pathology AI models treat slides in isolation. MUSK meaningfully <strong>fuses histology images with clinical report text</strong>, and shows the multimodal model improves over either modality alone for outcome prediction — a direct clinical advance.</li>
+      <li><b>Breadth over single-task specialization.</b> A single pretrained model is competitive across 23 diverse benchmarks (patch classification, slide-level tasks, retrieval, VQA, biomarker prediction, survival), reducing the need for task-specific model development in oncology.</li>
+      <li><b>Clinically high-stakes applications.</b> Predicting melanoma relapse, immunotherapy response in lung and gastro-oesophageal cancers, and pan-cancer prognosis are decisions with direct life-and-death consequences; AI assistance here carries enormous health impact.</li>
+      <li><b>Open science and reproducibility.</b> Model weights, evaluation code, and example data are publicly released at <a href="https://github.com/lilab-stanford/MUSK" target="_blank">github.com/lilab-stanford/MUSK</a>, enabling downstream research at no barrier of access.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-shifting scale and breadth:</b> pretraining on 50 M images and 1 B tokens from a single institution's data is the largest such effort for pathology to date, and the simultaneous evaluation across 23 benchmarks is unusual in scope — exactly the level of ambition Nature favors.</li>
+      <li><b>Novel technical contribution:</b> unified masked modeling that bridges image and text modalities without paired supervision is a methodological advance applicable beyond oncology.</li>
+      <li><b>Tangible societal benefit:</b> improved cancer diagnosis and treatment-response prediction directly addresses a pressing global health burden, meeting Nature's requirement for broad relevance.</li>
+      <li><b>Reproducible and open:</b> releasing model weights and code aligns with Nature's increasingly strict data-and-code policy and open-science values.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Pretraining images</dt><dd><strong>50 million pathology image patches</strong> from <strong>11,577 patients</strong> — used for Phase 1 unified masked-model pretraining without paired text.</dd>
+      <dt>Pretraining text</dt><dd><strong>One billion pathology-related text tokens</strong> drawn from BookSet and PubmedSet (Warwick TIA; <a href="https://warwick.ac.uk/fac/cross_fac/tia/data/arch" target="_blank">ARCH</a>) — unpaired with images in Phase 1.</dd>
+      <dt>Alignment pairs</dt><dd><strong>One million pathology image–text pairs</strong> (QUILT-1M and PathAsst) used in Phase 2 for cross-modal alignment.</dd>
+      <dt>TCGA clinical data</dt><dd>Multi-cancer histopathology slides and clinical reports from The Cancer Genome Atlas (<strong>TCGA</strong>), accessed via NCI GDC Portal, cBioPortal, and TCGA Pathology Reports; covers <strong>16 cancer cohorts</strong> used for prognosis prediction.</dd>
+      <dt>Melanoma cohort</dt><dd><strong>1,342 melanoma patients</strong> (Stanford internal cohort, controlled access) for 5-year relapse prediction.</dd>
+      <dt>Immunotherapy cohorts</dt><dd>Lung cancer and gastro-oesophageal cancer immunotherapy cohorts (Stanford; controlled access, request to rli2@stanford.edu); exact patient count not disclosed in main text.</dd>
+      <dt>Benchmark datasets</dt><dd>20+ public datasets: PatchCamelyon, NCT-CRC-HE-100K, SICAPv2, Osteo, RenalCell, SkinCancer, LC25000, PanNuke, UniToPatho, WSSS4LUAD, BRACS, Visiomel, PathVQA, PathMMU, BCNB, MUV-IDH (IDH-mutant brain tumors).</dd>
+      <dt>Code availability</dt><dd>Weights + code: <a href="https://github.com/lilab-stanford/MUSK" target="_blank">github.com/lilab-stanford/MUSK</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TCGA (NCI GDC / cBioPortal)</td><td>Histopathology + clinical reports (prognosis, pretraining)</td><td>16 cancer cohorts; multi-thousand slides</td><td><a href="https://portal.gdc.cancer.gov/" target="_blank">portal.gdc.cancer.gov</a></td></tr>
+        <tr><td>QUILT-1M</td><td>Image–text pairs for alignment pretraining</td><td>~1 million image–caption pairs</td><td><a href="https://github.com/wisdomikezogwo/quilt1m" target="_blank">github.com</a></td></tr>
+        <tr><td>PathAsst (PathCap)</td><td>Image–text pairs for alignment pretraining</td><td>Part of the 1M alignment set</td><td><a href="https://huggingface.co/datasets/jamessyx/PathCap" target="_blank">HuggingFace</a></td></tr>
+        <tr><td>BookSet + PubmedSet (ARCH)</td><td>Pathology text corpus (unpaired)</td><td>1 billion text tokens</td><td><a href="https://warwick.ac.uk/fac/cross_fac/tia/data/arch" target="_blank">warwick.ac.uk</a></td></tr>
+        <tr><td>PatchCamelyon</td><td>Benchmark — lymph node metastasis detection</td><td>Standard patch-level benchmark</td><td><a href="https://patchcamelyon.grand-challenge.org/" target="_blank">grand-challenge.org</a></td></tr>
+        <tr><td>NCT-CRC-HE-100K</td><td>Benchmark — colorectal tissue classification</td><td>100K patches, 9 classes</td><td><a href="https://zenodo.org/record/1214456" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>BCNB</td><td>Biomarker prediction (ER/PR/HER2)</td><td>Breast cancer; slide-level</td><td><a href="https://bcnb.grand-challenge.org/" target="_blank">grand-challenge.org</a></td></tr>
+        <tr><td>Visiomel</td><td>Melanoma relapse benchmark</td><td>Competition dataset; slides + labels</td><td><a href="https://www.drivendata.org/competitions/148/visiomel-melanoma/" target="_blank">drivendata.org</a></td></tr>
+        <tr><td>MUV-IDH</td><td>IDH mutation prediction (brain tumors)</td><td>Whole-slide images</td><td><a href="https://doi.org/10.25493/WQ48-ZGX" target="_blank">10.25493/WQ48-ZGX</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the melanoma and immunotherapy cohort patient counts (beyond the stated 1,342 melanoma patients) are not fully disclosed in the main text because they contain protected patient data accessible only on request. Numbers are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Phase 1 — Unified Masked Modeling:</b> independently masked reconstruction for both vision and language streams on 50 M images and 1 B text tokens without any paired supervision; a single transformer handles both modalities via shared masked autoencoding.</li>
+      <li><b>Phase 2 — Cross-modal alignment:</b> contrastive pretraining on 1 M pathology image–text pairs with an auxiliary masked language modeling (MLM) decoder that uses text embeddings as queries over image embeddings, instilling fine-grained cross-modal interaction.</li>
+      <li><b>Architecture:</b> two independent transformer encoders (vision and language), fused via cross-modal attention; the dual-stream design ensures robustness when either modality is missing.</li>
+      <li><b>Downstream adaptation:</b> zero-shot or few-shot (linear probe / 10-shot) evaluation across 23 benchmarks — no task-specific pretraining required in most settings.</li>
+      <li><b>Slide-level aggregation:</b> whole-slide inference uses patch embedding aggregation; survival/outcome modeling uses the Cox proportional-hazards framework with 5-fold cross-validation.</li>
+      <li><b>Statistical evaluation:</b> two-sided Wilcoxon signed-rank test (within-benchmark comparisons); Mann-Whitney U test (between-model comparisons); log-rank test (Kaplan-Meier survival stratification); bootstrapped 95% CIs (n = 1,000 replicates).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig1.png" target="_blank">
+        <img src="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig1.png" alt="Fig.1 Data curation, model development and evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Data curation, model development and evaluation — overview of MUSK's two-phase pretraining pipeline and downstream tasks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig2.png" target="_blank">
+        <img src="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig2.png" alt="Fig.2 Cross-modal retrieval and VQA" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Cross-modal retrieval and VQA — MUSK performance on image-to-text, text-to-image retrieval and visual question answering benchmarks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig3.png" target="_blank">
+        <img src="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig3.png" alt="Fig.3 Patch-level image classification" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Patch-level image classification — zero-shot, few-shot (10-shot), and linear probe results across 12 benchmark datasets.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig4.png" target="_blank">
+        <img src="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig4.png" alt="Fig.4 Prognosis prediction across 16 cancer types" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Prognosis prediction across 16 cancer types — c-index results for TCGA cohort survival prediction, with MUSK outperforming unimodal and multimodal baselines.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig5.png" target="_blank">
+        <img src="assets/a-vision-language-foundation-model-for-precision-oncology__s41586-024-08378-w/fig5.png" alt="Fig.5 Lung cancer immunotherapy response prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Lung cancer immunotherapy response prediction — AUC and c-index for objective response and progression-free survival; Kaplan-Meier risk stratification.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0 in main text); Supplementary Information contains 17 tables and 11 figures covering ablation studies and additional benchmark results.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable ML, health geography, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Fine-tune MUSK's cross-modal alignment on geospatial health data</h3>
+      <p><span class="lab paper">Extending this paper</span>MUSK's Phase 2 alignment relies on one million pathology image–text pairs to bridge vision and language. The same architecture — two-stream transformer + contrastive + MLM decoder — is generic. A direct extension: replace the pathology image stream with <strong>satellite or street-view imagery</strong> and pair it with <strong>geospatial health survey text</strong> (e.g., EHR notes, social-media health reports, survey descriptions) to build a <strong>geospatial health vision-language model</strong>. The masked pretraining pipeline from Phase 1 can absorb billions of unlabelled remote-sensing tiles, while Phase 2 aligns them to spatial health narratives — following MUSK's proven two-phase recipe.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly advances my <strong>fine-tuning of geospatial foundation models</strong> theme: MUSK provides a concrete architectural blueprint (unified masked modeling + contrastive alignment) that I can adapt to pair satellite imagery with public-health or telehealth text, enabling zero-shot spatial health classification and cross-modal retrieval of place-based health indicators without expensive annotation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A whole-slide foundation model for digital pathology from real-world data — <a href="https://doi.org/10.1038/s41586-024-07441-w" target="_blank">10.1038/s41586-024-07441-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Explainability layer: spatial attention maps as clinical evidence</h3>
+      <p><span class="lab paper">Extending this paper</span>MUSK produces attention heatmaps (shown qualitatively in Extended Data Figs. 4–5) but does not formally quantify which image regions or text phrases drive decisions. A natural extension: add an <strong>explainability module</strong> — e.g., gradient-weighted attention rollout or concept bottleneck layers — that produces clinician-interpretable saliency maps linking slide regions to specific pathological concepts (ulceration, lymphocyte density, fibrosis). The paper currently treats explanations as illustrative; making them quantitative would validate that MUSK's decision boundaries align with established pathology knowledge, a prerequisite for clinical deployment.</p>
+      <p><span class="lab mine">Added value to my research</span>My core theme is <strong>explainable ML for spatial prediction</strong>. The concept-bottleneck / gradient-attribution paradigm in histopathology maps cleanly onto my SHAP/MGWR pipeline for health-outcome spatial prediction: both ask "which local features (image patch / spatial unit) drive the predicted outcome?" Extending MUSK's attention maps with formal explainability gives me a template for building interpretable GeoAI health models where predictions must be explained to policymakers.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multimodal generative AI copilot for human pathology — <a href="https://doi.org/10.1038/s41586-024-07618-3" target="_blank">10.1038/s41586-024-07618-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ From patient-level to population-level: MUSK as a health disparity detector</h3>
+      <p><span class="lab paper">Extending this paper</span>MUSK is trained and evaluated at the patient level. Its prognosis and immunotherapy-response predictions are averaged across cohorts but not disaggregated by <strong>race, socio-economic status, or geography</strong>. A critical extension of the paper: systematically benchmark MUSK's performance across demographic and spatial subgroups to audit whether the model amplifies or mitigates existing disparities in cancer diagnosis and treatment access. The TCGA data contain some demographic metadata; the melanoma cohort of 1,342 patients could also be stratified. This would move MUSK from a performance leaderboard to a <strong>health-equity audit</strong>.</p>
+      <p><span class="lab mine">Added value to my research</span>My research examines <strong>spatial accessibility and digital divides</strong> in healthcare. MUSK-style AI tools will be deployed unevenly — enriched hospitals will adopt them first, potentially widening care gaps. Mapping MUSK's performance heterogeneity geographically (e.g., by census tract, rurality, or insurance coverage) is a direct extension of my health geography and telehealth-divide work, turning the foundation model into a lens for <strong>spatial health equity analysis</strong>.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Towards autonomous medical artificial intelligence agents — <a href="https://doi.org/10.1038/s41586-026-10675-5" target="_blank">10.1038/s41586-026-10675-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Multi-task learning across cancer types with a shared spatial-prior backbone</h3>
+      <p><span class="lab paper">Extending this paper</span>MUSK is pretrained generically and then adapted per downstream task. Its ablation study (Extended Data Fig. 8) shows performance scales with data volume but does not explore <strong>multi-task joint fine-tuning</strong> across the 23 benchmarks simultaneously, which could improve sample efficiency and yield better representations for rare cancer types. Extending MUSK with a <strong>hierarchical multi-task head</strong> — grouping tasks by tissue type, cancer type, and prediction horizon — mirrors the corpus paper on multi-task medical foundation models and could push performance further on low-data benchmarks.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-task framework parallels my multi-source data fusion work: just as I fuse mobile phone, social media, and remote sensing signals for spatiotemporal prediction, MUSK's joint learning across cancer-type benchmarks is a <strong>multi-task fusion of clinical signals</strong>. The hierarchical grouping strategy (tissue → cancer type → outcome) directly informs how I design multi-task GeoAI models that share a spatial backbone across health outcome prediction tasks (access, mental health, telehealth).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-task learning for medical foundation models — <a href="https://doi.org/10.1038/s43588-024-00658-9" target="_blank">10.1038/s43588-024-00658-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Spatiotemporal treatment-response prediction by coupling MUSK with mobility and environment data</h3>
+      <p><span class="lab paper">Extending this paper</span>MUSK predicts immunotherapy response from slide + report at the time of diagnosis, but treatment response is influenced by dynamic factors: follow-up adherence, hospital visit frequency, and environmental exposures. Extending MUSK: attach a <strong>spatiotemporal context module</strong> that encodes patient-level mobility patterns (GPS or insurance claims), neighborhood-level air quality/greenspace exposure, and travel time to the treatment facility as auxiliary inputs alongside the pathology embedding — testing whether place-based context improves survival prediction beyond what the slide alone provides.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly bridges computational pathology and my GeoAI work. My spatiotemporal kernel density estimation and 2SFCA accessibility models already characterize the <strong>geographic context of care access</strong>. Coupling MUSK's patient-level embedding with my spatial accessibility scores creates a <strong>place-aware oncology AI</strong> where the slide tells us about tumor biology and the spatial layer tells us about the patient's care environment — a novel fusion of precision medicine and health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A pathology foundation model for cancer diagnosis and prognosis prediction — <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

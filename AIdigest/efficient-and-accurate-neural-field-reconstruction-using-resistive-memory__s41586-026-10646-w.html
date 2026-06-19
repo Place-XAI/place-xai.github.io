@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efficient and accurate neural-field reconstruction using resistive memory — AI Digest</title>
+<meta name="description" content="AI Digest: Efficient and accurate neural-field reconstruction using resistive memory (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Neural Fields</span>
+      <span class="tag">Computing-in-Memory</span>
+      <span class="tag">Medical AI</span>
+      <span class="tag">3D Vision</span>
+    </div>
+    <h1>Efficient and accurate neural-field reconstruction using resistive memory</h1>
+    <div class="meta">
+      <span class="authors">Yifei Yu · Xinyuan Zhang · Shaocong Wang · Woyu Zhang · Xiuzhe Wu · Yangu He · Jichang Yang · Yue Zhang · Ning Lin · Bo Wang · Xi Chen · Songqi Wang · Xiaoshan Wu · Shihao Han · Yi Li · Meng Xu · Hegan Chen · Wenkui Zhang · Jingyi Chen · Xumeng Zhang · Xiaojuan Qi · Dashan Shang · Qi Liu · Zhongrui Wang · Kwang-Ting Cheng · Ming Liu</span>
+      <span><b>Published</b> 2026-06-10</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10646-w" target="_blank">10.1038/s41586-026-10646-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10646-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>software–hardware co-optimization framework</strong> couples implicit neural-field representations (compressed via low-rank decomposition and structured pruning) with a <strong>resistive-memory computing-in-memory chip</strong> to reconstruct complex signals from sparse inputs. On a 40-nm 256 Kb resistive-memory macro, the system achieves up to <strong>32.3× energy-efficiency gain</strong> and up to <strong>38.8× parallelism gain</strong> over digital baselines across 3D CT sparse reconstruction, novel view synthesis, and dynamic-scene novel view synthesis — all without compromising reconstruction quality. This work establishes resistive memory as a practical substrate for <strong>efficient and robust medical AI and 3D vision</strong> at the edge.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the von Neumann bottleneck for AI inference.</b> By co-designing the neural field representation with a resistive-memory chip, the system eliminates the energy-hungry data-movement cycle that dominates conventional digital hardware — a fundamental architectural advance rather than incremental engineering.</li>
+      <li><b>Orders-of-magnitude efficiency with no quality penalty.</b> 23.5–32.3× energy gains and 6.2–38.8× parallelism gains are demonstrated simultaneously across three distinct reconstruction tasks (CT, NeRF, dynamic NeRF), showing the gains are not task-specific.</li>
+      <li><b>Enables sparse-input reconstruction for resource-constrained settings.</b> Medical imaging devices, AR/VR headsets, and embodied robots all operate under power and bandwidth constraints; this framework directly targets those regimes.</li>
+      <li><b>Provides a complete, reproducible co-design methodology.</b> Hardware-aware quantization (HAQ) circuit, Gaussian encoder exploiting intrinsic memristor stochasticity, and open-source simulation code (<a href="https://github.com/SuperFrankyy/Memristive_Neural_Field" target="_blank">GitHub</a>) make the approach transferable to other neural-field tasks.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary depth:</b> spans materials science (resistive memory physics), hardware design (40-nm CMOS integration), and machine learning (neural fields, low-rank compression) — a truly multi-field result aligned with Nature's mandate.</li>
+      <li><b>Demonstrated hardware prototype, not simulation only:</b> results are validated on a fabricated 40-nm 256 Kb chip, elevating the claim from theoretical to experimental.</li>
+      <li><b>Broad societal impact:</b> medical imaging (CT) and embodied AI are high-stakes application domains; efficiency gains at the hardware layer directly affect clinical accessibility and deployability of AI diagnostics.</li>
+      <li><b>Pioneering a new paradigm:</b> the "neural-field on resistive memory" paradigm is presented here for the first time, constituting a conceptual step-change in AI hardware co-design.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>CT benchmark</dt><dd><strong>Pancreas 4D CT dataset</strong> (ref. 50 in the paper) — a publicly available four-dimensional computed tomography corpus used to evaluate sparse 3D CT reconstruction. Exact patient/scan count not stated in the abstract; publicly available per data-availability statement.</dd>
+      <dt>Novel view synthesis</dt><dd><strong>NeRF synthetic dataset</strong> (Mildenhall et al., <em>Commun. ACM</em> 65, 99–106, 2021; DOI: 10.1145/3503250) — the canonical benchmark of 8 synthetic Blender scenes used for static novel view synthesis evaluation.</dd>
+      <dt>Dynamic NeRF benchmark</dt><dd><strong>D-NeRF dataset</strong> (ref. 53 in the paper) — a monocular dynamic-scene benchmark (8 sequences of deformable objects) for dynamic novel view synthesis evaluation. Publicly available.</dd>
+      <dt>Hardware platform</dt><dd>Custom <strong>40-nm 256 Kb resistive-memory macro</strong> fabricated at 40-nm CMOS node (resistive memory) + 180-nm CMOS analogue readout macro; details in Extended Data Fig. 3. No external public dataset — measured hardware results reported directly.</dd>
+      <dt>Code availability</dt><dd>Simulation code at <a href="https://github.com/SuperFrankyy/Memristive_Neural_Field" target="_blank">github.com/SuperFrankyy/Memristive_Neural_Field</a>; source data for Figs. 2–6 provided as XLSX files with the paper.</dd>
+      <dt>Time window</dt><dd>Hardware fabrication and benchmarking results reported in the 2026 publication; benchmark datasets are from 2021 (NeRF, D-NeRF) and prior years (pancreas CT).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Pancreas 4D CT (ref. 50)</td><td>Sparse CT reconstruction benchmark</td><td>Publicly available; exact scan count not stated</td><td>Public (per data-availability statement)</td></tr>
+        <tr><td>NeRF synthetic dataset</td><td>Static novel view synthesis benchmark</td><td>8 synthetic Blender scenes</td><td><a href="https://doi.org/10.1145/3503250" target="_blank">doi:10.1145/3503250</a></td></tr>
+        <tr><td>D-NeRF dataset (ref. 53)</td><td>Dynamic novel view synthesis benchmark</td><td>8 monocular dynamic-object sequences</td><td>Public (per data-availability statement)</td></tr>
+        <tr><td>40-nm 256 Kb resistive-memory macro</td><td>Hardware evaluation platform</td><td>Custom fabricated chip; 40-nm / 180-nm CMOS</td><td>Measured data available on request</td></tr>
+        <tr><td>Simulation code</td><td>Reproducibility / co-design framework</td><td>Full framework code</td><td><a href="https://github.com/SuperFrankyy/Memristive_Neural_Field" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: benchmark dataset sizes (number of CT slices, NeRF scene images) are described in cited references rather than restated in this paper's abstract; consult original benchmarks for precise sample counts.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Neural field implicit representation:</b> signals (CT volumes, radiance fields) are represented implicitly as neural networks (multi-layer perceptrons with Gaussian positional encoding) rather than explicit voxel grids — enabling compact, differentiable signal storage.</li>
+      <li><b>Low-rank decomposition and structured pruning:</b> MLP weight matrices are factorized via low-rank decomposition; progressive structured pruning removes entire neurons/channels during training, making the compressed network hardware-friendly with no unstructured sparsity.</li>
+      <li><b>Hardware-aware quantization (HAQ):</b> a write-verify-style quantization circuit maps low-rank MLP weights precisely onto resistive-memory conductance states, closing the software–hardware accuracy gap created by device variation and noise.</li>
+      <li><b>Gaussian encoder on resistive memory:</b> the positional encoding layer exploits the intrinsic stochastic conductance fluctuations of resistive memory to generate Gaussian random features efficiently, turning a hardware imperfection into a computational asset.</li>
+      <li><b>Computing-in-memory (CIM) MLP engine:</b> matrix–vector multiplications of the MLP inference are performed in-situ within the resistive-memory array, avoiding DRAM accesses and the associated energy/latency overhead (von Neumann bottleneck).</li>
+      <li><b>Hardware-aware population-based training:</b> a co-optimization loop jointly tunes software (MLP weights, pruning schedule) and hardware (resistive-memory programming parameters) via evolutionary algorithms and hardware simulation (Extended Data Fig. 4).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig1.png" target="_blank">
+        <img src="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig1.png" alt="Fig.1 Cross-level co-optimizations for the system" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Cross-level co-optimizations — overview of the software (neural field + compression) and hardware (resistive-memory CIM) co-design layers.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig2.png" target="_blank">
+        <img src="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig2.png" alt="Fig.2 HAQ for accurate in-memory matrix multiplications" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Hardware-aware quantization (HAQ) — how weight mapping onto resistive-memory conductances is made precise, including convergence analysis.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig3.png" target="_blank">
+        <img src="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig3.png" alt="Fig.3 Architecture and circuits of the hardware co-design" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Chip architecture and circuit details — fabricated 40-nm resistive-memory macro, 180-nm analogue readout, and digital core layout.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig4.png" target="_blank">
+        <img src="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig4.png" alt="Fig.4 Three-dimensional CT reconstruction results" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> 3D CT sparse reconstruction — qualitative and quantitative comparison against digital baselines; 23.5× energy gain.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig5.png" target="_blank">
+        <img src="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig5.png" alt="Fig.5 Novel view synthesis results" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Novel view synthesis — PSNR/SSIM comparisons on NeRF synthetic scenes; 21.0× energy and 38.8× parallelism gains.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig6.png" target="_blank">
+        <img src="assets/efficient-and-accurate-neural-field-reconstruction-using-resistive-memory__s41586-026-10646-w/fig6.png" alt="Fig.6 Dynamic-scene novel view synthesis results" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Dynamic-scene novel view synthesis — D-NeRF benchmark results; 32.3× energy and 6.2× parallelism gains over digital hardware.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0); Extended Data contains 4 figures with circuit schematics, hardware comparison tables, and optimization framework diagrams.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, accessibility modeling, explainable ML for spatial prediction, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Extend the paper's neural-field compression to spatiotemporal geospatial fields</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's framework compresses 3D radiance fields and CT volumes using low-rank decomposition and structured pruning on a resistive-memory chip. An immediate extension of the paper: apply the same implicit-neural-field paradigm to <strong>spatiotemporal geospatial signals</strong> — population density grids, mobility flow tensors, or air-quality surfaces — where the "signal" is a 4D field (x, y, time, attribute). The paper's HAQ and Gaussian encoder are agnostic to signal type; adapting the structured-pruning schedule to preserve spatial autocorrelation (e.g., via a spatial-Laplacian regularizer) would make the framework geospatially aware. The reconstructed field from sparse sensors could then be fed into downstream analytics at near-zero energy cost.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly maps onto my <strong>spatiotemporal kernel density estimation and mobile-phone data fusion</strong> work: instead of manually aggregating sparse GPS/telecom pings into density grids, a neural-field encoder could reconstruct continuous population distributions from partial observations — a hardware-accelerated alternative to KDE that also handles missing data gracefully. The energy efficiency gains are especially valuable for large-scale, recurring urban monitoring pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing deep learning-based field reconstruction with a differentiable learning framework — <a href="https://doi.org/10.1038/s42256-025-01063-1" target="_blank">10.1038/s42256-025-01063-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use the paper's hardware-aware co-design loop to optimize GeoAI model deployment</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's hardware-aware population-based training jointly optimizes the MLP structure and resistive-memory programming parameters. This co-design methodology could be generalized beyond neural fields: apply it to any compact AI model (e.g., a geospatial transformer or a graph neural network) targeting embedded deployment on resource-constrained devices (urban IoT sensors, smart meters, edge health monitors). Extending the paper's framework to <strong>heterogeneous hardware targets</strong> — beyond the single 256 Kb macro — and to <strong>variable-precision inference</strong> (e.g., 4-bit for fast screening, 8-bit for final prediction) would make the co-design methodology broadly applicable.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>fine-tuning geospatial foundation models</strong> and explainable ML for spatial prediction currently targets GPU/cloud pipelines. Adapting the paper's co-design loop to prune and quantize a geospatial transformer for edge hardware would enable <strong>on-device spatial inference</strong> — e.g., real-time 2SFCA accessibility scoring on a smartphone or embedded health-facility allocation for telehealth — aligning with my digital-divide and telehealth accessibility research themes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep Bayesian active learning using in-memory computing hardware — <a href="https://doi.org/10.1038/s43588-024-00744-y" target="_blank">10.1038/s43588-024-00744-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply the Gaussian-encoder stochasticity principle to uncertainty-aware spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Gaussian encoder deliberately exploits the intrinsic stochastic conductance fluctuations of resistive memory as a random-feature generator — turning device noise into a computational feature rather than a bug. Extending the paper: investigate whether the stochastic Gaussian encoding layer can be trained to calibrate its variance to the local observation density, so that the encoder automatically produces <strong>wider uncertainty bands in sparsely observed regions</strong> and narrower ones where data is dense. This would give the neural-field reconstruction a built-in, hardware-native uncertainty quantification mechanism.</p>
+      <p><span class="lab mine">Added value to my research</span>Uncertainty quantification is a critical gap in my <strong>explainable ML for spatial prediction</strong> work (MGWR, ensemble methods). The paper's stochastic encoder offers a conceptual bridge: treating spatial autocorrelation-induced variance as a hardware-tunable random feature could produce calibrated prediction intervals for healthcare accessibility maps or housing-price models — a principled way to communicate model uncertainty to policy makers.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Resistive memory-based zero-shot liquid state machine for multimodal event data learning — <a href="https://doi.org/10.1038/s43588-024-00751-z" target="_blank">10.1038/s43588-024-00751-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Transfer the sparse-input reconstruction paradigm to sparse remote-sensing data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper solves sparse-input signal reconstruction for CT projections and camera rays; the mathematical structure (sparse measurement matrix, implicit continuous signal) maps directly onto <strong>multi-source remote-sensing data fusion</strong> — e.g., reconstructing a gap-free, high-resolution land-cover map from incomplete Sentinel-2 imagery (cloud gaps) and sparse SAR acquisitions. Extending the paper: define a unified neural-field formulation where the "positional encoding" encodes geographic coordinates and time, the "sparse measurements" are partial satellite observations, and the CIM platform accelerates the inference. The structured-pruning schedule would need to be adapted to preserve geographically smooth outputs.</p>
+      <p><span class="lab mine">Added value to my research</span>My <strong>multi-source data fusion work</strong> (remote sensing, GPS, social media) involves exactly this type of incomplete, heterogeneous observation problem. A neural-field backbone that can reconstruct continuous spatiotemporal surfaces from asynchronous, partial satellite observations would replace bespoke gap-filling pipelines (e.g., MODIS temporal compositing) with a unified, hardware-acceleratable framework — directly advancing my open science and FAIR data goals.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Energy-efficient multimodal zero-shot learning using in-memory reservoir computing — <a href="https://doi.org/10.1038/s43588-024-00762-w" target="_blank">10.1038/s43588-024-00762-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Bridge the paper's neural-field medical AI to spatial health-access modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's CT reconstruction application demonstrates a 23.5× energy gain for sparse 3D medical image reconstruction — an advance for AI diagnostics in resource-limited clinical settings. Extending the paper: couple the efficient CT reconstruction pipeline with a <strong>spatial accessibility layer</strong> that routes reconstructed images to the nearest radiologist or automated diagnostic server within a time threshold (analogous to a "15-minute radiology"). The neural-field compression reduces image transmission bandwidth; the CIM chip reduces local processing time; together they define a <strong>bandwidth-and-compute budget for equitable AI diagnostics</strong> as a function of geographic distance to healthcare facilities.</p>
+      <p><span class="lab mine">Added value to my research</span>This sits precisely at the intersection of my <strong>health geography, 2SFCA accessibility modeling, and telehealth/digital-divide</strong> research. The paper quantifies the hardware cost of AI medical imaging; my R2SFCA framework quantifies geographic access. Coupling them yields a composite "effective access" metric that accounts for both travel time to a facility and the on-site or remote compute capacity to perform AI-assisted diagnosis — a new dimension for health equity analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning incorporating biologically inspired neural dynamics and in-memory computing — <a href="https://doi.org/10.1038/s42256-020-0187-0" target="_blank">10.1038/s42256-020-0187-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

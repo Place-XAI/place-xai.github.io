@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Targeting protein–ligand neosurfaces with a generalizable deep learning tool — AI Digest</title>
+<meta name="description" content="AI Digest: Targeting protein–ligand neosurfaces with a generalizable deep learning tool (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Geometric Deep Learning</span>
+      <span class="tag">Protein Design</span>
+      <span class="tag">Drug-Inducible Interactions</span>
+      <span class="tag">Molecular Surface Fingerprinting</span>
+    </div>
+    <h1>Targeting protein–ligand neosurfaces with a generalizable deep learning tool</h1>
+    <div class="meta">
+      <span class="authors">Anthony Marchand · Stephen Buckley · Arne Schneuing · Martin Pacesa · Maddalena Elia · Pablo Gainza · Evgenia Elizarova · Rebecca M. Neeser · Pao-Wan Lee · Luc Reymond · Yangyang Miao · Leo Scheller · Sandrine Georgeon · Joseph Schmidt · Philippe Schwaller · Sebastian J. Maerkl · Michael Bronstein · Bruno E. Correia</span>
+      <span><b>Published</b> 2025-01-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-08435-4" target="_blank">10.1038/s41586-024-08435-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-08435-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MaSIF-neosurf is a <strong>geometric deep learning framework</strong> that extends learned molecular surface fingerprints — originally trained only on protein surfaces — to <strong>protein–ligand neosurfaces</strong> without any retraining. Applying this framework, the authors computationally designed and experimentally validated <strong>de novo protein binders</strong> against three drug-bound complexes (Bcl2–venetoclax, DB3–progesterone, PDF1–actinonin), achieving nanomolar affinities and demonstrating that these chemically induced dimerization (CID) systems function as precise ON-switches in cell-free and mammalian cell contexts, including a drug-inducible split CAR-T cell system. The key insight is that surface-level geometric and chemical features generalize across protein and small-molecule boundaries, enabling rational design of entirely new chemically controlled protein interactions.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Generalizability breakthrough:</b> Molecular surface fingerprints trained exclusively on protein–protein complexes successfully capture the geometric and chemical properties of <strong>protein–ligand hybrid surfaces</strong>, without additional training data — a rare demonstration of zero-shot generalization in structural biology AI.</li>
+      <li><b>Opens a new design space:</b> Chemically induced protein interactions (CIDs) are enormously useful in synthetic biology and cell therapy, yet the computational tools to design them have lagged far behind. This is the first fully <em>in silico</em> pipeline to generate CIDs from scratch with validated nanomolar affinities.</li>
+      <li><b>Clinical drug repurposing potential:</b> The system leverages FDA-approved venetoclax, natural progesterone, and the antibiotic actinonin as triggers, placing drug-controlled cell-based therapies — including safer CAR-T cells with an off switch — within practical reach.</li>
+      <li><b>Synergy with emerging tools:</b> Integrating LigandMPNN for sequence optimization improved design success rate up to 52-fold, showing that the framework is composable with the latest sequence-design tools to close remaining gaps in design quality.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Fundamental advance in generalization:</b> Demonstrating that surface fingerprints transfer from proteins to heterogeneous protein–ligand surfaces without retraining addresses a longstanding barrier in structural bioinformatics, warranting broad readership.</li>
+      <li><b>Full-cycle validation:</b> The work spans computation, biochemical assay, crystallography, cryo-EM structure determination, cell-free reporter systems, mammalian cell assays, and a CAR-T tumour-killing experiment — meeting Nature's benchmark for mechanistic depth and experimental rigor.</li>
+      <li><b>Therapeutic relevance:</b> Drug-inducible CAR-T cell systems that engage only in the presence of an approved small molecule address a critical safety challenge in cell therapy, with obvious translational importance.</li>
+      <li><b>Open-science posture:</b> Code (GitHub), structural depositions (PDB 8S1X, 9FKD; EMDB EMD-50522), and experimental data (Zenodo) are fully public, consistent with Nature's reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Benchmark dataset</dt><dd>14 known ligand-induced ternary protein complexes, split into <strong>28 independent search queries</strong>; queried against a database of <strong>8,907 decoy proteins</strong> (from PDBbind v.2020, comprising 2,852 PPIs), totalling more than <strong>35 million potential binding sites</strong>.</dd>
+      <dt>Seed database</dt><dd>~<strong>640,000 continuous structural fragments</strong> (seeds) from the MaSIF-seed database, representing ~<strong>402 million surface patches/fingerprints</strong>; covers ~390,000 sheet-based and ~250,000 helical motifs.</dd>
+      <dt>Scaffold database</dt><dd>~<strong>6,500 small protein scaffolds</strong> (&lt;90 amino acids) from the PDB and four experimentally validated miniprotein databases; partially available at Zenodo (<a href="https://zenodo.org/records/7643697" target="_blank">zenodo.org/records/7643697</a>) and GitHub (<a href="https://github.com/strauchlab/DBP" target="_blank">strauchlab/DBP</a>).</dd>
+      <dt>Computational designs</dt><dd>~<strong>2,000 designs per target complex</strong> (1,995 for Bcl2–venetoclax; 1,998 for DB3–progesterone; 1,997 for PDF1–actinonin) selected for experimental screening; 500 additional designs per target screened after LigandMPNN optimization.</dd>
+      <dt>Training data</dt><dd>MaSIF-neosurf builds on pretrained MaSIF networks (trained on PPI data only); small-molecule hydrophobicity parameterized using <strong>20,363 unique ligands</strong> from the Binding MOAD dataset, yielding 9,362 unique fragments.</dd>
+      <dt>Structural depositions</dt><dd>Crystal structure at PDB <code>8S1X</code>; cryo-EM model at PDB <code>9FKD</code> and EMDB <code>EMD-50522</code>; 3.23 Å local resolution for cryo-EM reconstruction from <strong>16,038 micrographs</strong>.</dd>
+      <dt>Experimental data</dt><dd>Figures 1–5, Extended Data Figs. 1–8 and Supplementary Figs. 1–17 data deposited at Zenodo (<a href="https://zenodo.org/records/13737922" target="_blank">zenodo.org/records/13737922</a>). Code at <a href="https://github.com/LPDI-EPFL/masif-neosurf" target="_blank">github.com/LPDI-EPFL/masif-neosurf</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>PDBbind v.2020</td><td>Decoy PPI database for benchmarking</td><td>2,852 PPIs → 8,907 protein chains</td><td><a href="http://www.pdbbind.org.cn/" target="_blank">pdbbind.org.cn</a></td></tr>
+        <tr><td>MaSIF-seed database</td><td>Structural fragment (seed) search space</td><td>~640,000 seeds; 402M fingerprints</td><td><a href="https://github.com/LPDI-EPFL/masif-neosurf" target="_blank">GitHub</a></td></tr>
+        <tr><td>Binding MOAD</td><td>Parameterization of small-molecule hydrophobicity</td><td>20,363 unique ligands → 9,362 fragments</td><td><a href="http://bindingmoad.chem.lsa.umich.edu/" target="_blank">bindingmoad.chem.lsa.umich.edu</a></td></tr>
+        <tr><td>Scaffold protein DB</td><td>Grafting seeds onto stable miniprotein scaffolds</td><td>~6,500 scaffolds (&lt;90 aa)</td><td><a href="https://zenodo.org/records/7643697" target="_blank">Zenodo</a> / <a href="https://github.com/strauchlab/DBP" target="_blank">GitHub</a></td></tr>
+        <tr><td>PDB 8S1X / 9FKD</td><td>Crystal &amp; cryo-EM structure of validated CIDs</td><td>2 depositions; 16,038 micrographs for cryo-EM</td><td><a href="https://www.rcsb.org/" target="_blank">rcsb.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact success rates (# binders out of # designs) are reported in the article; all numbers above are taken verbatim from the text. Design counts per target are stated explicitly; success rates are approximately 1 in ~2,000 for the first round and up to 1 in ~40 after LigandMPNN optimization.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Molecular surface computation:</b> Triangulated molecular surfaces (MSMS) computed for protein–ligand complexes. Five input features per patch: shape index, distance-dependent curvature (geometric); Poisson–Boltzmann electrostatics, hydrogen-bond donor/acceptor propensity, and hydropathy (chemical). Hydropathy for small molecules mapped from logP to the Kyte–Doolittle scale via the Eisenberg scale, fit on all 20 amino acids.</li>
+      <li><b>MaSIF-neosurf (fingerprinting and search):</b> Geodesic convolutional layers generate patch-level surface descriptors (fingerprints) for the neosurface. MaSIF-site predicts interface propensity; MaSIF-search performs an alignment-free nearest-neighbour search across the seed database (Euclidean distances between fingerprints), followed by 3D RANSAC-based alignment scored with the interface postalignment (IPA) neural network score.</li>
+      <li><b>Seed grafting and interface design (Rosetta):</b> Top seeds are refined with Rosetta FastDesign (penalty for buried unsatisfied polar atoms), then grafted onto ~6,500 miniprotein scaffolds using MotifGraft; the remaining scaffold interface is redesigned. ~2,000 final designs per target are selected by structural metrics (ddG, shape complementarity, interface H-bonds, buried unsatisfied polars).</li>
+      <li><b>Experimental screening by yeast display:</b> ~2,000 designs encoded as oligo pools (Twist Bioscience), displayed on yeast (EBY-100 / pCTcon2), and screened by flow cytometry in the presence/absence of the drug; two rounds of FACS enrichment followed by deep sequencing (Illumina MiSeq, ~0.8–1.2M reads/sample).</li>
+      <li><b>LigandMPNN optimization:</b> Designs that failed round-1 screening were sequence-optimized with LigandMPNN; 10 sequences/design were folded with AlphaFold2/ColabFold (single-sequence mode); the lowest-RMSD sequence per design was selected. 500 designs per target were re-screened.</li>
+      <li><b>Affinity and structural validation:</b> Biolayer interferometry (BLI) and surface plasmon resonance (SPR) for binding affinities; site-saturation mutagenesis (SSM) with deep sequencing for interface mapping; X-ray crystallography (ESRF, XDS/Phenix/COOT) and cryo-EM (Titan Krios G4, cryoSPARC v4.4.1) for structure determination.</li>
+      <li><b>Cell-based functional assays:</b> Cell-free reporter (PURExpress), GEMS (generalized extracellular molecule sensor), split NanoLuc assays in HEK293T, and split CID-CAR-T tumour-killing assay (MC38-HER2 target cells, IncuCyte live imaging).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig1.png" target="_blank">
+        <img src="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig1.png" alt="Fig.1 Neosurface features captured to identify interface sites and binding partners" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> MaSIF-neosurf captures neosurface properties — benchmark recovery of 70% correct binding partners vs. 14% for RoseTTAFold All-Atom, with ligand-driven improvement in IPA and descriptor scores.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig2.png" target="_blank">
+        <img src="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig2.png" alt="Fig.2 Design pipeline for ligand-induced protein interactions" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> The MaSIF-neosurf design pipeline: site identification, seed search, sequence optimization, scaffold grafting, and computational filtering of ~2,000 designs per target.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig3.png" target="_blank">
+        <img src="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig3.png" alt="Fig.3 De novo design and screening of small-molecule-dependent binders" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Experimental screening by yeast display confirms drug-dependent binding; point mutants at the designed interface abrogate binding, and ligand-analogue controls confirm specificity.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig4.png" target="_blank">
+        <img src="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig4.png" alt="Fig.4 Binding mode, affinity and structure determination of designed binders" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> SSM maps interface sensitivity; BLI shows nanomolar affinities after optimization (e.g. DBPro1156_2 K<sub>D</sub>=18 nM); crystal structure (PDB 8S1X) and cryo-EM (PDB 9FKD) confirm computational models.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig5.png" target="_blank">
+        <img src="assets/targeting-protein-ligand-neosurfaces-with-a-generalizable-deep-learning-tool__s41586-024-08435-4/fig5.png" alt="Fig.5 Computationally designed CIDs are functional in cell-based systems" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> CID systems function as ON-switches: 15.8-fold induction in cell-free reporter, 19.1-fold in intracellular NanoLuc, 26.8-fold in GEMS, and drug-inducible tumour killing in split CAR-T cells.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables; Extended Data includes Table 1 (crystallographic statistics) and Table 2 (cryo-EM statistics). Supplementary Information contains 17 figures and 5 tables.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, facility/resource accessibility optimization).</p>
+
+    <div class="idea">
+      <h3>① Extend MaSIF-neosurf to a generalizable multi-modal surface encoder via graph learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's five input features (shape index, curvature, electrostatics, H-bond propensity, hydropathy) are concatenated and fed to geodesic convolutions — a fixed, manually engineered feature set. A direct extension: replace the surface featurization with a <strong>learned graph neural network (GNN) over the molecular surface mesh</strong>, where nodes are surface vertices and edges encode geometric proximity, allowing the network to jointly learn which surface signals distinguish neosurfaces from protein-only surfaces. The paper already shows its features generalize; a GNN encoder would let the model discover richer joint representations — potentially capturing allosteric signatures or ring-current effects invisible to the current hand-crafted features — and would improve binder recovery beyond the 70% demonstrated.</p>
+      <p><span class="lab mine">Added value to my research</span>The same paradigm — replacing hand-crafted spatial features with learned GNN representations on irregular point clouds or meshes — maps directly onto my <strong>physics-informed graph learning</strong> agenda for spatiotemporal data. Just as molecular surface vertices encode local geometric and chemical context, geographic units (grid cells, census tracts, POI catchments) encode local socioeconomic and land-use context. The MaSIF-neosurf architecture is a concrete proof that a GNN can learn transferable representations from a physical surface and apply them in a zero-shot manner to a new domain. This inspires a GNN encoder for spatial health-access prediction that learns from multi-city training data and applies to unseen geographies without retraining.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Pair MaSIF-neosurf with generative molecular design to close the surface-to-sequence loop</h3>
+      <p><span class="lab paper">Extending this paper</span>MaSIF-neosurf identifies <em>where</em> to bind and proposes a binding seed, but then hands off to Rosetta for sequence design — a classical energy function that is the bottleneck for success rate (roughly 1 in 2,000 first-round designs). The paper already explores LigandMPNN as a post-filter and achieves 4–52× improvement. A deeper integration: use the MaSIF-neosurf surface fingerprint as a <strong>conditional embedding for a generative model</strong> (diffusion or flow-matching over sequence space) trained on protein–ligand complex data, so the neosurface fingerprint directly steers sequence generation rather than serving only as a post-hoc selector. This would close the surface-to-sequence design loop within a single differentiable pipeline and could raise design success rates by another order of magnitude.</p>
+      <p><span class="lab mine">Added value to my research</span>The idea of a surface fingerprint as a conditioning signal for generation parallels using spatial context embeddings to condition generative models in geographic AI. In my work on fine-tuning geospatial foundation models, a "spatial fingerprint" (a vector encoding local population density, road topology, and service distribution) could condition a generative model to propose facility placement or catchment delineation proposals adapted to local context — analogous to the paper's neosurface fingerprint conditioning binder design.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Build a benchmark dataset of protein–ligand–protein ternary complexes to enable supervised neosurface learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly identifies data scarcity as the core reason most deep learning tools fail on ternary complexes: the PDB contains very few protein–ligand–protein structures. The current benchmark uses only 14 ligand-induced complexes (28 search queries). Extending this paper: systematically curate and quality-filter all ternary complexes in the PDB (molecular glues, CIDs, coactivator assemblies), augment with AlphaFold3 predictions for known CID pairs, and release a standardized benchmark analogous to MISATO for protein–ligand complexes. This would allow supervised fine-tuning of the MaSIF-neosurf encoder on neosurface data rather than relying on zero-shot generalization, likely raising the 70% benchmark recovery substantially.</p>
+      <p><span class="lab mine">Added value to my research</span>The benchmark-dataset challenge in ternary protein complexes is structurally identical to the data challenge I face in spatial health access: <strong>multi-source data fusion</strong> where different data layers (population grids, POI surveys, mobility traces, administrative records) must be co-registered and quality-filtered before any model can be trained. Building an integrated ternary complex dataset requires the same harmonization pipeline (deduplication, resolution filtering, structural alignment) that I apply when fusing mobile-phone records with census grids and facility inventories. The methodological overlap in curation practice is directly transferable.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein–ligand complexes for structure-based drug discovery — <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply the topological surface representation to design allosteric small-molecule sensors for spatial biosurveillance</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that neosurface fingerprints can detect subtle chemical changes (small molecule vs. analogue, 10–12% of buried surface area contributed by the ligand). A natural extension: use MaSIF-neosurf to design protein sensors that report on <strong>small-molecule biomarkers</strong> (metabolites, toxins, pollutants) rather than drug compounds. By targeting the neosurfaces of known biomarker-binding proteins, new binders could be designed as the recognition elements in cell-free or cell-based biosensors for environmental or public-health monitoring — e.g., detecting heavy metals or endocrine disruptors in water samples. The paper's cell-free reporter system (Fig. 5a–c) is already a proof-of-concept biosensor format that could be repurposed.</p>
+      <p><span class="lab mine">Added value to my research</span>Environmental health biosurveillance is a growing dimension of my <strong>health geography and GeoAI</strong> agenda. Computationally designed biosensors distributed across geographic space — essentially turning the MaSIF-neosurf framework into a spatial sensing network — would generate fine-grained, real-time pollution or pathogen exposure maps. This connects my spatiotemporal kernel density estimation and mobile-sensor data fusion methods directly to molecular-level sensing, opening a new direction in digital health infrastructure that links computational protein design to public-health surveillance.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning on topological surface and geometric structure for 3D molecular generation — <a href="https://doi.org/10.1038/s43588-023-00530-2" target="_blank">10.1038/s43588-023-00530-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Leverage the paper's SSM + deep sequencing framework as a general explainability layer for learned representations</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper uses site-saturation mutagenesis (SSM) combined with deep sequencing to produce a per-residue "enrichment map" that reveals which interface positions drive binding — effectively a <strong>feature attribution map for the learned fingerprint</strong> (Fig. 4a). This is explainability by perturbation: mutate every position and measure impact. The MaSIF-neosurf fingerprint is a black-box embedding; SSM decodes it post-hoc into interpretable structure–function relationships. Extending the paper: formalize this as a <strong>computational SSM</strong> (in silico perturbation of surface patches) to produce fingerprint sensitivity maps without expensive experimental screening, enabling rapid hypothesis generation about which neosurface patches are "load-bearing" for specificity across many CID targets simultaneously.</p>
+      <p><span class="lab mine">Added value to my research</span>Perturbation-based feature attribution is exactly what I apply via <strong>SHAP/Shapley values in my explainable ML pipelines</strong> for spatial prediction (MGWR, ML ensembles for health outcomes). The paper's SSM paradigm — perturb one unit, measure the marginal effect, aggregate into an attribution map — is the protein-design analogue of SHAP. Formalizing this parallel validates the interpretability strategy across domains: just as SSM reveals which interface residues matter, SHAP reveals which spatial features (accessibility, density, greenness) drive health-outcome predictions. The conceptual unification strengthens the case for perturbation-based explainability as a domain-agnostic principle in learned representations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Protein sequence design by deep learning — <a href="https://doi.org/10.1038/s43588-022-00274-5" target="_blank">10.1038/s43588-022-00274-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

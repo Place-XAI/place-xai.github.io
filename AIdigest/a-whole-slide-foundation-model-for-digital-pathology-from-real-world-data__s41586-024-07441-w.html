@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A whole-slide foundation model for digital pathology from real-world data — AI Digest</title>
+<meta name="description" content="AI Digest: A whole-slide foundation model for digital pathology from real-world data (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Digital Pathology</span>
+      <span class="tag">Foundation Model</span>
+      <span class="tag">Vision Transformer</span>
+      <span class="tag">Cancer Diagnostics</span>
+    </div>
+    <h1>A whole-slide foundation model for digital pathology from real-world data</h1>
+    <div class="meta">
+      <span class="authors">Hanwen Xu · Naoto Usuyama · Jaspreet Bagga · Sheng Zhang · Rajesh Rao · Tristan Naumann · Cliff Wong · Zelalem Gero · Javier González · Yu Gu · Yanbo Xu · Mu Wei · Wenhui Wang · Shuming Ma · Furu Wei · Jianwei Yang · Chunyuan Li · Jianfeng Gao · Jaylen Rosemon · Tucker Bower · Soohee Lee · Roshanthi Weerasinghe · Bill J. Wright · Ari Robicsek · Brian Piening · Carlo Bifulco · Sheng Wang · Hoifung Poon</span>
+      <span><b>Published</b> 2024-05-22</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-07441-w" target="_blank">10.1038/s41586-024-07441-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-07441-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>Prov-GigaPath</strong>, a whole-slide pathology foundation model pretrained on <strong>1.3 billion image tiles from 171,189 real-world clinical slides</strong> across 28 cancer centres, achieves state-of-the-art performance on <strong>25 out of 26 digital pathology tasks</strong> — including cancer subtyping, mutation prediction, and zero-shot vision–language tasks — demonstrating that real-world data scale and ultra-large-context modelling of entire gigapixel slides are the decisive factors for advancing computational pathology.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the tile-subsampling bottleneck.</b> Prior models could only process a small fraction of a gigapixel slide; GigaPath's LongNet-based architecture handles the full sequence of up to 70,000 tiles, capturing slide-level context that was previously inaccessible.</li>
+      <li><b>Real-world clinical data at unprecedented scale.</b> The 1.3-billion-tile Prov-Path dataset from Providence Health Network is more than 5× larger than the widely used TCGA benchmark, enabling better generalization to out-of-distribution clinical samples.</li>
+      <li><b>Broad clinical utility demonstrated.</b> A single pretrained model covers 9 cancer subtyping tasks and 17 pathomics tasks (mutation prediction, TMB), outperforming specialized models on nearly all of them.</li>
+      <li><b>First zero-shot gene-mutation prediction via vision–language alignment.</b> By pairing slides with their clinical pathology reports, Prov-GigaPath enables zero-shot mutation prediction — a capability not previously demonstrated in pathology VL models.</li>
+      <li><b>Fully open-weight for clinical AI research.</b> Model weights and code are publicly released, directly accelerating the development of foundation models in resource-constrained clinical settings worldwide.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-level advance:</b> moving from tile-level to whole-slide modelling represents a fundamental shift in computational pathology — not an incremental improvement — matching Nature's appetite for conceptual breakthroughs.</li>
+      <li><b>Scale + novelty combination:</b> the largest pathology pretraining effort to date (1.3B tiles) combined with a novel architecture (LongNet adaptation for gigapixel images) constitutes both a technical and empirical landmark.</li>
+      <li><b>Direct clinical and public-health significance:</b> improving cancer subtyping and mutation prediction from routine H&amp;E slides could democratize precision oncology in settings without access to genomic sequencing.</li>
+      <li><b>Reproducibility commitment:</b> open weights, open code, and a publicly released de-identified data subset fulfil Nature's data-sharing expectations for high-impact AI models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>Prov-Path</strong> — proprietary real-world clinical dataset from the Providence Health Network (28 cancer centres, USA). Contains 1,384,860,229 image tiles from 171,189 H&amp;E-stained and immunohistochemistry whole-slide images, sourced from biopsies and resections of more than 30,000 patients covering 31 major tissue types. Data collected before March 2023.</dd>
+      <dt>Public benchmark</dt><dd><strong>TCGA (The Cancer Genome Atlas)</strong> — approximately 30,000 slides and 208 million image tiles; used for benchmarking generalizability. TCGA-LUAD subset (whole slides + labels) available via NIH Genomic Data Commons at <a href="https://portal.gdc.cancer.gov/projects/TCGA-LUAD" target="_blank">portal.gdc.cancer.gov</a>.</dd>
+      <dt>De-identified subset</dt><dd>A small de-identified patient subset from Prov-Path is released at <a href="https://doi.org/10.5281/zenodo.10909616" target="_blank">zenodo.10909616</a> and <a href="https://doi.org/10.5281/zenodo.10909922" target="_blank">zenodo.10909922</a> to support model replication.</dd>
+      <dt>Vision–language pairs</dt><dd>17,383 WSI–pathology report pairs constructed from Prov-Path; reports cleaned using GPT-3.5 (OpenAI); text embeddings computed with <code>text-embedding-ada-002</code>.</dd>
+      <dt>Tissue resolution</dt><dd>All slides standardized to 0.5 µm per pixel (20× magnification); tiles cropped to 256 × 256 pixels using pyvips; tissue segmentation via Otsu thresholding.</dd>
+      <dt>Benchmark tasks</dt><dd>26 tasks total: 9 cancer subtyping tasks (NSCLC, BRCA, RCC, COADREAD, HB, DIFG, OVT, CNS, EGC) and 17 pathomics tasks (18-biomarker pan-cancer mutation prediction, 5-gene LUAD mutation, pan-cancer 5-gene mutation, TMB prediction); evaluated on both Providence and TCGA data using 10-fold cross-validation.</dd>
+      <dt>Compute</dt><dd>Preprocessing on a cluster of up to 200 nodes (32 CPU cores, 256 GB RAM each), ~157 hours. Slide-encoder pretraining: 16 nodes × 4 × 80 GB A100 GPUs, ~2 days (3,072 A100 GPU hours).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Prov-Path (Providence)</td><td>Pretraining — whole-slide images</td><td>1.38B tiles; 171,189 slides; >30,000 patients; 31 tissue types; 28 cancer centres</td><td>Proprietary — de-identified subset on <a href="https://doi.org/10.5281/zenodo.10909616" target="_blank">Zenodo</a></td></tr>
+        <tr><td>TCGA (NIH GDC)</td><td>Benchmarking &amp; generalizability testing</td><td>~30,000 slides; 208M tiles; multiple cancer types</td><td><a href="https://portal.gdc.cancer.gov" target="_blank">portal.gdc.cancer.gov</a></td></tr>
+        <tr><td>TCGA-LUAD (NIH GDC)</td><td>LUAD mutation prediction benchmark</td><td>WSIs + mutation labels for lung adenocarcinoma</td><td><a href="https://portal.gdc.cancer.gov/projects/TCGA-LUAD" target="_blank">GDC TCGA-LUAD</a></td></tr>
+        <tr><td>Prov-Path WSI–report pairs</td><td>Vision–language pretraining</td><td>17,383 slide–report pairs; GPT-3.5 cleaned</td><td>Proprietary (Providence)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the primary Prov-Path dataset is proprietary and cannot be publicly shared; researchers may request a de-identified test subset from Providence Health System subject to ethical approvals. All numbers above are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Two-stage pretraining (GigaPath):</b> (1) tile-level self-supervised learning with <strong>DINOv2</strong> using a Vision Transformer (ViT) backbone; (2) slide-level self-supervised learning with a <strong>masked autoencoder</strong> built on <strong>LongNet</strong> (dilated self-attention) to handle sequences of up to 70,000 tiles without quadratic cost.</li>
+      <li><b>Whole-slide serialization:</b> WSI tiles are arranged in row-major order to form a long token sequence; coordinate discretization uses a grid (grid size 256, 1,000 rows/columns) to encode spatial position within the slide.</li>
+      <li><b>Downstream fine-tuning:</b> the pretrained tile encoder is frozen; only the LongNet slide encoder is fine-tuned per task; a shallow ABMIL (attention-based multiple instance learning) layer aggregates contextualized tile embeddings for classification.</li>
+      <li><b>Vision–language alignment:</b> CLIP-based contrastive learning aligns the slide encoder (Prov-GigaPath) with PubMedBERT on 17,383 WSI–report pairs; zero-shot classification is performed by matching slide embeddings against text prompts for cancer types or gene names.</li>
+      <li><b>Benchmarking:</b> 26 prediction tasks evaluated with 10-fold cross-validation; AUROC and AUPRC as primary metrics; statistical significance tested via one-sided Wilcoxon test; competing models include HIPT, CtransPath, REMEDIS, MI-Zero, BiomedCLIP, and PLIP.</li>
+      <li><b>Report denoising:</b> real-world pathology reports were cleaned using in-context learning with GPT-3.5, removing patient/institution identifiers while preserving cancer-relevant content.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig1.png" target="_blank">
+        <img src="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig1.png" alt="Fig.1 Overview of Prov-GigaPath" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of Prov-GigaPath — model architecture: tile serialization, DINOv2 tile-encoder pretraining, and LongNet masked-autoencoder slide-encoder pretraining.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig2.png" target="_blank">
+        <img src="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig2.png" alt="Fig.2 Gene mutation prediction results" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Gene mutation prediction — AUROC/AUPRC comparisons across pan-cancer 18-biomarker, LUAD 5-gene, and TMB prediction benchmarks; Prov-GigaPath leads on all.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig3.png" target="_blank">
+        <img src="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig3.png" alt="Fig.3 Cancer subtyping comparison" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Cancer subtyping across 9 cancer types — Prov-GigaPath outperforms all competitors on all nine types in AUROC and balanced accuracy.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig4.png" target="_blank">
+        <img src="assets/a-whole-slide-foundation-model-for-digital-pathology-from-real-world-data__s41586-024-07441-w/fig4.png" alt="Fig.4 Vision-language image-report alignment" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Vision–language alignment — zero-shot cancer subtyping and mutation prediction using slide–report CLIP; Prov-GigaPath outperforms MI-Zero, BiomedCLIP, and PLIP.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 in main text); Supplementary contains Tables 1–9 and Figs. 1–10 including ablation studies and demographic distributions.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, health geography &amp; accessibility, explainable ML, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Spatially-aware fine-tuning: geography of real-world clinical data as an explicit model input</h3>
+      <p><span class="lab paper">Extending this paper</span>Prov-GigaPath's pretraining dataset comes from 28 cancer centres across a single US health network, yet the paper treats all slides as exchangeable regardless of where they were collected. A direct extension would incorporate <strong>geographic metadata</strong> (centre location, regional cancer incidence rates, environmental exposures) as conditioning variables during fine-tuning — allowing the model to learn which slide-level features are universal versus site-specific. This would explicitly address the distribution shift the paper acknowledges when applying Providence-trained models to TCGA data from different institutions.</p>
+      <p><span class="lab mine">Added value to my research</span>This connects to my work on <strong>geospatial AI and spatiotemporal health analysis</strong>: the same question of spatial non-stationarity that drives MGWR in accessibility research applies here — a pathology foundation model pretrained on geographically diverse clinical data could serve as a probe for <strong>place-based health inequity</strong>, linking slide-level pathology features to neighbourhood-level social determinants via a spatial regression framework (GWR/MGWR).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging — <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② From institution-level access disparities to a geospatial access model for digital pathology AI</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central motivation — that real-world clinical slides differ dramatically from curated benchmarks — is fundamentally a <strong>data-access equity problem</strong>. Cancer centres contributing to Prov-Path are concentrated in specific geographies; patients in rural or low-resource areas are systematically underrepresented in the 30,000-patient training set. Extending this paper: map the spatial distribution of contributing slides against cancer incidence and population density to quantify <strong>representation gaps by geography</strong>, then use targeted data collection or synthetic augmentation (e.g., stain transfer) to close them — directly improving model fairness for underserved regions.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct extension of my <strong>health geography and accessibility research</strong>: just as 2SFCA/R2SFCA quantifies physical access to healthcare facilities, a "data-2SFCA" metric could quantify the <em>training data access</em> of a clinical AI model — measuring whether a region's pathology practices are sufficiently represented to ensure equitable AI performance. This would pair with my telehealth/digital divide work to map AI-readiness of health systems spatially.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for breast and lung cancer screening using non-contrast computed tomography — <a href="https://doi.org/10.1038/s44360-026-00055-8" target="_blank">10.1038/s44360-026-00055-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Scaling laws in pathology: how does slide-level performance scale with data volume and model size?</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper hints at scaling laws — GigaPath pretrained on Prov-Path (1.3B tiles) beats GigaPath pretrained on TCGA (208M tiles), and a smaller 23M-parameter model still outperforms competitors — but stops short of fitting a <strong>formal power-law relationship</strong> between pretraining tokens, model parameters, and downstream AUROC. A rigorous scaling-law study with multiple model sizes (23M, 300M, ViT-L) and data fractions would determine the returns to data and compute, enabling rational resource allocation for the next generation of pathology foundation models. The companion paper on a pathology foundation model for cancer diagnosis and prognosis (UNI, Nature 2024) provides an independent data point for cross-model scaling comparison.</p>
+      <p><span class="lab mine">Added value to my research</span>Scaling laws are directly analogous to my interest in <strong>data-efficient geospatial foundation models</strong>: I am interested in fine-tuning geospatial foundation models (e.g., RemoteCLIP, SatMAE) on small regional datasets. Understanding how performance scales with pretraining data volume in pathology provides a transferable methodological blueprint — specifically, whether "quality beats quantity" thresholds exist that are relevant to scarce geospatial labelled data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A pathology foundation model for cancer diagnosis and prognosis prediction — <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Multimodal extension: integrating EHR tabular data and clinical notes alongside whole-slide images</h3>
+      <p><span class="lab paper">Extending this paper</span>Prov-GigaPath's vision–language extension aligns slides with free-text pathology reports — a critical first step — but the Providence dataset also contains structured clinical records (cancer staging, demographic data, genomic mutation profiles). A natural and tractable extension: add a <strong>tabular encoder</strong> (e.g., a transformer over structured EHR fields) as a third modality alongside the visual slide encoder and the PubMedBERT text encoder, and pretrain with a three-way contrastive objective. This would allow the model to leverage the same data hierarchy already present in Prov-Path without requiring new data collection.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>multi-source data fusion</strong> (mobile phone, social media, remote sensing) uses analogous strategies: different sensors capture the same phenomenon from complementary angles. The challenge of aligning tabular clinical data with unstructured pathology images is structurally identical to aligning GPS trajectories with satellite imagery for urban activity inference — the contrastive alignment architecture of this paper is a reusable template. I can adapt the WSI–report CLIP framework to align multi-source geospatial data modalities for spatiotemporal health prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A vision–language foundation model for precision oncology — <a href="https://doi.org/10.1038/s41586-024-08378-w" target="_blank">10.1038/s41586-024-08378-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Explainability: spatially grounded attention maps as interpretable clinical biomarkers</h3>
+      <p><span class="lab paper">Extending this paper</span>Prov-GigaPath generates slide-level embeddings through LongNet's dilated self-attention, but the paper does not extensively analyse <strong>which spatial regions of the slide drive predictions</strong>. The attention weights in the ABMIL aggregation layer are a natural interpretability handle: visualizing which tile positions receive high attention for a given mutation prediction would (1) validate biological plausibility against known histological correlates, (2) generate candidate spatial biomarkers from morphology alone, and (3) help clinicians understand model decisions — a prerequisite for regulatory approval. The generative AI copilot for pathology paper (PathChat, Nature 2024) points toward human-in-the-loop interpretable AI as the next frontier.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial attention maps in pathology are structurally analogous to <strong>SHAP spatial decompositions</strong> in my explainable GeoAI work: both produce location-specific feature importance scores that explain where a model is looking. My experience with explainable ML (SHAP, MGWR spatial attribution) translates directly — I can apply similar post-hoc spatial attribution frameworks to pathology foundation models, linking tile-level attention to slide coordinates to produce <em>spatially explicit clinical explanations</em>. This could also inform my physics-informed graph learning by identifying which spatial scales carry predictive signal.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multimodal generative AI copilot for human pathology — <a href="https://doi.org/10.1038/s41586-024-07618-3" target="_blank">10.1038/s41586-024-07618-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

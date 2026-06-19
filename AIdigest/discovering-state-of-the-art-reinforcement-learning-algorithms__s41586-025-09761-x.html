@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovering state-of-the-art reinforcement learning algorithms — AI Digest</title>
+<meta name="description" content="AI Digest: Discovering state-of-the-art reinforcement learning algorithms (Nature, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Reinforcement Learning</span>
+      <span class="tag">Meta-Learning</span>
+      <span class="tag">Algorithm Discovery</span>
+      <span class="tag">AI Automation</span>
+    </div>
+    <h1>Discovering state-of-the-art reinforcement learning algorithms</h1>
+    <div class="meta">
+      <span class="authors">Junhyuk Oh · Gregory Farquhar · Iurii Kemaev · Dan A. Calian · Matteo Hessel · Luisa Zintgraf · Satinder Singh · Hado van Hasselt · David Silver</span>
+      <span><b>Published</b> 2025-10-22</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-09761-x" target="_blank">10.1038/s41586-025-09761-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-09761-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Machines can now autonomously <strong>discover state-of-the-art reinforcement learning algorithms</strong> that outperform all manually designed rules. The method — meta-learning over a large population of agents across diverse, complex environments — produced <strong>DiscoRL</strong>, which surpassed every existing RL rule on the Atari benchmark and generalised to held-out benchmarks (ProcGen, DMLab-30, Crafter, NetHack, Sokoban) it had never seen during discovery. Crucially, performance and generality improve as more diverse environments are used, suggesting that <strong>future RL algorithms for advanced AI may be machine-discovered rather than manually designed</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First machine-discovered RL rule to beat the human-designed state of the art.</b> Decades of attempts at automated RL discovery had not matched hand-crafted algorithms; this breaks that barrier decisively on the canonical Atari benchmark (IQM 13.86, exceeding MuZero).</li>
+      <li><b>Strong zero-shot generalisation.</b> Disco57, meta-trained only on Atari, topped all existing published methods on ProcGen and reached top-3 on the NetHack NeurIPS 2021 Challenge without domain-specific reward shaping — evidence that the discovered rule captures genuinely transferable learning dynamics.</li>
+      <li><b>Performance scales with data (environments) and compute.</b> Disco103, discovered on 103 environments (Atari + ProcGen + DMLab-30), improved on every benchmark over Disco57, demonstrating a tractable scaling pathway analogous to data scaling in supervised learning.</li>
+      <li><b>Discovery of semantically novel predictions.</b> Analysis reveals that DiscoRL invents prediction targets distinct from value functions and policy entropy — it identifies salient upcoming events, suggesting the method can uncover genuinely new RL concepts rather than merely re-parameterising known ones.</li>
+      <li><b>Open science.</b> Meta-parameters of Disco103 and all meta-training/evaluation code are released as open source at <a href="https://github.com/google-deepmind/disco_rl" target="_blank">github.com/google-deepmind/disco_rl</a>, enabling reproducibility and community extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-shifting result:</b> the claim that machines can discover better-than-human learning algorithms is of broad scientific significance, not domain-specific — Nature's remit for discoveries that reshape a field.</li>
+      <li><b>Rigorous, large-scale empirical validation:</b> evaluations span six established benchmarks (57–103 environments), with confidence intervals, statistical comparisons to MuZero, PPO, Dreamer and others — the level of scientific rigour Nature demands.</li>
+      <li><b>Biological resonance:</b> the framing that evolution discovered RL in biological organisms and machines can now do the same conceptually connects to Nature's life-science readership without overreaching.</li>
+      <li><b>Societal implications for AI safety and capability:</b> self-improving AI systems are a central concern in current AI discourse; this paper provides the first concrete, peer-reviewed evidence of the phenomenon at scale.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>External data</dt><dd>The paper states explicitly: <em>"No external data were used for the results presented in the article."</em> All empirical results derive from interactions of agents with publicly available RL benchmark environments.</dd>
+      <dt>Training environments</dt><dd><strong>Atari 2600 benchmark</strong> — 57 games (ALE/Atari Learning Environment). <strong>ProcGen</strong> — 16 procedurally generated 2-D games. <strong>DMLab-30</strong> — 30 DeepMind Lab 3-D navigation/task environments. Total discovery corpus for Disco103: 103 environments.</dd>
+      <dt>Held-out benchmarks</dt><dd><strong>Crafter</strong> (survival/crafting game), <strong>NetHack NeurIPS 2021 Challenge</strong> (roguelike; >40 teams competed), <strong>Sokoban</strong> (puzzle). None seen during meta-training — used only for zero-shot generalisation evaluation.</dd>
+      <dt>Discovery compute</dt><dd>Disco57: <strong>1,024 TPUv3 cores for 64 hours</strong>. Disco103: <strong>2,048 TPUv3 cores for 60 hours</strong>. Best rule found within ~600 million environment steps per Atari game (approximately 3 agent lifetimes per game).</dd>
+      <dt>Seeds / replication</dt><dd>2 random seeds per environment on Atari, ProcGen and DMLab; 3 seeds on Crafter and NetHack; 5 seeds on Sokoban. 95% confidence intervals reported throughout.</dd>
+      <dt>Code &amp; model</dt><dd>Meta-parameters of Disco103 and full source code at <a href="https://github.com/google-deepmind/disco_rl" target="_blank">github.com/google-deepmind/disco_rl</a> (CC BY-NC-ND 4.0). All benchmarks are publicly available.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Benchmark</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Atari 2600 (ALE)</td><td>Primary meta-training + evaluation</td><td>57 games, canonical RL benchmark</td><td><a href="https://github.com/mgbellemare/Arcade-Learning-Environment" target="_blank">GitHub ALE</a></td></tr>
+        <tr><td>ProcGen</td><td>Meta-training (Disco103) + held-out eval (Disco57)</td><td>16 procedurally generated games</td><td><a href="https://github.com/openai/procgen" target="_blank">openai/procgen</a></td></tr>
+        <tr><td>DMLab-30</td><td>Meta-training (Disco103) + evaluation</td><td>30 3-D navigation/task environments</td><td><a href="https://github.com/deepmind/lab" target="_blank">deepmind/lab</a></td></tr>
+        <tr><td>Crafter</td><td>Zero-shot held-out evaluation</td><td>Survival/crafting game, public leaderboard</td><td><a href="https://github.com/danijar/crafter" target="_blank">danijar/crafter</a></td></tr>
+        <tr><td>NetHack (NeurIPS 2021)</td><td>Zero-shot held-out evaluation</td><td>&gt;40-team competition benchmark</td><td><a href="https://github.com/facebookresearch/nle" target="_blank">facebook/nle</a></td></tr>
+        <tr><td>Sokoban</td><td>Zero-shot held-out evaluation</td><td>Combinatorial puzzle environment</td><td>Public implementations</td></tr>
+        <tr><td>Grid-world (57 tasks)</td><td>Ablation baseline (toy environments)</td><td>Extended from prior work; simpler than Atari</td><td>N/A (internal)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: no external datasets (remote sensing, population, geospatial) were used. All data are RL benchmark environments. Numbers above are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Meta-learning via meta-gradient:</b> a <strong>meta-network</strong> (LSTM-based) parameterises the RL update rule — it receives agent trajectory outputs and returns prediction targets. Meta-parameters are updated via meta-gradients that backpropagate through 20 agent-update steps (sliding window).</li>
+      <li><b>Expressive search space:</b> the agent outputs a <strong>policy (π)</strong>, observation-conditioned predictions <strong>y(s)</strong>, action-conditioned predictions <strong>z(s,a)</strong>, action values <strong>q</strong>, and auxiliary policy prediction <strong>p</strong> — supporting any RL rule representable as target functions over these quantities.</li>
+      <li><b>Population-based discovery:</b> 128–206 parallel agents, each with its own environment instance; meta-parameters updated synchronously by averaging per-agent Adam-normalised meta-gradients.</li>
+      <li><b>Meta-optimization stabilization:</b> advantage normalization across environments, separate per-agent Adam optimizers before aggregation, entropy regularization of predictions (L_ent), and KL regularization of policy targets (L_KL) to prevent collapse.</li>
+      <li><b>Meta-RNN for lifetime statistics:</b> an additional recurrent module unrolled forward across agent update steps (not time steps) allows the meta-network to adapt targets to the agent's learning dynamics over its lifetime.</li>
+      <li><b>Evaluation metric:</b> interquartile mean (IQM) of human-normalized scores across tasks — a statistically robust metric recommended for RL benchmarking to reduce sensitivity to outlier games.</li>
+      <li><b>Ablation analysis:</b> systematic removal of predictions (y/z/q/p) and replacement of Atari by toy grid-worlds verifies each component's contribution and the critical role of complex environments.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig1.png" target="_blank">
+        <img src="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig1.png" alt="Fig. 1 Discovering an RL rule from a population of agents" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The DiscoRL discovery pipeline: (a) population of agents in diverse environments, (b) agent architecture with policy/prediction outputs, (c) LSTM meta-network producing targets, (d) meta-gradient optimization loop.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig2.png" target="_blank">
+        <img src="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig2.png" alt="Fig. 2 Evaluation of DiscoRL across six benchmarks" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> DiscoRL vs. human-designed RL rules (MuZero, PPO, Dreamer, IMPALA, Rainbow, etc.) on Atari, ProcGen, DMLab, Crafter, NetHack, and Sokoban — Disco103 (orange) improves on every benchmark.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig3.png" target="_blank">
+        <img src="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig3.png" alt="Fig. 3 Properties of the discovery process" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Discovery efficiency (best rule within ~3 lifetimes per game), scalability with number of environments, and ablation study showing the critical contribution of each architectural component.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig4.png" target="_blank">
+        <img src="assets/discovering-state-of-the-art-reinforcement-learning-algorithms__s41586-025-09761-x/fig4.png" alt="Fig. 4 Analysis of DiscoRL discovered predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Qualitative and quantitative analysis of discovered predictions: saliency spikes before rewards, gradient-based attention maps, information content (R² for future entropy/reward), bootstrapping horizon, and ablation of prediction access.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables. Six Extended Data Tables (Atari57, ProcGen, DMLab-30, NetHack, Crafter results, and hyperparameters) are in the Extended Data section.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Apply DiscoRL's meta-learning framework to discover optimal spatial accessibility rules</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper discovers RL update rules by meta-learning across many diverse environments. The same framework — a meta-network that generates targets, a population of agents, and meta-gradient optimization — could be applied to <strong>discover optimal catchment-delineation rules for spatial accessibility</strong>. Instead of Atari games, the "environments" would be cities with known true accessibility outcomes; the "agent" would be a 2SFCA-style accessibility calculator; and the discovered rule would determine how service-area boundaries and demand weights adapt to local spatial context (density, network topology, population heterogeneity). This directly extends the paper's "complex and diverse environments" insight to geospatial problem domains.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA/R2SFCA work currently uses hand-tuned distance-decay parameters and fixed catchment radii — analogous to the "manually designed RL rules" that DiscoRL replaces. A DiscoRL-style meta-learner could <strong>autonomously discover optimal catchment geometries for primary care and mental health accessibility</strong>, adapting to urban/rural density gradients rather than relying on expert-chosen thresholds. This would convert my R2SFCA from a calibrated formula into a learned, transferable accessibility operator.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use DiscoRL's discovered predictions as spatiotemporal feature extractors for urban sensing</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's analysis (Fig. 4) demonstrates that DiscoRL's discovered predictions <strong>capture salient upcoming events</strong> better than value functions or policy entropy — they are genuinely novel, emergent representations. A natural extension: use a DiscoRL agent pre-trained on spatiotemporal decision tasks (e.g., urban navigation, resource routing) and extract its discovered prediction vectors <strong>y(s)</strong> and <strong>z(s,a)</strong> as general-purpose spatiotemporal embeddings. These embeddings could be evaluated as features for downstream urban prediction tasks, testing whether the discovered semantics transfer across the RL-to-supervised-learning domain boundary in the same way they transfer across RL benchmarks.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal work fuses mobile phone trajectories, social media, and remote sensing into prediction models using hand-engineered features. DiscoRL's emergent prediction vectors could serve as <strong>self-supervised spatiotemporal representations</strong> for my urban health outcome models, potentially discovering task-relevant temporal patterns (e.g., mobility precursors of health crises) that my current feature engineering misses. This aligns with my fine-tuning of geospatial foundation models: DiscoRL offers a route to RL-discovered representations rather than purely supervised ones.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-timescale reinforcement learning in the brain — <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Meta-learn an RL rule for multi-objective facility-location optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that DiscoRL's performance scales with <strong>diversity of environments</strong> and that the discovered rule generalises to environments it never trained on. A direct extension: define a family of facility-location environments (EV charging station placement, healthcare facility siting, urban park allocation) with varying city structures, demand distributions, and equity constraints. A DiscoRL-style discovery process would meta-learn a rule that <strong>autonomously discovers multi-objective placement strategies</strong> — balancing efficiency, equity, and resilience — across all city types, rather than requiring separate hand-designed optimization algorithms for each application.</p>
+      <p><span class="lab mine">Added value to my research</span>My EV charging-station work uses hand-crafted efficiency-vs-equity optimization objectives. A meta-learned placement rule could <strong>discover which spatial trade-off mechanisms generalize across cities</strong>, replacing the manual objective-engineering step and enabling a single trained rule to be deployed across different urban contexts — mirroring how Disco103 outperformed specialized algorithms on held-out benchmarks.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Automating turbulence modelling by multi-agent reinforcement learning — <a href="https://doi.org/10.1038/s42256-020-00272-0" target="_blank">10.1038/s42256-020-00272-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Integrate distributional RL targets into DiscoRL's meta-network for uncertainty-aware spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's meta-network discovers prediction targets but currently focuses on expected returns. A corpus-motivated extension: incorporate <strong>distributional RL targets</strong> (predicting the full return distribution rather than its mean) into the meta-network's discoverable search space. The paper's flexible functional form — any target computable from trajectory data — could encompass distributional targets, allowing the discovery process to find rules that reason about <strong>risk and uncertainty</strong> rather than just expected performance. The biological analogy is compelling: the companion paper on opponent striatal circuits shows that biological RL systems do precisely this.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial accessibility and health geography predictions have inherent uncertainty (travel-time variability, population estimation error, facility capacity fluctuations). A distributional extension of DiscoRL applied to spatial decision problems would output <strong>full accessibility distributions rather than point estimates</strong>, enabling my 2SFCA/R2SFCA models to quantify access uncertainty — critical for equity-informed health policy that must account for worst-case access deficits, not just average accessibility scores.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> An opponent striatal circuit for distributional reinforcement learning — <a href="https://doi.org/10.1038/s41586-024-08488-5" target="_blank">10.1038/s41586-024-08488-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply the diversity-scaling insight to GeoAI model training: more city types = stronger spatial transfer</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most actionable findings is that <strong>diversity of training environments drives generalisation more than raw scale</strong>: Disco103's broader environment set improved performance on every held-out benchmark. This is a transferable algorithmic insight for any meta-learning system. Extending the paper: systematically study which <em>environmental properties</em> (reward sparsity, observation complexity, action-space size, partial observability) most drive this generalisation gain — producing a taxonomy of environment diversity that could guide environment selection for future discovery runs, analogous to data curation in large-scale supervised learning.</p>
+      <p><span class="lab mine">Added value to my research</span>My GeoAI models (explainable ML for spatial prediction, geospatial foundation model fine-tuning) are typically trained on data from a limited set of cities or regions. The DiscoRL diversity-scaling principle suggests that <strong>deliberately curating geographically diverse training corpora</strong> — spanning different urban morphologies, climate zones, and socioeconomic contexts — should produce stronger cross-city transfer than simply collecting more data from the same types of cities. This gives a principled strategy for my multi-source data fusion work: maximize environmental diversity, not just data volume, when assembling training sets for geospatial foundation model fine-tuning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Algorithmic fairness and bias mitigation for clinical machine learning with deep reinforcement learning — <a href="https://doi.org/10.1038/s42256-023-00697-3" target="_blank">10.1038/s42256-023-00697-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

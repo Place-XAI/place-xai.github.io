@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthesizing scientific literature with retrieval-augmented language models — AI Digest</title>
+<meta name="description" content="AI Digest: Synthesizing scientific literature with retrieval-augmented language models (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Retrieval-augmented LM</span>
+      <span class="tag">Scientific synthesis</span>
+      <span class="tag">Hallucination detection</span>
+      <span class="tag">Open-source AI</span>
+    </div>
+    <h1>Synthesizing scientific literature with retrieval-augmented language models</h1>
+    <div class="meta">
+      <span class="authors">Asai, Akari · He, Jacqueline · Shao, Rulin · Shi, Weijia · Singh, Amanpreet · Chang, Joseph Chee · Lo, Kyle · Soldaini, Luca · Feldman, Sergey · D'Arcy, Mike · Wadden, David · Latzke, Matt · Sparks, Jenna · Hwang, Jena D. · Kishore, Varsha · Tian, Minyang · Ji, Pan · Liu, Shengyan · Tong, Hao · Wu, Bohao · Xiong, Yanyu · Zettlemoyer, Luke · Neubig, Graham · Weld, Daniel S. · Downey, Doug · Yih, Wen-tau · Koh, Pang Wei · Hajishirzi, Hannaneh</span>
+      <span><b>Published</b> 2026-02-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-025-10072-4" target="_blank">10.1038/s41586-025-10072-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-025-10072-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>OpenScholar, a <strong>fully open retrieval-augmented language model</strong>, synthesizes scientific literature by retrieving relevant passages from <strong>45 million open-access papers</strong> and generating citation-backed responses. On ScholarQABench — a new multi-domain benchmark spanning computer science, physics, neuroscience and biomedicine — OpenScholar-8B <strong>outperforms GPT-4o by 6.1%</strong> and achieves <strong>citation accuracy on par with human experts</strong>, while GPT-4o hallucinates citations 78–90% of the time. In human evaluations, experts <strong>preferred OpenScholar over human-written answers</strong> 51–70% of the time, compared with only 32% for vanilla GPT-4o.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Directly attacks the hallucination crisis in scientific AI.</b> Showing that vanilla GPT-4o fabricates citations 78–90% of the time — with rates reaching 98% in biomedicine — this is the first large-scale, multi-field empirical characterization of citation hallucination and a concrete solution to it.</li>
+      <li><b>Proves smaller open models can beat proprietary giants.</b> OpenScholar-8B, trained entirely on open data and weights, outperforms GPT-4o and PaperQA2 (which uses proprietary GPT-4o internally), at orders-of-magnitude lower inference cost — disrupting the assumption that literature synthesis requires closed mega-models.</li>
+      <li><b>Introduces the first multi-domain, expert-annotated literature synthesis benchmark.</b> ScholarQABench's 2,967 queries and 208 long-form expert answers across four disciplines becomes a community reference for reproducible evaluation of AI science assistants.</li>
+      <li><b>Ships a fully open platform.</b> All code, model checkpoints, the 45M-paper OSDS data store, ScholarQABench and a public demo (<a href="https://openscholar.allen.ai" target="_blank">openscholar.allen.ai</a>) are open-sourced — making the research also infrastructure that the community can build on.</li>
+      <li><b>Demonstrates expert-level performance at scale.</b> More than 30,000 users and 90,000 queries since launch confirm real-world uptake beyond a controlled benchmark.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Directly serves the scientific community:</b> improving how scientists synthesize literature is a meta-contribution to all of science — squarely within Nature's mandate of enabling scientific progress.</li>
+      <li><b>Cross-disciplinary scope:</b> the benchmark spans computer science, physics, neuroscience and biomedicine, ensuring broad relevance across Nature's readership.</li>
+      <li><b>Quantifies a systemic flaw in state-of-the-art AI:</b> the hallucination statistics for GPT-4o are a finding of general scientific concern, not just a systems contribution.</li>
+      <li><b>Platform-scale open-science contribution:</b> releasing a 45M-paper data store and a live demo constitutes infrastructure — Nature has a track record of publishing resource papers with broad community value.</li>
+      <li><b>Human evaluation at expert level:</b> the rigorous expert pairwise study (16 PhD-level evaluators, 108 questions) provides the behavioral science evidence Nature expects for claims about AI surpassing human performance.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Corpus</dt><dd><strong>peS2o v3</strong> (derived from S2ORC, Semantic Scholar Open Research Corpus) — <strong>45 million open-access academic papers</strong> up to October 2024, spanning all major scientific disciplines. The paper uses peS2o v2 (papers up to January 2023) for benchmark evaluations and peS2o v3 for the live data store.</dd>
+      <dt>Data store (OSDS)</dt><dd><strong>OpenScholar DataStore (OSDS)</strong> — 236 million passage embeddings built from peS2o, with passages chunked into 256-word blocks. Self-described as "the largest open-sourced data store for scientific literature."</dd>
+      <dt>Benchmark</dt><dd><strong>ScholarQABench</strong> — 2,967 expert-written queries and 208 long-form expert-annotated answers across computer science, physics, neuroscience and biomedicine, created by PhD students and postdocs (April–October 2024). Single-paper subsets: SciFact (1,400 claims), PubMedQA (yes/no/maybe), QASA (AI/ML QA). Multi-paper subsets: Scholar-CS (100 questions + rubrics), Scholar-Bio (biology questions), Scholar-Neuro (neuroscience questions), Scholar-Multi (108 expert QA pairs in 3 domains).</dd>
+      <dt>Retrieval APIs</dt><dd><strong>Semantic Scholar API</strong> (keyword search, top papers by citation count); <strong>You.com academic search</strong> (restricted to arXiv, PubMed). Both used to supplement OSDS dense retrieval.</dd>
+      <dt>Training data</dt><dd>Synthetically generated from <strong>1 million paper abstracts</strong> sampled from peS2o, filtered to 130,000 training instances; blended 50% scientific domain / 50% general-domain instruction tuning data. Publicly available at <code>huggingface.co/datasets/OpenSciLM/OS_Train_Data</code>.</dd>
+      <dt>Human evaluation</dt><dd><strong>16 PhD-level expert raters</strong> across 108 Scholar-Multi questions (3 fields); 12 expert writers; compensation US$25–45/h. Inter-annotator agreement 0.68–0.70 (pairwise with ties).</dd>
+      <dt>Time window</dt><dd>Benchmark annotations: April–October 2024. peS2o v2: up to January 2023. peS2o v3: up to October 2024.</dd>
+      <dt>Availability</dt><dd>All artefacts open-sourced: <a href="https://github.com/AkariAsai/OpenScholar" target="_blank">github.com/AkariAsai/OpenScholar</a>; benchmark: <a href="https://github.com/AkariAsai/ScholarQABench" target="_blank">ScholarQABench</a>; demo: <a href="https://openscholar.allen.ai" target="_blank">openscholar.allen.ai</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>peS2o / S2ORC</td><td>Primary scientific paper corpus; OSDS backbone</td><td>45M open-access papers; 236M passages (up to Oct 2024)</td><td><a href="https://huggingface.co/datasets/allenai/pes2o" target="_blank">HuggingFace allenai/pes2o</a></td></tr>
+        <tr><td>Semantic Scholar API</td><td>Keyword retrieval; citation metadata</td><td>Global academic literature index</td><td><a href="https://api.semanticscholar.org" target="_blank">api.semanticscholar.org</a></td></tr>
+        <tr><td>You.com academic search</td><td>Web-based paper retrieval (arXiv, PubMed)</td><td>Open-access subset of web</td><td><a href="https://you.com" target="_blank">you.com</a></td></tr>
+        <tr><td>ScholarQABench (new)</td><td>Evaluation benchmark — queries + expert answers</td><td>2,967 queries; 208 long-form expert answers; 4 domains</td><td><a href="https://github.com/AkariAsai/ScholarQABench/tree/main/data" target="_blank">GitHub</a></td></tr>
+        <tr><td>OS Training Data</td><td>Synthetic training set for OpenScholar-8B</td><td>130,000 filtered instances from 1M sampled abstracts</td><td><a href="https://huggingface.co/datasets/OpenSciLM/OS_Train_Data" target="_blank">HuggingFace OpenSciLM</a></td></tr>
+        <tr><td>SciFact / PubMedQA / QASA</td><td>Single-paper benchmark subsets (existing)</td><td>1,400 / ~1,000 / ~700 QA pairs respectively</td><td>Public (ACL Anthology, PubMed)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact query counts differ slightly between abstract (2,967 queries / 208 answers) and article body (3,000 questions / 250 answers) due to different counting conventions for subsets. Numbers taken verbatim from the respective article sections.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Three-source retrieval pipeline:</b> (1) dense retrieval from OSDS using a trained bi-encoder (Contriever, continually pre-trained on peS2o, 110M parameters); (2) keyword retrieval via Semantic Scholar API; (3) web search via You.com, restricted to arXiv/PubMed. Each source returns top-10 papers; full texts fetched if open-access.</li>
+      <li><b>Cross-encoder reranking:</b> a fine-tuned BGE cross-encoder (340M parameters) jointly scores query-passage pairs and selects top-N passages. Meta-filtering caps passages per paper at 3 and incorporates normalized citation counts into relevance scores.</li>
+      <li><b>Iterative self-feedback inference:</b> the LM generates an initial draft y<sub>0</sub>, then produces natural-language feedback F and refines iteratively. Each feedback round may trigger additional retrieval queries. Final step applies citation verification to ensure all citation-worthy claims are supported.</li>
+      <li><b>Synthetic training data generation:</b> the same inference pipeline generates 130K high-quality (question, answer, intermediate feedback) training triples from 1M peS2o abstracts; filtered by pairwise quality and rubric scoring (threshold ≥ 4.5/5); used to fine-tune Llama 3.1 8B for 2 epochs.</li>
+      <li><b>ScholarQABench evaluation:</b> rubric-based automatic scoring (annotation-driven 60% + general criteria 40%); citation F1 (precision and recall at sentence level); LLM judge using Prometheus v2 for content quality (coverage, relevance, organization); human pairwise preference studies with inter-annotator agreement 0.68–0.70.</li>
+      <li><b>Ablation analysis:</b> systematic removal of reranking, self-feedback, citation verification, and domain-specific training to isolate the contribution of each component. Also ablates retrieval source (OSDS-only vs. Semantic Scholar vs. web vs. combined).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/synthesizing-scientific-literature-with-retrieval-augmented-language-models__s41586-025-10072-4/fig1.png" target="_blank">
+        <img src="assets/synthesizing-scientific-literature-with-retrieval-augmented-language-models__s41586-025-10072-4/fig1.png" alt="Fig.1 Overview of OpenScholar, ScholarQABench and evaluation results" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of OpenScholar (top: data store + retriever + iterative self-feedback loop), ScholarQABench (middle: 2,200 expert-written questions across disciplines), and key results (bottom: OpenScholar-8B and OpenScholar-GPT-4o substantially outperform baselines and are preferred over expert-written answers in human evaluation).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table" style="margin-top:12px">Main text tables: Table 1 (ScholarQABench results across all baselines), Table 2 (hallucinated citation statistics for computer science and biomedicine), Table 3 (expert-written answer statistics), Table 4 (expert rater evaluations with win rates). Extended Data: Table 1 (ScholarQABench dataset overview), Table 2 (ablations of training and inference). Extended Data Figures 1–5 are in the supplementary section. Total: 4 main-text tables, 5 extended-data figures, 2 extended-data tables.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable ML, physics-informed graph learning, open science).</p>
+
+    <div class="idea">
+      <h3>① Build a GeoScholar: domain-specialized RAG for geospatial and public-health literature</h3>
+      <p><span class="lab paper">Extending this paper</span>OpenScholar's architecture is domain-agnostic: the peS2o corpus, bi-encoder, cross-encoder and self-feedback loop were engineered for general scientific synthesis. Extending it to geospatial science and public health would require constructing a geospatial-specific data store (supplementing peS2o with grey literature, WHO/CDC reports, municipal open-data documentation), fine-tuning the retriever on GeoAI terminology and spatial relations, and augmenting ScholarQABench with rubrics written by urban-health experts. The self-feedback loop could further be adapted to trigger follow-up retrieval whenever a geographic entity or spatial statistic is mentioned but not yet supported by a citation — capturing the domain-specific citation norms in health geography.</p>
+      <p><span class="lab mine">Added value to my research</span>A GeoScholar would accelerate systematic literature reviews underlying my 2SFCA/R2SFCA and spatial-accessibility work: rather than manually combing journals for distance-decay parameters or catchment-size benchmarks across cities, a domain-aware RAG could retrieve and synthesize those figures on demand, with verified citations. This directly supports the reproducibility and FAIR-data pillars of my research — a RAG-based search assistant that cross-links my own prior work with the incoming literature stream.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A novel machine learning framework for automated biomedical relation extraction from large-scale literature repositories — <a href="https://doi.org/10.1038/s42256-020-0189-y" target="_blank">10.1038/s42256-020-0189-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace static rubric scoring with an adaptive, domain-calibrated LLM judge</h3>
+      <p><span class="lab paper">Extending this paper</span>ScholarQABench's correctness metric mixes rubric items (annotation-driven 60%) with general criteria (40%) and weights them with fixed heuristics. A direct extension: train a domain-calibrated evaluator LM that learns which rubric items matter most per discipline — using the paper's own expert-preference judgements as signal — and replaces the fixed weighting with a learned, discipline-aware scoring function. This would also address the paper's acknowledged limitation that annotators sometimes focus on writing fluency rather than factual correctness when doing pairwise preferences.</p>
+      <p><span class="lab mine">Added value to my research</span>This adaptive evaluation approach is transferable to my explainable ML work: instead of fixed feature-importance metrics (e.g., SHAP values with a single threshold), a learned evaluator could calibrate which explanations are most useful for urban-health policy contexts — treating the "quality of an explanation" as a rubric-scoring problem analogous to OpenScholar's literature synthesis quality.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating large language models for accuracy incentivizes hallucinations — <a href="https://doi.org/10.1038/s41586-026-10549-w" target="_blank">10.1038/s41586-026-10549-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Integrate citation-network topology into OpenScholar's retriever to surface seminal papers</h3>
+      <p><span class="lab paper">Extending this paper</span>A recurring complaint from OpenScholar's expert annotators is that "the suggested papers were occasionally outdated or less relevant compared with more representative work." The paper already normalizes citation counts in its cross-encoder meta-filtering step, but this is shallow: it does not exploit the full citation-network structure. Extending the paper: encode each paper as a node in its citation graph and compute PageRank or co-citation proximity scores as additional retrieval signals, then fine-tune the cross-encoder to jointly use passage relevance and network centrality — ensuring that seminal methodological papers surface even when they are not lexically similar to the query.</p>
+      <p><span class="lab mine">Added value to my research</span>Citation-graph-aware retrieval is directly relevant to my multi-source data fusion workflows: when I synthesize GeoAI methods across mobile-phone, GPS and remote-sensing literatures, the most important bridging papers (those that connect graph learning to spatiotemporal prediction) are often not the most recently cited but the most network-central. Encoding this topology also mirrors my physics-informed graph-learning agenda — using known structural constraints (citation flow) to improve an ML system's inductive bias.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy — <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend OpenScholar's self-feedback loop to multi-turn interactive literature review</h3>
+      <p><span class="lab paper">Extending this paper</span>ScholarQABench is explicitly designed for single-turn set-ups: one query, one long-form answer. The paper itself notes that "evaluating multi-turn LM-human interactions remains challenging." A natural extension: adapt the iterative self-feedback loop — which already performs structured internal dialogue (draft, feedback, revise, re-retrieve) — into an <em>external</em> dialogue where a scientist interactively refines the query and the retrieved evidence. Each conversational turn would extend the retrieval context rather than restart from scratch, accumulating a personalized literature base across sessions. Training the 8B model on multi-turn annotation data (which the demo's 90,000 user queries could supply) would make this tractable without proprietary APIs.</p>
+      <p><span class="lab mine">Added value to my research</span>My agent-based modeling and Monte Carlo simulation workflows require iterative hypothesis refinement — I do not form a single query but explore a parameter space across many runs. A multi-turn OpenScholar variant could serve as an intelligent literature co-pilot: as my simulation narrows toward a specific spatial-diffusion scenario, the RAG system would progressively surface more targeted references on SIR parameterization or urban mobility decay functions, rather than returning a monolithic synthesis from the first query.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Larger and more instructable language models become less reliable — <a href="https://doi.org/10.1038/s41586-024-07930-y" target="_blank">10.1038/s41586-024-07930-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply OpenScholar's synthetic-data pipeline to generate spatiotemporal QA training sets for GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>OpenScholar's most replicable technical contribution is its <em>synthetic training data generation pipeline</em>: sample abstracts from a corpus, generate information-seeking queries with an LM, run the full self-feedback inference to produce high-quality (query, answer, feedback) triples, then filter by quality rubric. Extending this to a geospatial domain: replace peS2o with a curated GeoAI corpus (Nature Cities, ISPRS, Environment and Planning B, Urban Studies), adapt the query generator to produce spatial analysis questions ("What distance-decay functions have been used for 2SFCA in low-density rural areas?"), and use the resulting synthetic set to fine-tune a smaller 8B model specialized for spatial science. This is fully reproducible with open weights and the open data pipeline.</p>
+      <p><span class="lab mine">Added value to my research</span>This would be a direct methodological contribution to my open-science agenda: a reproducible, open pipeline for fine-tuning geospatial foundation models (the fourth research direction on my profile). The synthetic QA data could also serve as an evaluation benchmark analogous to ScholarQABench for GeoAI — filling the gap that no such domain-specific benchmark currently exists, and making my own publications more reproducible by providing standardized retrieval-based evaluation of spatial methods.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Optimizing generative AI by backpropagating language model feedback — <a href="https://doi.org/10.1038/s41586-025-08661-4" target="_blank">10.1038/s41586-025-08661-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

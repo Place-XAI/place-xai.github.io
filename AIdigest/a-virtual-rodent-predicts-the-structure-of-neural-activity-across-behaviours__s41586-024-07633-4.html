@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A virtual rodent predicts the structure of neural activity across behaviours — AI Digest</title>
+<meta name="description" content="AI Digest: A virtual rodent predicts the structure of neural activity across behaviours (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Motor control</span>
+      <span class="tag">Deep reinforcement learning</span>
+      <span class="tag">Neural activity</span>
+      <span class="tag">Biomechanical simulation</span>
+    </div>
+    <h1>A virtual rodent predicts the structure of neural activity across behaviours</h1>
+    <div class="meta">
+      <span class="authors">Diego Aldarondo · Josh Merel · Jesse D. Marshall · Leonard Hasenclever · Ugne Klibaite · Amanda Gellis · Yuval Tassa · Greg Wayne · Matthew Botvinick · Bence P. Ölveczky</span>
+      <span><b>Published</b> 2024-06-11</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-07633-4" target="_blank">10.1038/s41586-024-07633-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-07633-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>biomechanically realistic virtual rodent</strong>, trained via deep reinforcement learning to imitate freely moving rats, produces network activity that <strong>predicts real neural recordings in the sensorimotor striatum (DLS) and motor cortex (MC) better than any kinematic feature of the real rat's movement</strong> — consistent with both regions implementing <strong>inverse dynamics</strong>. Moreover, the network's latent variability replicates the structure of neural variability across behaviours in a manner consistent with the <strong>minimal intervention principle</strong> of optimal feedback control, demonstrating that physics-based virtual animals are a powerful interpretive lens for systems neuroscience.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the loop between control theory and neuroscience.</b> By building a virtual rat that imitates real behaviour, the paper creates a direct empirical test of theoretical motor-control principles — inverse dynamics and the minimal intervention principle — something previously impossible with kinematic data alone.</li>
+      <li><b>The virtual agent outperforms movement features.</b> The finding that artificial network activity predicts real neural activity better than actual body kinematics is a striking result: it implies the brain encodes <em>control commands</em>, not just movement trajectories.</li>
+      <li><b>Latent variability as a functional signal.</b> Neural variability is usually treated as noise; this work shows the virtual rodent's latent stochasticity mirrors the structure of real neural variability across behaviours — recasting variability as a purposeful component of the control architecture.</li>
+      <li><b>Scales across the full behavioural repertoire.</b> The MIMIC pipeline covers the complete ethogram of freely moving rats (locomotion, grooming, rearing, and more), not a single constrained task — making the conclusions broadly applicable.</li>
+      <li><b>Open data and reusable tools.</b> Neural recordings are publicly available on Harvard Dataverse; code for STAC (skeletal registration) and motion-mapper (behaviour classification) is open-source — enabling community reuse and extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Fundamental insight at the intersection of AI and biology:</b> the virtual-animal approach establishes a new paradigm for using embodied AI agents to decode brain function — a conceptual leap beyond single-neuron or single-task studies.</li>
+      <li><b>Cross-disciplinary significance:</b> the paper speaks simultaneously to systems neuroscience, computational motor control, biomechanics, and deep reinforcement learning — the kind of synthesis Nature prizes.</li>
+      <li><b>Falsifiable theoretical predictions confirmed:</b> inverse dynamics and minimal intervention principle are established theoretical frameworks; the paper delivers clean empirical confirmation via the virtual-animal framework.</li>
+      <li><b>Methodological novelty with broad applicability:</b> the MIMIC pipeline is not rat-specific — it generalizes to any species with pose-estimation data, making it a platform rather than a single study.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Animal recordings</dt><dd>Electrophysiological recordings from freely behaving rats; 128-channel tetrode drives implanted in the <strong>dorsolateral striatum (DLS)</strong> and <strong>motor cortex (MC)</strong>. The paper reports recordings from multiple animals (exact number stated in Methods/Extended Data; 3 animals identified in Extended Data Fig. 1H–I for implant verification). Hundreds of putative single units recorded simultaneously per session.</dd>
+      <dt>3D pose data</dt><dd><strong>DANNCE</strong> (6-camera multi-view video system) — 3D keypoint estimation at 23 body landmarks per frame, across the full behavioural repertoire of freely moving rats. Pose data registered to a biomechanical skeletal model via <strong>STAC</strong> (Skeletal Tracking via Articulated Constraints).</dd>
+      <dt>Behavioural classification</dt><dd><strong>motion-mapper</strong> — unsupervised behavioural embedding used to segment and label the continuous behavioural repertoire into discrete behaviour categories (locomotion, grooming, rearing, etc.).</dd>
+      <dt>Simulation data</dt><dd>A <strong>MuJoCo physics simulator</strong> hosts the biomechanically realistic rat model; the ANN controller is trained with deep RL using these simulated physics. Simulation data are large and available on reasonable request (not publicly deposited).</dd>
+      <dt>Real-animal data</dt><dd>Publicly archived at <strong>Harvard Dataverse</strong> — <a href="https://doi.org/10.7910/DVN/FB0MZT" target="_blank">10.7910/DVN/FB0MZT</a>. Includes neural recordings, pose estimates, and behavioural labels.</dd>
+      <dt>Code / tools</dt><dd>Open-source repositories for STAC, motion-mapper, and inverse dynamic model inference: <a href="https://github.com/diegoaldarondo/virtual_rodent" target="_blank">github.com/diegoaldarondo/virtual_rodent</a>. Full analysis code available from corresponding authors on request.</dd>
+      <dt>Time period</dt><dd>Not explicitly stated in the abstract; study period inferred from recording sessions described in Extended Data. Data deposited prior to publication (2024).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Harvard Dataverse (DVN/FB0MZT)</td><td>Real-animal neural recordings + pose data</td><td>Multi-session, freely behaving rats; hundreds of putative single units</td><td><a href="https://doi.org/10.7910/DVN/FB0MZT" target="_blank">dataverse.harvard.edu</a></td></tr>
+        <tr><td>DANNCE pose estimates</td><td>3D body-pose trajectories (23 keypoints)</td><td>Full behavioural repertoire; 6-camera video per session</td><td>Part of Harvard Dataverse deposit</td></tr>
+        <tr><td>MuJoCo simulation</td><td>Physics-based ANN training environment</td><td>Biomechanically realistic rat model; large simulation outputs</td><td>Available on request</td></tr>
+        <tr><td>STAC / motion-mapper code</td><td>Skeletal registration + behaviour classification</td><td>Open-source tools</td><td><a href="https://github.com/diegoaldarondo/virtual_rodent" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact animal counts and session numbers are reported in the Methods section of the full article (not included in the publicly available abstract). Numbers above are inferred from Extended Data descriptions.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>MIMIC pipeline:</b> an end-to-end framework — <strong>M</strong>ulti-camera video acquisition → <strong>I</strong>nverse kinematics (STAC) → <strong>M</strong>otion imitation via deep RL → <strong>I</strong>nterpretation via <strong>C</strong>omparison of neural activity.</li>
+      <li><b>Deep reinforcement learning (RL) for motion imitation:</b> a variational autoencoder (VAE) + LSTM decoder controller is trained with RL to match the rat's pose trajectory frame by frame, minimizing imitation error while actuating a physics-constrained biomechanical model.</li>
+      <li><b>Generalized Linear Models (GLMs) for neural prediction:</b> spike counts of individual neurons are predicted from either kinematic features (joint angles, velocities) or ANN network features (hidden-layer activations of the controller). Cross-validated log-likelihood ratios (CV-LLR) quantify predictive gain.</li>
+      <li><b>Representational Similarity Analysis (RSA):</b> representational dissimilarity matrices (RDMs) are built from both neural population activity and ANN layer activations; WUC (weighted uncentred correlation) similarity between RDMs tests whether the network's representational geometry matches neural geometry across behaviours.</li>
+      <li><b>Latent variability analysis:</b> the VAE's KL regularization controls the amount of latent noise; the resulting motor variability is compared to neural variability structure to test the minimal intervention principle — i.e., whether variability is suppressed for task-critical dimensions and amplified along task-irrelevant ones.</li>
+      <li><b>Inverse vs. forward vs. sequential model comparison:</b> alternative control architectures (forward model, sequential model) are trained on the same data and evaluated on both imitation performance and neural predictivity, establishing that an inverse dynamics model best explains the data.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig1.png" target="_blank">
+        <img src="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig1.png" alt="Fig.1 Comparing biological and artificial control across the behavioural repertoire with MIMIC" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Comparing biological and artificial control across the behavioural repertoire with MIMIC — overview of the pipeline and behavioural coverage.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig2.png" target="_blank">
+        <img src="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig2.png" alt="Fig.2 Training artificial agents to imitate rat behaviour with MIMIC" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Training artificial agents to imitate rat behaviour with MIMIC — deep RL training architecture and imitation performance.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig3.png" target="_blank">
+        <img src="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig3.png" alt="Fig.3 Neural activity in DLS and MC is best predicted by an inverse dynamics model" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Neural activity in DLS and MC is best predicted by an inverse dynamics model — GLM comparison showing ANN features beat kinematics.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig4.png" target="_blank">
+        <img src="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig4.png" alt="Fig.4 Representational structure of neural populations resembles an inverse model" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> The representational structure of neural populations in DLS and MC across behaviours resembles that of an inverse model — RSA results.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig5.png" target="_blank">
+        <img src="assets/a-virtual-rodent-predicts-the-structure-of-neural-activity-across-behaviours__s41586-024-07633-4/fig5.png" alt="Fig.5 Stochastic controllers regulate motor variability by changing latent variability" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Stochastic controllers regulate motor variability as a function of behaviour by changing latent variability — minimal intervention principle validation.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0). Supplementary information contains Tables 1–3 (Supplementary Discussion).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, open science).</p>
+
+    <div class="idea">
+      <h3>① Scale MIMIC to a multi-agent, multi-timescale RL framework</h3>
+      <p><span class="lab paper">Extending this paper</span>The virtual rodent is trained as a <strong>single-agent, single-timescale</strong> imitation learner. The brain, however, operates across multiple temporal scales simultaneously — from milliseconds (motor reflexes) to seconds (action planning) to minutes (habit formation). A direct extension: replace the paper's single LSTM decoder with a <strong>hierarchical, multi-timescale RL controller</strong> where higher layers set behavioural goals and lower layers execute them. This would test whether multi-timescale network activity better predicts the temporal structure of DLS/MC recordings, and whether distinct neural subpopulations align with distinct controller levels.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-timescale decomposition is directly analogous to my <strong>spatiotemporal kernel density estimation</strong> work, where different bandwidth selections capture different interaction scales. A hierarchical temporal model trained on movement trajectories could inform how I parameterize temporal decay in spatiotemporal accessibility models — particularly for health-seeking behaviour where decisions unfold over multiple time horizons (real-time, weekly routine, seasonal).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-timescale reinforcement learning in the brain — <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use population-level neural geometry to benchmark foundation models of brain activity</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's RSA framework compares an ANN controller's representational geometry to real neural population geometry. This is a principled neural-benchmarking approach that has been used in vision neuroscience but rarely in motor neuroscience at this scale. An extension: train a <strong>foundation model of motor-cortical neural activity</strong> (analogous to visual cortex foundation models) using the paper's open Harvard Dataverse recordings, then evaluate whether its learned representations generalise to predict responses to novel movement types not seen during training — directly extending the paper's MIMIC framework from a comparison tool to a generative neural model.</p>
+      <p><span class="lab mine">Added value to my research</span>Foundation model ideas transfer to my interest in <strong>fine-tuning geospatial foundation models</strong>. Just as a motor-cortex foundation model must generalise across behavioural contexts, a geospatial foundation model must generalise across urban contexts. The paper's RSA benchmarking pipeline — comparing representational geometry across conditions — could be adapted to evaluate geospatial embeddings: do representations learned in one city transfer their geometric structure to another?</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation model of neural activity predicts response to new stimulus types — <a href="https://doi.org/10.1038/s41586-025-08829-y" target="_blank">10.1038/s41586-025-08829-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Bridge virtual-animal simulation to arousal and state-dependent neural variability</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's latent variability analysis shows that the virtual rodent regulates motor noise in a behaviourally structured way. But it treats arousal and internal brain state as implicit background variables. Extending it: inject an <strong>arousal signal</strong> (pupil dilation, heartrate proxy, or a learned latent arousal embedding) into the VAE's prior, and test whether the resulting latent-variability structure better predicts the across-behaviour neural variability observed in real animals — particularly for transitions between active and quiescent states where arousal fluctuates most.</p>
+      <p><span class="lab mine">Added value to my research</span>Internal state modulation of variability parallels how <strong>human mobility patterns</strong> shift under different contextual states (commute vs. leisure, weekday vs. weekend). My agent-based models of urban accessibility could incorporate a "behavioural state" variable — analogous to arousal — that modulates the distance-decay function, allowing the model to capture why the same individual accesses facilities differently under different motivational states.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Arousal as a universal embedding for spatiotemporal brain dynamics — <a href="https://doi.org/10.1038/s41586-025-09544-4" target="_blank">10.1038/s41586-025-09544-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Transfer the MIMIC benchmarking philosophy to explainable AI for spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core insight is methodological: <strong>build a model that mimics the system, then interrogate the model's internals</strong> to understand the real system. This "mimicry-then-interpret" philosophy could be extended beyond motor control to social behaviour. A follow-up: apply MIMIC to a model trained to imitate <strong>human social interactions</strong> recorded via GPS/mobile sensors, and ask whether network representations of a virtual social agent predict the structure of neural activity in social brain regions — linking the virtual-animal paradigm to human behaviour in naturalistic environments.</p>
+      <p><span class="lab mine">Added value to my research</span>The mimicry-then-interpret philosophy is exactly the logic of my <strong>explainable machine learning for spatial prediction</strong> work: train a flexible ML model, then use SHAP/attention maps to interpret which spatial features drive predictions. The paper validates this approach at a neuroscientific level — the model's internal activations are the interpretable signal, not just the output. This gives theoretical grounding for reporting SHAP feature importances as genuine mechanistic indicators rather than post-hoc correlations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Mapping model units to visual neurons reveals population code for social behaviour — <a href="https://doi.org/10.1038/s41586-024-07451-8" target="_blank">10.1038/s41586-024-07451-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Encode physics-of-movement priors into spatiotemporal mobility graph learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The virtual rodent's controller is physically constrained: it must respect joint limits, inertia, and the biomechanics of the rat skeleton — and these constraints are encoded as <em>soft losses</em> during RL training, analogous to physics-informed learning. A direct extension of the paper: add a <strong>musculoskeletal energy constraint</strong> as an explicit Lagrangian term so that the optimal controller minimises both imitation error and metabolic cost, then test whether the resulting energy-aware representations better predict the speed-dependent encoding patterns in DLS/MC seen in Extended Data Fig. 3C.</p>
+      <p><span class="lab mine">Added value to my research</span>The analogy to my <strong>physics-informed graph learning</strong> agenda is tight: just as the virtual rodent encodes biomechanical laws as constraints on ANN weights, a physics-informed GNN for urban mobility can encode conservation laws (flow conservation at nodes, capacity constraints on edges) as architectural priors rather than regularisation terms. The paper's demonstration that physics constraints improve biological realism supports the premise that physics priors improve generalisation in urban graph models — a strong argument for my ongoing work on physics-informed GNNs for origin-destination flow prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> The development of aperiodic neural activity in the human brain — <a href="https://doi.org/10.1038/s41562-025-02270-x" target="_blank">10.1038/s41562-025-02270-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

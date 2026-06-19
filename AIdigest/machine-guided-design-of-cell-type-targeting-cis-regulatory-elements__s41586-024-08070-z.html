@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine-guided design of cell-type-targeting cis-regulatory elements — AI Digest</title>
+<meta name="description" content="AI Digest: Machine-guided design of cell-type-targeting cis-regulatory elements (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Gene Regulation</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Synthetic Biology</span>
+      <span class="tag">MPRA</span>
+    </div>
+    <h1>Machine-guided design of cell-type-targeting cis-regulatory elements</h1>
+    <div class="meta">
+      <span class="authors">Gosai, Sager J. · Castro, Rodrigo I. · Fuentes, Natalia · Butts, John C. · Mouri, Kousuke · Alasoadura, Michael · Kales, Susan · Nguyen, Thanh Thanh L. · Noche, Ramil R. · Rao, Arya S. · Joy, Mary T. · Sabeti, Pardis C. · Reilly, Steven K. · Tewhey, Ryan</span>
+      <span><b>Published</b> 2024-10-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-08070-z" target="_blank">10.1038/s41586-024-08070-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-08070-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A machine-learning platform called <strong>CODA</strong>, powered by a deep convolutional model (Malinois) trained on over 776,000 MPRA-measured sequences, can <strong>design synthetic cis-regulatory elements (CREs) that surpass all naturally occurring genomic sequences</strong> in driving cell-type-specific gene expression across three human cell lines. Synthetic CREs achieve specificity through a unique combination of on-target <em>activating</em> and off-target <em>repressing</em> transcription-factor motifs rarely co-deployed in the human genome. These synthetic sequences retain tissue-level specificity <strong>in vivo</strong> in zebrafish and mouse, establishing a generalizable framework for writing programmable regulatory code for gene therapy and biotechnology applications.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Unlocks programmable gene-therapy delivery.</b> The lack of robust cell-type-targeted regulatory elements is a bottleneck for gene therapies. CODA provides a principled route to synthetic, tissue-specific CREs without relying on elements that happened to evolve naturally.</li>
+      <li><b>Demonstrates that evolution does not find the optimum.</b> Synthetic sequences consistently out-perform natural sequences (94.1% specificity rate vs. 40.6% for DHS-natural), showing that the regulatory sequence space contains far better CREs than exist in the human genome.</li>
+      <li><b>Closes the model-to-experiment loop at scale.</b> By combining an accurate predictive model, three optimization algorithms, and massively parallel reporter assays (77,157 sequences tested), the study validates machine-generated biology at a scale previously impractical.</li>
+      <li><b>Reveals interpretable regulatory grammar.</b> NMF decomposition into 12 functional programs and motif contribution scores make the model's decisions transparent — the study writes and reads regulatory code simultaneously.</li>
+      <li><b>Cross-species in vivo validation.</b> Liver- and neuron-specific CREs designed from human cell-line models retain specificity in zebrafish and mice, confirming that in silico optimization generalizes to complex organisms.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Proof-of-concept at unprecedented scale:</b> testing 77,157 synthetic and natural CREs in parallel is a landmark demonstration that machine-designed biology works at genome scale.</li>
+      <li><b>Generalizable framework, not a single result:</b> CODA is a platform applicable to any optimization objective, matching Nature's preference for contributions that open new fields rather than solving one problem.</li>
+      <li><b>Therapeutic significance:</b> the direct implications for CRISPR, gene-replacement therapies and targeted drug delivery carry broad societal relevance expected of a Nature primary article.</li>
+      <li><b>Cross-disciplinary integration:</b> the work unites deep learning, genomics, developmental biology, and synthetic biology — characteristic of high-impact Nature papers that transcend single disciplines.</li>
+      <li><b>Open data and reproducible tools:</b> raw data, model weights, and code are deposited at Zenodo and GitHub, meeting the journal's open-science standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>MPRA training data</dt><dd>798,064 unique 200 bp oligonucleotide sequences functionally characterized by MPRA across three human cell types (K562, HepG2, SK-N-SH), aggregated from ten independent experiments across three projects (UKBB, GTEx, OL15). Totalling <strong>155.3 Mb of unique genomic sequence per cell type</strong>. References indexed in Supplementary Table 1.</dd>
+      <dt>Model test set</dt><dd>62,582 sequences on chromosomes 7 and 13, withheld from both training and hyperparameter tuning for unbiased performance evaluation.</dd>
+      <dt>CODA MPRA library</dt><dd>77,157 sequences including <strong>51,000 synthetic CREs</strong> (36,000 standard + 15,000 motif-penalized), <strong>24,000 natural sequences</strong> (12,000 DHS-natural + 12,000 Malinois-natural), and 2,157 experimental controls. Tested in triplicate in K562, HepG2, and SK-N-SH cells. Results in Supplementary Table 12.</dd>
+      <dt>Reference genomes</dt><dd>GRCh38/hg38 (human) and GRCm38/mm10 (mouse). Whole-genome tiling used 200 bp windows with 50 bp stride for Malinois genome-wide predictions.</dd>
+      <dt>Epigenomic data</dt><dd>ENCODE DHS peaks, H3K27ac ChIP-seq, and STARR-seq data for K562, HepG2, and SK-N-SH cells (via ENCODE portal). JASPAR CORE 2022 and HOCOMOCO Human v11 FULL for TF-binding motif annotation.</dd>
+      <dt>In silico tissue prediction</dt><dd>Enformer model applied to synthetic CREs inserted into mouse H11 locus sequence (chr11:3101137–3493091, mm10), predicting DHS/H3K27ac/ATAC/CAGE across 10 tissue types at 128 bp resolution.</dd>
+      <dt>In vivo validation</dt><dd>Zebrafish (minimum 15 embryos per construct, imaged at 48 and 96 h post-fertilization); mouse transgenic models (n = 3–6 per group, embryonic day 14.5 and 5 weeks postnatal).</dd>
+      <dt>RNA-seq</dt><dd>3 replicates per genotype from transgenic mice (liver, spleen, brain); sequenced on Illumina NovaSeq X+, 2 × 150 bp. Available at NCBI GEO: <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA1075667" target="_blank">PRJNA1075667</a>.</dd>
+      <dt>Raw data &amp; models</dt><dd>Processing notebooks, model weights, and immunofluorescence images at <a href="https://zenodo.org/records/10698014" target="_blank">Zenodo 10698014</a>. Code (CODA/boda2) at <a href="https://github.com/sjgosai/boda2" target="_blank">GitHub sjgosai/boda2</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MPRA (UKBB/GTEx/OL15)</td><td>Train Malinois; functional CRE measurements</td><td>798,064 oligos; 3 cell types; 155.3 Mb/cell type</td><td>Supplementary Tables 1 &amp; 2</td></tr>
+        <tr><td>ENCODE DHS + H3K27ac</td><td>Select DHS-natural sequences; benchmark Malinois</td><td>K562, HepG2, SK-N-SH; chromosome-wide peaks</td><td><a href="https://www.encodeproject.org/" target="_blank">encodeproject.org</a></td></tr>
+        <tr><td>CODA MPRA library</td><td>Empirically validate synthetic &amp; natural CREs</td><td>77,157 sequences; 3 cell lines; 3 replicates</td><td>Supplementary Table 12; Zenodo 10698014</td></tr>
+        <tr><td>GRCh38/hg38 + GRCm38/mm10</td><td>Reference genomes for sequence annotation &amp; design</td><td>Human + mouse whole genomes</td><td>NCBI/Ensembl</td></tr>
+        <tr><td>JASPAR CORE 2022 / HOCOMOCO v11</td><td>TF-binding motif annotation (TOMTOM)</td><td>Human TF motif databases</td><td><a href="https://jaspar.genereg.net/" target="_blank">jaspar.genereg.net</a></td></tr>
+        <tr><td>RNA-seq (NCBI GEO PRJNA1075667)</td><td>Validate synN1 neuronal specificity in mice</td><td>3 replicates × 2 genotypes × 3 tissues</td><td><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA1075667" target="_blank">NCBI BioProject</a></td></tr>
+        <tr><td>Zenodo 10698014</td><td>Raw data, model weights, notebooks, IF images</td><td>Full study reproducibility package</td><td><a href="https://zenodo.org/records/10698014" target="_blank">zenodo.org/records/10698014</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all numbers are taken verbatim from the article text. The training MPRA data originate from previous uniform-pipeline experiments (Gosai et al. 2023, Nat. Genet.) rather than newly generated sequencing in this study.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Malinois (deep CNN):</b> a convolutional neural network adapted from the Basset architecture, trained on 798,064 MPRA-measured sequences to predict cell-type-specific CRE activity from 200 bp DNA sequences alone. Bayesian hyperparameter optimization on Google Cloud Vertex AI (NVIDIA A100 GPU). Pearson r = 0.88–0.89 on held-out chromosomes.</li>
+      <li><b>CODA optimization platform:</b> iterative loop of (predict → score via MinGap objective → update sequence) using three classes of algorithm — gradient-based (Fast SeqProp), probabilistic (Simulated Annealing), and evolutionary (AdaLead). Motif-penalization variant diversifies TF-motif usage.</li>
+      <li><b>Massively Parallel Reporter Assay (MPRA):</b> 200 bp oligos synthesized by Twist Bioscience, cloned upstream of a minimal promoter driving GFP with unique 20 bp barcodes; transcriptional output quantified by Illumina sequencing (NovaSeq). 77,157 sequences tested across three cell types in triplicate.</li>
+      <li><b>Sequence interpretation — Sampled Integrated Gradients (SIG):</b> nucleotide-resolution contribution scores computed via a modified Integrated Gradients approach using a uniform random background, providing hypothetical contribution scores for TF-MoDISco motif discovery.</li>
+      <li><b>Motif discovery and NMF decomposition:</b> TF-MoDISco Lite identifies 66 motif patterns → 36 non-redundant core motifs (7–18 bp). Non-negative matrix factorization (k = 12) decomposes sequences into functional programs describing co-occurring TF vocabularies.</li>
+      <li><b>In silico tissue-specificity prediction:</b> Enformer applied to synthetic CREs inserted into the mouse H11 locus to predict epigenetic signatures across 10 tissues, guiding in vivo candidate selection.</li>
+      <li><b>In vivo validation:</b> transient and stable transgenic reporter assays in zebrafish embryos (Tol2-based GFP reporters) and mouse H11 safe-harbour locus (lacZ/GFP reporters via zygote microinjection); immunofluorescence and confocal imaging for cell-type colocalization.</li>
+      <li><b>RNA-seq + saturation mutagenesis MPRA:</b> DESeq2-based differential expression (lacZ in mouse tissues); 600-variant saturation mutagenesis library to empirically validate Malinois contribution scores for the synN1 neuronal CRE.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig1.png" target="_blank">
+        <img src="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig1.png" alt="Fig.1 Malinois accurately predicts CRE activity" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Malinois deep CNN accurately predicts cell-type-specific CRE activity from sequence alone (Pearson r = 0.88–0.89 on held-out chromosomes).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig2.png" target="_blank">
+        <img src="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig2.png" alt="Fig.2 CODA designs cell-type-specific CREs" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> CODA's iterative design loop and empirical MPRA validation: synthetic CREs achieve 94.1% specificity vs. 40.6% for DHS-natural sequences.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig3.png" target="_blank">
+        <img src="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig3.png" alt="Fig.3 Interpreting functional sequence content" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Motif contribution scores, co-occurrence patterns, and NMF program decomposition revealing the TF grammar of cell-type specificity.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig4.png" target="_blank">
+        <img src="assets/machine-guided-design-of-cell-type-targeting-cis-regulatory-elements__s41586-024-08070-z/fig4.png" alt="Fig.4 In vivo validation of synthetic elements" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> In vivo validation: liver-specific CREs in zebrafish (27/36 animals) and neuron-specific synN1 restricted to neocortical layer 6 in mice.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables. Supplementary contains 12 data tables (including the full MPRA training dataset and the CODA library results) and 22 supplementary figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, explainable ML for spatial prediction, physics-informed graph learning, spatiotemporal analysis for public-health policy).</p>
+
+    <div class="idea">
+      <h3>① Replace CODA's fixed-objective optimization with a learned generative model</h3>
+      <p><span class="lab paper">Extending this paper</span>CODA iterates three optimization heuristics (Fast SeqProp, Simulated Annealing, AdaLead) that search sequence space one CRE at a time without learning from past designs. A direct extension of this paper would replace the inner loop with a <strong>conditional generative model</strong> — such as a variational autoencoder or a genomic language model fine-tuned on MPRA data — that directly samples high-specificity sequences in a single forward pass. The corpus paper on semantic de-novo gene design from a genomic language model (Semantic design of functional de novo genes, Nature 2025) demonstrates exactly this paradigm: a generative model conditioned on functional properties outputs novel, functional DNA sequences orders of magnitude faster than iterative search. Applied to CODA, this would make multi-objective CRE design (e.g., simultaneous specificity + minimal length + motif diversity) tractable without the combinatorial explosion of exhaustive search.</p>
+      <p><span class="lab mine">Added value to my research</span>The same conditional-generation principle is directly relevant to my work on <strong>fine-tuning geospatial foundation models</strong>: just as a genomic language model is conditioned on cell-type activity labels to generate sequences, a geospatial foundation model can be conditioned on accessibility or health-outcome targets to generate synthetic spatial patterns for data augmentation or scenario planning — for instance, generating hypothetical urban configurations that maximize healthcare accessibility.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Semantic design of functional de novo genes from a genomic language model — <a href="https://doi.org/10.1038/s41586-025-09749-7" target="_blank">10.1038/s41586-025-09749-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Transfer Malinois' explainability framework (SIG + NMF) to spatiotemporal feature attribution</h3>
+      <p><span class="lab paper">Extending this paper</span>Malinois' interpretability stack — Sampled Integrated Gradients for position-level attribution, TF-MoDISco for motif discovery, and NMF for program decomposition — provides a complete, multi-resolution explanation of <em>why</em> a sequence drives activity. This paper applies it to a 1D biological sequence; extending it to predict regulatory activity across a wider variety of cell types (as in "Multiomics and deep learning dissect regulatory syntax in human development," Nature 2026) would require the same framework to handle multi-scale, multi-omics inputs while retaining interpretability. A specific extension of this paper: apply the NMF-program decomposition to the extended Malinois trained on primary tissue chromatin states (not just transformed cell lines) to discover whether the 12 programs are stable or cell-context dependent.</p>
+      <p><span class="lab mine">Added value to my research</span>SIG + NMF is a transferable explainability recipe for my <strong>explainable ML for spatial prediction</strong> work. In MGWR/GWR models, regression coefficients vary spatially but provide no feature-interaction story. Replacing the linear spatial decomposition with NMF over SHAP/integrated-gradient attribution maps would yield spatially coherent "programs" — groups of co-varying features that jointly explain health outcomes — analogous to the TF programs discovered here.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiomics and deep learning dissect regulatory syntax in human development — <a href="https://doi.org/10.1038/s41586-026-10326-9" target="_blank">10.1038/s41586-026-10326-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Upgrade Malinois from cell-line MPRA to primary tissue epigenomics via a foundation model</h3>
+      <p><span class="lab paper">Extending this paper</span>Malinois is trained on episomal reporter data from three transformed cell lines — a controlled but artificial context. The paper itself acknowledges that translating from in vitro to in vivo requires careful bridging (it uses Enformer as an ad hoc bridge). A principled extension: replace the Enformer bridge with a <strong>foundation model of transcription across human cell types</strong> (as demonstrated by the corpus paper "A foundation model of transcription across human cell types," Nature 2025) fine-tuned on primary-tissue MPRA or STARR-seq data, then use CODA to design CREs optimized against this richer, primary-tissue-aware objective. This would close the in-vitro/in-vivo gap that required laborious zebrafish and mouse validation in the original study.</p>
+      <p><span class="lab mine">Added value to my research</span>The concept of a pre-trained foundation model fine-tuned on domain-specific data maps directly onto my agenda of <strong>fine-tuning geospatial foundation models</strong>: a geospatial FM pre-trained on global satellite imagery and census data, fine-tuned on local health-facility utilization data, could predict healthcare demand with the same efficiency that the genomic FM predicts tissue-specific regulatory activity — moving from generic representation to task-specific, context-aware prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model of transcription across human cell types — <a href="https://doi.org/10.1038/s41586-024-08391-z" target="_blank">10.1038/s41586-024-08391-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Benchmark CODA's predictive accuracy against an uncertainty-aware model for higher-confidence CRE nomination</h3>
+      <p><span class="lab paper">Extending this paper</span>Malinois provides point predictions with no uncertainty estimates; the paper relies on empirical MPRA to catch false positives among 77,000 candidates. An extension of this paper would integrate <strong>uncertainty quantification</strong> — Bayesian dropout, deep ensembles, or knowledge distillation into a calibrated student network — into Malinois so that only sequences with high predicted specificity <em>and</em> low epistemic uncertainty are nominated, reducing the experimental validation burden. The corpus paper "Evaluating deep learning for predicting epigenomic profiles" (Nature Machine Intelligence 2022) rigorously benchmarks the failure modes of genomic deep-learning models, providing a roadmap for where uncertainty is highest and most consequential.</p>
+      <p><span class="lab mine">Added value to my research</span>Uncertainty-aware prediction is directly relevant to my <strong>spatial accessibility modeling</strong>: 2SFCA/R2SFCA models propagate distance-decay uncertainty into accessibility estimates silently. Integrating ensemble uncertainty quantification into spatial ML models would allow health-policy makers to distinguish confidently accessible areas from ones where the prediction is uncertain — a critical distinction for resource-allocation decisions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles — <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Extend CODA's regulatory grammar discovery to multi-scale motif syntax using a graph neural network</h3>
+      <p><span class="lab paper">Extending this paper</span>CODA's NMF decomposes CREs into co-occurring TF programs but treats motifs as a bag-of-words — spatial arrangement within the 200 bp sequence (syntax) is inferred indirectly from contribution scores rather than explicitly modelled. A direct extension: replace the NMF program layer with a <strong>graph neural network</strong> where nodes are motif instances, edges encode pairwise distances and orientations, and graph-level embeddings predict specificity. This would let CODA learn higher-order syntactic rules (e.g., "ETS and CREB heterodimers must be within 15 bp") rather than co-occurrence frequencies, and would operate at a resolution the current framework cannot reach. The corpus paper on end-to-end genomic sequence analysis with deep learning (Nature Computational Science 2023) provides a software backbone for such graph-augmented sequence models.</p>
+      <p><span class="lab mine">Added value to my research</span>This is squarely my <strong>physics-informed graph learning</strong> agenda translated to a new domain: the GNN syntax model encodes a constraint (motif proximity rule) as a structural prior — analogous to encoding geographic contiguity or transportation-network topology as physics constraints in a spatial GNN. The graph-regularized sequence model here and the physics-informed spatial model for urban accessibility both exploit the principle that structured interactions, not just feature co-occurrence, drive outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A software framework for end-to-end genomic sequence analysis with deep learning — <a href="https://doi.org/10.1038/s43588-023-00557-5" target="_blank">10.1038/s43588-023-00557-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

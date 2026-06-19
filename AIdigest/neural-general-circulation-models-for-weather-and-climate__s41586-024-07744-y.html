@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural general circulation models for weather and climate — AI Digest</title>
+<meta name="description" content="AI Digest: Neural general circulation models for weather and climate (Nature, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Hybrid AI + Physics</span>
+      <span class="tag">Weather Forecasting</span>
+      <span class="tag">Climate Simulation</span>
+      <span class="tag">Deep Learning</span>
+    </div>
+    <h1>Neural general circulation models for weather and climate</h1>
+    <div class="meta">
+      <span class="authors">Dmitrii Kochkov · Janni Yuval · Ian Langmore · Peter Norgaard · Jamie Smith · Griffin Mooers · Milan Klöwer · James Lottes · Stephan Rasp · Peter Düben · Sam Hatfield · Peter Battaglia · Alvaro Sanchez-Gonzalez · Matthew Willson · Michael P. Brenner · Stephan Hoyer</span>
+      <span><b>Published</b> 2024-07-22</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-024-07744-y" target="_blank">10.1038/s41586-024-07744-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-024-07744-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>NeuralGCM is the first hybrid model to combine a <strong>differentiable atmospheric dynamical core</strong> with end-to-end learned neural-network parameterizations, achieving forecast accuracy <strong>on par with the best physics-based and pure machine-learning models</strong> across 1- to 15-day weather and multi-decade climate timescales. It produces <strong>calibrated ensemble forecasts</strong> (better CRPS than ECMWF-ENS), realistically simulates tropical cyclones and global temperature trends over 40 years, and delivers <strong>3–5 orders of magnitude computational savings</strong> over conventional GCMs — while acknowledging that extrapolation to substantially different future climates remains an open challenge.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges the gap between ML and physics-based modeling.</b> Previous machine-learning weather models (GraphCast, Pangu) excelled at deterministic short-range forecasts but lacked ensemble capability and long-term stability. NeuralGCM is the first to close both gaps simultaneously.</li>
+      <li><b>First ML-based model with calibrated ensemble forecasts.</b> NeuralGCM-ENS achieves a spread-skill ratio near 1 and lower CRPS than ECMWF-ENS across almost all variables and lead times — a prerequisite for operational probabilistic forecasting and risk communication.</li>
+      <li><b>Decadal climate fidelity from weather-scale training.</b> Models trained on 3–5 day weather trajectories remain stable and physically accurate over 40-year AMIP simulations, providing empirical support for the hypothesis that short-range optimization is sufficient to tune climate parameterizations.</li>
+      <li><b>Orders-of-magnitude speedup with physics retained.</b> Running 70,000 simulation days in 24 hours on a single TPU (versus 19 days on 13,824 CPU cores for X-SHiELD) makes large-ensemble climate projections computationally accessible for the first time.</li>
+      <li><b>Fully open source infrastructure.</b> The Dinosaur differentiable dynamical core and NeuralGCM model weights are publicly released on GitHub, enabling the research community to extend, fine-tune, and couple the model to other Earth-system components.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-shifting result at the frontier of two fields:</b> demonstrates that end-to-end deep learning is compatible with tasks performed by decades-mature GCMs, a finding of broad significance to atmospheric science and AI communities alike.</li>
+      <li><b>Quantitative benchmark superiority:</b> surpasses the ECMWF ensemble — the gold standard for operational forecasting — on ensemble probability scores, meeting Nature's threshold for methodological advance.</li>
+      <li><b>Societal relevance:</b> improved weather and climate predictions directly inform disaster preparedness, agricultural planning, and climate-adaptation policy across all nations.</li>
+      <li><b>Platform contribution with open infrastructure:</b> open-source code (Dinosaur + NeuralGCM on GitHub) and integration with WeatherBench2 constitute a reusable community resource, not merely a one-off result.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd><strong>ERA5 reanalysis</strong> (ECMWF Reanalysis v5) — approximately 40 years of global atmospheric data at 0.25° horizontal resolution, 37 pressure levels, 1-hour temporal resolution. Accessed via Copernicus Climate Data Store (<a href="https://cds.climate.copernicus.eu/" target="_blank">cds.climate.copernicus.eu</a>) and Google Cloud Storage in Zarr format (<code>gs://gcp-public-data-arco-era5</code>). Training uses data through 2019; year 2020 is held out for evaluation.</dd>
+      <dt>Weather evaluation</dt><dd><strong>WeatherBench2</strong> benchmark suite — 732 forecasts (noon and midnight UTC throughout 2020) for all compared models. Includes ECMWF-HRES, ECMWF-ENS, GraphCast, and Pangu outputs. Available at <a href="https://weatherbench2.readthedocs.io/en/latest/data-guide.html" target="_blank">weatherbench2.readthedocs.io</a>.</dd>
+      <dt>Climate baselines</dt><dd><strong>CMIP6 AMIP runs</strong> — 22 model experiments from the Coupled Model Intercomparison Project Phase 6, accessed via Pangeo catalog (<a href="https://catalog.pangeo.io/browse/master/climate/" target="_blank">catalog.pangeo.io</a>). Used for multi-decadal temperature trend comparison (1981–2014).</dd>
+      <dt>Cloud-resolving model</dt><dd><strong>X-SHiELD</strong> — global cloud-resolving model output (2020-01-19 to 2021-01-17); one realization available via Google Cloud Storage (<code>gs://ai2cm-public-requester-pays/C3072-to-C384-res-diagnostics</code>).</dd>
+      <dt>Temperature trends ref.</dt><dd><strong>RAOBCORE V1.9</strong> (Radiosonde Observation Correction using Reanalyses) — vertical tropical temperature trend reference downloaded from <a href="https://webdata.wolke.img.univie.ac.at/haimberger/v1.9/" target="_blank">Universität Wien</a>.</dd>
+      <dt>Base maps</dt><dd><strong>Natural Earth</strong> — freely available vector/raster map data from <a href="https://www.naturalearthdata.com/downloads/" target="_blank">naturalearthdata.com</a>.</dd>
+      <dt>Model resolutions</dt><dd>NeuralGCM trained at three horizontal resolutions: 2.8°, 1.4°, and 0.7° grid spacing. Climate simulations use 2.8° and 1.4°; highest-resolution weather runs use 0.7°.</dd>
+      <dt>Code availability</dt><dd>Dinosaur (differentiable dynamical core): <a href="https://github.com/google-research/dinosaur" target="_blank">github.com/google-research/dinosaur</a>. NeuralGCM (ML components + model checkpoints): <a href="https://github.com/google-research/neuralgcm" target="_blank">github.com/google-research/neuralgcm</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ERA5 reanalysis</td><td>Training + evaluation ground truth</td><td>~40 years, global, 0.25°, 37 levels, 1-hourly</td><td><a href="https://cds.climate.copernicus.eu/" target="_blank">Copernicus CDS</a></td></tr>
+        <tr><td>WeatherBench2</td><td>Standardized forecast evaluation benchmark</td><td>Year 2020, 732 forecast initializations, multiple models</td><td><a href="https://weatherbench2.readthedocs.io/en/latest/data-guide.html" target="_blank">weatherbench2.readthedocs.io</a></td></tr>
+        <tr><td>CMIP6 AMIP</td><td>Multi-decadal climate trend comparison</td><td>22 model runs, 1980–2020+</td><td><a href="https://catalog.pangeo.io/browse/master/climate/" target="_blank">Pangeo catalog</a></td></tr>
+        <tr><td>X-SHiELD</td><td>Cloud-resolving model baseline (climate)</td><td>1 realization, 2020–2021</td><td><a href="https://registry.opendata.aws/" target="_blank">Google Cloud (requester pays)</a></td></tr>
+        <tr><td>RAOBCORE V1.9</td><td>Tropical temperature trend reference</td><td>Radiosonde corrections, global tropics</td><td><a href="https://webdata.wolke.img.univie.ac.at/haimberger/v1.9/" target="_blank">Universität Wien</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: ERA5 training period is approximately 1979–2019 (~40 years of data as stated in the text); exact year range is inferred from the paper's description and not stated as a precise date range for training. All volumes are taken verbatim from the article's data section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Differentiable dynamical core (Dinosaur):</b> solves the hydrostatic primitive equations with moisture using horizontal pseudo-spectral discretization and vertical sigma coordinates in JAX, enabling automatic differentiation throughout the solver.</li>
+      <li><b>Learned physics module (neural parameterization):</b> a fully connected neural network with residual connections operating on single atmospheric columns predicts the tendencies of unresolved processes (clouds, radiation, precipitation, subgrid dynamics), with weights shared across all columns globally.</li>
+      <li><b>End-to-end online training:</b> gradients flow back through hundreds of simulation steps (up to 5-day rollouts) so that neural-network parameterizations are optimized in the context of their interaction with the governing equations — resolving the instability and climate-drift problems of offline-trained hybrids.</li>
+      <li><b>Multi-objective loss for deterministic models:</b> combination of (1) mean-squared error in spherical-harmonics basis with progressive high-wavenumber filtering at longer lead times, (2) total-wavenumber spectrum matching loss, and (3) bias-penalizing mean amplitude loss.</li>
+      <li><b>Stochastic ensemble extension (NeuralGCM-ENS):</b> random Gaussian fields with learned spatial/temporal correlation are injected into the encoder and physics module; trained with a CRPS loss over 6-hour to 5-day rollouts generating two ensemble members per forecast.</li>
+      <li><b>Encoder/decoder architecture:</b> learned linear interpolation between ERA5 pressure coordinates and the model's internal sigma coordinates, with additional learned corrections that suppress initialization shock from gravity waves.</li>
+      <li><b>Evaluation framework:</b> WeatherBench2 benchmark — RMSE, RMSB, CRPS, and spread-skill ratio computed on a 1.5° grid over 732 held-out 2020 forecasts; tropical cyclone tracking via TempestExtremes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig1.png" target="_blank">
+        <img src="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig1.png" alt="Fig.1 Structure of the NeuralGCM model" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> NeuralGCM architecture — the differentiable dynamical core feeds into the learned physics module; the full pipeline from ERA5 encoding through ODE time-stepping to decoded predictions.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig2.png" target="_blank">
+        <img src="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig2.png" alt="Fig.2 Weather forecasting accuracy scores" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Weather forecast skill (RMSE, RMSB, CRPS, spread-skill ratio) comparing NeuralGCM variants against ECMWF-HRES, ECMWF-ENS, GraphCast, and Pangu across lead times and variables.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig3.png" target="_blank">
+        <img src="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig3.png" alt="Fig.3 Case study medium-range forecast Hurricane Laura" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Case study of Hurricane Laura (2020-08-22) — specific humidity at 700 hPa for 1-, 5-, and 10-day forecasts, plus ensemble member tracks from all 50 NeuralGCM-ENS members.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig4.png" target="_blank">
+        <img src="assets/neural-general-circulation-models-for-weather-and-climate__s41586-024-07744-y/fig4.png" alt="Fig.4 Climate simulation with NeuralGCM" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Climate simulation results — global mean temperature seasonality, 40-year AMIP trends vs. CMIP6, tropical temperature bias profiles, tropical cyclone tracks, and precipitable water bias.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 Extended Data Table (resource requirements for NeuralGCM variants on Google Cloud TPUs); 0 main-text tables. Extended data includes 8 additional figures; Supplementary Information contains 38 figures and 6 tables.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, health geography, urban analytics).</p>
+
+    <div class="idea">
+      <h3>① Downscale NeuralGCM output to neighborhood-scale urban climate for health exposure mapping</h3>
+      <p><span class="lab paper">Extending this paper</span>NeuralGCM's coarsest operational resolution is 1.4°–2.8° (~140–300 km), sufficient for climate indices but far too coarse for urban heat island characterization or hyper-local air-quality attribution. A direct extension: couple NeuralGCM's global outputs with the generative downscaling framework proposed in the corpus — using score-based diffusion or conditional normalizing flows to produce probabilistic sub-kilometer fields. This would preserve NeuralGCM's physical consistency while adapting it to the high-resolution demands needed for urban environmental health studies, which the paper itself identifies as a future direction.</p>
+      <p><span class="lab mine">Added value to my research</span>For my health geography and urban analytics work, neighborhood-scale temperature and humidity fields derived from NeuralGCM could serve as continuous environmental exposure covariates in 2SFCA/R2SFCA accessibility models (replacing coarse interpolated station data) and in spatiotemporal kernel density estimation of heat-related health outcomes — enabling climate-sensitive facility-planning at the city block scale.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast, scale-adaptive and uncertainty-aware downscaling of Earth system model fields with generative machine learning — <a href="https://doi.org/10.1038/s42256-025-00980-5" target="_blank">10.1038/s42256-025-00980-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace NeuralGCM's single-column physics with a spatial graph neural network to capture mesoscale interactions</h3>
+      <p><span class="lab paper">Extending this paper</span>NeuralGCM's learned physics module operates column-by-column with no direct lateral information exchange between adjacent columns — mesoscale horizontal interactions are handled entirely by the dynamical core spectral solver. An extension: replace the fully connected single-column network with a <strong>graph neural network</strong> operating on the icosahedral atmospheric graph (as in GraphCast), allowing the physics parameterization to learn from neighboring columns. This directly addresses NeuralGCM's acknowledged weakness of blurrier small-scale predictions compared to ECMWF-HRES, and is architecturally consistent with the paper's open-ended call for more advanced machine-learning architectures.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a natural entry point for my physics-informed graph learning agenda: encoding geophysical conservation laws (moisture budget, energy balance) as soft constraints into the GNN parameterization module provides a template for how I can bake domain knowledge into GeoAI graph architectures for spatiotemporal prediction tasks — for instance, spatiotemporal epidemic spread constrained by mobility flux conservation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Automating turbulence modelling by multi-agent reinforcement learning — <a href="https://doi.org/10.1038/s42256-020-00272-0" target="_blank">10.1038/s42256-020-00272-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend NeuralGCM's ensemble calibration framework to probabilistic forecasting of climate-sensitive health events</h3>
+      <p><span class="lab paper">Extending this paper</span>NeuralGCM-ENS achieves a spread-skill ratio near 1 and lower CRPS than ECMWF-ENS through a novel stochastic injection mechanism trained with CRPS loss — but this evaluation is restricted to standard meteorological variables. A substantive extension: couple NeuralGCM-ENS with a downstream epidemiological or health-outcome module (vector-borne disease risk, respiratory hospitalization rates) and optimize the <strong>joint</strong> calibration of atmospheric and health-outcome ensembles end-to-end. The corpus paper on probabilistic weather forecasting with machine learning provides the epistemic uncertainty quantification methods needed to propagate forecast uncertainty through nonlinear health-impact functions.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on telehealth digital divides and healthcare accessibility is increasingly intersecting with climate resilience: knowing the calibrated probability distribution of extreme heat or flood events 7–15 days ahead, at spatial scales relevant to health catchment areas, would allow dynamic adjustment of service-area delineations in my R2SFCA models — shifting from static to climate-aware accessibility metrics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Probabilistic weather forecasting with machine learning — <a href="https://doi.org/10.1038/s41586-024-08252-9" target="_blank">10.1038/s41586-024-08252-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply NeuralGCM's effective-dynamics learning strategy to coarse-graining spatiotemporal urban models</h3>
+      <p><span class="lab paper">Extending this paper</span>NeuralGCM's core innovation — training a neural parameterization to represent subgrid processes within a coarse-resolution solver using gradients that flow through the solver itself — is an instance of the general "learning effective dynamics" paradigm for multiscale systems. Extending this principle: apply the same online end-to-end training strategy to <strong>coarse-resolution urban mobility or disease-spread models</strong> where subgrid heterogeneity (individual trip decisions, localized transmission) is currently represented by hand-tuned parameters. The corpus paper on multiscale simulation by learning effective dynamics shows this generalizes to molecular and hydrodynamic systems; NeuralGCM is its atmospheric instance.</p>
+      <p><span class="lab mine">Added value to my research</span>For my spatiotemporal modeling of COVID-19 or other infectious diseases, online-trained subgrid parameterizations could replace the fixed SIR compartment rates I currently use with learned rates conditioned on local spatial context — producing physically stable yet data-driven disease-spread simulators at scale, much as NeuralGCM stabilizes decades-long atmospheric runs from short-term training.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiscale simulations of complex systems by learning their effective dynamics — <a href="https://doi.org/10.1038/s42256-022-00464-w" target="_blank">10.1038/s42256-022-00464-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use NeuralGCM's decadal climate outputs as dynamic covariates for long-horizon urban growth and land-use prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>NeuralGCM runs stable, physics-consistent AMIP simulations for 40 years at 2.8° resolution, producing climatological fields (temperature, precipitation, circulation patterns, tropical cyclone tracks) with less spatial bias than CMIP6 models. These outputs are not yet exploited for downstream terrestrial or socioeconomic projections. A paper extension: feed 40-year NeuralGCM ensembles into an agent-based urban-growth model as forcing climate variables, providing the first hybrid neural-GCM-driven urban sprawl and land-use scenario analysis — closing the loop between atmospheric simulation and human geography.</p>
+      <p><span class="lab mine">Added value to my research</span>In my urban analytics work on job-housing networks, public-facility accessibility, and healthy cities, long-term climate trajectories constrain where infrastructure investment is viable over 20–30 year planning horizons. NeuralGCM's computationally cheap ensemble (orders-of-magnitude faster than CMIP6) makes it practical to run Monte Carlo scenarios of climate-driven population shift and simulate resulting changes in healthcare or green-space accessibility — integrating atmospheric and urban systems in a unified GeoAI pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning the coupled dynamics of global climate modes — <a href="https://doi.org/10.1038/s42256-026-01245-5" target="_blank">10.1038/s42256-026-01245-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>
