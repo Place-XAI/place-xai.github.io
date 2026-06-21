@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decoding omics via representation learning — AI Digest</title>
+<meta name="description" content="AI Digest: Decoding omics via representation learning (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Representation learning</span>
+      <span class="tag">Autoencoders</span>
+      <span class="tag">Multi-omics</span>
+      <span class="tag">Benchmarking</span>
+    </div>
+    <h1>Decoding omics via representation learning</h1>
+    <div class="meta">
+      <span class="authors">Wang, Dinghao · Zhang, Qingrun</span>
+      <span><b>Published</b> 2025-12-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00909-3" target="_blank">10.1038/s43588-025-00909-3</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00909-3" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The AUTOENCODIX framework provides a <strong>standardized, open-source benchmark</strong> for training, comparing, and visualizing diverse autoencoder architectures on biological multi-omics data. By unifying everything from raw preprocessing to latent-space visualization and downstream prediction, it <strong>lowers the technical barriers</strong> that have prevented autoencoders from becoming routine bioinformatics tools. Critically, architectures embedding <strong>prior biological knowledge</strong> — such as ontology-guided and cross-modal models — produce interpretable latent representations tied directly to known pathways, bridging complex ML outputs and actionable biological insight.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Standardization for a fragmented field.</b> Autoencoder implementations have historically been custom-built per project, making cross-study comparisons nearly impossible. AUTOENCODIX installs a common benchmarking ground that all researchers can adopt, cite, and build upon.</li>
+      <li><b>Reproducibility as infrastructure.</b> The framework documents every choice — preprocessing, architecture selection, hyperparameters — creating a reproducible audit trail for biological discovery rather than a one-off analysis.</li>
+      <li><b>Architecture-agnostic benchmarking.</b> Researchers can now systematically compare vanilla autoencoders, variational autoencoders (VAEs), ontology-guided models, and cross-modal designs within a single workflow, surfacing concrete trade-offs between reconstruction fidelity, interpretability, and predictive performance.</li>
+      <li><b>Biological interpretability built in.</b> Ontology-based architectures embed prior pathway knowledge so that latent nodes correspond to known biological mechanisms — a step beyond black-box compression that enables direct translation to wet-lab hypotheses.</li>
+      <li><b>Opens multi-omics integration at scale.</b> Applied to large-scale cancer genomics (referencing TCGA), single-cell measurements, and cross-modal data combinations, the framework directly addresses one of the central bottlenecks in precision medicine.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Platform-type contribution at field scale:</b> AUTOENCODIX is infrastructure, not just an analysis — an open, extensible tool that shifts community practice, matching Nature Computational Science's appetite for methods that create lasting impact.</li>
+      <li><b>Interdisciplinary bridge:</b> the framework spans ML architecture design, biological pathway knowledge, and clinical data integration, reflecting the journal's cross-disciplinary remit between computer science and life sciences.</li>
+      <li><b>Reproducibility-first positioning:</b> explicit standardization and documentation of all choices directly addresses the reproducibility crisis in computational biology, a topic the journal actively champions.</li>
+      <li><b>Forward-looking scope:</b> the commentary explicitly anticipates large-scale pre-trained foundation models for single-cell data as the next step, positioning AUTOENCODIX as the benchmarking substrate for that emerging research direction.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary data</dt><dd>The companion AUTOENCODIX software paper (Joas et al., Nat. Comput. Sci., 2025; doi: 10.1038/s43588-025-00916-4) applies the framework to <strong>large-scale cancer genomics</strong> (referencing <strong>TCGA</strong> — The Cancer Genome Atlas, Weinstein et al., Nat. Genet. 2013), <strong>single-cell measurements</strong>, and <strong>multi-modal molecular combinations</strong>. Specific accession IDs and exact sample counts are in the primary software paper, not in this News &amp; Views commentary.</dd>
+      <dt>Data types covered</dt><dd>Gene expression, protein abundance, imaging-based molecular profiling (cell painting; Haghighi et al., Nat. Methods 2022), and cross-modal combinations of heterogeneous omics layers spanning multiple cancer types and cell populations.</dd>
+      <dt>Benchmark scope</dt><dd>Multiple biological problem types demonstrated: cancer subtype discovery, single-cell clustering, cross-modal prediction (using one omics type to predict another). Exact number of benchmarked datasets not stated in this commentary.</dd>
+      <dt>Code availability</dt><dd>AUTOENCODIX is <strong>open-source</strong>; implementation provided in the primary paper (10.1038/s43588-025-00916-4). No direct GitHub URL specified in this commentary.</dd>
+      <dt>Time window</dt><dd>Commentary published December 2025; referenced data sources span 2013–2025 (TCGA 2013, Cell Painting 2022, multi-omics benchmarks 2022–2025).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TCGA (The Cancer Genome Atlas)</td><td>Large-scale cancer genomics benchmark</td><td>Multi-cancer, multi-omics; exact sample count in primary paper</td><td><a href="https://www.cancer.gov/tcga" target="_blank">cancer.gov/tcga</a></td></tr>
+        <tr><td>Cell Painting / morphological profiling</td><td>Imaging-based molecular profiling example</td><td>Referenced via Haghighi et al. 2022; scope not specified in commentary</td><td><a href="https://doi.org/10.1038/s41592-022-01667-0" target="_blank">Nat. Methods 2022</a></td></tr>
+        <tr><td>Single-cell RNA-seq / multi-omics</td><td>Single-cell clustering and cross-modal use cases</td><td>Unspecified in commentary; see primary AUTOENCODIX paper</td><td><a href="https://doi.org/10.1038/s43588-025-00916-4" target="_blank">AUTOENCODIX paper</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this is a News &amp; Views commentary. Specific dataset accession numbers, exact sample counts, and repository URLs are found in the primary AUTOENCODIX methods paper (doi: 10.1038/s43588-025-00916-4), not here. Entries above are taken verbatim from references cited in the commentary text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Autoencoder architectures benchmarked:</b> vanilla autoencoders (linear baseline for interpretability), variational autoencoders (VAEs for generative modeling), ontology-guided autoencoders (embedding prior biological pathway structure as architectural constraints), and cross-modal autoencoders (predicting one data modality from another).</li>
+      <li><b>Standardized end-to-end workflow:</b> raw data preprocessing → architecture selection and configuration → model training with built-in hyperparameter optimization → systematic evaluation (reconstruction quality, downstream predictive performance) → latent-space visualization.</li>
+      <li><b>Benchmarking protocol:</b> systematic multi-architecture comparison on the same datasets, measuring reconstruction fidelity, clustering quality, and downstream task performance to enable principled architecture selection.</li>
+      <li><b>Latent-space interpretation:</b> dimensionality reduction of compressed representations for visualization; ontology-based models produce latent nodes aligned with known biological pathways, enabling mechanistic interpretation of the learned representations.</li>
+      <li><b>Downstream tasks:</b> patient subgroup discovery (unsupervised clustering), disease type / outcome prediction (supervised classification and regression), and cross-modal transfer (predicting one omics type from another).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/decoding-omics-via-representation-learning__s43588-025-00909-3/fig1.png" target="_blank">
+        <img src="assets/decoding-omics-via-representation-learning__s43588-025-00909-3/fig1.png" alt="Fig.1 Overview of AUTOENCODIX" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of AUTOENCODIX: (a) multiple autoencoder architectures available as candidate designs; (b) tools to train, compare, and visualize candidates enabling prioritization of the most suitable design; (c) the resulting model applied to clustering, prediction, and interpretation of biological omics data.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). This is a News &amp; Views commentary with one schematic overview figure; detailed benchmarking results and tables appear in the primary AUTOENCODIX paper (10.1038/s43588-025-00916-4).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, 2SFCA/R2SFCA accessibility, multi-source data fusion, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Transfer AUTOENCODIX's benchmarking philosophy to geospatial representation learning</h3>
+      <p><span class="lab paper">Extending this paper</span>AUTOENCODIX demonstrates that a standardized, architecture-agnostic benchmarking harness can unlock a field held back by fragmented implementations. The same fragmentation afflicts <strong>geospatial deep learning</strong>: remote sensing encoders, street-view embeddings, mobility trajectory autoencoders, and POI representation models are all custom-built, incomparable, and unreproducible across studies. A direct extension of AUTOENCODIX's philosophy would create a "GeoEncodix" framework benchmarking geospatial autoencoder variants — spatial VAEs, graph autoencoders, spatiotemporal autoencoders for trajectories — with a unified preprocessing-to-evaluation pipeline. The corpus paper on integrative deep learning of spatial multi-omics with SWITCH offers a conceptual bridge, as it applies the same "integrate heterogeneous spatial layers" logic to tissue biology that GeoEncodix would apply to urban geography.</p>
+      <p><span class="lab mine">Added value to my research</span>For my work fine-tuning geospatial foundation models and fusing multi-source data (mobile-phone, social-media, remote-sensing, POIs), a standardized benchmarking framework would resolve the current inability to systematically compare GeoAI encoder architectures across modalities — producing reproducible geospatial representation quality scores analogous to AUTOENCODIX's biological benchmarks, and establishing which architecture best preserves spatial autocorrelation in the latent space.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrative deep learning of spatial multi-omics with SWITCH — <a href="https://doi.org/10.1038/s43588-025-00891-w" target="_blank">10.1038/s43588-025-00891-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Inject geographic prior knowledge into latent spaces the way AUTOENCODIX injects biological ontologies</h3>
+      <p><span class="lab paper">Extending this paper</span>AUTOENCODIX's most distinctive architectural contribution is the <strong>ontology-guided autoencoder</strong> that constrains latent nodes to correspond to known biological pathways, producing interpretable representations. An extension would ask whether analogous <strong>geography-guided autoencoders</strong> can be constructed — where latent dimensions are constrained to correspond to known spatial processes (accessibility zones, urban density gradients, catchment areas) rather than learned freely. This would convert the latent space from an opaque compressed representation into one where each dimension maps to an interpretable geographic concept. The corpus paper on multimodal foundation models in molecular cell biology explores precisely this idea of structured latent priors at large scale.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps directly to my physics-informed graph learning agenda: encode <strong>spatial network topology and accessibility constraints</strong> (from 2SFCA service areas, street graphs, catchment hierarchies) as architectural priors in a spatiotemporal autoencoder. The resulting latent space would have interpretable geospatial meaning, enabling explainable ML for spatial health prediction where each latent feature connects directly to a named geographic process — the spatial analogue of AUTOENCODIX's pathway-aligned nodes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Towards multimodal foundation models in molecular cell biology — <a href="https://doi.org/10.1038/s41586-025-08710-y" target="_blank">10.1038/s41586-025-08710-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend AUTOENCODIX cross-modal learning to spatial health data fusion across heterogeneous urban sources</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies <strong>cross-modal learning</strong> as a high-potential but underdemonstrated capability, noting that "demonstrations so far remain synthetic." A concrete extension would apply AUTOENCODIX cross-modal autoencoders to real paired omics datasets — predicting proteomics from transcriptomics, or imaging phenotypes from genomics — and quantify how much predictive gain comes from the shared latent space versus architecture-specific inductive biases. The corpus paper on predicting drug responses of unseen cell types via transfer learning provides a natural testbed: it demands exactly this kind of cross-modal generalization across cell types not seen during training.</p>
+      <p><span class="lab mine">Added value to my research</span>In my multi-source data fusion work integrating mobile-phone, social-media, remote-sensing, and census data, the cross-modal autoencoder paradigm offers a principled way to learn <strong>shared latent representations</strong> across modalities with very different statistical properties. This would enable transfer of spatial patterns learned from GPS trajectories to domains where only a proxy is available (e.g., social media check-ins), directly improving health accessibility prediction under data scarcity — the urban-geography analogue of predicting drug responses for unseen cell types.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use AUTOENCODIX-style hierarchical compression to tackle high-dimensional spatiotemporal health data</h3>
+      <p><span class="lab paper">Extending this paper</span>AUTOENCODIX is demonstrated on single-cell omics where the challenge is compressing thousands of gene-expression dimensions into a biologically coherent low-dimensional space without losing cluster structure. The corpus paper on fast and precise single-cell analysis via hierarchical autoencoder provides a complementary architecture: hierarchical compression that preserves cluster hierarchy at multiple scales while handling millions of cells. Incorporating hierarchical autoencoder designs into AUTOENCODIX's benchmarking suite — and testing whether they outperform flat VAEs on rare subtype detection under data scarcity — would directly address the overfitting concern the commentary flags as the most pressing open problem.</p>
+      <p><span class="lab mine">Added value to my research</span>High-dimensional spatiotemporal health data — fine-grained mobility trajectories across thousands of geographic units, or multi-week telehealth usage patterns across census tracts — faces the exact same curse of dimensionality. Hierarchical autoencoders that preserve clustering structure at multiple geographic scales could improve my spatiotemporal kernel density estimation and spatial entropy analysis of health-access patterns, producing compressed area-level health signatures that remain interpretable at the neighborhood, district, and city scale simultaneously.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast and precise single-cell data analysis using a hierarchical autoencoder — <a href="https://doi.org/10.1038/s41467-021-21312-2" target="_blank">10.1038/s41467-021-21312-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Build a neighborhood health-access atlas using AUTOENCODIX-style learned representations for policy retrieval</h3>
+      <p><span class="lab paper">Extending this paper</span>The commentary envisions AUTOENCODIX as a stepping stone toward large-scale pre-trained foundation models for biology. The corpus paper on a cell atlas foundation model for scalable search of similar human cells realizes this vision for single-cell biology: learned cell embeddings enable instant retrieval of similar cells across a massive atlas at query time. An extension of AUTOENCODIX would train a pan-cancer omics encoder across all public TCGA/GEO datasets, producing a molecular atlas where a new patient's profile can be compared against thousands of reference profiles — transforming AUTOENCODIX from a benchmarking tool into a <strong>retrieval engine for precision oncology</strong>.</p>
+      <p><span class="lab mine">Added value to my research</span>The atlas-retrieval paradigm translates directly to urban health geography: encode thousands of census tracts as latent health-access profiles (fusing telehealth usage, POI accessibility scores from R2SFCA, mobile-phone activity, and demographics), then retrieve the most similar neighborhoods at query time to support <strong>spatial policy transfer</strong> — identifying which past interventions succeeded in analogous spatial contexts and predicting their effectiveness in a target area. This would be a novel GeoAI capability combining my explainable ML, accessibility, and data fusion themes into a single retrievable neighborhood health atlas.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A cell atlas foundation model for scalable search of similar human cells — <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

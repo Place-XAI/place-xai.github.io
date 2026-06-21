@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple nearest-neighbour analysis meets the accuracy of compound potency predictions — AI Digest</title>
+<meta name="description" content="AI Digest: Simple nearest-neighbour analysis meets the accuracy of compound potency predictions using complex machine learning models (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Benchmark critique</span>
+      <span class="tag">Potency prediction</span>
+      <span class="tag">Cheminformatics</span>
+      <span class="tag">Drug discovery ML</span>
+    </div>
+    <h1>Simple nearest-neighbour analysis meets the accuracy of compound potency predictions using complex machine learning models</h1>
+    <div class="meta">
+      <span class="authors">Tiago Janela · Jürgen Bajorath</span>
+      <span><b>Published</b> 2022-12-14</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00581-6" target="_blank">10.1038/s42256-022-00581-6</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00581-6" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Across ten pharmaceutical activity classes (totalling 13,444 compounds from ChEMBL), a simple <strong>k-nearest-neighbour (kNN) analysis</strong> consistently matched or exceeded the prediction accuracy of support vector regression, random forests, deep neural networks, and graph convolutional networks. More strikingly, <strong>completely random predictions</strong> reproduce experimental potency values to within one order of magnitude — an artefact of the narrow potency-value distributions inherent in standard benchmark data sets. These findings reveal a <strong>fundamental flaw in conventional benchmarking</strong>: the gap between the best ML model and a random predictor is only ~0.5 MAE (log units), making it nearly impossible to credibly demonstrate model superiority. The authors call for simple kNN baselines and alternative benchmark criteria that target structurally unique and highly potent compounds.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Challenges a decade of reported ML "progress" in drug discovery.</b> The standard benchmarking practice has systematically overestimated the value of increasingly complex models; kNN is an adequate baseline that is almost never reported.</li>
+      <li><b>Identifies a data-distribution artefact as the root cause.</b> Potency distributions in medicinal-chemistry libraries cluster in the micromolar-to-high-nanomolar range, ensuring that even random predictions stay within one order of magnitude — a structural problem, not a model-quality signal.</li>
+      <li><b>Provides concrete, actionable benchmark reforms.</b> Using hold-out sets of structurally unique or most potent compounds, and reporting kNN alongside any new model, are feasible changes that would make benchmark scores meaningful again.</li>
+      <li><b>Generalizes beyond drug discovery.</b> The logic — that baseline simplicity is underestimated and data distributions distort apparent accuracy — applies to any supervised regression task on structured chemical or property data.</li>
+      <li><b>Open, reproducible science.</b> All data and code are freely available (GitHub + Zenodo), enabling community replication and extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Field-wide methodological critique, not a narrow algorithmic contribution:</b> reframes how the entire sub-field evaluates ML performance — high-impact perspective that fits NMI's appetite for work that redirects a research community.</li>
+      <li><b>Rigorous, reproducible empirical analysis:</b> hundreds of independent prediction trials across ten activity classes using five model families, with open data and code — credible basis for a strong claim.</li>
+      <li><b>Counterintuitive, well-evidenced finding:</b> that simpler is consistently better, and that randomness mimics accuracy — exactly the kind of surprising result NMI seeks to publish.</li>
+      <li><b>High translational relevance:</b> implications for drug-discovery practice, benchmark design, and reporting norms in the entire computational chemistry community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary database</dt><dd><strong>ChEMBL version 30</strong> — bioactivity data repository. Compounds with direct human-target interactions at confidence score 9, IC<sub>50</sub> values with standard relation '=', molecular weight &lt;1,000 Da, pIC<sub>50</sub> in range 5–11, with exclusion of potential assay-interference compounds.</dd>
+      <dt>Activity classes</dt><dd>Ten randomly selected classes, each with ≥1,000 qualifying compounds; total <strong>13,444 compounds</strong> across popular pharmaceutical targets (exact target IDs listed in Table 1 of the paper).</dd>
+      <dt>Training/test split</dt><dd>Original sets: 80% training / 20% test. Size-reduced sets: 20% training / 5% test. Diverse sets: 20% training selected by MaxMin dissimilarity algorithm.</dd>
+      <dt>Analogue series</dt><dd>Compound–core relationship algorithm applied to each activity class to identify structural analogue series; largest series per class used as a structurally unique hold-out set.</dd>
+      <dt>Independent replication</dt><dd>Sakai et al. GCN predictions for nine of the ten activity classes used as an independent comparison point (larger training sets, no confidence criteria filtering — yet results were concordant).</dd>
+      <dt>Code &amp; data availability</dt><dd>GitHub: <a href="https://github.com/TiagoJanela/ML-for-compound-potency-prediction" target="_blank">TiagoJanela/ML-for-compound-potency-prediction</a>; Zenodo: <a href="https://doi.org/10.5281/zenodo.7238586" target="_blank">10.5281/zenodo.7238586</a>. Source data (XLSX) provided for all five main figures and four extended-data figures.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ChEMBL v30</td><td>Compound activity classes (IC<sub>50</sub> data)</td><td>13,444 compounds across 10 classes (≥1,000 per class)</td><td><a href="https://www.ebi.ac.uk/chembl/" target="_blank">ebi.ac.uk/chembl</a></td></tr>
+        <tr><td>ECFP4 fingerprints (RDKit)</td><td>Molecular representation for kNN, SVR, DNN</td><td>Folded 2,048-bit vectors for all 13,444 compounds</td><td><a href="http://www.rdkit.org/" target="_blank">rdkit.org</a></td></tr>
+        <tr><td>DeepChem atom features</td><td>Molecular graph representation for GCN</td><td>75 atom-level features per compound</td><td><a href="https://deepchem.io/" target="_blank">deepchem.io</a></td></tr>
+        <tr><td>GitHub / Zenodo repository</td><td>All preprocessed data sets and calculation code</td><td>Full data for all ten activity classes</td><td><a href="https://github.com/TiagoJanela/ML-for-compound-potency-prediction" target="_blank">GitHub</a> · <a href="https://doi.org/10.5281/zenodo.7238586" target="_blank">Zenodo</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper does not report exact per-class compound counts individually in the abstract; Table 1 in the original article lists full composition. The 13,444 total is stated explicitly in the Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>k-Nearest Neighbour (kNN) regression:</b> non-parametric baseline; potency of a test compound assigned as the average pIC<sub>50</sub> of its 1, 3, or 5 most similar training compounds (Tanimoto similarity on ECFP4). Best k selected per class.</li>
+      <li><b>Support Vector Regression (SVR):</b> Tanimoto kernel; cost parameter C optimized over 7 values (0.001–1,000) via 10-fold cross-validation; implemented in scikit-learn.</li>
+      <li><b>Random Forest Regression (RFR):</b> ensemble of decision trees; grid search over number of trees (25/100/200) and leaf/split parameters; scikit-learn.</li>
+      <li><b>Deep Neural Network (DNN):</b> feedforward network with 2–3 hidden layers (100–500 neurons); Adam optimizer; tanh/ReLU activations; 200 epochs with early stopping; TensorFlow/Keras.</li>
+      <li><b>Graph Convolutional Network (GCN):</b> two convolutional layers; channel width up to 1,024; learned molecular graph representation (neural fingerprint); DeepChem; batch normalization, early stopping.</li>
+      <li><b>Median Regressor (MR):</b> constant baseline assigning training-set median potency to every test compound — establishes the floor of "pseudoaccuracy."</li>
+      <li><b>Randomized model controls:</b> y-randomization (potency values randomly shuffled across compounds before training) applied to kNN and SVR to establish the true random prediction floor.</li>
+      <li><b>Evaluation:</b> Mean Absolute Error (MAE) and Root Mean Square Error (RMSE) across 10 independent trials per model per class; statistical significance via Wilcoxon test (α = 0.05).</li>
+      <li><b>Analogue-series clustering:</b> compound–core relationship algorithm for structurally unique hold-out sets; MaxMin dissimilarity algorithm (Tanimoto on ECFP4) for diverse training sets.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig1.png" target="_blank">
+        <img src="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig1.png" alt="Fig. 1: Potency value distributions of activity classes" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Potency value (pIC<sub>50</sub>) distributions for the ten activity classes — density plot and violin plots showing the narrow, overlapping distribution that enables pseudoaccuracy.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig2.png" target="_blank">
+        <img src="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig2.png" alt="Fig. 2: Prediction accuracy (MAE) across all models and training set sizes" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> MAE boxplots for kNN, SVR, RFR, DNN, GCN and MR across full and size-reduced training sets — kNN consistently matches or beats complex ML models.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig3.png" target="_blank">
+        <img src="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig3.png" alt="Fig. 3: Prediction accuracy for unique hold-out sets" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> MAE for structurally unique cluster hold-out sets — the most stringent test; models remain broadly comparable except two extreme outlier classes.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig4.png" target="_blank">
+        <img src="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig4.png" alt="Fig. 4: Prediction accuracy for most potent compounds" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> MAE for extrapolative prediction of the most potent 10% of compounds — only 2 of 10 classes show DNN advantage; kNN remains competitive.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig5.png" target="_blank">
+        <img src="assets/simple-nearest-neighbour-analysis-meets-the-accuracy-of-compound-potency-predictions-using__s42256-022-00581-6/fig5.png" alt="Fig. 5: Performance of random prediction models" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Fully randomized kNN and SVR versus MR — random models yield ~0.8–1.0 MAE, only ~0.5 MAE worse than best models, revealing the pseudoaccuracy ceiling.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — activity class composition and GCN comparison with Sakai et al.); 1 supplementary table (Supplementary Table 1 — Wilcoxon test p-values). Four extended-data figures report equivalent RMSE results.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed spatial ML, spatiotemporal prediction).</p>
+
+    <div class="idea">
+      <h3>① Apply the paper's "kNN-as-ceiling" test to geospatial property prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central finding — that kNN matches complex ML in potency prediction — was demonstrated exclusively in chemical space. A direct extension would test whether this pattern generalizes to <strong>other high-dimensional property prediction tasks</strong>, particularly those where the training distribution is similarly narrow. Graph-based molecular property prediction (GCN) is topologically analogous to graph-based spatial prediction; the same structural argument (similar nodes have similar labels, dominating benchmark accuracy) applies. Running the paper's exact experimental protocol on a different domain's benchmark datasets — e.g., protein–ligand binding affinities — would determine whether the pseudoaccuracy artefact is universal or domain-specific.</p>
+      <p><span class="lab mine">Added value to my research</span>This reasoning transfers directly to <strong>geospatial regression benchmarks</strong>: in spatiotemporal prediction (air quality, disease rates, housing prices), nearby observations tend to have similar values, so spatial kNN (using geographic neighbours) likely performs on par with complex GNNs. Before claiming any GeoAI model outperforms baselines, I should include a geographic-kNN control — the same discipline this paper advocates for chemistry.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace the potency-distribution benchmark flaw with activity-cliff-aware evaluation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies that narrow potency distributions are the root cause of pseudoaccuracy, and proposes hold-out sets of structurally unique and most potent compounds as a partial fix. A natural extension is a fully <strong>activity-cliff-stratified benchmark</strong>: partition compounds into cliff-forming pairs (large potency difference, high structural similarity) and non-cliff pairs, and report MAE separately for each stratum. This would isolate whether any complex model — DNN, GCN, or learned molecular representations — provides genuine advantage specifically on the difficult, high-discontinuity examples the paper acknowledges are underrepresented.</p>
+      <p><span class="lab mine">Added value to my research</span>The "activity cliff" concept maps to <strong>spatial outlier detection</strong> in GeoAI: locations where spatially similar contexts yield dramatically different outcomes (e.g., two adjacent neighborhoods with very different health outcomes). My explainable ML workflow should explicitly stratify evaluation into spatially smooth and spatially discontinuous strata — reporting SHAP-based feature attribution only for the hard (discontinuous) cases where the model actually needs to generalize.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular deep learning at the edge of chemical space — <a href="https://doi.org/10.1038/s42256-026-01216-w" target="_blank">10.1038/s42256-026-01216-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Probe whether learned molecular representations break the kNN ceiling</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper tests ECFP4-based kNN (hand-crafted fingerprints) against DNN and GCN with learned representations, finding no advantage for the latter. However, it predates self-supervised <strong>molecular contrastive pre-training</strong>, which encodes chemical space geometry from unlabelled data. An extension: replace ECFP4 with a contrastively pre-trained embedding and rerun the paper's exact kNN benchmark. If contrastive embeddings dramatically close the kNN ceiling (i.e., kNN in a better space yields much lower MAE), the paper's conclusion shifts: the problem is not model architecture complexity, but <em>representation quality</em>. This is a precise, testable hypothesis anchored directly to the paper's protocol.</p>
+      <p><span class="lab mine">Added value to my research</span>This tests a hypothesis relevant to <strong>geospatial foundation model fine-tuning</strong>: if I replace hand-crafted spatial features (POI counts, road density) with embeddings from a pre-trained geospatial model, does kNN in that representation space already achieve strong accuracy before any task-specific model is trained? If yes, my fine-tuning effort should focus on the embedding, not the prediction head.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Link the paper's y-randomization results to out-of-distribution generalization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that y-randomized models achieve ~0.8–1.0 MAE — nearly indistinguishable from best models. A mechanistic extension: examine <strong>what the model has actually learned</strong> (or failed to learn) by coupling y-randomization analysis with chemical-space coverage metrics. Specifically, models trained on randomized labels but evaluated on nearby (in-distribution) test compounds benefit from the same proximity effect as kNN. Extending to <strong>out-of-distribution (OOD) test sets</strong> — compounds from different chemical series, scaffolds, or potency bins than the training set — would reveal whether complex models carry any genuine structural learning advantage when proximity to training data cannot rescue the prediction.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial analogue: in GeoAI, <strong>spatial autocorrelation inflates benchmark accuracy</strong> just as potency autocorrelation does in chemistry. My spatiotemporal kernel density and MGWR models trained on nearby training points perform well not because of model capacity but because of spatial proximity. Adopting a <strong>spatial cross-validation</strong> protocol (buffered LOO or blocked k-fold by geographic region) is the direct GeoAI equivalent of the paper's OOD hold-out — and would be more honest.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Navigating molecular OOD-ness — <a href="https://doi.org/10.1038/s42256-026-01251-7" target="_blank">10.1038/s42256-026-01251-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use the paper's benchmark reform proposals to design a principled ML evaluation framework for accessibility prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper recommends two concrete benchmark reforms: (1) always include kNN as a reference model, and (2) design hold-out sets that oversample the hardest prediction targets (structurally unique and highest-potency compounds). Applied back to molecular property prediction, this implies a <strong>benchmark meta-standard</strong> — a checklist of required baselines and data splits that any paper claiming superior ML performance must satisfy. Building such a meta-standard (analogous to the CASP competition in protein structure) and applying it to generative molecular design would directly operationalize the paper's call to action.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>healthcare accessibility prediction</strong> (2SFCA, spatial ML for service-area delineation) suffers the same problem: most studies benchmark on spatially clustered test sets where spatial kNN trivially succeeds. Adopting the paper's discipline — reporting spatial kNN accuracy first, then demonstrating incremental ML gain on geographically isolated test areas — would make my accessibility model claims defensible and publishable in high-impact venues that demand rigorous baseline comparisons.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

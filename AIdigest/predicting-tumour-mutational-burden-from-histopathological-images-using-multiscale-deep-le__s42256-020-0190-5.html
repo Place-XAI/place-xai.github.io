@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting tumour mutational burden from histopathological images using multiscale deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Predicting tumour mutational burden from histopathological images using multiscale deep learning (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Computational oncology</span>
+      <span class="tag">Histopathology AI</span>
+      <span class="tag">Immunotherapy biomarker</span>
+    </div>
+    <h1>Predicting tumour mutational burden from histopathological images using multiscale deep learning</h1>
+    <div class="meta">
+      <span class="authors">Mika S. Jain · Tarik F. Massoud</span>
+      <span><b>Published</b> 2020-06-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-0190-5" target="_blank">10.1038/s42256-020-0190-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-0190-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Image2TMB — a multiscale deep learning algorithm — can predict tumour mutational burden (TMB) directly from routine H&amp;E-stained histopathological images of lung adenocarcinoma, achieving an AUC of 0.92 and average precision of 0.89. Its predictive power matches that of a targeted sequencing panel of approximately <strong>100 genes</strong>, while requiring <strong>no additional sequencing</strong>: predictions run in under 1 minute from slides already acquired for diagnosis. This demonstrates that <strong>whole-genome-level genomic features</strong> — not just individual morphological markers — are encoded in histopathology images and are recoverable by multiscale CNNs, opening a low-cost, at-diagnosis avenue for immunotherapy patient triage.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Democratizes a critical biomarker.</b> Whole-exome sequencing (WES) — the gold standard for TMB — is prohibitively expensive and logistically complex for most hospitals. Image2TMB makes equivalent information available from a slide already on the pathologist's desk at near-zero marginal cost.</li>
+      <li><b>Demonstrates genotype-from-phenotype inference at whole-genome scale.</b> The work provides the first systematic evidence that <em>aggregate</em> mutational load across an entire tumour genome is recoverable from tissue morphology, extending the AI-pathology frontier beyond predicting single gene mutations.</li>
+      <li><b>Clinically actionable turnaround.</b> WES takes weeks and costs hundreds of dollars; Image2TMB takes under 1 minute after slide digitization. For immunotherapy prescribing decisions, this gap is transformative.</li>
+      <li><b>Robust across clinically relevant patient subgroups.</b> Performance is consistently high within smoking-status and TP53/EGFR/KRAS subgroups, showing the method is not exploiting a population-specific confound.</li>
+      <li><b>Reveals spatial TMB heterogeneity within tumours.</b> Tile-level heatmaps expose intra-tumour variation in TMB predictions — a dimension inaccessible to bulk WES — opening new questions about tumour spatial biology.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Machine learning at the boundary of biology and clinical medicine:</b> Image2TMB exemplifies NMI's focus on AI methods with direct biomedical impact — bridging computer vision, genomics, and oncology in a single framework.</li>
+      <li><b>Novel inference capability, not incremental improvement:</b> predicting a whole-genome quantity from an image is a qualitatively new task, not just an accuracy bump on an existing classification benchmark.</li>
+      <li><b>Principled multiscale architectural contribution:</b> the three-scale CNN plus random-forest fusion is a methodological contribution suited to NMI's methods-focused readership, with clear ablations demonstrating each component's value.</li>
+      <li><b>Open data and reproducible:</b> TCGA is fully public and the complete pipeline is on GitHub, enabling verification and community reuse — values NMI consistently highlights in its editorial policy.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary source</dt><dd><strong>The Cancer Genome Atlas (TCGA)</strong> — a collaboration between the National Cancer Institute and the National Human Genome Research Institute. All data are publicly accessible at <a href="https://www.cancer.gov/tcga" target="_blank">cancer.gov/tcga</a>.</dd>
+      <dt>Cancer type</dt><dd>Lung adenocarcinoma (<strong>LUAD</strong>) — chosen because TCGA provides the largest co-occurrence of imaging and WES data for this malignancy, and because TMB has particular clinical relevance in lung cancer immunotherapy.</dd>
+      <dt>Patient cohort</dt><dd><strong>499 patients</strong> with <strong>760 H&amp;E-stained whole-slide images</strong> (WSIs) of frozen tissue sections. Data split: 349 training / 75 validation / 75 test — patients assigned exclusively to one split.</dd>
+      <dt>Image tiles</dt><dd>WSIs divided into 512×512-pixel tiles at <strong>×5, ×10, and ×20 magnification</strong>, yielding tens to thousands of tiles per slide (distribution shown in Fig. 1b; exact aggregate tile count not reported in the article).</dd>
+      <dt>TMB ground truth</dt><dd>Total non-synonymous somatic mutations per exome, called with <strong>VarScan2</strong>. Primary classification threshold: <strong>206 mutations</strong> (≈10 mut/Mb in FoundationOne CDX); 38% of patients are high-TMB. Additional thresholds 135.5, 223, 293.5 used for robustness.</dd>
+      <dt>Clinical annotations</dt><dd>Smoking status and pathogenic variant status for TP53, EGFR, KRAS — from TCGA metadata, <strong>OncoKB</strong>, and <strong>My Cancer Genome</strong>.</dd>
+      <dt>Code</dt><dd>Full pipeline (download, preprocessing, Image2TMB) at <a href="https://github.com/msj3/Image2TMB" target="_blank">github.com/msj3/Image2TMB</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TCGA LUAD (WSIs)</td><td>Histopathology images — model input</td><td>760 frozen H&amp;E whole-slide images; 499 patients</td><td><a href="https://www.cancer.gov/tcga" target="_blank">cancer.gov/tcga</a></td></tr>
+        <tr><td>TCGA LUAD (WES)</td><td>TMB ground truth — mutation labels</td><td>499 whole exomes; VarScan2 somatic mutation calls</td><td><a href="https://www.cancer.gov/tcga" target="_blank">cancer.gov/tcga</a></td></tr>
+        <tr><td>TCGA clinical metadata</td><td>Subgroup stratification (smoking, TP53/EGFR/KRAS)</td><td>499 patients; supplemented with OncoKB and My Cancer Genome annotations</td><td><a href="https://www.cancer.gov/tcga" target="_blank">cancer.gov/tcga</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the aggregate tile count across all 760 slides is not reported as a single number; the per-slide distribution is shown in Fig. 1b. Numbers here are taken verbatim from the Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Multiscale tile extraction:</b> each WSI is divided into 512×512-pixel tiles at ×5, ×10, and ×20 magnification, yielding three independent multi-resolution views of the same tissue.</li>
+      <li><b>Inception v3 CNN (one per scale):</b> a separate Inception v3 model — pre-trained on ImageNet, then fine-tuned end-to-end — predicts the probability of high TMB for every tile at each magnification. Architecture: five convolution nodes + two max-pooling + eleven inception-module stacks + softmax output.</li>
+      <li><b>Confidence-filtered tile aggregation:</b> low-confidence tile predictions (probability in [0.3, 0.7]) are discarded; the <em>median</em> of remaining predictions gives one probability per patient per magnification — a principled noise-reduction step avoiding mean-dominated outlier effects.</li>
+      <li><b>Random forest multiscale fusion:</b> a random forest (RF) trained on the validation set takes the three per-magnification probabilities as input and outputs the final patient-level TMB classification. No test-set exposure during training.</li>
+      <li><b>Gene-panel comparison baseline:</b> performance benchmarked against logistic regression over greedily selected gene panels of increasing size (1 to ~150 genes), quantifying information equivalence in sequencing-panel currency.</li>
+      <li><b>Robustness checks:</b> model retrained at four TMB thresholds (clinical/median/upper-tertile/upper-quartile); stratification analysis by smoking status and TP53/EGFR/KRAS carrier status; non-cancerous tissue control experiment with uninvolved lung tissue from the same patients.</li>
+      <li><b>Spatial heatmap visualization:</b> tile-level probabilities projected back onto slide coordinates produce spatial TMB maps at three resolutions, revealing intra-tumour spatial heterogeneity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig1.png" target="_blank">
+        <img src="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig1.png" alt="Fig.1 Overview of Image2TMB and dataset" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of Image2TMB and TCGA LUAD dataset — computational pipeline diagram, tile-count histogram, TMB distribution, and train/validation/test split summary.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig2.png" target="_blank">
+        <img src="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig2.png" alt="Fig.2 Performance of Image2TMB" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Performance of Image2TMB — ROC curves (AUC=0.92), precision-recall curves (AP=0.89), comparison against gene panels of increasing size, and TMB regression scatter (R²=0.49).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig3.png" target="_blank">
+        <img src="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig3.png" alt="Fig.3 Stratification study of TMB prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Stratification study — performance within smoking status and TP53/KRAS/EGFR mutation subgroups, demonstrating consistent robustness across patient populations.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig4.png" target="_blank">
+        <img src="assets/predicting-tumour-mutational-burden-from-histopathological-images-using-multiscale-deep-le__s42256-020-0190-5/fig4.png" alt="Fig.4 Spatial heterogeneity of predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Spatial heterogeneity of TMB predictions — raw WSI slides and per-magnification heatmaps for five test patients, including a non-cancerous tissue control (TMB=361 patient).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0); Supplementary contains Tables 1–2 (confidence intervals, threshold-robustness) and Supplementary Figs. 1–3.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Replace the ImageNet-pretrained backbone with a pathology foundation model</h3>
+      <p><span class="lab paper">Extending this paper</span>Image2TMB initializes Inception v3 from ImageNet — natural-image weights — and fine-tunes on 499 LUAD patients. The paper's own discussion flags training-set size and generalizability as the primary bottleneck. A direct extension: swap the backbone for a <strong>pathology foundation model</strong> pretrained on millions of real-world pathology slides across many cancer types, then fine-tune only the multiscale aggregation head for TMB prediction. Domain-appropriate initialization should substantially raise sample efficiency (fewer LUAD patients needed to match current AUC) and generalizability to external cohorts, FFPE slides, and smaller biopsy specimens — directly addressing the paper's stated limitations.</p>
+      <p><span class="lab mine">Added value to my research</span>The pretrain-then-fine-tune paradigm is identical to my agenda of fine-tuning <strong>geospatial foundation models</strong> (e.g., satellite-imagery FMs) for downstream spatial health-outcome prediction. The same questions — how much in-domain pretraining data is needed, which layers to freeze, how to handle domain shift across geographic regions — apply to both settings. Lessons from pathology FM fine-tuning inform how I scale GeoAI models from urban-canyon sensing to global health mapping with limited labeled data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A pathology foundation model for cancer diagnosis and prognosis prediction — <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Make Image2TMB explainable: from spatial heatmaps to interpretable morphological features</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's tile-level heatmaps (Fig. 4) reveal <em>where</em> in a slide the model predicts high TMB, but not <em>why</em> — which morphological features (nuclear pleomorphism, chromatin texture, tumour-infiltrating lymphocyte density, stromal architecture) drive the CNN's decisions. A direct extension: apply <strong>gradient-based attribution (Grad-CAM, SHAP for tile patches)</strong> and correlate the resulting attribution maps with pathologist-annotated features or spatial transcriptomics signals, to produce an interpretable vocabulary mapping morphological patterns to mutational burden. This would validate the paper's genotype–phenotype hypothesis mechanistically and give clinicians actionable visual anchors for trust calibration.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable spatial prediction is the core of my GeoAI agenda: I use SHAP, MGWR, and geographically weighted regression to transform black-box predictions into <strong>spatially heterogeneous, interpretable findings</strong>. A histopathology slide is literally a 2-D spatial domain (x, y position on tissue), so the conceptual framework of "spatial explainability" — attributing a prediction to local context, detecting non-stationarity in feature importance — translates directly. Methods I develop for spatial health-risk attribution at the neighborhood level can be adapted to attribute TMB predictions to sub-millimeter tissue regions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multi-task learning strategy to pretrain models for medical image analysis — <a href="https://doi.org/10.1038/s43588-024-00666-9" target="_blank">10.1038/s43588-024-00666-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend from binary TMB classification to spatially resolved gene-expression prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>Image2TMB collapses all genomic signal to one scalar per patient (high/low TMB) and its regression head achieves only R²=0.49. The spatial heatmaps in Fig. 4 already hint that TMB is heterogeneous within a tumour — but the model was trained on a <em>patient-level</em> label, aggregated across all tumour cells. A direct extension: use <strong>spatial transcriptomics</strong> (e.g., 10x Visium) spot-level gene-expression measurements as supervision, training a tile-level predictor of local expression profiles rather than a single binary label. This closes the gap between the paper's tile-level spatial outputs and actual spatially resolved biology, and would enable the paper's heatmaps to say "this region over-expresses DNA-repair pathways" rather than just "this region is high-TMB."</p>
+      <p><span class="lab mine">Added value to my research</span>Spatially resolved prediction from images maps directly onto my <strong>multi-source data fusion</strong> work: just as I fuse mobile-phone mobility traces with POI layers and remote-sensing imagery to estimate fine-grained spatial health risks at the neighborhood scale, fusing histology tiles with spatial transcriptomics supervision yields fine-grained "spatial genomic density" maps. The core methodological challenge — aligning observations of different spatial resolution, modality, and missingness patterns — is identical across both domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> HESpotEx: a dual-stream deep learning framework for spot-level gene expression prediction from histological images — <a href="https://doi.org/10.1038/s43588-026-00992-0" target="_blank">10.1038/s43588-026-00992-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Fuse image-predicted TMB with clinical and sequencing modalities via multimodal generative AI</h3>
+      <p><span class="lab paper">Extending this paper</span>Image2TMB operates on images alone. In clinical practice, the histology slide co-exists with radiology images, structured EMR data, and often a small targeted-sequencing panel. A direct extension: treat Image2TMB's three per-magnification probability scores as one modality in a <strong>multimodal fusion architecture</strong> where radiology, structured labs, and limited panel data are co-inputs. This approach could resolve cases where histology-predicted TMB and panel-predicted TMB conflict, providing a calibrated, uncertainty-aware TMB estimate that outperforms any single modality — directly addressing the paper's discussion of relating image features to partial sequencing evidence.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-source data fusion under heterogeneous noise, resolution, and missingness is central to my work (GPS + social media + remote sensing + POI fusion). The same engineering challenges — how to weight modalities, how to handle asynchronous observation times, how to propagate uncertainty through a fusion pipeline — appear in clinical multimodal AI. My <strong>Monte Carlo uncertainty-propagation</strong> methodology provides a starting point for quantifying how much a partial targeted-sequencing panel reduces TMB prediction uncertainty when combined with Image2TMB, and vice versa.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multimodal generative AI for medical image interpretation — <a href="https://doi.org/10.1038/s41586-025-08675-y" target="_blank">10.1038/s41586-025-08675-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ From a single TCGA cohort to geographically equitable multi-center validation via federated learning</h3>
+      <p><span class="lab paper">Extending this paper</span>Image2TMB is trained and tested entirely on TCGA LUAD — a U.S.-centric, research-selected cohort of frozen-section slides digitized under standardized conditions. The paper explicitly flags this limitation: clinical biopsy samples (small, from lymph nodes, pleural fluid, liver), FFPE slides (different staining), and non-U.S. populations may behave differently. A direct extension: validate Image2TMB on external multi-site cohorts spanning different staining protocols, scanner vendors, and patient ancestries, and train with <strong>domain adaptation or federated learning</strong> to build a geographically generalizable model without centralizing protected patient data across institutions.</p>
+      <p><span class="lab mine">Added value to my research</span>Geographic generalizability of data-driven models is the central concern of my <strong>health geography</strong> agenda: 2SFCA catchment models calibrated in U.S. urban settings fail in rural China or Sub-Saharan Africa because population distributions, facility densities, and travel behaviors differ — exactly the same distribution-shift problem Image2TMB faces across hospital systems. My work on spatial non-stationarity (MGWR/GWR) and FAIR open-science reproducibility speaks directly to the challenge of building models that acknowledge and quantify geographic heterogeneity rather than averaging over it — a methodological bridge to equitable AI-pathology deployment.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> High-accuracy prostate cancer pathology using deep learning — <a href="https://doi.org/10.1038/s42256-020-0200-7" target="_blank">10.1038/s42256-020-0200-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

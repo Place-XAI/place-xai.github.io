@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A software framework for end-to-end genomic sequence analysis with deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: A software framework for end-to-end genomic sequence analysis with deep learning (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Regulatory Genomics</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Open Science</span>
+      <span class="tag">FAIR Software</span>
+    </div>
+    <h1>A software framework for end-to-end genomic sequence analysis with deep learning</h1>
+    <div class="meta">
+      <span class="authors">Adam Klie · Hannah Carter</span>
+      <span><b>Published</b> 2023-11-16</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00557-5" target="_blank">10.1038/s43588-023-00557-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00557-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Deep learning is increasingly powerful for gene regulation research, but the field lacks a cohesive, reusable toolchain. <strong>EUGENe</strong> (Elucidating the Utility of Genomic Elements with Neural Nets) fills this gap as a <strong>FAIR, modular, end-to-end Python toolkit</strong> that unifies data extraction, transformation, GPU-accelerated model training, and sequence-feature interpretation for regulatory genomics — lowering the barrier for both novice and expert users and advancing interoperability and reproducibility in the field.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes a critical software gap.</b> Genomics deep learning has been held back by fragmented, model-specific codebases; EUGENe provides a single FAIR framework covering the full workflow from raw sequence files to model interpretation.</li>
+      <li><b>Democratizes cutting-edge sequence modeling.</b> The toolkit is designed to be usable by researchers with only basic programming skills, widening access to state-of-the-art methods such as sequence convolutional networks and attention models.</li>
+      <li><b>Enables large-scale analysis without memory bottlenecks.</b> EUGENe trains on datasets too large to fit in CPU memory by using Zarr/Dask lazy loading, a feature currently unavailable in competing tools.</li>
+      <li><b>Plug-and-play benchmarking ecosystem.</b> Integration with the Kipoi model zoo lets users instantiate and compare dozens of published genomics models in a uniform API — accelerating reproducibility and benchmarking.</li>
+      <li><b>Seeds a developer community.</b> Following the scverse blueprint, EUGENe is positioned to become a community-maintained platform for regulatory genomics, not just a one-off publication code release.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Platform-type contribution:</b> EUGENe is methodological infrastructure — a reusable ecosystem, not a one-off analysis — matching Nature Computational Science's explicit interest in computational tools that enable reproducible science.</li>
+      <li><b>Cross-disciplinary integration:</b> The toolkit spans machine learning (PyTorch Lightning, Captum), bioinformatics file formats, and GPU computing, sitting squarely at the computational-biology interface the journal champions.</li>
+      <li><b>FAIR and open-science framing:</b> Explicit alignment with FAIR software principles (Findable, Accessible, Interoperable, Reusable) addresses a recognized community need highlighted in the journal's scope.</li>
+      <li><b>Expert endorsement signals broad impact:</b> An unsolicited expert opinion (Peter Koo, Cold Spring Harbor Laboratory) and the chief editor's commentary signal that the field views EUGENe as an infrastructure milestone, not just a research result.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary input</dt><dd>Genomic sequence data in standard bioinformatics formats (FASTA, BED, VCF, BigWig, and others) — the toolkit ingests these via its <strong>SeqData</strong> module. No single benchmark dataset is mandated; EUGENe is dataset-agnostic by design.</dd>
+      <dt>Internal format</dt><dd>Raw sequences are converted to <strong>Zarr</strong> files (a chunked, compressed N-dimensional array store), then lazy-loaded as <strong>Dask</strong> and <strong>XArray</strong> objects. This architecture supports datasets too large to fit in CPU memory, though no specific genome-scale volume is stated in the article.</dd>
+      <dt>Model zoo</dt><dd><strong>Kipoi</strong> model repository (<a href="https://kipoi.org" target="_blank">kipoi.org</a>) — an open catalog of pre-trained genomics models (100+ models at time of publication); EUGENe can instantiate any Kipoi model via its API for fine-tuning or evaluation.</dd>
+      <dt>Training backend</dt><dd><strong>PyTorch Lightning</strong> — used for GPU-accelerated model fitting; EUGENe includes a library of plug-and-play deep learning building blocks (CNNs, attention layers, hybrid architectures) to support rapid benchmarking.</dd>
+      <dt>Interpretation</dt><dd><strong>Captum</strong> library (Facebook AI Research) — backs the <strong>SeqExplainer</strong> module for feature-attribution methods (e.g., gradient-based saliency, integrated gradients) that visualize important sequence motifs as sequence logos.</dd>
+      <dt>YAML configs</dt><dd>Model architectures can be specified via human-readable YAML configuration files, enabling reproducible sharing of experiment designs without code changes.</dd>
+      <dt>Data availability</dt><dd>EUGENe is open-source (Python package); no primary genomic dataset is deposited as part of this publication. Data availability statement is not specified in the scraped metadata; users supply their own genomic data.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Component / Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Zarr + Dask + XArray</td><td>Scalable sequence data storage and lazy loading</td><td>Memory-efficient; no stated size limit</td><td><a href="https://zarr.dev" target="_blank">zarr.dev</a></td></tr>
+        <tr><td>Kipoi model zoo</td><td>Pre-trained genomics model repository</td><td>100+ models across tasks (at publication)</td><td><a href="https://kipoi.org" target="_blank">kipoi.org</a></td></tr>
+        <tr><td>PyTorch Lightning</td><td>GPU training backend</td><td>Framework-level; platform-independent</td><td><a href="https://lightning.ai" target="_blank">lightning.ai</a></td></tr>
+        <tr><td>Captum</td><td>Model interpretability / feature attribution</td><td>Library-level; sequence-logo output</td><td><a href="https://captum.ai" target="_blank">captum.ai</a></td></tr>
+        <tr><td>EUGENe (Python package)</td><td>End-to-end deep learning workflow in genomics</td><td>Open-source; user-supplied genomic data</td><td><a href="https://github.com/ML4GLand/EUGENe" target="_blank">GitHub: ML4GLand/EUGENe</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: EUGENe is a software framework, not a data analysis of a fixed dataset. No specific genome assembly, cell-type count, or sample number is reported in the article. Numbers above reflect the tool ecosystem's stated scope.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Extract–Transform–Load (ETL) pipeline:</b> SeqData module parses genomic file formats (FASTA, BED, VCF, BigWig), converts them to compressed Zarr stores, and lazy-loads them via Dask/XArray — decoupling data volume from CPU memory.</li>
+      <li><b>Sequence preprocessing:</b> SeqPro module handles normalization, one-hot encoding, data augmentation, and other transformations needed to prepare raw sequences for model input.</li>
+      <li><b>Model instantiation:</b> EUGENe API supports three model-building pathways: (1) YAML configuration files, (2) programmatic API calls using EUGENe's building-block library (CNN layers, attention heads, hybrid architectures), and (3) direct import from the Kipoi model zoo.</li>
+      <li><b>GPU-accelerated training:</b> PyTorch Lightning backend handles distributed/single-GPU training with minimal boilerplate, including callbacks for logging, early stopping, and checkpointing.</li>
+      <li><b>Feature attribution / interpretation:</b> SeqExplainer module applies Captum-backed methods (gradient saliency, integrated gradients, DeepLIFT) to trained models and renders results as nucleotide-level sequence-logo visualizations identifying transcription-factor binding sites (TFBS).</li>
+      <li><b>Modular architecture:</b> Every step (data, model, training, interpretation) is a replaceable module — users can substitute their own data loaders, custom model classes, or external attribution methods without rewriting the pipeline.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-software-framework-for-end-to-end-genomic-sequence-analysis-with-deep-learning__s43588-023-00557-5/fig1.png" target="_blank">
+        <img src="assets/a-software-framework-for-end-to-end-genomic-sequence-analysis-with-deep-learning__s43588-023-00557-5/fig1.png" alt="Fig.1 EUGENe computational toolkit overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> EUGENe is a computational toolkit for deep learning analysis of regulatory genomic sequences. (a) SeqData extracts sequences into Zarr/Dask/XArray stores; SeqPro transforms them; data are loaded to GPU. (b) EUGENe API instantiates model architectures and fits them to data. (c) SeqExplainer evaluates and interprets trained models, visualizing important sequence features as logos. TFBS = transcription factor binding site.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables. The article is a Brief Communication (Research Briefing) with 1 main figure and no supplementary tables cited.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, spatial accessibility, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Extend EUGENe's SeqExplainer with spatial-aware attribution for genomic loci</h3>
+      <p><span class="lab paper">Extending this paper</span>EUGENe's current SeqExplainer treats every nucleotide position equivalently using standard gradient-based attribution (integrated gradients, DeepLIFT). However, regulatory elements are spatially clustered along chromosomes, and attribution maps inherit this genomic positional structure. A direct extension: introduce a <strong>spatially-aware attribution smoothing layer</strong> — analogous to spatially-weighted regression — that down-weights isolated attribution spikes and amplifies contiguous motif clusters. This would produce biologically more interpretable sequence logos and reduce false-positive motif calls in SeqExplainer, making EUGENe's interpretation outputs more reliable for identifying TFBS.</p>
+      <p><span class="lab mine">Added value to my research</span>This is structurally identical to my work on <strong>spatially-varying coefficient models (MGWR/GWR)</strong>: in both cases, we want to discover <em>where</em> a signal is locally elevated rather than averaging it globally. The design pattern — spatially-weighted attribution with adaptive bandwidth — could be directly ported from geospatial kernel methods to sequence-position kernels. This cross-domain transfer would enrich my explainable ML toolkit with a new interpretability lens applicable wherever positional context matters (genetic loci, street segments, spatial grids).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles — <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Build a FAIR federated learning layer on top of EUGENe for multi-institutional genomics</h3>
+      <p><span class="lab paper">Extending this paper</span>EUGENe currently assumes all genomic data can be centralized in one compute environment. Many clinical and population genomics datasets cannot be shared due to privacy constraints. A natural extension of the paper's FAIR-software mandate: add a <strong>federated training module</strong> so multiple institutions can contribute gradient updates from local sequence data without pooling raw genomes. The Zarr-based ETL is already partition-friendly; adding federated aggregation (FedAvg or differential-privacy wrappers) would make EUGENe the first end-to-end federated deep learning framework for regulatory genomics and dramatically widen its data scope beyond what any single lab can access.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>open science / FAIR data principles</strong> and <strong>multi-source data fusion</strong> maps directly here. Many health-geography datasets (EHR, mobile-phone trajectories, mental-health records) share the same privacy barrier. A federated-EUGENe design template would be directly applicable to building spatially federated models for healthcare access research — where hospitals or counties contribute local mobility/utilization data without disclosing individual records.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> On responsible machine learning datasets emphasizing fairness, privacy and regulatory norms with examples in biometrics and healthcare — <a href="https://doi.org/10.1038/s42256-024-00874-y" target="_blank">10.1038/s42256-024-00874-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace EUGENe's plug-and-play CNN blocks with genomic language model fine-tuning</h3>
+      <p><span class="lab paper">Extending this paper</span>EUGENe's model library focuses on convolutional and attention building blocks trained from scratch. Foundation models pre-trained on entire genome assemblies (e.g., Enformer, Nucleotide Transformer, HyenaDNA) now offer far richer sequence representations than random initialization. Extending EUGENe: add a <strong>genomic foundation model adapter</strong> that loads pre-trained weights and exposes them through EUGENe's existing training API, so fine-tuning on regulatory tasks becomes a one-line configuration change. This would position EUGENe as the fine-tuning harness for the next generation of genomics foundation models, directly applying the paper's FAIR-software and end-to-end principles to large pre-trained systems.</p>
+      <p><span class="lab mine">Added value to my research</span>I actively work on <strong>fine-tuning geospatial foundation models</strong> (e.g., remote sensing and mobility pre-trained encoders). The modular adapter pattern EUGENe uses — swap out the model backbone while keeping the ETL and interpretation pipeline fixed — is exactly the architecture I want for GeoAI fine-tuning workflows. Borrowing this design pattern from EUGENe's YAML-driven model specification would accelerate my own multi-source data fusion pipelines for spatiotemporal prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Regulatory grammar in human promoters uncovered by MPRA-based deep learning — <a href="https://doi.org/10.1038/s41586-025-10093-z" target="_blank">10.1038/s41586-025-10093-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Adapt EUGENe's end-to-end pipeline philosophy to spatiotemporal public-health data</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core insight is architectural: a single, FAIR end-to-end framework outperforms a collection of single-purpose scripts because it enforces consistent data handling, reproducible model specifications, and interpretable outputs. This architectural philosophy can be directly translated to <strong>spatiotemporal health data analysis</strong>. An EUGENe-inspired geospatial framework would provide (1) a spatial ETL module (mobile phone, remote sensing, POI, census rasters into a unified XArray-GeoZarr store), (2) a GeoAI model library (GWR, GNN, Transformer over graphs), and (3) a spatial explainability module (MGWR coefficients, spatial SHAP maps). Such a framework would do for spatial health analytics what EUGENe does for regulatory genomics.</p>
+      <p><span class="lab mine">Added value to my research</span>This idea is the blueprint for a tool I actively need: a reproducible, FAIR end-to-end pipeline connecting multi-source geospatial data (GPS trajectories, social media, remote sensing) to interpretable spatial models for <strong>public and urban health policy</strong>. EUGENe validates that building such a framework as a community resource, rather than a per-project script, is the right investment — and its modular Zarr/Dask/ETL stack is directly applicable to geo-raster and trajectory data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning and beyond — <a href="https://doi.org/10.1038/s43588-025-00916-4" target="_blank">10.1038/s43588-025-00916-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Leverage EUGENe's training-data generalization lessons for geospatial model evaluation</h3>
+      <p><span class="lab paper">Extending this paper</span>EUGENe explicitly documents "machine learning pitfalls" and encourages users to read method-specific failure-mode documentation. A critical pitfall for regulatory genomics — and flagged in the companion corpus — is that model generalization depends heavily on <strong>training data composition</strong> (positive vs. negative example balance, genomic context diversity). EUGENe could be extended with an automated <strong>data-composition auditor</strong>: before training, scan the SeqData object for class imbalance, sequence redundancy, and chromatin-context coverage gaps, and report a data-quality scorecard. This would make EUGENe's FAIR promise operational rather than aspirational.</p>
+      <p><span class="lab mine">Added value to my research</span>Training-data composition is equally critical in my spatial ML workflows: healthcare access models trained on urban cores fail in rural areas, and mobility models trained on weekdays fail on weekends. Formalizing an analogous <strong>spatial data-composition audit</strong> — checking for geographic coverage gaps, demographic imbalance, and temporal distribution shifts before model fitting — would strengthen the reproducibility of my GeoAI pipelines and align with my open science / FAIR data principles.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training data composition determines machine learning generalization and biological rule discovery — <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature / Klie et al. (CC BY 4.0); shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

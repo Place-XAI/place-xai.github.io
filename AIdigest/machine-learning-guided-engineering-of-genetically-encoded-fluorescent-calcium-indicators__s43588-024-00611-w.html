@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine learning-guided engineering of genetically encoded fluorescent calcium indicators — AI Digest</title>
+<meta name="description" content="AI Digest: Machine learning-guided engineering of genetically encoded fluorescent calcium indicators (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Protein engineering</span>
+      <span class="tag">ML ensemble</span>
+      <span class="tag">Fluorescence biosensors</span>
+      <span class="tag">Sequence&ndash;function prediction</span>
+    </div>
+    <h1>Machine learning-guided engineering of genetically encoded fluorescent calcium indicators</h1>
+    <div class="meta">
+      <span class="authors">Sarah J. Wait &middot; Marc Exp&ograve;sit &middot; Sophia Lin &middot; Michael Rappleye &middot; Justin Daho Lee &middot; Samuel A. Colby &middot; Lily Torp &middot; Anthony Asencio &middot; Annette Smith &middot; Michael Regnier &middot; Farid Moussavi-Harami &middot; David Baker &middot; Christina K. Kim &middot; Andre Berndt</span>
+      <span><b>Published</b> 2024-03-21</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00611-w" target="_blank">10.1038/s43588-024-00611-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00611-w" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A stacked ensemble of three regression models &mdash; trained on <strong>1,078 experimentally characterized GCaMP mutants</strong> and encoded with biophysical amino acid properties &mdash; screened <strong>1,423 novel variants in silico</strong> and identified three new calcium indicators (eGCaMP, eGCaMP+, eGCaMP2+). The best variant, eGCaMP2+, achieves a 2.5-fold larger fluorescence response than prior fast indicators and outperforms sixth-, seventh-, and eighth-generation GCaMPs, demonstrating that <strong>small, curated sequence&ndash;function libraries can drive efficient protein engineering</strong> when paired with ensemble ML and domain-principled feature encoding.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Compresses the protein engineering cycle.</b> Rather than exhaustive trial-and-error mutagenesis, the ensemble reduced in-vitro testing from 1,423 candidates to 17 prioritized variants, with most predictions confirmed experimentally (accuracy 0.75 for kinetics, 0.56 for &Delta;F/F<sub>0</sub>).</li>
+      <li><b>Delivers practically superior biosensors.</b> eGCaMP2+ (jGCaMP7s L317H/Q305D) achieves ~1,938% &Delta;F/F<sub>0</sub> at KCl saturation &mdash; roughly twofold larger than GCaMP6s &mdash; while eGCaMP+ is the fastest-decaying variant tested (46% faster than jGCaMP8f), enabling resolution of rapid neural events in vivo.</li>
+      <li><b>Structure-agnostic approach is broadly transferable.</b> Because the pipeline relies solely on sequence&ndash;function data (no 3D structural input required), it can be applied to any genetically encoded indicator or protein with a quantifiable readout and an existing mutational library.</li>
+      <li><b>Validates ensemble learning on small biological datasets.</b> The approach overcomes data scarcity (~1,000 training examples) by combining diverse encodings and model architectures, achieving cross-validation R<sup>2</sup> &gt; 0.80 for both targets.</li>
+      <li><b>Provides open, reproducible infrastructure.</b> All datasets are deposited on figshare, code on Zenodo and CodeOcean, crystal structure via RCSB, and plasmids via Addgene &mdash; enabling immediate reuse and iterative retraining by the community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Computational method driving experimental discovery:</b> the ML ensemble is the primary engine that generated novel, experimentally validated biology &mdash; exactly the scope of Nature Computational Science (not a post-hoc analysis).</li>
+      <li><b>Generalizable framework, not a one-off tool:</b> the authors explicitly position the pipeline as transferable to any genotype-to-phenotype mutation library, with implications across biosensor and enzyme engineering.</li>
+      <li><b>Clear quantitative superiority of the ensemble:</b> the stacked model outperforms every individual contributor model in R<sup>2</sup> &mdash; a crisp computational science result with a direct experimental payoff.</li>
+      <li><b>FAIR-compliant open science:</b> full deposition of data, code, models, and reagents meets the journal&rsquo;s reproducibility standards and enables iterative community use.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training library</dt><dd><strong>1,078 characterized GCaMP mutants</strong> from two published cultured-neuron screening studies: Chen et al. 2013 (GCaMP6-generation) and Dana et al. 2019 (jGCaMP7-generation). Targets: 1AP &Delta;F/F<sub>0</sub> and &tau;<sub>1/2</sub> (decay half-time after 10 APs), normalized to GCaMP6s&nbsp;=&nbsp;1.0. 80/20 train/test split; mean values did not differ significantly between splits.</dd>
+      <dt>Novel library</dt><dd>Single-point saturation mutagenesis across <strong>75 residue positions</strong> of jGCaMP7s &rarr; <strong>1,423 untested variants</strong> (after removing 77 redundant with training set).</dd>
+      <dt>Amino acid encoding</dt><dd><strong>AAindex database</strong> &mdash; 554 complete amino acid property matrices (hydrophobicity, polarity, folding energetics, etc.); top-5 per model selected by grid search. Encoding improved R<sup>2</sup> by ~20% vs. one-hot or label encoding.</dd>
+      <dt>Crystal structure</dt><dd>GCaMP3&ndash;D380Y, <strong>RCSB PDB: 3SG3</strong> &mdash; used for structural interpretation of impactful residues; excluded from model input to keep the pipeline structure-agnostic.</dd>
+      <dt>In vitro validation</dt><dd><strong>17 predicted mutations</strong> tested in HEK293 cells (acetylcholine stimulation); subset advanced to rat primary cortical neurons (electrical field stimulation, 1/10/80 APs, 4 independent biological replicates); in vivo fiber photometry in <strong>C57BL/6J mice</strong> (mPFC to NAc circuit, n&nbsp;=&nbsp;2 mice per GCaMP variant, n&nbsp;=&nbsp;4 shock trials each).</dd>
+      <dt>Data availability</dt><dd>Datasets: <a href="https://doi.org/10.6084/M9.FIGSHARE.23750682.V1" target="_blank">figshare&nbsp;23750682</a>. Code: <a href="https://doi.org/10.5281/ZENODO.8179256" target="_blank">Zenodo&nbsp;8179256</a> and <a href="https://doi.org/10.24433/CO.0624159.v1" target="_blank">CodeOcean</a>. Plasmids: Addgene&nbsp;201147&ndash;201150.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Chen et al. 2013 GCaMP6 library</td><td>Training: &Delta;F/F<sub>0</sub> &amp; kinetics per mutant</td><td>Subset of 1,078 total; GCaMP6-generation</td><td><a href="https://doi.org/10.6084/M9.FIGSHARE.23750682.V1" target="_blank">figshare</a></td></tr>
+        <tr><td>Dana et al. 2019 jGCaMP7 library</td><td>Training: &Delta;F/F<sub>0</sub> &amp; kinetics per mutant</td><td>Subset of 1,078 total; jGCaMP7-generation</td><td><a href="https://doi.org/10.6084/M9.FIGSHARE.23750682.V1" target="_blank">figshare</a></td></tr>
+        <tr><td>AAindex amino acid property DB</td><td>Biophysical feature encoding (554 matrices)</td><td>20 amino acids &times; 554 properties; top-5 per model advanced</td><td><a href="https://www.genome.jp/aaindex/" target="_blank">genome.jp/aaindex</a></td></tr>
+        <tr><td>RCSB PDB 3SG3</td><td>Structural context for residue interpretation</td><td>GCaMP3&ndash;D380Y crystal structure</td><td><a href="https://www.rcsb.org/structure/3sg3" target="_blank">rcsb.org</a></td></tr>
+        <tr><td>Novel variant library (in silico)</td><td>Prediction target; 1,423 uncharacterized variants</td><td>75 positions &times; 19 substitutions, deduplicated</td><td><a href="https://doi.org/10.6084/M9.FIGSHARE.23750682.V1" target="_blank">figshare</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: the exact split of variants between the Chen and Dana libraries is not individually stated in the paper; the combined total is 1,078. In vivo mouse experiment: n&nbsp;=&nbsp;2 mice per GCaMP variant (stated in the article).</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Biophysical feature encoding:</b> each GCaMP sequence position is replaced by the amino acid&rsquo;s quantitative value from an AAindex property matrix (hydrophobicity, polarity, folding energetics, etc.), yielding ~20% higher cross-validation R<sup>2</sup> compared with one-hot or label encoding.</li>
+      <li><b>Stacked ensemble regression:</b> three regressor architectures &mdash; Random Forest Regressor (RFR), K-Neighbors Regressor (KNR), and Multi-Layer Perceptron Regressor (MPNR) &mdash; each trained across the top-5 AAindex properties, producing 15 contributor models per target (&Delta;F/F<sub>0</sub> or &tau;<sub>1/2</sub>); final prediction is the mean of all 15 outputs.</li>
+      <li><b>Hyperparameter optimization:</b> grid-search tuning per model type, with <code>SelectKBest</code> feature selection and 80/20 train/test split (random seed 42). Ensemble R<sup>2</sup> &gt; 0.80 on held-out test set for both targets, exceeding any individual contributor model.</li>
+      <li><b>In silico volcano screening:</b> for each of 1,423 novel variants, a two-sided unpaired t-test between the 15 contributor predictions for that variant and those for jGCaMP7s generates a predicted effect size and confidence score; impactful residues defined as top/bottom 2.5% of ranked predictions (&plusmn;3&sigma;).</li>
+      <li><b>PCA + K-means clustering:</b> principal component analysis (elbow method for component selection) and K-means clustering characterize the variant library&rsquo;s sequence space.</li>
+      <li><b>Multi-stage experimental validation:</b> HEK293 acetylcholine assay (intermediate throughput) &rarr; primary rat cortical neuron electrical field stimulation (1/10/80 APs) &rarr; in vivo mouse fiber photometry (mPFC&ndash;NAc circuit, foot-shock paradigm); fluorescence analysis via the custom FUSE platform with Cellpose segmentation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig1.png" target="_blank">
+        <img src="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig1.png" alt="Fig.1 Variant library, computational approach and ensemble cross-validation" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> 1,078-variant scatter plot, GCaMP crystal structure with 75 mutable residues, model training schema, and ensemble cross-validation R<sup>2</sup> for both &Delta;F/F<sub>0</sub> and &tau;<sub>1/2</sub>.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig2.png" target="_blank">
+        <img src="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig2.png" alt="Fig.2 In vitro verification of ensemble predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Volcano plots of predicted &Delta;F/F<sub>0</sub> and kinetics changes from jGCaMP7s; bubble plot showing L317 (22% of impactful &Delta;F/F<sub>0</sub> predictions) and L302 as dominant residues.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig3.png" target="_blank">
+        <img src="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig3.png" alt="Fig.3 Gq/IP3 assay in HEK293 cells to validate ensemble predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> HEK293 acetylcholine assay: fluorescence responses, decay kinetics, SNR, and performance score (SNR/&tau;) for 17 predicted mutations versus jGCaMP7s.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig4.png" target="_blank">
+        <img src="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig4.png" alt="Fig.4 Identification of eGCaMP+ and eGCaMP2+ in HEK293 cells" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Combinatorial mutation screening identifying eGCaMP (L317H in 7s), eGCaMP+ (A289H in 8f backbone), and eGCaMP2+ (L317H/Q305D); dose&ndash;response curves and kinetics benchmarking across concentrations.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig5.png" target="_blank">
+        <img src="assets/machine-learning-guided-engineering-of-genetically-encoded-fluorescent-calcium-indicators__s43588-024-00611-w/fig5.png" alt="Fig.5 eGCaMP performance in primary neurons" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> eGCaMP, eGCaMP+, and eGCaMP2+ &Delta;F/F<sub>0</sub> and half-decay times in primary cortical neurons at 1, 10, and 80 AP trains; KCl saturation responses and heat-mapped fluorescence images (scale bar 50&nbsp;&micro;m).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables. Extended Data contains Figs.&nbsp;1&ndash;2 (excitation/emission spectra; in vivo fiber photometry). Supplementary includes 8 supplementary figures and 26 supplementary tables with complete statistical benchmarking across GCaMP generations.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper&rsquo;s extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal prediction, explainable ML, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>&#9312; Replace single-point saturation with deep-learning sequence design to escape local optima</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper deliberately restricts its novel library to <strong>single-point mutations</strong> at 75 known residue positions to avoid epistasis in a small training set. A direct extension: once the ensemble identifies impactful residues (L317, L302, Q305), retrain it on the combinatorial mutants generated in Fig.&nbsp;4, then seed a deep-learning sequence design model to propose <strong>multi-point sequences</strong> that simultaneously optimize &Delta;F/F<sub>0</sub>, kinetics, and baseline fluorescence. This converts the paper&rsquo;s conservative screen into an iterative active-learning loop &mdash; propose &rarr; test &rarr; retrain &mdash; sampling exponentially larger sequence space without proportionally increasing experimental cost.</p>
+      <p><span class="lab mine">Added value to my research</span>The iterative retrain paradigm mirrors how I approach geospatial foundation model fine-tuning: a small labeled set seeds a pretrained backbone, predictions on unlabeled space identify high-value samples, and retraining closes the loop. This paper&rsquo;s sequence-to-function workflow is an isomorphic case study for spatiotemporal prediction tasks where labeled data are scarce but proxy signals (like AAindex for amino acids, or built-environment indices for cities) are rich &mdash; a template for feature-encoding strategies in data-sparse GeoAI applications.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Protein sequence design by deep learning &mdash; <a href="https://doi.org/10.1038/s43588-022-00274-5" target="_blank">10.1038/s43588-022-00274-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Incorporate structural graph representations to predict epistatic combinatorial effects</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly excludes structural information to keep the pipeline structure-agnostic, but acknowledges this limits extrapolation outside the training sequence space. A direct extension: encode the GCaMP crystal structure (PDB 3SG3) as a <strong>residue contact graph</strong> and train a graph neural network that learns both sequence and spatial interaction features. This would give the ensemble geometric context for epistatic pairs like L317H/Q305D &mdash; the paper&rsquo;s most dramatic combinatorial hit &mdash; without requiring new structural data. Protein&ndash;ligand affinity GNNs in the corpus offer a direct methodological template for this architecture.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning work encodes spatial topology as graph structure for urban networks. Adapting a residue contact graph to a spatial accessibility network is conceptually analogous: nodes are locations (residues / facilities), edges encode proximity or interaction (contacts / road links), and the GNN learns a structure-aware property (fluorescence / accessibility score). This cross-domain analogy strengthens the generalization argument for spatiotemporal graph operators, and I can use this paper as a compelling non-geospatial validation example.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein&ndash;ligand affinities &mdash; <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Apply the AAindex domain-principled encoding strategy to geospatial feature engineering</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper&rsquo;s most impactful methodological decision is replacing naive one-hot encoding with <strong>domain-principled property matrices</strong> (AAindex), boosting cross-validation R<sup>2</sup> by ~20% on average. Extending this within the GCaMP context: expand the encoding vocabulary beyond 554 amino acid properties to include evolutionary co-variation signals (from protein multiple sequence alignments) and AlphaFold2-derived stability scores &mdash; testing whether layered biophysical encodings further improve prediction, particularly for positions with sparse training data.</p>
+      <p><span class="lab mine">Added value to my research</span>In GeoAI, POI categories and urban zone types are routinely one-hot encoded just as amino acids were here. This paper&rsquo;s lesson &mdash; substitute one-hot with <em>domain-principled property vectors</em> &mdash; directly motivates encoding urban features with spatially meaningful attributes: walkability indices, built-environment typology scores, socioeconomic gradients. Applying this principle to R2SFCA supply-demand modeling could produce analogous accuracy gains, simply by replacing naive categorical encoding of healthcare facility types with evidence-based service-quality matrices derived from inspection records or patient outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Rapid protein model refinement by deep learning &mdash; <a href="https://doi.org/10.1038/s43588-021-00104-0" target="_blank">10.1038/s43588-021-00104-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Port the ML-guided engineering pipeline to CRISPR systems to probe minimum training-data requirements</h3>
+      <p><span class="lab paper">Extending this paper</span>The authors propose the pipeline is applicable to &ldquo;any genotype-to-phenotype mutation library.&rdquo; A direct test: apply it to other GEFIs (dLight, GRAB-NE) or CRISPR&ndash;Cas9 PAM variants where mutation libraries are smaller and sparser than GCaMP&rsquo;s, to define the lower bound on training data size before ensemble accuracy degrades. The corpus contains a parallel ML-guided engineering study for CRISPR&ndash;Cas9 PAM variants that faced similar sparsity challenges. Comparing accuracy curves across these two domains would produce a transferable &ldquo;minimum data requirement&rdquo; guide for the field.</p>
+      <p><span class="lab mine">Added value to my research</span>The minimum training size question is directly relevant to fine-tuning geospatial foundation models with limited local labeled data. Understanding at what n the ensemble degrades informs decisions about when to rely on transfer learning from a large pre-trained model versus retraining from scratch &mdash; exactly the tradeoff I face when building health-accessibility models for data-sparse regions (e.g., rural mental health facility access in underserved counties where labeled catchment data are extremely limited).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Custom CRISPR&ndash;Cas9 PAM variants via scalable engineering and machine learning &mdash; <a href="https://doi.org/10.1038/s41586-025-09021-y" target="_blank">10.1038/s41586-025-09021-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Use the ensemble&rsquo;s residue-importance ranking as an explainability template for spatial feature attribution</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper generates a residue-level importance map (Fig.&nbsp;2d bubble plot): L317 accounts for 22% of impactful &Delta;F/F<sub>0</sub> predictions despite comprising only 1.3% of the library &mdash; a striking concentration of predictive power. A direct extension: compute formal <strong>Shapley-value (SHAP) decompositions</strong> across all 15 contributor models to produce residue-level SHAP scores, then cross-reference with structural contact maps to statistically test whether high-SHAP residues cluster at protein domain interfaces. This would convert the paper&rsquo;s visual observation into a statistically grounded attribution and serve as a reproducible explainability benchmark for protein ML.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable ML for spatial prediction is a core theme of my work (SHAP/MGWR for health geography and urban analytics). This paper provides an elegant non-geospatial case study where the same SHAP logic produces actionable spatial (structural) insights. I can cite it as cross-domain evidence of SHAP&rsquo;s interpretability power in grant writing, and adapt the residue-cluster visualization to show how spatial clusters of important predictors emerge in my GWR/MGWR models of healthcare accessibility &mdash; demonstrating that &ldquo;spatial importance concentration&rdquo; is a general phenomenon across scientific domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials &mdash; <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

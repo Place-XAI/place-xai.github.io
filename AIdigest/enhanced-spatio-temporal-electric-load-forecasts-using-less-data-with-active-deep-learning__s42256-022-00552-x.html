@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhanced spatio-temporal electric load forecasts using less data with active deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Enhanced spatio-temporal electric load forecasts using less data with active deep learning (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Active Deep Learning</span>
+      <span class="tag">Spatiotemporal Forecasting</span>
+      <span class="tag">Energy Transition</span>
+      <span class="tag">Smart Meters</span>
+    </div>
+    <h1>Enhanced spatio-temporal electric load forecasts using less data with active deep learning</h1>
+    <div class="meta">
+      <span class="authors">Arsam Aryandoust · Anthony Patt · Stefan Pfenninger</span>
+      <span><b>Published</b> 2022-11-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00552-x" target="_blank">10.1038/s42256-022-00552-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00552-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Electric utilities can use <strong>active deep learning (ADL)</strong> to strategically select where and when to collect smart-meter data, achieving <strong>26–81% more accurate</strong> load predictions while using <strong>29–46% less data</strong> — and reducing physical smart-meter deployment by up to <strong>24%</strong> — compared with conventional passive (random) data collection, at the price of 4–11 times more computation. The framework leverages an <strong>embedding uncertainty</strong> metric derived from a novel spatio-temporal embedding network to cluster candidate buildings and times in feature space, querying the most informative profiles first.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the data-cost barrier for grid decarbonization.</b> Smart-meter rollout is constrained by cost, bandwidth, and privacy; ADL shows that high-quality load forecasts do not require exhaustive instrumentation — directly lowering the barrier for utilities in the global energy transition.</li>
+      <li><b>Shifts spatio-temporal forecasting from passive to strategic.</b> The paper is among the first real-world applications of active deep learning for spatial + temporal prediction of energy load, moving the field beyond "collect more data" toward "collect smarter data."</li>
+      <li><b>Dual savings: data volume and physical sensors.</b> By decoupling prediction accuracy from sensor count, it provides a blueprint for resource-constrained grid operators — especially relevant for regions with low or uneven smart-meter penetration (Africa, parts of Asia, Latin America).</li>
+      <li><b>Open, reproducible pipeline.</b> Full code (MIT-licensed), a Python package (<code>altility</code>), Docker container, and data on Harvard Dataverse (CC0) make the framework directly reusable.</li>
+      <li><b>Connects ADL theory to a high-stakes climate problem.</b> By demonstrating sequence-dependent online learning regret and implicit regularization via diversity queries, the paper advances understanding of ADL dynamics in the context of real distribution-shift problems.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel method + high-impact application:</b> proposes a new metric (embedding uncertainty) and a new architecture (spatio-temporal embedding network) applied to a globally significant problem — the energy transition — matching NMI's appetite for principled ML innovations with societal stakes.</li>
+      <li><b>Rigorous multi-axis evaluation:</b> experiments span spatial, temporal, and spatio-temporal prediction types, multiple ADL variants, and two dataset scales (100 and 400 buildings), providing thorough empirical coverage expected by a top ML venue.</li>
+      <li><b>Connects active learning theory to practice:</b> the paper draws explicit links between query diversity, training loss dynamics, catastrophic forgetting, and online regret — bridging theory and the engineering challenge of data collection in constrained systems.</li>
+      <li><b>Reproducibility-first:</b> end-to-end Jupyter notebooks, a public Python package, and open data satisfy NMI's emphasis on reproducible ML research.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Electric load profiles</dt><dd>Measured electricity consumption in <strong>15-minute steps</strong> for <strong>100 and 400 residential, commercial, and industrial buildings in Switzerland</strong>, provided by local distribution system operators. The exact operator names are not disclosed for privacy; data are available in sampled form on Harvard Dataverse.</dd>
+      <dt>Temporal coverage</dt><dd>Year <strong>2014</strong>. Candidate data pools are formed from <strong>800 time stamps</strong> (for the 100-building dataset) and <strong>200 time stamps</strong> (for the 400-building dataset), selected randomly from 2014.</dd>
+      <dt>Aerial imagery</dt><dd>Overhead images of each building at a resolution of <strong>25 cm per pixel</strong>, collected using the geographic coordinates of the buildings. Source is stated as ref. 36 in the paper; specific provider not named in the public text. Privacy-preserving histograms of RGB pixel values (100 bins per channel, 300 dimensions) are provided in lieu of raw images.</dd>
+      <dt>Meteorological data</dt><dd><strong>Nine meteorological variables</strong> from reanalysis data (refs. 37–38, likely ERA5/Copernicus-type sources, not explicitly named): air density, cloud cover, precipitation, ground-level and top-of-atmosphere solar irradiance, air temperature, snowfall, snow mass, and wind speed — aggregated at <strong>1-hour accuracy</strong> per cluster of buildings within 1 km radius.</dd>
+      <dt>Data split</dt><dd>4.5% initial training / 4.5% validation / 91% candidate (testing) pool. Of the candidate pool: 23% spatial, 23% temporal, 54% spatio-temporal predictions.</dd>
+      <dt>Data budget</dt><dd>ADL allowed to query up to <strong>50%</strong> of the candidate pool (10 iterations × 10% of budget per iteration).</dd>
+      <dt>Availability</dt><dd>Sampled load profiles + image histograms: <a href="https://doi.org/10.7910/DVN/3VYYET" target="_blank">Harvard Dataverse (CC0 1.0)</a>. Code: <a href="https://github.com/ArsamAryandoust/DataSelectionMaps" target="_blank">GitHub (MIT)</a>. Python package: <a href="https://pypi.org/project/altility" target="_blank">PyPI (altility)</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Swiss building load profiles</td><td>Ground-truth labels (electricity consumption)</td><td>100 &amp; 400 buildings, 15-min steps, 2014, Switzerland</td><td><a href="https://doi.org/10.7910/DVN/3VYYET" target="_blank">Harvard Dataverse (CC0)</a></td></tr>
+        <tr><td>Aerial building imagery</td><td>Spatial feature (building appearance)</td><td>25 cm/pixel, one image per building; shared as RGB histograms</td><td>Via Harvard Dataverse (histograms only)</td></tr>
+        <tr><td>Meteorological reanalysis</td><td>Space-time variant features (9 variables)</td><td>1-h resolution, per building cluster, 2014; source refs. 37–38 (likely ERA5-type)</td><td>Not separately released; used in model training</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact data-provider names for aerial imagery and meteorological reanalysis are cited by reference number only in the article; specific datasets cannot be confirmed without accessing references 36–38 directly. Numbers reported here are taken verbatim from the article's Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Spatio-temporal embedding network:</b> a modular deep neural network combining ANN, CNN, RNN, and CRNN sub-modules — one branch per feature type (time stamp, building image histogram, meteorological conditions) — that maps the concatenated feature vector (520 dimensions) to a 24-hour, 15-minute-resolution load profile (96 values).</li>
+      <li><b>Embedding uncertainty metric:</b> each sub-encoder maps candidate data points into a 100-dimensional latent space. The Laplacian-kernel distance of each embedded candidate to its K-means++ cluster centre is used as an informativeness proxy — the paper's key methodological contribution.</li>
+      <li><b>Batch ADL algorithm:</b> iterative pool-based active learning where (1) candidates are embedded, (2) K-means++ clusters them, (3) one candidate per cluster is selected based on the embedding uncertainty (four variants: random, maximized, minimized, averaged), and (4) the queried labels are used to retrain the DL model. The removal rate δ ∈ {0, 1} controls whether queried points are kept in the pool (incremental learning, δ = 0) or removed (forced exploration / catastrophic forgetting, δ = 1).</li>
+      <li><b>Passive deep learning (PDL) baseline:</b> identical network trained on uniformly random data samples from the same candidate pool; used as the primary benchmark. A random forest (RF) also serves as a non-DL reference.</li>
+      <li><b>Computational complexity reduction strategies:</b> subsampling the candidate pool (up to 75%), reducing cluster count, and querying by spatial coordinate embedding only — achieving 2–3× speedup with minimal accuracy loss.</li>
+      <li><b>Evaluation types:</b> spatial predictions (unseen buildings, seen times), temporal predictions (seen buildings, unseen times), and spatio-temporal predictions (unseen buildings and times) — testing generalization across all distribution shift combinations.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig1.png" target="_blank">
+        <img src="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig1.png" alt="Fig.1 Global smart meter adoption" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Global smart meter adoption rates — worldwide, Europe, and Asia maps plus country-level distributions across Africa, Latin America, Asia, and Europe. Motivates the need for efficient data-collection strategies.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig2.png" target="_blank">
+        <img src="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig2.png" alt="Fig.2 Spatio-temporal embedding network architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Spatio-temporal embedding network architecture — modular ANN/CNN/RNN/CRNN branches for time, space, and space-time features feeding a joint encoder that drives both prediction and active-learning queries.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig3.png" target="_blank">
+        <img src="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig3.png" alt="Fig.3 ADL variants in embedded space" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Four ADL query variants visualized in 2D embedded space — random, maximized uncertainty (cluster fringe), minimized uncertainty (cluster centre), and averaged uncertainty — illustrating the embedding-uncertainty metric.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig4.png" target="_blank">
+        <img src="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig4.png" alt="Fig.4 Training and validation losses for main ADL experiments" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Training and validation losses for spatio-temporal predictions under δ = 1 and δ = 0, showing how ADL variants compare with PDL across remaining candidates and the full data population.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig5.png" target="_blank">
+        <img src="assets/enhanced-spatio-temporal-electric-load-forecasts-using-less-data-with-active-deep-learning__s42256-022-00552-x/fig5.png" alt="Fig.5 Computational complexity reduction and query sequence experiments" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Computational complexity reduction (candidate subsampling, cluster reduction, spatial coordinate embedding) and query-sequence importance experiments — showing 2–3× speedup with minor accuracy trade-offs.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <strong>1 main-text table</strong> (Table 1 — numerical results for each prediction type, ADL variable, and ADL variant on 400-building dataset); Supplementary Table 1 contains equivalent results for the 100-building dataset.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, public/urban health policy, explainable ML, physics-informed graph learning, accessibility, EV optimization).</p>
+
+    <div class="idea">
+      <h3>① Replace the paper's fixed K-means++ clustering with a graph-structured ADL policy</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's ADL algorithm clusters candidate data points in a flat embedding space, ignoring the <strong>spatial topology of the distribution network</strong>. Buildings do not exist in isolation — they are connected by grid infrastructure whose graph structure creates physical dependencies in load. A direct extension: reformulate the ADL candidate-selection step on a <strong>spatial graph</strong> where nodes are buildings (or substations), edges are grid lines, and the query policy is learned by a graph neural network that propagates uncertainty across connected nodes. This would make informativeness estimates physically meaningful rather than purely geometrically derived, and should further reduce data demand in realistic utility settings where grid topology is known.</p>
+      <p><span class="lab mine">Added value to my research</span>This graph-aware ADL extension maps directly onto my <strong>physics-informed graph learning</strong> agenda: encoding grid topology as a soft physical constraint in the GNN embedding means the learned query policy generalizes across grids of different sizes — a transferable GeoAI sensor-placement operator. The same framework applies to my urban analytics context (facility catchment areas as a graph), turning passive data collection for spatiotemporal models into a principled allocation problem.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend the embedding-uncertainty metric to multi-task and multi-city transfer settings</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper trains and evaluates entirely within a single country (Switzerland) on one year of data. The embedding uncertainty metric is computed from one task's encoder — but the same encoder could, in principle, be pre-trained on buildings from many cities and then fine-tuned. An extension: apply the paper's ADL framework in a <strong>transfer-learning regime</strong> where a model pre-trained on densely instrumented cities (e.g., European capitals with high smart-meter penetration) is fine-tuned with active queries on a target city with sparse data. The embedding uncertainty, now reflecting cross-city feature diversity, would guide where to install the first meters in a new city — turning the paper's within-sample query strategy into a city-level deployment planner.</p>
+      <p><span class="lab mine">Added value to my research</span>Transfer-based ADL translates to my <strong>fine-tuning of geospatial foundation models</strong>: instead of random fine-tuning samples, use embedding uncertainty to select the most geographically diverse and informationally rich locations — exactly the "multi-source data fusion" challenge I face when adapting mobile-phone or remote-sensing models across cities. This also aligns with my interest in open science/FAIR: a pre-trained embedding released publicly lets other groups run ADL for sensor placement without re-training from scratch.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting human mobility flows in cities using deep learning on satellite imagery — <a href="https://doi.org/10.1038/s41467-025-65373-z" target="_blank">10.1038/s41467-025-65373-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Scale the paper's framework from buildings to city-wide net-zero planning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper operates at the <strong>single-building level</strong> with 100–400 buildings in Switzerland. Its predictions are the load profile of one building given its aerial image and local meteorology — a fine-grained but spatially limited scope. A natural extension: aggregate the building-level ADL predictions upward to produce <strong>district- and city-scale load maps</strong>, integrating rooftop solar generation estimates (also derivable from aerial imagery) to produce residual-load (net-load) maps for active distribution grids. This would connect the paper's per-building forecasts to the urban-scale energy-transition planning literature, testing whether active selection of measurement sites at building level also minimizes aggregate city-scale uncertainty.</p>
+      <p><span class="lab mine">Added value to my research</span>This scaling bridges the paper directly to my <strong>urban analytics</strong> themes: city-level net-load maps are analogous to the spatiotemporal density surfaces I produce for public-health accessibility — both require aggregating fine-grained point-level predictions into policy-relevant spatial summaries. The ADL sampling strategy could be adapted to my spatiotemporal kernel density estimation work, selecting which GPS trajectory samples or POI records to collect for maximum density-estimate coverage.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A building-scale modeling framework for urban net-zero transitions in Nanjing — <a href="https://doi.org/10.1038/s41467-025-64016-7" target="_blank">10.1038/s41467-025-64016-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply the paper's ADL query logic to equitable smart-meter deployment in underserved cities</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that ADL can <strong>reduce the number of smart meters needed</strong> while maintaining forecast accuracy, but it never asks <em>where</em> those meters should go in an equity-conscious way. Fig. 1 highlights that smart-meter adoption in Africa and Latin America is near zero — exactly the context where ADL's meter-saving properties are most valuable. An extension: couple the paper's embedding-uncertainty-based placement algorithm with an <strong>equity constraint</strong> (e.g., minimum coverage fraction per income quartile or neighbourhood type), producing a placement plan that is simultaneously informative for the grid model and fair across socio-economic groups. This would transform ADL from a pure ML efficiency tool into an infrastructure-equity instrument.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly intersects my <strong>EV charging efficiency-vs-equity optimization</strong> research: the same Pareto-front framing (prediction accuracy vs. coverage equity) applies to smart-meter siting. My R2SFCA service-area methods could define spatial accessibility scores for each neighbourhood as an equity input to the ADL placement objective — converting an abstract fairness constraint into a spatially actionable one grounded in accessibility modelling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Grid connections and inequitable access to electricity in African cities — <a href="https://doi.org/10.1038/s44284-025-00221-1" target="_blank">10.1038/s44284-025-00221-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Harvest the paper's uncertainty estimates as explainability signals for ML-based urban energy policy</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's embedding-uncertainty metric reflects <em>which</em> spatio-temporal contexts the model finds most surprising or poorly represented — a latent measure of model confidence across space and time. This signal is currently used only for data selection, then discarded. An extension: <strong>retain and map the embedding uncertainty surface</strong> after the final ADL iteration to produce an "uncertainty atlas" of the grid — identifying neighborhoods, building types, and seasonal windows where load predictions remain least reliable. This atlas could guide targeted audits, serve as an explainability layer for regulators, and inform where additional physical sensors have the highest marginal value even after ADL has converged.</p>
+      <p><span class="lab mine">Added value to my research</span>Mapping prediction uncertainty over space and time is precisely the goal of my <strong>explainable machine learning for spatial prediction</strong> work. The embedding-uncertainty surface functions like a spatially adaptive confidence interval — analogous to the local R² in MGWR or the bandwidth in GWR — and could be used to communicate to health or urban planners where a model's recommendations are most and least trustworthy. This also connects to my FAIR/open-science agenda: an uncertainty atlas released alongside model outputs makes spatial ML predictions more interpretable and actionable for non-expert policy audiences.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A systematic map of machine learning for urban climate change mitigation — <a href="https://doi.org/10.1038/s44284-025-00328-5" target="_blank">10.1038/s44284-025-00328-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

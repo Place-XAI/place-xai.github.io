@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Continual learning of context-dependent processing in neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Continual learning of context-dependent processing in neural networks (Nature Machine Intelligence, 2019)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Continual Learning</span>
+      <span class="tag">Catastrophic Forgetting</span>
+      <span class="tag">Context-Dependent Processing</span>
+      <span class="tag">Brain-Inspired AI</span>
+    </div>
+    <h1>Continual learning of context-dependent processing in neural networks</h1>
+    <div class="meta">
+      <span class="authors">Guanxiong Zeng · Yang Chen · Bo Cui · Shan Yu</span>
+      <span><b>Published</b> 2019-08-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-019-0080-x" target="_blank">10.1038/s42256-019-0080-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-019-0080-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A biologically inspired algorithm — <strong>Orthogonal Weights Modification (OWM)</strong> — overcomes catastrophic forgetting by restricting weight updates to directions orthogonal to previously learned input subspaces, enabling a single compact neural network to sequentially learn <strong>thousands of tasks</strong> (up to 3,755 Chinese character classes; 1,000 ImageNet classes) with as few as <strong>~10 samples per task</strong>. Paired with a <strong>Context-Dependent Processing (CDP) module</strong> inspired by the prefrontal cortex, the system further learns to apply <em>different mapping rules to identical inputs</em> across 40 distinct contexts — approaching multi-task performance without storing past data or expanding network size.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves a fundamental AI limitation.</b> Catastrophic forgetting has blocked practical deployment of continual-learning systems for decades; OWM provides a scalable, mathematically grounded fix without replay buffers or network growth.</li>
+      <li><b>Few-shot continual learning at scale.</b> With only ~10 samples per class, the system attains ~92% accuracy on 3,755 Chinese handwritten characters — approaching human-level (~96%) performance under sequential, one-pass conditions.</li>
+      <li><b>Context-dependent flexibility from a single network.</b> The CDP module allows one shared classifier to produce 40 contextually distinct input–output mappings — the first demonstration of primate-like cognitive flexibility in a compact DNN.</li>
+      <li><b>Brain-science bridge.</b> The paper reveals that CDP neurons exhibit mixed selectivity (task + sensory attribute responses) matching real prefrontal cortex (PFC) neurons, opening empirical neuroscience hypotheses.</li>
+      <li><b>Open source and reproducible.</b> Code is publicly available at <a href="https://github.com/beijixiong3510/OWM" target="_blank">github.com/beijixiong3510/OWM</a>, with all datasets publicly accessible.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Addresses a landmark open problem:</b> catastrophic forgetting has been the key unsolved challenge in neural network research for over three decades; this paper offers a principled, scalable solution.</li>
+      <li><b>Bridges AI and neuroscience:</b> the OWM algorithm and CDP module are explicitly derived from and validated against biological neural mechanisms (PFC mixed selectivity, synaptic consolidation), a hallmark of Nature MI's editorial preference.</li>
+      <li><b>Demonstrated generality across domains:</b> benchmarks span handwritten digits (MNIST), colour images (CIFAR-10), natural images (ImageNet), Chinese handwriting (CASIA-HWDB), and face attributes (CelebA) — demonstrating broad applicability rather than a narrow benchmark win.</li>
+      <li><b>Compact systems with outsized capability:</b> no extra memory, no network expansion, yet matching or surpassing prior methods — the compression-efficiency story resonates with deployable AI.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>MNIST</dt><dd>Modified National Institute of Standards and Technology handwritten digit dataset — 60,000 training + 10,000 test images of 10 digit classes (0–9). Used for shuffled-MNIST (up to 100 sequential tasks) and disjoint-MNIST (10-task sequential) benchmarks. Available at <a href="http://yann.lecun.com/exdb/mnist/" target="_blank">yann.lecun.com/exdb/mnist</a>.</dd>
+      <dt>CIFAR-10</dt><dd>Canadian Institute For Advanced Research dataset of 60,000 32×32 colour images across 10 object classes. Used for end-to-end continual learning (disjoint CIFAR-10, 5 sequential tasks of 2 classes each). Available at <a href="https://www.cs.toronto.edu/~kriz/cifar.html" target="_blank">cs.toronto.edu/~kriz/cifar.html</a>.</dd>
+      <dt>ImageNet (ILSVRC2012)</dt><dd>Large-scale visual recognition challenge dataset — ~1.28 million training images across 1,000 object categories. Used to test OWM scalability on 1,000 sequentially learned classes with a pre-trained ResNet feature extractor. Available at <a href="http://image-net.org/index" target="_blank">image-net.org</a>.</dd>
+      <dt>CASIA-HWDB1.1</dt><dd>Chinese Academy of Sciences Institute of Automation Handwritten Database — 3,755 Chinese character classes (level I vocabulary, covering &gt;99% of usage frequency in written Chinese), with small-sample conditions tested down to &lt;10 samples per class. Available at <a href="http://www.nlpr.ia.ac.cn/databases/handwriting/Home.html" target="_blank">nlpr.ia.ac.cn/databases/handwriting</a>.</dd>
+      <dt>CelebA</dt><dd>CelebFaces Attributes dataset — over 200,000 face images annotated with 40 binary facial attributes (e.g., gender, attractiveness, smile). Used for the context-dependent 40-attribute sequential classification experiment (19,962 test images analysed in the mixed-selectivity analysis). Available at <a href="http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html" target="_blank">mmlab.ie.cuhk.edu.hk/projects/CelebA.html</a>.</dd>
+      <dt>Code</dt><dd>Full source code (OWM + CDP) available at <a href="https://github.com/beijixiong3510/OWM" target="_blank">github.com/beijixiong3510/OWM</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MNIST</td><td>Handwritten digit sequential learning benchmark</td><td>70,000 images, 10 classes, up to 100 tasks</td><td><a href="http://yann.lecun.com/exdb/mnist/" target="_blank">lecun.com/exdb/mnist</a></td></tr>
+        <tr><td>CIFAR-10</td><td>End-to-end continual learning (image classification)</td><td>60,000 images, 10 classes, 5 sequential tasks</td><td><a href="https://www.cs.toronto.edu/~kriz/cifar.html" target="_blank">cs.toronto.edu</a></td></tr>
+        <tr><td>ImageNet (ILSVRC2012)</td><td>Scalability test — 1,000-class sequential classifier</td><td>~1.28M training images, 1,000 classes</td><td><a href="http://image-net.org/index" target="_blank">image-net.org</a></td></tr>
+        <tr><td>CASIA-HWDB1.1</td><td>Few-shot continual learning, Chinese characters</td><td>3,755 classes, &lt;10 samples/class tested</td><td><a href="http://www.nlpr.ia.ac.cn/databases/handwriting/Home.html" target="_blank">nlpr.ia.ac.cn</a></td></tr>
+        <tr><td>CelebA</td><td>Context-dependent 40-attribute face classification</td><td>&gt;200,000 images, 40 binary attributes</td><td><a href="http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html" target="_blank">mmlab.ie.cuhk.edu.hk</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all datasets are publicly available; the paper reports performance under specifically constrained conditions (small sample size, sequential task order). Exact per-task sample counts come directly from the article's Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Orthogonal Weights Modification (OWM):</b> during training on a new task, the backpropagation gradient is projected onto the subspace <em>orthogonal</em> to all previously seen inputs (via projector <code>P = I − A(AᵀA + αI)⁻¹Aᵀ</code>), so weight changes cannot disturb learned responses. P is updated iteratively using a Recursive Least Squares (RLS) analogue — no need to store all past inputs.</li>
+      <li><b>Context-Dependent Processing (CDP) module:</b> a neural layer inspired by the prefrontal cortex is inserted between the feature extractor and the classifier. A trainable encoder maps contextual signals (e.g., word-embedding of the task name) to control signals that multiplicatively rotate the sensory feature space — enabling the same classifier to produce task-specific outputs for identical inputs without interference.</li>
+      <li><b>Pre-trained feature extraction + OWM classifier:</b> for complex tasks (CASIA-HWDB, ImageNet), a DNN feature extractor is pre-trained on (a subset of) the data; the OWM algorithm then trains only the classifier head in a sequential, online fashion — separating slow perceptual learning from fast concept formation.</li>
+      <li><b>End-to-end OWM (CIFAR-10):</b> for tasks without a pre-trained extractor, OWM is applied throughout the full convolutional network (3 conv layers + 3 FC layers) in an end-to-end manner, demonstrating applicability beyond linear classifiers.</li>
+      <li><b>Network capacity analysis:</b> the rank of the orthogonal projector P serves as a theoretical capacity meter — when rank approaches zero, the network is saturated. Empirically validated on CASIA-HWDB across varying network sizes and task counts (Fig. 3d,e).</li>
+      <li><b>Statistical validation:</b> all performance comparisons use two-sided t-tests across 10 repeated experiments; significance threshold P &lt; 0.01.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig1.png" target="_blank">
+        <img src="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig1.png" alt="Fig. 1 Schematic of OWM weight projection" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic of OWM — new task weight modifications are projected onto the orthogonal subspace of previously learned inputs, preventing interference with old tasks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig2.png" target="_blank">
+        <img src="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig2.png" alt="Fig. 2 OWM performance on 10-task disjoint MNIST" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> OWM vs. CAB vs. SGD on the 10-task disjoint MNIST experiment — test accuracy as a function of classes learned; OWM shows far less forgetting.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig3.png" target="_blank">
+        <img src="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig3.png" alt="Fig. 3 Continual learning with small sample size on CASIA-HWDB" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Few-shot continual learning on CASIA-HWDB1.1 — accuracy vs. pre-training extent, sample size, and network capacity (rank of orthogonal projector).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig4.png" target="_blank">
+        <img src="assets/continual-learning-of-context-dependent-processing-in-neural-networks__s42256-019-0080-x/fig4.png" alt="Fig. 4 CDP module and 40-attribute face classification" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> CDP module architecture and performance on CelebA — sequential learning of 40 facial attributes using a single classifier approaches multi-task training accuracy.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables in main text: 3 (Table 1: shuffled MNIST comparison; Table 2: disjoint MNIST comparison; Table 3: disjoint CIFAR-10 comparison). Additional supplementary tables (S1–S7) and figures (S1–S7) in the Supplementary Information.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, spatial accessibility, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Apply OWM to geospatial foundation model fine-tuning across evolving urban contexts</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that OWM can sequentially learn thousands of context-specific mapping rules without forgetting, using ~10 samples per task. A direct extension: apply OWM as the fine-tuning algorithm for geospatial foundation models (e.g., remote sensing or GPS trajectory encoders) that are continuously updated as <strong>new cities, time periods, or policy interventions</strong> create new contexts. Instead of a single fine-tune that overwrites prior knowledge, OWM's orthogonal projector would ensure that the model retains spatial patterns learned from earlier cities when adapting to new ones — enabling a single foundation model to serve as a truly universal geospatial encoder.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models is a core thread of my research agenda. OWM offers a principled algorithm for <strong>continual adaptation of pre-trained remote sensing or trajectory encoders</strong> as new data streams arrive (new satellite imagery time slices, new mobile phone records), directly replacing the destructive full-parameter fine-tuning typically applied in geospatial ML workflows. This would make my multi-source data fusion pipelines robust to temporal drift without re-training from scratch.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for the Earth system — <a href="https://doi.org/10.1038/s41586-025-09005-y" target="_blank">10.1038/s41586-025-09005-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② OWM as an online updater for context-switching spatial prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>The CDP module in this paper solves a problem structurally identical to the challenge of <strong>non-stationarity in spatial prediction</strong>: the same input features (e.g., socioeconomic covariates) should produce different outputs (e.g., health outcomes) depending on the spatial context (urban core vs. suburban periphery vs. rural). Extending the paper: implement the CDP module as a spatially-indexed context layer in which the context signal is a location embedding (e.g., from a pre-trained place encoder), allowing OWM to learn region-specific transformations of the same feature vector sequentially — one spatial context at a time.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatiotemporal analysis work, MGWR/GWR already captures spatial non-stationarity but is static — refit from scratch for each new dataset. Replacing the GWR bandwidth-selection step with a <strong>CDP-layer whose context signal is the spatial coordinate embedding</strong> would yield a neural analogue of GWR that is updatable online and interpretable via the encoder weights. This bridges explainable ML with the continual-learning literature in a way directly applicable to my health geography and urban analytics projects.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Three types of incremental learning — <a href="https://doi.org/10.1038/s42256-022-00568-3" target="_blank">10.1038/s42256-022-00568-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Combine OWM with loss-of-plasticity mitigation for long-horizon spatiotemporal models</h3>
+      <p><span class="lab paper">Extending this paper</span>OWM protects previous knowledge by constraining the weight-update direction, but does not address <strong>loss of plasticity</strong> — the progressive inability of neurons to learn new tasks as training depth grows. A subsequent Nature paper (Dohare et al., 2024) identifies this as a separate failure mode distinct from catastrophic forgetting. Extending the current paper: pair OWM's orthogonal projection with continual neuron re-initialization strategies (e.g., periodic reset of dead neurons in ReLU networks), to maintain <em>both</em> knowledge retention and learning plasticity over arbitrarily long sequential task streams.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatiotemporal models for public health (e.g., SIR epidemic modeling updated monthly with new mobility data) face exactly this dual problem: they must retain older outbreak patterns while remaining plastic to new variant dynamics. An OWM + plasticity-maintenance combination would be directly applicable to my <strong>Monte Carlo SIR simulations</strong> that currently require full re-parameterization each epidemic wave — enabling genuinely online epidemic intelligence.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Loss of plasticity in deep continual learning — <a href="https://doi.org/10.1038/s41586-024-07711-7" target="_blank">10.1038/s41586-024-07711-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use the CDP module for multi-context accessibility modeling across diverse urban typologies</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's CDP module enables a <em>single classifier</em> to learn 40 distinct facial attribute tasks by rotating the feature space according to contextual signals. The same architecture is directly applicable to any domain where identical input features should produce different inferences depending on context. Extending the paper: replace the face-attribute context signals with <strong>urban typology embeddings</strong> (e.g., dense metropolitan / mid-size city / rural town derived from morphological data), training a single CDP-enabled network to infer the appropriate accessibility threshold, decay function, and equity criterion for each urban type — rather than running separate models per city class.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA/R2SFCA accessibility modeling currently requires separate parameterization (catchment size, distance-decay function) for each study area and service type. A CDP-equipped accessibility model conditioned on urban-typology context would allow a <strong>single trained model to serve any city type</strong>, outputting not just an accessibility score but the contextually appropriate calculation parameters — a step toward a universal, context-aware accessibility oracle for public-facility planning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Engineering flexible machine learning systems by traversing functionally invariant paths — <a href="https://doi.org/10.1038/s42256-024-00902-x" target="_blank">10.1038/s42256-024-00902-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Exploit OWM's curriculum sensitivity to design data-ordering strategies for geospatial ML</h3>
+      <p><span class="lab paper">Extending this paper</span>A subtle but important finding in the paper is that task order matters for OWM: digit '9' is recognized significantly better after learning '7' and '4', suggesting that <strong>curriculum learning</strong> interacts with the orthogonal projection capacity in non-trivial ways. Extending the paper: systematically map the relationship between input-space geometry (overlap between task input distributions) and optimal task ordering, deriving a curriculum-planning algorithm that pre-sorts tasks to maximize residual orthogonal capacity and thus final sequential performance.</p>
+      <p><span class="lab mine">Added value to my research</span>In multi-source geospatial data fusion, the order in which data streams (satellite imagery, social media, POI, mobile-phone records) are fed into a continual model affects what spatial structure is retained vs. overwritten. This paper's curriculum insight, combined with <strong>my spatiotemporal kernel density estimation</strong> methods to characterize input-distribution overlap, could yield a principled data-ordering strategy for incrementally building GeoAI models from heterogeneous streams — reducing the dependence on full-data re-training that currently limits reproducibility and FAIR compliance in my pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning incorporating biologically inspired neural dynamics and in-memory computing — <a href="https://doi.org/10.1038/s42256-020-0187-0" target="_blank">10.1038/s42256-020-0187-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

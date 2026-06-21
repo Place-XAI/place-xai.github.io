@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lessons from infant learning for unsupervised machine learning — AI Digest</title>
+<meta name="description" content="AI Digest: Lessons from infant learning for unsupervised machine learning (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Unsupervised learning</span>
+      <span class="tag">Infant cognition</span>
+      <span class="tag">Multimodal learning</span>
+      <span class="tag">Representation learning</span>
+    </div>
+    <h1>Lessons from infant learning for unsupervised machine learning</h1>
+    <div class="meta">
+      <span class="authors">Lorijn Zaadnoordijk · Tarek R. Besold · Rhodri Cusack</span>
+      <span><b>Published</b> 2022-06-22</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00488-2" target="_blank">10.1038/s42256-022-00488-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00488-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Unsupervised machine learning has stalled because it has largely mimicked supervised ML's conventions: unimodal data, fixed architectures, and stationary training sets. Drawing on developmental cognitive science, this Perspective identifies <strong>three transferable lessons from infant learning</strong>: (1) information processing guided by innate architectural biases and constraints; (2) richer representations built from diverse, multimodal inputs; and (3) learning inputs shaped by a natural developmental curriculum and curiosity-driven active exploration. Adopting these principles could unlock <strong>qualitatively new performance levels</strong> in unsupervised learning that incremental data scaling alone cannot achieve.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Diagnoses the ceiling of current unsupervised ML.</b> The paper argues that "the data will fix it" is insufficient; the community inherits supervised ML's data limitations while lacking its supervision signal — a fundamental structural problem.</li>
+      <li><b>Grounds inspiration in the most relevant biological learner.</b> Prior neuro-inspired ML focuses on adult cognition. Infants are the true counterpart: they build flexible representations from unlabeled data with far fewer examples than any state-of-the-art DNN requires.</li>
+      <li><b>Proposes concrete, actionable architectural directions.</b> From fibred "networks of networks" that encode complex connectivity to curriculum schedules mimicking developmental non-stationarity, the recommendations go beyond vague biologically inspired rhetoric.</li>
+      <li><b>Identifies the catastrophic interference problem as unsolved and urgent.</b> The analysis ties plasticity loss directly to the mismatch between static ANN architectures and the infant brain's temporally evolving structure, motivating new solutions.</li>
+      <li><b>Bridges two research communities.</b> By translating specific developmental-science findings (the Goldilocks effect, subplate transience, joint-attention scaffolding) into ML design principles, the paper creates a sustained bilateral exchange rather than a one-off analogy.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary synthesis at the right breadth:</b> spans developmental cognitive science, neuroscience, and ML in a way that fits Nature MI's mission of bringing AI into dialogue with the sciences of mind and brain.</li>
+      <li><b>Challenges orthodoxy with evidence:</b> argues against the dominant "scale data + scale compute" paradigm using peer-reviewed developmental-science results, a bold position with clear empirical backing.</li>
+      <li><b>Perspective/Review format ideal for the journal:</b> Nature MI publishes Perspectives that reframe an open problem for a broad ML audience; this paper's three-lesson structure maps precisely onto that genre.</li>
+      <li><b>Forward-looking yet grounded:</b> the proposals (fibred nets, developmental curricula, curiosity-driven active learning) are speculative but already partially instantiated in the literature, giving practitioners a toehold.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>Perspective/Review — no primary empirical dataset collected by the authors. All quantitative claims are drawn from cited studies in developmental cognitive science and machine learning.</dd>
+      <dt>Developmental science corpus</dt><dd>Synthesizes &gt;200 peer-reviewed studies on infant cognition, neuroimaging (MRI, fMRI of neonates and infants aged 0–12 months), head-mounted camera datasets, and behavioral paradigms (looking-time, habituation, statistical learning tasks).</dd>
+      <dt>ML benchmarks referenced</dt><dd>ImageNet (15 million high-resolution images, 22,000 label classes); AlexNet, ResNet, Inception, Echo State Networks, contrastive-learning methods; the paper does not rerun or generate new benchmark results.</dd>
+      <dt>Neuroimaging context</dt><dd>Macaque visual cortex connectivity map cited for architectural comparison (Fig. 1). Brain MRI cortical folding and structural connectivity data from published human infant neuroimaging cohorts (not collected by authors).</dd>
+      <dt>Head-mounted camera studies</dt><dd>Head-cam datasets from infants aged 1–24 months (cited refs. 140–145) provide naturalistic first-person visual input statistics; the paper reviews their findings on face/hand frequency as a function of age.</dd>
+      <dt>Data availability</dt><dd>No primary data generated. All referenced datasets are from the cited literature; data availability statement is absent (consistent with review/perspective article type).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role in Paper</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ImageNet (Deng et al., 2009)</td><td>Benchmark reference for supervised ML data demands</td><td>15M images, 22,000 classes</td><td><a href="https://www.image-net.org" target="_blank">image-net.org</a></td></tr>
+        <tr><td>Macaque visual cortex connectivity (Van Essen et al.)</td><td>Architectural comparison with ANNs (Fig. 1)</td><td>One species, full cortical map</td><td>Neurooptikon / Janelia Farm</td></tr>
+        <tr><td>Head-mounted camera corpora (infant head-cam studies)</td><td>Evidence for natural learning curriculum statistics</td><td>Infants 1–24 months; multiple labs</td><td>Various published sources</td></tr>
+        <tr><td>Infant neuroimaging literature (MRI/fMRI)</td><td>Evidence for early brain structure and connectivity</td><td>Term-age neonates through 6-month-olds</td><td>Various published sources</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: this is a Perspective article; no original data were collected. Numbers above are taken verbatim from cited references as reported in the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Structured literature synthesis:</b> surveys developmental cognitive science (lessons 1–3) and maps each finding onto a counterpart in unsupervised ML, identifying gaps in current ML practice.</li>
+      <li><b>Lesson 1 — Constrained architectures:</b> review of infant neuroimaging showing adult-like structural connectivity at birth; translation into proposals for richer inductive biases, pre-wiring, and fibred "network of networks" architectures with efficient hyperparameter optimization.</li>
+      <li><b>Lesson 2 — Multimodal statistical learning:</b> synthesis of cross-modal infant studies (visual-auditory, visual-tactile, auditory-tactile); assessment of current multimodal ML (contrastive learning, multiview self-supervision) and gap analysis vs. the full sensory diversity infants exploit.</li>
+      <li><b>Lesson 3 — Developmental curriculum and active learning:</b> review of motor-development-driven input changes, caregiver scaffolding, the Goldilocks curiosity effect, and critical periods; translation into curriculum learning schedules, non-stationarity in continual learning, and curiosity-driven exploration strategies for ANNs.</li>
+      <li><b>Comparative architectural analysis:</b> visual comparison of primate visual cortex connectivity vs. AlexNet, ResNet, and Inception to motivate richer ANN design (Fig. 1); schematic of ANN training vs. infant developmental trajectory (Fig. 2).</li>
+      <li><b>Method positioning:</b> narrative review with conceptual proposals — no quantitative experiments run; evidence quality drawn from peer-reviewed developmental and ML literature.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/lessons-from-infant-learning-for-unsupervised-machine-learning__s42256-022-00488-2/fig1.png" target="_blank">
+        <img src="assets/lessons-from-infant-learning-for-unsupervised-machine-learning__s42256-022-00488-2/fig1.png" alt="Fig.1 Connectivity in biological vs. artificial neural networks" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Connectivity within biological and artificial neural networks: macaque visual cortex (a), AlexNet (b), ResNet (c), Inception (d) — illustrates the vast structural gap between primate cortex and current ANNs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/lessons-from-infant-learning-for-unsupervised-machine-learning__s42256-022-00488-2/fig2.png" target="_blank">
+        <img src="assets/lessons-from-infant-learning-for-unsupervised-machine-learning__s42256-022-00488-2/fig2.png" alt="Fig.2 Typical ANN training vs infant development" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Typical ANN training vs. infant development — contrasts the fixed, unimodal, stationary training regime of ANNs with the multimodal, embodied, and developmentally structured curriculum of human infants.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0). Three summary boxes (Boxes 1–3) distill each lesson's implications for ML but are narrative, not tabular.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, geospatial foundation models, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Operationalize the paper's "natural curriculum" principle in geospatial foundation-model fine-tuning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Lesson 3 proposes that ANNs should train on inputs ordered by an increasing complexity schedule analogous to infants' developmental progression from blurry-low-acuity to sharp-high-resolution vision. The paper remains conceptual; a direct extension is to <strong>empirically validate whether spatially coarse-to-fine curriculum ordering</strong> (training a geospatial model first at low spatial resolution, then at progressively finer scales) improves representation quality and data efficiency, directly testing the core hypothesis on real-world spatial data. This would also formalize "what counts as complexity" for spatial inputs — the paper leaves this open.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly informs my work on fine-tuning geospatial foundation models. A resolution-escalating curriculum during fine-tuning — coarse regional patterns first, then neighborhood-level details — could improve sample efficiency when adapting a pre-trained model to sparse ground-truth labels (e.g., healthcare facility access surveys), exactly the labeled-data bottleneck the paper identifies. It gives a principled, infant-inspired protocol for multi-scale fine-tuning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Loss of plasticity in deep continual learning — <a href="https://doi.org/10.1038/s41586-024-07711-7" target="_blank">10.1038/s41586-024-07711-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Build a multimodal spatiotemporal self-supervised learner inspired by the paper's cross-modal binding principle</h3>
+      <p><span class="lab paper">Extending this paper</span>Lesson 2 argues that infants' cross-modal temporal synchrony (linking sight, sound, touch) produces richer representations than any single-modality training. Current multimodal ML has barely moved beyond image–text pairs. A concrete extension of the paper: construct a self-supervised pre-training objective that binds <strong>spatially registered but modality-diverse inputs</strong> — satellite imagery, street-level imagery, mobility traces, and POI sequences — via a temporal-synchrony contrastive objective inspired by the infant's multimodal binding, then evaluate whether representations transfer better than single-modality baselines.</p>
+      <p><span class="lab mine">Added value to my research</span>My data science agenda fuses remote sensing, GPS trajectories, social media, and POI records — precisely the multi-source, unlabeled streams the paper identifies as the untapped potential of unsupervised learning. A cross-modal contrastive pre-training step over these heterogeneous urban data streams would give me a foundation-model backbone tailored to GeoAI tasks (health geography, urban accessibility), without relying on ImageNet pre-training that encodes non-spatial visual biases.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Translate the paper's inductive-bias lesson into spatially-structured priors for explainable GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>Lesson 1 argues that not all inductive biases are equal and that the specific structure of the bias matters — a point the paper makes for neural architecture but does not develop for learned spatial representations. An extension: test whether explicitly encoding <strong>spatial autocorrelation as an architectural prior</strong> (e.g., geographically weighted attention heads or spatial-kernel constraints in the first network layers, analogous to the cortical microcircuitry biases the paper describes) produces more sample-efficient and interpretable representations than unstructured architectures trained on the same spatial data.</p>
+      <p><span class="lab mine">Added value to my research</span>This speaks directly to my MGWR/GWR and explainable ML agenda. If spatial non-stationarity is encoded as an inductive bias — not estimated post hoc — then the model's attention maps carry geographic meaning by construction, making explanations (which spatial features drive prediction where) directly interpretable without Shapley post-processing. This bridges the paper's architectural-bias lesson with my explainability work on health-geography predictions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Continual learning of context-dependent processing in neural networks — <a href="https://doi.org/10.1038/s42256-019-0080-x" target="_blank">10.1038/s42256-019-0080-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Formalize curiosity-driven active learning for sparse spatial label acquisition</h3>
+      <p><span class="lab paper">Extending this paper</span>Lesson 3 describes the Goldilocks effect: infants preferentially attend to stimuli at intermediate complexity — not too familiar, not too novel — maximizing learning progress per unit of exposure. The paper reviews computational counterparts (prediction-error curiosity, multi-armed bandit syllabi) but does not propose a specific geographic or spatial instantiation. A direct extension: formalize a <strong>spatial active-learning policy</strong> where a model queries the most informative unlabeled locations (intermediate uncertainty × spatial novelty) rather than sampling at random, implementing the infant's curiosity mechanism for geospatial data collection.</p>
+      <p><span class="lab mine">Added value to my research</span>Efficient ground-truth collection is the binding constraint in spatial accessibility research — surveying healthcare facility quality across hundreds of cities is expensive. A curiosity-inspired spatial active-learner that prioritizes locations where the model's uncertainty is high <em>and</em> the local spatial context is underrepresented would let me build training sets for R2SFCA calibration or telehealth digital-divide mapping with far fewer surveys, directly reducing data-collection cost while improving geographic coverage.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unsupervised pretraining in biological neural networks — <a href="https://doi.org/10.1038/s41586-025-09180-y" target="_blank">10.1038/s41586-025-09180-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Address the paper's unsolved catastrophic-interference problem through spatiotemporal continual learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper flags catastrophic interference — new knowledge overwriting previous representations — as an unsolved obstacle for developmental-inspired ML, and suggests that the infant cortex's temporally evolving architecture (especially the transient subplate structure) holds hints for biological solutions. A concrete extension: implement a <strong>spatiotemporal dual-memory architecture</strong> (fast elastic weights for current context, slow plastic weights for long-term geography) where the "context" is defined by spatial region and time period, mimicking how the subplate mediates local cortical organization before disappearing — testing whether geographically segmented replay buffers reduce catastrophic forgetting when a model is sequentially trained across cities.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban dynamics are non-stationary: mobility patterns, health access, and POI distributions shift over years and across cities. A spatiotemporal continual-learning framework would let my GeoAI models update on new city data (e.g., post-pandemic mobility shifts or new healthcare facility openings) without forgetting what was learned on prior cities — a capability essential for building transferable, updatable urban health-geography tools. The paper's catastrophic-interference discussion gives a biological mandate for this engineering investment.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Three types of incremental learning — <a href="https://doi.org/10.1038/s42256-022-00568-3" target="_blank">10.1038/s42256-022-00568-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

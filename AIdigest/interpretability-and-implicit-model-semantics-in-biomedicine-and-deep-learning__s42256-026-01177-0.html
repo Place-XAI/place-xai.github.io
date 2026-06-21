@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interpretability and implicit model semantics in biomedicine and deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Interpretability and implicit model semantics in biomedicine and deep learning (Nature Machine Intelligence, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Interpretability</span>
+      <span class="tag">Model Semantics</span>
+      <span class="tag">Biomedical AI</span>
+    </div>
+    <h1>Interpretability and implicit model semantics in biomedicine and deep learning</h1>
+    <div class="meta">
+      <span class="authors">Jonathan Warrell · Michael Gancz · Hussein Mohsen · Prashant Emani · Mark Gerstein</span>
+      <span><b>Published</b> 2026-03-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-026-01177-0" target="_blank">10.1038/s42256-026-01177-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-026-01177-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Interpretability is only <strong>one facet of a deep-learning model's full semantics</strong>. By drawing on the philosophy of science, this Brief Communication introduces an <strong>"implicit model semantics" framework</strong> that distinguishes the <em>minimal semantics</em> (the learned input–output mapping) from richer <em>implicit semantics</em> (structured features embedded in the network's internal representations). Applied to AlphaFold, computational genomics, and medical diagnosis, the framework reveals that <strong>progressively removing explicit physical or biological constraints from architectures does not impoverish — and often enriches — what the model implicitly encodes</strong>, with consequences for how biomedical AI systems should be evaluated, trusted, and interpreted.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Moves interpretability from engineering to epistemology.</b> By grounding the analysis in Solomonoff induction and philosophy-of-science notions of model semantics, the paper provides a <strong>principled vocabulary</strong> for debating what "understanding a model" actually means — replacing the ad-hoc XAI landscape with a coherent framework.</li>
+      <li><b>Explains the AlphaFold2→AlphaFold3 shift.</b> The framework elegantly explains why removing explicit physical priors (energy functions) from AlphaFold3's architecture improved performance: the network learned <strong>finer-grained implicit representations</strong> that supersede the hand-coded semantics — a concrete demonstration of the framework in a landmark system.</li>
+      <li><b>Addresses high-stakes AI governance.</b> The tension between implicit-semantics accuracy and interpretability is cast as a fundamental trade-off, not a technical nuisance, directly informing FDA approval criteria and clinical AI deployment decisions.</li>
+      <li><b>Bridges computation and biology.</b> By analyzing genomics models (in silico mutagenesis, latent factor decomposition) and diagnostic imaging together, it establishes a cross-cutting principle that applies across all biomedical DL subfields.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Conceptual framework, not incremental benchmark:</b> Nature Machine Intelligence prizes perspectives and frameworks that reframe the field; this paper proposes a novel conceptual lens for all of ML interpretability.</li>
+      <li><b>Cross-disciplinary reach:</b> uniting philosophy of science, information theory (Solomonoff/Kolmogorov), and three distinct biomedical subdomains in a single Brief Communication showcases the breadth NMI values.</li>
+      <li><b>Timely governance relevance:</b> as AI clinical systems reach regulatory approval, a rigorous semantics framework directly informs AI governance debates that NMI actively covers.</li>
+      <li><b>Influential anchor point:</b> the framework cites and reinterprets landmark papers (AlphaFold, Enformer, psychiatric genomics) in a way that will be cited broadly by the NMI readership building or evaluating interpretable biomedical models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>This is a <strong>Brief Communication / perspective piece</strong> — it presents a conceptual framework illustrated with published case studies; it does not introduce a new empirical dataset or run original experiments.</dd>
+      <dt>Case study 1 — Protein folding</dt><dd><strong>AlphaFold2</strong> (Jumper et al., <em>Nature</em> 596, 2021) and <strong>AlphaFold3</strong> (Abramson et al., <em>Nature</em> 630, 2024) are used as primary illustrations. AlphaFold2 training data covers ~100 million known sequences; exact training volumes for AlphaFold3 are not stated in this paper.</dd>
+      <dt>Case study 2 — Computational genomics</dt><dd>Referenced models include <strong>Enformer</strong> (Avsec et al., <em>Nature Methods</em> 18, 2021; <em>Nature</em> 649, 2026) for genomics-track prediction, a <strong>mutagenesis-based variant-effect predictor</strong> (Sun et al., bioRxiv 2024), and the <strong>LNCP (linear network of cell-type phenotypes)</strong> framework for psychiatric genomics (Emani et al., <em>Science</em> 384, 2024) — the latter trained on multi-tissue bulk and single-cell brain genomics data. Exact dataset sizes come from those primary papers, not stated here.</dd>
+      <dt>Case study 3 — Medical diagnosis</dt><dd>Referenced literature on DL in radiology and pathology image analysis (Acosta et al., <em>Nat. Med.</em> 28, 2022); no new imaging datasets are used or cited with specific volumes in this paper.</dd>
+      <dt>Theoretical grounding</dt><dd><strong>Solomonoff induction / Kolmogorov complexity</strong> (Hutter 2007) as the formal compression principle underlying the framework's definition of model semantics.</dd>
+      <dt>Data availability</dt><dd>No new data generated; all illustrations refer to published datasets (AlphaFold PDB, genomics benchmarks) accessible through the primary papers cited.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / System</th><th>Role in Framework</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>AlphaFold2 &amp; AlphaFold3</td><td>Protein-folding case study — illustrating shift from explicit to implicit physical semantics</td><td>Training set: ~100M sequences (AlphaFold2 est.); AlphaFold3 scope not stated in this paper</td><td><a href="https://alphafold.ebi.ac.uk" target="_blank">alphafold.ebi.ac.uk</a></td></tr>
+        <tr><td>Enformer / genomics-track predictors</td><td>Computational genomics case study — in silico mutagenesis and variant-effect prediction</td><td>Genome-wide; exact training volumes in Avsec et al. 2021 / 2026</td><td><a href="https://www.nature.com/articles/s41592-021-01252-x" target="_blank">Nat. Methods 2021</a></td></tr>
+        <tr><td>LNCP psychiatric genomics framework</td><td>Latent-factor / multi-level biological network model — illustrates probing of implicit semantics</td><td>Multi-tissue bulk + single-cell brain data; details in Emani et al., Science 2024</td><td><a href="https://doi.org/10.1126/science.adi5199" target="_blank">Science 2024</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this paper is a framework/perspective piece. Concrete data volumes (sample sizes, genome coverage) belong to the primary papers cited; the numbers above are from those sources, not independently verified in this article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Implicit semantics framework:</b> introduces a two-level taxonomy — <em>minimal semantics</em> (the learned input–output function, probed via in silico simulation) vs. <em>implicit semantics</em> (structured, recoverable knowledge in the network's internal representations, probed via layer inspection or latent-factor decomposition).</li>
+      <li><b>Philosophy-of-science grounding:</b> connects the framework to existing philosophy-of-science theories of model semantics (French &amp; Ladyman 1999, French 2000), placing DL interpretability within the broader epistemology of scientific modeling.</li>
+      <li><b>Solomonoff induction as unifying principle:</b> formalizes the compression view of science — theories are programs; the credence placed in a model is a Bayesian distribution over programs weighted by their Kolmogorov complexity — providing a rigorous definition of why interpretability serves scientific induction.</li>
+      <li><b>Case-study analysis:</b> applies the framework to AlphaFold2/3 (explicit → implicit physical semantics), computational genomics (in silico mutagenesis vs. weight decomposition), and medical imaging DL (accuracy–interpretability trade-off in clinical deployment).</li>
+      <li><b>Adversarial training perspective:</b> discusses adversarial training and adversarial examples as tools to audit implicit semantics and mitigate unknown confounders in medical imaging models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/interpretability-and-implicit-model-semantics-in-biomedicine-and-deep-learning__s42256-026-01177-0/fig1.png" target="_blank">
+        <img src="assets/interpretability-and-implicit-model-semantics-in-biomedicine-and-deep-learning__s42256-026-01177-0/fig1.png" alt="Fig.1 Implicit model semantics in biomedicine" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Implicit model semantics in biomedicine — schematic illustrating types of model semantics introduced in the framework and their relationship to domain knowledge. A concrete application to a neurogenomics model is in Supplementary Fig. 1.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Supplementary contains Supplementary Fig. 1 and Supplementary Box 1.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, explainable spatial ML, 2SFCA/R2SFCA accessibility, spatiotemporal methods, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Operationalize the implicit-semantics taxonomy as a spatial-model audit toolkit</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper defines implicit vs. minimal semantics conceptually but does not provide a computable audit protocol. A direct extension: implement the taxonomy as a <strong>structured audit checklist</strong> — simulation-based probes (minimal semantics) paired with layer-decomposition probes (implicit semantics) — and benchmark it across the three biomedical subfields the paper touches. This would transform the framework from a classificatory vocabulary into a replicable empirical workflow, addressing the paper's own call for interpretability as a bridge between human and algorithmic insight.</p>
+      <p><span class="lab mine">Added value to my research</span>The same two-tier audit maps directly onto my <strong>explainable spatial ML pipeline</strong>: minimal semantics correspond to SHAP global importance on ensemble predictions, while implicit semantics correspond to MGWR/GWR coefficient surfaces that expose <em>where</em> a feature's influence is spatially non-stationary. A unified audit framework would let me report both tiers together — strengthening reproducibility and FAIR-data commitments in spatial health research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead — <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend the AlphaFold semantics progression to foundation models in medical imaging</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper traces how AlphaFold removed explicit physical priors yet retained implicit physical semantics. The same trajectory is now underway in medical imaging: gigapixel pathology models (e.g., whole-slide foundation models) remove hand-crafted histological features yet learn clinically meaningful representations. Extending the paper: apply its minimal vs. implicit semantics framework <strong>quantitatively</strong> to a pathology foundation model — measuring how much biological information (cell type, grade, prognosis) is recoverable via linear probes on frozen embeddings without explicit annotation, then trace how that implicit richness scales with pretraining data volume.</p>
+      <p><span class="lab mine">Added value to my research</span>Foundation-model probing has a direct analogue in <strong>geospatial foundation models</strong>: I can probe whether a fine-tuned geo-FM's frozen embeddings implicitly encode accessibility gradients, demographic structure, or health outcomes without explicit labeling — using this paper's framework to justify and structure the probing experiments as semantic recovery, not just transfer learning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A whole-slide foundation model for digital pathology from real-world data — <a href="https://doi.org/10.1038/s41586-024-07441-w" target="_blank">10.1038/s41586-024-07441-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Ground the implicit-semantics framework in causal structure to handle confounding</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper acknowledges that implicit semantics may encode confounders (e.g., hospital-site artefacts in medical imaging) rather than true biology, and cites adversarial training as one mitigation. A deeper extension: replace the paper's Bayesian compression view with an <strong>explicit causal graphical model</strong> in which semantics are defined relative to a causal DAG — distinguishing spurious correlations (confounders) from genuine implicit biological structure. This grounds the framework's "is implicit semantics real?" question in the causal inference literature and provides principled tools (do-calculus, invariant risk minimization) to separate them.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial predictive models for health outcomes routinely conflate environmental determinism with socioeconomic confounding. Adopting the paper's implicit-semantics language plus a causal DAG would let me articulate — and audit — whether my GWR coefficient maps recover <strong>place effects</strong> or merely unmeasured confounders, directly strengthening causal claims in my health-geography work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging — <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Formalize the Solomonoff compression principle as a model-selection criterion for spatial ensembles</h3>
+      <p><span class="lab paper">Extending this paper</span>Box 1 in the paper formalizes Solomonoff induction — preferring the most compressed theory consistent with data — as the epistemological foundation of scientific modeling. The paper stops at a conceptual level. An extension: derive a <strong>practical model-selection criterion from Kolmogorov complexity approximations</strong> (e.g., MDL-based penalties) and compare it against AIC/BIC on the biomedical models the paper analyzes. This would convert Box 1 from illustration to tool, enabling practitioners to operationalize the "maximum-compression" ideal.</p>
+      <p><span class="lab mine">Added value to my research</span>MDL-style compression priors would offer a principled alternative to cross-validation bandwidth selection in <strong>MGWR and spatiotemporal kernel density estimation</strong> — replacing empirical tuning with a theoretically grounded complexity penalty that accounts for the spatial non-stationarity of coefficient surfaces. This bridges information theory and spatial statistics in a way this paper motivates.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stable learning establishes some common ground between causal inference and machine learning — <a href="https://doi.org/10.1038/s42256-022-00445-z" target="_blank">10.1038/s42256-022-00445-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use the explicit-to-implicit semantics trajectory to design interpretable GeoAI for health geography</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper frames the AlphaFold2→3 shift as an insight about how DL can progressively internalize domain knowledge. The same logic applies to biomedical explainability more broadly: the paper proposes that when interpretability incurs negligible accuracy loss it should be preferred, but it does not provide a principled mechanism for detecting this crossover. An extension: develop a <strong>sensitivity-of-accuracy-to-interpretability curve</strong> (sweeping regularization strength on interpretable constraints) across multiple tasks to empirically locate where the accuracy cost of interpretability becomes negligible — making the paper's pragmatic recommendation operational.</p>
+      <p><span class="lab mine">Added value to my research</span>This crossover concept is directly actionable for my <strong>telehealth accessibility and digital-divide prediction</strong> models: I can sweep regularization on spatial smoothness constraints (analogous to interpretable priors) and plot the accuracy–interpretability frontier. Points on the Pareto frontier that sacrifice negligible AUROC for spatially smooth, policy-legible coefficient maps can then be justified using this paper's framework — producing outputs that are both accurate enough for clinical policy use and interpretable enough for geographic explanation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Morphological and molecular breast cancer profiling through explainable machine learning — <a href="https://doi.org/10.1038/s42256-021-00303-4" target="_blank">10.1038/s42256-021-00303-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

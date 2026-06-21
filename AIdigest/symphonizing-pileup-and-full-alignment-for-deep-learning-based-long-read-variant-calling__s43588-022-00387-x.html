@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symphonizing pileup and full-alignment for deep learning-based long-read variant calling — AI Digest</title>
+<meta name="description" content="AI Digest: Symphonizing pileup and full-alignment for deep learning-based long-read variant calling (Nature Computational Science, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Variant calling</span>
+      <span class="tag">Long-read sequencing</span>
+      <span class="tag">Deep learning</span>
+      <span class="tag">Genomics</span>
+    </div>
+    <h1>Symphonizing pileup and full-alignment for deep learning-based long-read variant calling</h1>
+    <div class="meta">
+      <span class="authors">Zhenxian Zheng · Shumin Li · Junhao Su · Amy Wing-Sze Leung · Tak-Wah Lam · Ruibang Luo</span>
+      <span><b>Published</b> 2022-12-19</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-022-00387-x" target="_blank">10.1038/s43588-022-00387-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-022-00387-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>Clair3</strong> achieves state-of-the-art long-read variant calling by <strong>combining two complementary deep learning strategies</strong>: a fast pileup network handles the majority of candidates, while a full-alignment network rescues difficult calls the pileup model flags as low-confidence. The result outperforms prior tools — especially at challenging low coverage (10–20×) — while running <strong>approximately four times faster</strong> than the next-best full-alignment method, converging pileup speed with full-alignment accuracy into a single unified caller.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves a long-standing design dilemma.</b> Long-read variant callers had to choose between pileup (fast, lower precision) and full-alignment (accurate, slow); Clair3 is the first tool to demonstrate that the two are complementary rather than competing, routing candidates selectively rather than redundantly processing all of them.</li>
+      <li><b>Critical for clinical-grade sequencing at lower cost.</b> Superior performance at 10–20× coverage means reliable variant calls from cheaper, lower-depth runs — directly reducing the cost barrier to population-scale or clinical genomic screening with Oxford Nanopore platforms.</li>
+      <li><b>Adopted by the ONT ecosystem as the default caller.</b> Oxford Nanopore Technologies replaced their own Medaka variant-calling submodule with Clair3, validating production-grade readiness and cementing a real-world impact on a large user base.</li>
+      <li><b>Open, modular, and reproducible.</b> Clair3 is BSD-licensed, distributed via Docker/Bioconda/Singularity, and all benchmarking outputs (VCFs, logs) are publicly archived — a model of computational reproducibility in bioinformatics.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methods advance at the intersection of deep learning and genomics:</b> the paper is not a narrow tool paper but a principled algorithmic contribution — the selective routing insight is a generalizable design pattern for any two-stage DL classifier.</li>
+      <li><b>Rigorous, reproducible benchmarking:</b> head-to-head comparison across five GIAB truth samples, two base-caller versions (Guppy 4 and 5), multiple coverages (10–50×), and fourteen genome stratification categories satisfies the journal's standards for comprehensive evaluation.</li>
+      <li><b>Immediate community impact:</b> adoption by ONT as the default caller and convergence of PEPPER's subsequent updates toward the same design philosophy demonstrate that the contribution has reshaped practice within the same publication cycle.</li>
+      <li><b>Transparent training methodology:</b> representation unification, phased-alignment training, and the Ranger optimizer are each described in ablation experiments with quantified gains — the work teaches as well as delivers.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Benchmarking samples</dt><dd><strong>GIAB (Genome in a Bottle)</strong> truth datasets — five human samples (HG001–HG005); primary benchmarking on HG003 and HG004 following PrecisionFDA v2 practices. Truth variants upgraded from GIAB v3.3.2 to <strong>v4.2.1</strong>.</dd>
+      <dt>Sequencing data</dt><dd>Oxford Nanopore Technologies (ONT) reads base-called with <strong>Guppy 5 (v5.0.14)</strong> — primary — and <strong>Guppy 4 (v4.2.2)</strong> for comparison on noisier data. Coverage range tested: <strong>10× to 50×</strong>. Reads also used from the <strong>Human Pangenome Reference Consortium</strong> (Guppy 4 data).</dd>
+      <dt>Reference genome</dt><dd>Standard human reference genomes; links in Supplementary Section 5. Genome stratifications via <strong>GIAB v2.0 genome stratifications</strong> (14 categories including low complexity, functional, and difficult-to-map regions).</dd>
+      <dt>Training regime</dt><dd>Models trained on the four GIAB samples not used for testing, at <strong>ten sub-sampled coverages per sample</strong>; chromosome 20 always held out. Separate pileup and full-alignment models per base-caller version.</dd>
+      <dt>Evaluation tools</dt><dd><strong>hap.py</strong> for variant comparison against truth sets; <strong>qfy.py</strong> for region-stratified metrics; <strong>WhatsHap</strong> for phasing. All commands and parameters in Supplementary Section 6 and Zenodo.</dd>
+      <dt>Analysis output</dt><dd>All VCFs and running logs publicly archived at <a href="http://www.bio8.cs.hku.hk/clair3/analysis_result" target="_blank">bio8.cs.hku.hk/clair3/analysis_result</a>.</dd>
+      <dt>Availability</dt><dd>Clair3 source code at <a href="https://github.com/HKU-BAL/Clair3" target="_blank">github.com/HKU-BAL/Clair3</a> (BSD-3); pretrained models via Bioconda, Docker, Singularity, and Zenodo.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>GIAB HG001–HG005 truth variants</td><td>Training &amp; benchmarking ground truth</td><td>5 human samples, v4.2.1, chr20 held out</td><td><a href="https://www.nist.gov/programs-projects/genome-bottle" target="_blank">NIST GIAB</a></td></tr>
+        <tr><td>ONT Guppy 5 reads</td><td>Primary test sequencing data</td><td>HG003, HG004; 10–50× coverage</td><td>Supplementary Sec. 5</td></tr>
+        <tr><td>ONT Guppy 4 reads</td><td>Noisier-data comparison; HPRC compatibility</td><td>HG003, HG004; 10–50× coverage</td><td>Human Pangenome Ref Consortium</td></tr>
+        <tr><td>GIAB genome stratifications v2.0</td><td>Region-specific performance evaluation</td><td>14 genome region categories</td><td><a href="https://github.com/genome-in-a-bottle/genome-stratifications" target="_blank">GitHub GIAB</a></td></tr>
+        <tr><td>Clair3 analysis output (VCFs)</td><td>Reproducible benchmarking archive</td><td>All tools, coverages, samples</td><td><a href="http://www.bio8.cs.hku.hk/clair3/analysis_result" target="_blank">bio8.cs.hku.hk</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper does not report a single headline sample count; coverage figures above are taken verbatim from the article. Links to reference genomes and ONT data are in Supplementary Section 5, not published inline.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Two-stage selective routing:</b> a lightweight <strong>Bi-LSTM pileup network</strong> (594-feature input; two bidirectional LSTM layers with 128/160 units) first calls all candidates above coverage and allele-frequency thresholds. Only the lowest-quality 30% of variant calls and 10% of reference calls are passed to the full-alignment network — decoupling speed from accuracy.</li>
+      <li><b>Full-alignment ResNet with spatial pyramid pooling:</b> a compact <strong>ResNet</strong> (3 residual blocks, ~3M parameters — eight times smaller than Inception-v3 used in DeepVariant/PEPPER) accepts 23,496-integer inputs encoding 8 channels × 33 positions × 89 reads. An <strong>SPP layer</strong> handles variable coverage without requiring input cropping.</li>
+      <li><b>WhatsHap phasing integration:</b> high-quality heterozygous pileup SNP calls phase the read alignments; phased alignments serve as full-alignment input, improving Indel F1 by ~6% in ablation.</li>
+      <li><b>Representation unification:</b> truth variants are aligned to the candidate representation in the alignments using a five-step haplotype Cartesian-product matching algorithm, improving SNP recall ~0.2% and Indel recall ~2%.</li>
+      <li><b>Ranger optimizer training:</b> RectifiedAdam + Lookahead replaces cyclical learning-rate decay, providing automated warm-up and faster convergence; ablation shows ~0.2% overall F1 gain over Clair's optimizer alone.</li>
+      <li><b>Benchmarking:</b> hap.py evaluation against GIAB truth sets across SNP/Indel/Insertion/Deletion at 10–50× coverage; region-stratified analysis using GIAB v2.0 genome stratifications; runtime measured on identical hardware (two Intel Xeon Silver 4116s, 24 cores, 256 GB RAM).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/symphonizing-pileup-and-full-alignment-for-deep-learning-based-long-read-variant-calling__s43588-022-00387-x/fig1.png" target="_blank">
+        <img src="assets/symphonizing-pileup-and-full-alignment-for-deep-learning-based-long-read-variant-calling__s43588-022-00387-x/fig1.png" alt="Fig.1 Benchmarking results on HG003 and HG004 with Guppy 5 data" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Benchmarking results on HG003 and HG004 with Guppy 5 data — SNP/Indel F1 at 10–50× coverage, precision-recall at 20×, and runtime breakdowns.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/symphonizing-pileup-and-full-alignment-for-deep-learning-based-long-read-variant-calling__s43588-022-00387-x/fig2.png" target="_blank">
+        <img src="assets/symphonizing-pileup-and-full-alignment-for-deep-learning-based-long-read-variant-calling__s43588-022-00387-x/fig2.png" alt="Fig.2 Pileup and full-alignment calling working details and synergy" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Pileup and full-alignment synergy on HG003 at 50× — variant quality distributions, recovery rates of pileup-failed calls, and the F1 curve when varying the proportion routed to full-alignment.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); 12 Supplementary Tables cover dataset summaries, benchmarking at Guppy 4/5, genome stratification results, parameter sensitivity, memory consumption, and ablation studies.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, spatiotemporal kernel density, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Transfer the selective-routing architecture to spatial prediction pipelines</h3>
+      <p><span class="lab paper">Extending this paper</span>Clair3's core insight — route <em>only uncertain candidates</em> from a fast but coarse model to a slow but precise model — is architecturally general. The paper restricts this to genomic variants, but an extension would formalize the routing criterion (quality score thresholds, 30%/10% percentile cuts) into a learnable gating function and test whether those thresholds generalize across sequencing platforms (PacBio HiFi, R10.4 chemistry) and organism types beyond human. The key challenge is that the "uncertainty" signal from the pileup network needs to be calibrated, not just ranked, to set principled cross-platform thresholds.</p>
+      <p><span class="lab mine">Added value to my research</span>The two-stage selective routing pattern translates directly into <strong>spatiotemporal prediction pipelines</strong>: a fast, coarse spatial model (e.g., MGWR or a lightweight GNN) first covers easy cases, and only grid cells or time points where the model's uncertainty exceeds a threshold are routed to a heavy physics-informed graph model. This could dramatically reduce computation in city-scale accessibility or epidemiological mapping without sacrificing accuracy in complex urban geometries.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A software framework for end-to-end genomic sequence analysis with deep learning — <a href="https://doi.org/10.1038/s43588-023-00557-5" target="_blank">10.1038/s43588-023-00557-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Fine-tune Clair3-style models with population-specific training data for global health genomics</h3>
+      <p><span class="lab paper">Extending this paper</span>Clair3's pretrained models are trained exclusively on five GIAB individuals of primarily European and Asian ancestry (HG001–HG005). The paper acknowledges this scope but does not evaluate performance on non-reference-panel populations or admixed genomes. A direct extension would compile truth sets from under-represented populations (African, South Asian, Indigenous) and fine-tune the pileup and full-alignment networks using Clair3's own modular training pipeline, then measure whether the performance gap — known to exist for short-read callers across ancestries — narrows or persists for long-read data.</p>
+      <p><span class="lab mine">Added value to my research</span>Population-specific fine-tuning mirrors the <strong>fine-tuning of geospatial foundation models</strong> challenge: a model pretrained on high-income, data-rich cities performs poorly in low-income settings. The lesson from Clair3's phased-alignment training technique — creating two training samples per variant, one phased and one unphased — maps onto multi-source data fusion in GeoAI, where models must gracefully handle missing or noisy data streams (e.g., absent GPS or partial POI coverage).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A generalizable deep learning framework for inferring fine-scale germline mutation rate maps — <a href="https://doi.org/10.1038/s42256-022-00574-5" target="_blank">10.1038/s42256-022-00574-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace empirical quality-score thresholds with uncertainty-aware calibration</h3>
+      <p><span class="lab paper">Extending this paper</span>Clair3 decides which candidates to route to full-alignment calling by ranking pileup variant quality and cutting at the bottom 30% (variants) and 10% (reference calls) by default — thresholds set empirically on GIAB data. The paper shows this works well for the tested conditions but does not provide a theoretical basis or calibration curve for why these percentiles are optimal. An extension would replace the fixed-percentile gating with a <strong>conformal prediction wrapper</strong> around the pileup network, so the routing criterion is coverage- and genome-region-adaptive with statistical guarantees on recall preservation. This would make Clair3's performance more predictable in novel chemistries or organisms.</p>
+      <p><span class="lab mine">Added value to my research</span>Conformal prediction for spatial models is a live research gap: my explainable ML pipelines for spatial prediction (health accessibility, facility-location) output point estimates without valid coverage guarantees. Clair3's routing problem — decide at prediction time whether a model is confident enough — is structurally identical to deciding when a spatial prediction needs additional features or more granular data, making this an important methodological bridge between genomics and GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles — <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply Clair3's representation unification to multi-source data harmonization in spatial analysis</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's representation unification step — aligning truth variant representations to read-alignment representations via haplotype Cartesian-product matching — is a principled solution to the problem that two equally valid representations of the same fact can confuse a model if not reconciled before training. Clair3 shows ablation gains of ~0.2% SNP recall and ~2% Indel recall from this step alone. An extension would formalize representation unification as a general pre-training preprocessing module and test whether similar gains arise in other genomic DL tasks (phasing, structural variant detection) where multiple annotation conventions coexist.</p>
+      <p><span class="lab mine">Added value to my research</span>The representation unification problem is directly analogous to the <strong>multi-source data fusion</strong> challenge in GeoAI: POI databases, remote-sensing products, census data, and mobile-phone records all represent the same urban reality in different geometric, temporal, and semantic conventions. Clair3's systematic five-step reconciliation protocol — phase, match, enumerate haplotype combinations, select best, merge — provides a concrete template for designing harmonization pipelines that reconcile spatial feature representations before training a downstream model, reducing the label noise that degrades prediction in data-fusion studies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning speeds up genetic structure analysis — <a href="https://doi.org/10.1038/s43588-023-00481-8" target="_blank">10.1038/s43588-023-00481-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use Clair3's network architecture as a blueprint for dual-scale spatiotemporal models</h3>
+      <p><span class="lab paper">Extending this paper</span>Clair3 pairs a sequence model (Bi-LSTM, capturing positional context along the genome) with an image-like spatial model (ResNet with SPP, capturing alignment patterns across reads and positions). The two are not just independent models — they are explicitly designed to handle different granularities of the same problem, with the pileup summarizing counts and the full-alignment preserving spatial detail. An extension would test whether this "summary-then-detail" dual-network design outperforms single-network approaches in other structured biological prediction tasks, such as splicing prediction or structural variant detection, where a coarse-grained signal (junction counts) and fine-grained signal (read-pair layouts) convey complementary information.</p>
+      <p><span class="lab mine">Added value to my research</span>The Bi-LSTM + ResNet dual-scale design maps onto <strong>spatiotemporal kernel density estimation and agent-based modeling</strong>: a sequential model captures temporal trend (analogous to pileup sequence context) while a convolutional spatial model captures local neighborhood patterns (analogous to full-alignment read layout). My spatiotemporal analysis work could adopt this template — LSTM for temporal trends in mobility or health-seeking behavior, ResNet for spatial texture features from remote sensing or street-view imagery — replacing ad hoc feature concatenation with a principled selective-routing ensemble that only invokes the heavier spatial branch when the temporal model is uncertain.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Explicit dynamic cross-strand interactions for DNA sequence language modelling — <a href="https://doi.org/10.1038/s42256-026-01249-1" target="_blank">10.1038/s42256-026-01249-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

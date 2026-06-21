@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random sketch learning for deep neural networks in edge computing — AI Digest</title>
+<meta name="description" content="AI Digest: Random sketch learning for deep neural networks in edge computing (Nature Computational Science, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Edge AI</span>
+      <span class="tag">Model compression</span>
+      <span class="tag">Federated learning</span>
+      <span class="tag">Tiny AI</span>
+    </div>
+    <h1>Random sketch learning for deep neural networks in edge computing</h1>
+    <div class="meta">
+      <span class="authors">Bin Li &middot; Peijun Chen &middot; Hongfu Liu &middot; Weisi Guo &middot; Xianbin Cao &middot; Junzhao Du &middot; Chenglin Zhao &middot; Jun Zhang</span>
+      <span><b>Published</b> 2021-03-25</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-021-00039-6" target="_blank">10.1038/s43588-021-00039-6</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-021-00039-6" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Rosler (random sketch learning) is a <strong>compressing-while-training framework</strong> that directly learns a compact DNN without pre-training, achieving <strong>~50&ndash;90&times; memory reduction</strong> (16-bit quantization) versus fully connected networks. Deployed on a low-cost DSP, it accelerates hardware inference by <strong>&gt;180&times;</strong> and cuts energy consumption by <strong>~10&times;</strong>, while also enabling computationally efficient <strong>on-device federated learning</strong> &mdash; closing the fundamental gap between DNN complexity and edge-device resource constraints.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the pre-training bottleneck.</b> All current lightweight DNN methods follow the same pipeline of high-dimensional pre-training followed by post-compression; Rosler is the first to show that a compact model can be <strong>learned from scratch</strong>, bypassing this computationally expensive stage entirely.</li>
+      <li><b>Enables real on-device learning.</b> By removing the pre-training requirement, Rosler makes <strong>federated learning tractable on sub-watt embedded hardware</strong> &mdash; enabling privacy-preserving, low-latency intelligence at the network edge.</li>
+      <li><b>Demonstrated on real silicon.</b> Results are not simulation-only: the method is validated on a DSP C6478 platform (CPU 375 MHz, 256 KB on-chip RAM), achieving 300 &mu;s inference latency for a 500-sample bearing diagnosis task.</li>
+      <li><b>Unifies MLP and CNN compression.</b> The BUFF structure and aRes-BP algorithm apply to both fully connected and convolutional architectures, yielding a single universal framework across model families.</li>
+      <li><b>Opens tiny AI to science and industry.</b> With ~20 KB model footprint fitting entirely in on-chip RAM, Rosler removes the off-chip DRAM bottleneck &mdash; enabling real-time diagnostics, remote sensing, and IoT analytics at milliwatt power levels.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Foundational algorithmic contribution:</b> introduces a new mathematical primitive (the BUFF three-sublayer sketch structure and aRes-BP gradient update) rather than an incremental engineering improvement.</li>
+      <li><b>Cross-disciplinary impact:</b> the hardware-software co-design perspective, spanning algorithm, embedded system, and energy measurement, addresses a problem that is simultaneously a computational science and engineering challenge.</li>
+      <li><b>Quantified hardware demonstration:</b> oscilloscope-measured power and latency on real DSP silicon give the work scientific rigor beyond typical software benchmarks.</li>
+      <li><b>Societal/industrial urgency:</b> deployment of AI on billions of low-cost edge devices (industrial IoT, autonomous instruments, remote observation) is a pressing computational science challenge with broad scientific impact.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Bearing dataset</dt><dd><strong>Case Western Reserve University Bearing Data Center</strong> (<a href="https://csegroups.case.edu/bearingdatacenter" target="_blank">csegroups.case.edu/bearingdatacenter</a>) &mdash; vibration time-series for industrial bearing health diagnosis. The paper uses 3,000 training samples and 2,000 test samples; each input consists of 500 randomly truncated data points. Five operation states are classified.</dd>
+      <dt>MNIST</dt><dd><strong>MNIST handwritten digit database</strong> (<a href="http://yann.lecun.com/exdb/mnist/" target="_blank">yann.lecun.com/exdb/mnist</a>) &mdash; 70,000 28&times;28 greyscale images of digits 0&ndash;9; used to evaluate both MLP and CNN variants of Rosler.</dd>
+      <dt>CIFAR-10</dt><dd><strong>CIFAR-10 image recognition dataset</strong> (<a href="https://www.cs.toronto.edu/kriz/cifar.html" target="_blank">cs.toronto.edu/kriz/cifar.html</a>) &mdash; 60,000 32&times;32 colour images across 10 object categories; used to benchmark the VGG-A model variant.</dd>
+      <dt>Cat&ndash;dog dataset</dt><dd><strong>Kaggle Dogs vs. Cats</strong> (<a href="https://www.kaggle.com/c/dogsvs-cats/data" target="_blank">kaggle.com/c/dogsvs-cats</a>) &mdash; binary image classification dataset; used specifically to evaluate feature-map compression (reduction of off-chip DRAM access by 4.3&times;).</dd>
+      <dt>Hardware platform</dt><dd>DSP <strong>TI C6478</strong>: CPU 375 MHz, on-chip RAM 256 KB, off-chip DRAM 256 MB. Energy measured via oscilloscope (instantaneous power P = 426.9 mW; stand-by P = 36.3 mW).</dd>
+      <dt>Code</dt><dd>Python implementation of Rosler available via <strong>Code Ocean</strong> (referenced as citation 52 in the article).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>CWRU Bearing Data Center</td><td>Machinery fault diagnosis (MLP &amp; federated learning)</td><td>3,000 train / 2,000 test; 500-sample time-series per instance; 5 classes</td><td><a href="https://csegroups.case.edu/bearingdatacenter" target="_blank">csegroups.case.edu</a></td></tr>
+        <tr><td>MNIST</td><td>Handwritten digit recognition (MLP &amp; CNN)</td><td>60,000 train / 10,000 test; 28&times;28 greyscale; 10 classes</td><td><a href="http://yann.lecun.com/exdb/mnist/" target="_blank">yann.lecun.com</a></td></tr>
+        <tr><td>CIFAR-10</td><td>Object recognition (VGG-A model)</td><td>50,000 train / 10,000 test; 32&times;32 RGB; 10 classes</td><td><a href="https://www.cs.toronto.edu/kriz/cifar.html" target="_blank">cs.toronto.edu</a></td></tr>
+        <tr><td>Kaggle Dogs vs. Cats</td><td>Binary image classification (feature-map compression)</td><td>25,000 images; binary classes</td><td><a href="https://www.kaggle.com/c/dogsvs-cats/data" target="_blank">kaggle.com</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact dataset sizes above are taken from standard published benchmarks; the paper reports the MLP bearing split (3,000/2,000) explicitly. Source Data for Figs. 2&ndash;5 are provided as supplementary XLSX files with the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>BUFF structure (Butterfly-Unfolding):</b> each dense layer W is represented as a product of three small matrices &mdash; a left sketch C, a central body U, and a right sketch R &mdash; so W &#8776; CUR with rank(CUR) &le; s, where s is far smaller than min(M, N).</li>
+      <li><b>Leverage-score random sampling:</b> column and row sketches are initialized by sampling indices according to the leverage-score distribution of the weight matrix's singular vectors, providing theoretical near-optimality guarantees for the approximation.</li>
+      <li><b>Approximate rank-restricted back-propagation (aRes-BP):</b> a novel gradient update that first updates C and R in parallel using the previous epoch's values, then derives U analytically via a pseudo-inverse, before a successive per-layer fine-tuning pass.</li>
+      <li><b>Compressing-while-training:</b> no pre-training of a large network is performed; the compact tiny model is learned directly from random initialization, fundamentally changing the training complexity from O(n<sub>E</sub> KM<sub>l</sub>N<sub>l</sub>) to O(n<sub>E</sub>[KM<sub>l</sub>s + KN<sub>l</sub>s + (M<sub>l</sub>+N<sub>l</sub>+K)s<sup>2</sup>]).</li>
+      <li><b>Feature-map sketching for CNN:</b> extends BUFF to convolutional feature maps X &#8776; X<sub>c</sub>X<sub>u</sub>X<sub>r</sub>, reducing off-chip DRAM access by 4.3&times; beyond weight compression alone.</li>
+      <li><b>Cooperative parallel federated training:</b> two processors on a local device update C and R concurrently, exchanging only the small sketch matrices rather than full-gradient tensors, halving local computation and reducing communication overhead by ~2&times; versus SNIP.</li>
+      <li><b>Hardware energy measurement:</b> instantaneous power computed from voltage-drop across a 6-ohm series resistor plus oscilloscope timing; energy split into full-load and interrupt-sleep periods.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig1.png" target="_blank">
+        <img src="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig1.png" alt="Fig. 1 Rosler directly learns one compact tiny model" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Rosler directly learns one compact tiny model &mdash; contrasts classical pre-train-then-compress with the BUFF compressing-while-training pipeline.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig2.png" target="_blank">
+        <img src="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig2.png" alt="Fig. 2 Computationally efficient model training" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Computationally efficient model training &mdash; parallel vs. successive aRes-BP update and convergence curves over 50 independent trials.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig3.png" target="_blank">
+        <img src="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig3.png" alt="Fig. 3 Test accuracy and computation/storage cost of Rosler" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Test accuracy and computation/storage cost across MLP (bearing, MNIST), CNN (MNIST), and VGG-A (CIFAR-10) &mdash; comparison with SNIP, LTH, weight pruning, SVD, and low-rank+sparse.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig4.png" target="_blank">
+        <img src="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig4.png" alt="Fig. 4 On-device federated learning in industrial IoT" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> On-device federated learning in industrial IoT &mdash; convergence, storage cost, and communication/computation reduction across FC DNN, SNIP, and Rosler.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig5.png" target="_blank">
+        <img src="assets/random-sketch-learning-for-deep-neural-networks-in-edge-computing__s43588-021-00039-6/fig5.png" alt="Fig. 5 Hardware demonstration of edge inference and training" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Hardware demonstration on DSP C6478 &mdash; inference latency (&gt;180&times; speedup), instantaneous power, average power, and on-device training latency/energy.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (tables&nbsp;=&nbsp;0); Supplementary contains Tables 1&ndash;2 (feature-map DRAM access, VGG federated results) and Figs. 1&ndash;6.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal prediction, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>&#9312; Deploy Rosler for spatiotemporal prediction on urban edge sensors</h3>
+      <p><span class="lab paper">Extending this paper</span>Rosler is validated only on time-series bearing diagnosis and standard vision benchmarks (MNIST, CIFAR-10). A direct extension is to apply its BUFF structure to <strong>spatiotemporal sequence models</strong> (LSTMs, temporal graph networks) used for urban sensing tasks such as air quality, traffic flow, or pedestrian density. These models are computationally heavier than the MLP/CNN examples in the paper yet must run on low-cost sensors distributed across a city. The aRes-BP algorithm's architecture-agnostic nature makes this a natural extension, and the federated training capability directly addresses the privacy constraint of per-district sensor data.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal kernel density and SIR-based epidemic models involve iterative, parameter-heavy inference that is today run centrally. A Rosler-compressed spatiotemporal model could enable <strong>privacy-preserving on-device inference of health geography indicators</strong> (e.g., real-time contact intensity from mobile sensors), removing the need to upload raw GPS trajectories to a server and directly supporting my digital-divide and telehealth-access work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Lightweight deep learning for real-time road distress detection on mobile devices &mdash; <a href="https://doi.org/10.1038/s41467-025-59516-5" target="_blank">10.1038/s41467-025-59516-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Replace fixed sketch dimension s with a learned architecture-search policy</h3>
+      <p><span class="lab paper">Extending this paper</span>In Rosler, the sketch dimension s (equivalently the compression ratio per layer) is a <strong>user-specified constant</strong>, and the paper acknowledges this as its primary limitation. A direct extension: cast the selection of per-layer sampling lengths as a <strong>reinforcement learning (RL) problem on the DNN graph</strong>, where the agent observes layer-wise gradient norms and memory budgets, and outputs the per-layer sketch dimension that jointly minimizes test error and on-chip footprint. The RL formulation would also generalize across architectures, removing the need for manual grid search of compression ratios.</p>
+      <p><span class="lab mine">Added value to my research</span>The same RL-driven architecture search is relevant to my <strong>physics-informed graph learning</strong> work: deciding which graph convolution channels to retain (analogous to sketch dimensions) under a computation budget is structurally identical, and a Rosler-style aRes-BP update on the graph weight tensors would enable on-device inference of spatially heterogeneous phenomena with minimal memory.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control &mdash; <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Extend the BUFF structure to graph neural networks for geospatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper focuses on dense weight matrices (FC) and 2D convolution kernels. Graph neural networks (GNNs), which operate on sparse adjacency and dense feature matrices simultaneously, are not addressed. Extending Rosler: apply the BUFF decomposition W &#8776; CUR to the <strong>learnable transformation matrices in each GNN message-passing layer</strong>, with the adjacency sparsity handled separately. This would create a tiny GNN that is deployable on edge infrastructure nodes (e.g., 5G base stations, urban sensing hubs) without cloud round-trips, while the aRes-BP convergence guarantees carry over directly.</p>
+      <p><span class="lab mine">Added value to my research</span>My <strong>physics-informed graph learning</strong> for spatial prediction (e.g., disease spread, accessibility networks) requires running GNN inference over city-scale spatial graphs. A Rosler-compressed GNN could be deployed as a lightweight <strong>geospatial foundation model</strong> fine-tuned on-device per city, reducing both cloud transfer cost and privacy exposure of location data &mdash; directly supporting my FAIR/open-science data agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning &mdash; <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Use Rosler's energy-measurement protocol to benchmark geospatial AI carbon cost</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper introduces a rigorous <strong>hardware energy measurement methodology</strong> (oscilloscope-measured instantaneous power + interrupt-sleep accounting) that is currently absent from nearly all geospatial ML publications. Extending it: apply this protocol to benchmark the <em>actual</em> energy cost of spatial inference workloads &mdash; GPU-based kriging, graph-based accessibility solvers, mobile-phone data fusion &mdash; and pair it with Rosler-style compression to chart an <strong>accuracy-energy Pareto frontier</strong> for geospatial models. This would turn a hardware engineering tool into a reproducibility metric for sustainable GeoAI.</p>
+      <p><span class="lab mine">Added value to my research</span>My open-science / FAIR agenda is currently focused on data and code reproducibility. Adding an <strong>energy-cost dimension</strong> to model reporting would make my spatiotemporal and GeoAI papers more complete, align with emerging computational sustainability standards, and provide a new axis for comparing sparse-graph versus dense-grid spatial models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient deep learning &mdash; <a href="https://doi.org/10.1038/s43588-021-00042-x" target="_blank">10.1038/s43588-021-00042-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Federated Rosler for privacy-preserving healthcare accessibility modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates federated learning on 3 local clients with bearing data. A more ambitious extension: deploy Rosler-powered federated learning across <strong>hospital/clinic networks</strong> where each facility holds patient-flow or appointment records that cannot be centralized. The BUFF-based model compression reduces both communication bandwidth (the C and R sketches rather than full weight tensors are transmitted) and on-device training time, making it feasible for low-resource clinical edge hardware. Differential privacy could be added at the sketch level, providing a lightweight privacy amplification beyond what the paper currently offers.</p>
+      <p><span class="lab mine">Added value to my research</span>My R2SFCA healthcare accessibility work relies on aggregated patient-flow data that health authorities rarely release openly. A Rosler-style federated model could learn <strong>demand-side accessibility parameters</strong> (distance decay, catchment utilization) directly from privacy-protected facility records, without raw data leaving each site &mdash; directly addressing the data-availability bottleneck in my health-geography and telehealth-access research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Advancing green mobile networks &mdash; <a href="https://doi.org/10.1038/s41467-026-71562-1" target="_blank">10.1038/s41467-026-71562-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

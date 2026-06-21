@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empirical observation of negligible fairness–accuracy trade-offs in machine learning for public policy — AI Digest</title>
+<meta name="description" content="AI Digest: Empirical observation of negligible fairness–accuracy trade-offs in machine learning for public policy (Nature Machine Intelligence, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Algorithmic fairness</span>
+      <span class="tag">Public policy ML</span>
+      <span class="tag">Disparity mitigation</span>
+      <span class="tag">Resource allocation</span>
+    </div>
+    <h1>Empirical observation of negligible fairness–accuracy trade-offs in machine learning for public policy</h1>
+    <div class="meta">
+      <span class="authors">Kit T. Rodolfa · Hemank Lamba · Rayid Ghani</span>
+      <span><b>Published</b> 2021-10-14</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-021-00396-x" target="_blank">10.1038/s42256-021-00396-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-021-00396-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Across four real-world public policy domains — criminal justice, mental health, housing safety, and education — <strong>post-hoc disparity mitigation via subgroup-specific score thresholds substantially improved racial and demographic equity without any statistically significant or practically meaningful loss of predictive accuracy</strong>. The trade-off between fairness and accuracy, widely assumed in the ML literature, was <strong>empirically negligible</strong> in all settings studied, and this finding was robust across policy contexts, programme scale, time, and protected-group size. These results challenge a foundational assumption and make pursuing equity in high-stakes ML applications far more practical than previously thought.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Directly challenges a dominant assumption.</b> The belief that reducing bias requires sacrificing accuracy has discouraged practitioners from pursuing fairness. This paper provides four systematic counter-examples across distinct policy domains and shows the cost can be near zero.</li>
+      <li><b>Actionable and practically simple method.</b> The proposed fix — subgroup-specific score thresholds applied post-hoc — requires no retraining, no new architecture, and minimal overhead, making it immediately deployable in existing government ML pipelines.</li>
+      <li><b>Covers high-stakes, human-consequential domains.</b> Criminal recidivism (Johnson County, KS), housing code enforcement (San Jose, CA), student dropout (El Salvador), and crowdfunding shortfalls (DonorsChoose) represent the breadth of real social-impact applications where bias costs are greatest.</li>
+      <li><b>Robustness across conditions.</b> Findings held across 5–10 temporal validation cohorts per context, varying list sizes (k = 500 to 10,000), and resampled protected-group sizes (5%–38%), which is a more rigorous test than most fairness studies.</li>
+      <li><b>Open code for replication.</b> The full pipeline is publicly available at <a href="https://github.com/dssg/peeps-chili" target="_blank">github.com/dssg/peeps-chili</a>, enabling practitioners to replicate and extend the work.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Empirically falsifies a theoretical prior:</b> overturning a received belief with systematic empirical evidence across multiple real-world settings is precisely what top-tier venues seek — this is not an incremental improvement but a conceptual correction.</li>
+      <li><b>Cross-domain generalization:</b> four different problem types, government partners, countries, and demographic attributes in a single paper demonstrate breadth that a venue like Nature MI values over narrow benchmarking.</li>
+      <li><b>Direct societal relevance:</b> the paper addresses racial equity in criminal justice and social services — the editorial remit of Nature MI explicitly includes responsible AI and societal impact.</li>
+      <li><b>Methodological contribution + policy translation:</b> the paper contributes both a technical method (recall-equalizing thresholds with intertemporal cross-validation) and clear guidance for policy practitioners — a dual contribution matching Nature MI's intended audience.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Inmate mental health</dt><dd><strong>Johnson County, KS</strong> administrative data (mental health centre records, jail bookings, police arrests, ambulance runs) — shared under data use agreement. Cohorts of county residents with mental health history released from jail in past 3 years; modelling window targets 500 highest-risk individuals per 4-month prediction window, evaluated across <strong>10 temporal validation cohorts</strong>. Data cannot be publicly released.</dd>
+      <dt>Housing safety</dt><dd><strong>San Jose, CA Code Enforcement Office</strong> — internal inspection records for the city's <strong>4,500+ multiple-housing properties</strong> (apartment buildings, hotels, fraternities). Outcome: serious violation found on inspection. Evaluated across <strong>9 temporal validation cohorts</strong> (k = 500 per cohort). Data under DUA, not public.</dd>
+      <dt>Student outcomes</dt><dd><strong>El Salvador Ministry of Education</strong> — student-level data including demographics, urbanicity, school resources, gang/drug violence, family characteristics, attendance, and grade repetition. Annual cohorts of approximately <strong>300,000 students</strong> in San Salvador state; 5 years of training data; 5 temporal validation cohorts; identifies top 10,000 at-risk students. Data under DUA, not public.</dd>
+      <dt>Education crowdfunding</dt><dd><strong>DonorsChoose 2014 KDD Cup dataset</strong> — publicly available via <a href="https://www.kaggle.com/c/kdd-cup-2014-predicting-excitement-at-donors-choose/data" target="_blank">Kaggle</a>. Projects posted on the DonorsChoose platform from 2000 onward; analysis uses most recent 2 years of data in the extract. Targets helping 1,000 at-risk projects per 2-month window across <strong>10 temporal validation cohorts</strong> (k = 1,000).</dd>
+      <dt>Code &amp; replication</dt><dd>Full modelling pipeline at <a href="https://github.com/dssg/peeps-chili" target="_blank">github.com/dssg/peeps-chili</a>. Education crowdfunding model outputs and disparity mitigation results available for download per README instructions.</dd>
+      <dt>Protected attributes</dt><dd>Race/ethnicity (white vs. non-white; white vs. Black vs. Hispanic) in mental health context; income neighbourhood (above/below $55k median) in housing; gender, age-relative-to-grade, urban–rural in student context; school poverty level (65% free/reduced lunch vs. others) in crowdfunding.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Johnson County, KS admin data</td><td>Inmate mental health risk modelling</td><td>Multi-agency county records; 10 temporal cohorts; k = 500</td><td>DUA only (contact authors)</td></tr>
+        <tr><td>San Jose Code Enforcement data</td><td>Housing safety inspection prioritization</td><td>4,500+ properties; 9 temporal cohorts; k = 500</td><td>DUA only (contact authors)</td></tr>
+        <tr><td>El Salvador Ministry of Education</td><td>Student dropout prediction</td><td>~300,000 students/year, San Salvador; 5 cohorts; k = 10,000</td><td>DUA only (contact authors)</td></tr>
+        <tr><td>DonorsChoose KDD Cup 2014</td><td>Education crowdfunding unfunding risk</td><td>Multi-year US school projects; 10 cohorts; k = 1,000</td><td><a href="https://www.kaggle.com/c/kdd-cup-2014-predicting-excitement-at-donors-choose/data" target="_blank">Kaggle (public)</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact individual record counts are not reported in the paper for confidential datasets. All numbers above are drawn verbatim from the article's Methods and Data Availability sections.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Top-k precision framework:</b> each policy setting is framed as a resource-constrained "top-k" problem where the model selects the k highest-risk individuals for intervention. Model accuracy is measured by precision (positive predictive value) at top k.</li>
+      <li><b>Fairness metric — recall disparity:</b> equity is measured as the ratio of within-subgroup recall for a minority group vs. a reference group (e.g., Black/white recall ratio). This operationalizes "equality of opportunity" (Hardt et al., 2016). A ratio of 1.0 = parity.</li>
+      <li><b>Post-hoc disparity mitigation — subgroup-specific thresholds:</b> after scoring all individuals with a trained model, group-specific score cutoffs are found that equalize recall across groups while keeping the total selected list at k. Because recall increases monotonically with lower thresholds, a unique balancing solution always exists.</li>
+      <li><b>Intertemporal cross-validation:</b> a temporal train/validate/test scheme (t-2 train, t-1 threshold calibration, t0 evaluation) prevents leakage and mimics real deployment where models trained on past data must generalize into a changing future. Repeated across 5–10 temporal splits per context.</li>
+      <li><b>Grid search over ML methods:</b> logistic regression, random forests, gradient boosting, and decision trees with extensive hyperparameter grids (detailed in Supplementary Tables 1–4), trained via the open-source <code>triage</code> pipeline (dssg/triage).</li>
+      <li><b>Composite model strategy:</b> selects the best-performing model for each subgroup separately and combines subgroup-optimal individuals at recall-equalizing list sizes. Compared against the simpler single-model mitigation approach; composite was less stable at small subgroup sizes.</li>
+      <li><b>Sensitivity analysis:</b> results tested across varying list sizes k and resampled protected-group proportions (5%–38% Hispanic) via bootstrap to assess robustness.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig1.png" target="_blank">
+        <img src="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig1.png" alt="Fig.1 Methods illustration and motivating results" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Methods and motivating results: (a) subgroup-specific thresholds, (b) intertemporal validation scheme, (c–d) precision vs. recall-disparity scatter before/after adjustment for inmate mental health context, (e) distribution of precision changes after mitigation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig2.png" target="_blank">
+        <img src="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig2.png" alt="Fig.2 Equity and performance across four policy contexts" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Recall disparity vs. precision at top k across all four policy contexts (education crowdfunding k=1,000; inmate mental health k=500; student outcomes k=10,000; housing safety k=500), comparing unmitigated vs. mitigated model selection strategies.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig3.png" target="_blank">
+        <img src="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig3.png" alt="Fig.3 Performance over time for inmate mental health context" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Temporal stability of disparity mitigation in the inmate mental health setting (k=500): (a) precision at top 500 over cohorts, (b) white vs. Black recall disparity, (c) white vs. Hispanic recall disparity — all across 10 temporal splits.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig4.png" target="_blank">
+        <img src="assets/empirical-observation-of-negligible-fairness-accuracy-trade-offs-in-machine-learning-for-p__s42256-021-00396-x/fig4.png" alt="Fig.4 Sensitivity to programme scale and protected group size" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Sensitivity analysis in inmate mental health: (a–c) disparity and precision vs. list size k; (d) disparity between white and Hispanic individuals as a function of resampled Hispanic group size (5%–38%) — composite model degrades at small group sizes.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables — Table 1 (policy settings and data details across four contexts) and Table 2 (descriptions of the three model selection strategies). Supplementary contains Tables 1–4 (modelling grids) and Figs. 1–7.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA spatial accessibility, explainable ML for spatial prediction, urban health equity, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>① Extend disparity mitigation from recall to spatial accessibility — a fairness-aware 2SFCA</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's recall-equalizing threshold logic assumes non-spatial, population-level subgroup membership (race, income, gender). A natural extension is to import this into <strong>spatial settings where geographic access itself is the disparity axis</strong>. For the housing safety and mental health contexts, individuals in low-income or rural census tracts face a structural access barrier independent of their risk score. Extending the paper's framework: replace the uniform score threshold with a <strong>spatially stratified threshold</strong> that jointly equalizes recall across both demographic and geographic subgroups, testing whether the negligible trade-off holds when geography is an explicit protected attribute.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly maps onto my 2SFCA/R2SFCA service-area delineation work: the paper's recall-disparity framework provides an <em>outcome-calibrated</em> equity metric that I can import into catchment-size optimization. Instead of minimizing supply-demand ratio disparities abstractly, I can ask whether spatial accessibility scores have equalized recall across demographic groups — grounding the equity criterion in a real policy objective (who actually receives the intervention). This would upgrade my R2SFCA from a distance-decay model into a fairness-aware allocator with empirical backing.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Algorithmic fairness and bias mitigation for clinical machine learning with deep reinforcement learning — <a href="https://doi.org/10.1038/s42256-023-00697-3" target="_blank">10.1038/s42256-023-00697-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Apply the intertemporal validation framework to healthcare facility access prediction in Chinese cities</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's intertemporal cross-validation scheme (train on t-2, calibrate on t-1, evaluate on t0) was designed to prevent data leakage in administrative policy settings where context shifts over time. This schema is directly transferable to <strong>predictive models of healthcare utilization and access barriers</strong> in rapidly urbanizing regions where demographic composition, facility counts, and mobility patterns change year-on-year. An extension of the paper: test whether the negligible fairness–accuracy trade-off holds in <strong>non-Western urban contexts</strong> where the "protected attribute" might be hukou registration status (rural vs. urban household), which is structurally analogous to the income-neighbourhood stratification the paper used in housing safety.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on healthcare accessibility in Chinese cities routinely encounters temporal non-stationarity (new hospitals open, transport networks change, migrant populations shift). The paper's temporal validation discipline, applied to predicting who will remain under-served in the next year's facility landscape, would make my spatiotemporal analyses more deployment-realistic. The hukou-as-protected-attribute framing also connects fairness evaluation directly to the digital divide and telehealth access questions I study.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging — <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use explainable ML to diagnose why the trade-off is negligible — feature-level SHAP attribution</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates empirically that the trade-off is negligible but candidly acknowledges that the <em>mechanism</em> is not fully understood. The authors hypothesize that it is driven by (a) the high score density near the top-k threshold and (b) similar cross-subgroup predictive performance. An extension: apply <strong>SHAP (SHapley Additive exPlanations)</strong> to decompose which features contribute most to within-subgroup accuracy in each context, and test whether features with high predictive power for one group are systematically "transferred" to others. This would provide the mechanistic account the paper calls for and identify which feature types (demographic proxies, behavioural history, geographic) are the hidden bridges that keep the trade-off small.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable ML for spatial prediction is a core method in my toolkit. Applying SHAP within-subgroup in a public-policy prediction context gives me a fairness-diagnostic layer: I can identify which spatial features (e.g., distance to facility, neighbourhood income, transport connectivity) act as proxies that differentially impact recall across demographic groups in my healthcare accessibility models. This is directly actionable for my urban health equity work — the same features that "buy" accuracy may also be the levers of geographic disparities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Causal inference and counterfactual prediction in machine learning for actionable healthcare — <a href="https://doi.org/10.1038/s42256-020-0197-y" target="_blank">10.1038/s42256-020-0197-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Test the negligible trade-off claim in urban crime prediction — where enforcement bias compounds model bias</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's criminal justice context (inmate mental health) uses a <em>benefit allocation</em> framing (identifying individuals for supportive outreach), where recall disparities measure omission errors. A harder extension is to apply the same disparity mitigation framework to <strong>predictive policing or urban crime event prediction</strong>, where biased historical enforcement data contaminates the training labels themselves. If the negligible trade-off finding holds even when labels encode historical enforcement bias, that would be a much stronger result — and if it fails, the conditions of failure would precisely characterize when novel in-training debiasing methods are actually necessary.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban crime and safety prediction involves geographic hot-spot modeling — spatiotemporal kernel density estimation is one of my methods. Importing the paper's recall-disparity audit into hot-spot models would reveal whether geographically defined "high-crime" areas are systematically over-predicted for minority-majority neighbourhoods. This bridges the paper's demographic fairness framework with my spatial analysis methods to produce a <em>spatially and demographically fair</em> risk surface.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Event-level prediction of urban crime reveals a signature of enforcement bias in US cities — <a href="https://doi.org/10.1038/s41562-022-01372-0" target="_blank">10.1038/s41562-022-01372-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Export the top-k fairness framework to EV charging station and public facility siting optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's resource-constrained top-k framing — select k individuals/facilities for intervention from a scored list — is structurally identical to <strong>facility siting under budget constraints</strong>: select k locations for new EV chargers or primary care clinics from a scored set of candidate sites. The paper's recall-equalizing thresholds could be reinterpreted as a mechanism that ensures the k selected facilities provide <strong>equally reachable coverage across income or racial subgroups</strong>, not just maximizing aggregate coverage. An extension: operationalize recall as the fraction of under-served residents of a subgroup who are within a threshold travel time of a selected facility, and test whether the fairness–efficiency trade-off is also negligible in this spatial allocation problem.</p>
+      <p><span class="lab mine">Added value to my research</span>My EV charging station efficiency-vs-equity optimization work is precisely this problem: selecting k charging sites to balance accessibility across income groups while maximizing overall utilization. The paper's empirical finding — that equity can be substantially improved at near-zero accuracy cost — is an actionable prior for my optimization: it suggests that <em>equity-constrained siting</em> may not sacrifice mean coverage, making the equity constraint a near-free add-on rather than a binding trade-off. I can test this hypothesis using my spatial datasets and validate whether the negligible trade-off generalizes from individual-level scoring to geographic facility placement.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Algorithmic fairness and bias mitigation for clinical machine learning with deep reinforcement learning — <a href="https://doi.org/10.1038/s42256-023-00697-3" target="_blank">10.1038/s42256-023-00697-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

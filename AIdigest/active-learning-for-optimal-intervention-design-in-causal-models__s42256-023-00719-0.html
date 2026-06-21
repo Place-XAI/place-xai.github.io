@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Active learning for optimal intervention design in causal models — AI Digest</title>
+<meta name="description" content="AI Digest: Active learning for optimal intervention design in causal models (Nature Machine Intelligence, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Causal Active Learning</span>
+      <span class="tag">Bayesian Optimization</span>
+      <span class="tag">Gene Regulatory Networks</span>
+      <span class="tag">Sequential Experimental Design</span>
+    </div>
+    <h1>Active learning for optimal intervention design in causal models</h1>
+    <div class="meta">
+      <span class="authors">Jiaqi Zhang · Louis Cammarata · Chandler Squires · Themistoklis P. Sapsis · Caroline Uhler</span>
+      <span><b>Published</b> 2023-10-02</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-023-00719-0" target="_blank">10.1038/s42256-023-00719-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-023-00719-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>causal active learning framework</strong> identifies optimal interventions in complex systems by combining a <strong>Bayesian posterior over causal edge weights</strong> with a novel <strong>causally informed acquisition function (CIV)</strong> that is evaluable in closed form. On both synthetic DAG benchmarks and real single-cell transcriptomic data from Perturb–CITE-seq (35,525 melanoma cells, 248 gene perturbations), the CIV and its output-weighted variant CIV-OW <strong>consistently outperform correlation-based and non-causal baselines</strong>, discovering optimal genetic perturbations for cell-state transitions with substantially <strong>fewer experiments</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges causal reasoning and experimental efficiency.</b> By encoding the DAG structure into a Bayesian posterior, the method skips experiments that correlation-based approaches waste resources on — the causal graph constrains the search space so fewer well-chosen interventions suffice.</li>
+      <li><b>Closed-form tractability at scale.</b> Unlike BALD and mutual-information methods requiring MCMC approximations, the CIV acquisition function is <em>evaluated exactly in closed form</em> (Proposition 2), enabling fast gradient-based optimization on systems with tens of variables running on a CPU.</li>
+      <li><b>Theoretically grounded with provable consistency.</b> The framework comes with an information-theoretic mutual information lower bound (Theorem 1) and a consistency theorem proving that CIV converges to the optimal intervention as t → ∞ (Theorem 2), giving formal guarantees absent from most acquisition-function heuristics.</li>
+      <li><b>Validated on real biology.</b> Applied to Perturb–CITE-seq data (5,039 unperturbed + 30,486 perturbed human melanoma cells; 36 interferon-γ pathway genes), CIV correctly prioritizes the CDH19 knockout as the optimal cell-state reprogramming intervention with fewer samples than baselines.</li>
+      <li><b>Domain-general formulation.</b> The same loop applies to drug dosage optimization, climate-change intervention research, mechanical feedback control, and dynamic pricing — any domain where interventions propagate causally through a directed network.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Principled algorithmic innovation with rigorous theory:</b> introduces the CIV acquisition function with closed-form evaluation and two formal theorems (mutual information bound + consistency), meeting NMI's demand for theoretically grounded ML contributions.</li>
+      <li><b>Cross-disciplinary reach:</b> core ML methodology (active learning, Bayesian optimization) simultaneously addresses computational biology, mechanical engineering, and public-policy intervention — NMI's hallmark interdisciplinary positioning.</li>
+      <li><b>High-stakes biological validation:</b> the Perturb–CITE-seq single-cell experiment grounds the framework in cellular reprogramming for regenerative medicine, satisfying NMI's emphasis on societally impactful applications of AI.</li>
+      <li><b>Addresses fundamental limits of existing methods:</b> the paper formally shows that correlation-based and non-causal criteria are suboptimal when the system is causal, making a crisp "why this matters over prior work" case that NMI editors value.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Synthetic dataset</dt><dd>Randomly generated linear Gaussian SCMs on DAGs with up to <strong>30 nodes and 10 intervention targets</strong>; each method run <strong>20 times over 10 random DAG instances</strong>. Ablations cover varying graph sizes (p), numbers of intervention targets, edge densities (complete, Erdos-Renyi p=0.8, path graphs). Generated with <code>NetworkX</code> and <code>CausalDAG</code> Python packages.</dd>
+      <dt>Biological dataset</dt><dd><strong>Perturb–CITE-seq</strong> from Norman et al. 2021 (<em>Nature Genetics</em>, doi: 10.1038/s41588-021-00779-1) — single-cell transcriptomics from patient-derived human melanoma cells. One control screen: <strong>5,039 unperturbed cells</strong> + <strong>30,486 perturbed cells</strong> covering interventions on <strong>248 genes</strong> linked to immunotherapy resistance. Active learning experiments focus on <strong>p = 36 genes</strong> in the interferon-γ signalling / immune response module.</dd>
+      <dt>DAG structure learning</dt><dd>Greedy sparsest permutation (GSP) algorithm applied to 5,039 unperturbed observational cells to infer the 36-gene causal DAG used as the fixed graph structure in biological experiments.</dd>
+      <dt>Intervention model</dt><dd>Knockout perturbations modeled as <em>shift interventions</em> — each knockout sets the target gene's mean to zero by shifting it by its negative observational mean; multi-gene interventions excluded due to insufficient samples (most multi-target interventions have ≤1 sample in the dataset).</dd>
+      <dt>Software</dt><dd><code>SciPy</code> (SLSQP optimizer), <code>Scanpy</code> (single-cell preprocessing), <code>NetworkX</code> and <code>CausalDAG</code> (DAG generation), contrastive PCA (visualization). All code publicly deposited (ref. 49 in the article).</dd>
+      <dt>Data availability</dt><dd>Perturb–CITE-seq dataset is publicly available at <a href="https://doi.org/10.1038/s41588-021-00779-1" target="_blank">doi:10.1038/s41588-021-00779-1</a>. No geographic or spatial datasets are used in this paper.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Synthetic linear Gaussian SCMs</td><td>Algorithm benchmarking under controlled causal structure</td><td>DAGs up to 30 nodes; 10 instances × 20 runs per method per configuration</td><td>Generated via NetworkX + CausalDAG (open-source)</td></tr>
+        <tr><td>Perturb–CITE-seq (Norman et al. 2021)</td><td>Real single-cell gene perturbation data for biological validation</td><td>35,525 total melanoma cells; 248 intervention genes; 36 genes in focal module</td><td><a href="https://doi.org/10.1038/s41588-021-00779-1" target="_blank">doi:10.1038/s41588-021-00779-1</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: no spatial, geographic, or remote-sensing datasets are used. All empirical data derive from the Perturb–CITE-seq repository or are synthetically generated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Structural causal model (SCM) with linear Gaussian noise:</b> variables follow a DAG with shift interventions; causal structure (sparsity of B) is assumed known; edge weights are the unknown parameters to be estimated sequentially.</li>
+      <li><b>DAG–Bayesian Linear Regression (DAG–BLR) prior:</b> a conjugate prior over edge weights and noise variances, derived from the DAG–Wishart distribution, enabling exact closed-form posterior updates after each new batch of interventional samples.</li>
+      <li><b>Causal Integrated Variance (CIV) acquisition function:</b> integrates the posterior variance of the optimality gap g(a) over the full intervention space, weighted by a measure ν. Minimizing CIV selects the intervention most informative about the optimal a*.</li>
+      <li><b>Output-weighted variant (CIV-OW):</b> replaces the uniform measure ν with a bimodal von Mises–Fisher distribution that concentrates mass near the estimated optimal intervention, further accelerating convergence to a*.</li>
+      <li><b>Closed-form evaluation (Proposition 2):</b> for A = unit hypersphere and uniform ν, CIV reduces to an explicit algebraic expression, enabling gradient-based optimization via SciPy SLSQP without MCMC or variational approximations.</li>
+      <li><b>Information-theoretic bound (Theorem 1):</b> minimizing the CIV integrated variance corresponds to maximizing a lower bound on the mutual information between interventional samples and the optimality gap — connecting CIV to the BALD literature.</li>
+      <li><b>Consistency (Theorem 2):</b> as t → ∞, the gradient of CIV at the optimal intervention vanishes faster than the acquisition function itself, proving that gradient-based optimizers converge to a*.</li>
+      <li><b>Contrastive PCA + DAG structure learning:</b> greedy sparsest permutation (GSP) learns the gene regulatory DAG from 5,039 observational cells; contrastive PCA visualizes high-dimensional interventional distributions in 2D.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig1.png" target="_blank">
+        <img src="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig1.png" alt="Fig.1 Overview schematic of the active learning framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the active learning loop: update the SCM posterior from collected samples, then select the next intervention by optimizing the CIV acquisition function.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig2.png" target="_blank">
+        <img src="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig2.png" alt="Fig.2 Example 4-node linear Gaussian DAG causal model" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Example 4-node linear SCM illustrating how nodes (variables) and labeled edges (coefficients) constitute the causal model governing intervention propagation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig3.png" target="_blank">
+        <img src="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig3.png" alt="Fig.3 Output-weighted measure on the intervention hypersphere" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Visualization of the output-weighted measure ν on the intervention hypersphere, concentrating mass near the estimated optimal intervention b to accelerate CIV-OW convergence.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig4.png" target="_blank">
+        <img src="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig4.png" alt="Fig.4 Convergence of selected interventions to optimal a*" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> CIV convergence: selected interventions a(t) converge to the optimal a* over 50 time steps on a 10-node DAG, illustrating Theorem 2 experimentally.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig5.png" target="_blank">
+        <img src="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig5.png" alt="Fig.5 Comparison of acquisition functions on 30-node DAG benchmark" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Benchmark on 30-node DAG (10 targets, 20 runs × 10 instances): CIV and CIV-OW consistently reduce relative distance to the target mean faster than random, greedy, MaxV, and CV baselines.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig6.png" target="_blank">
+        <img src="assets/active-learning-for-optimal-intervention-design-in-causal-models__s42256-023-00719-0/fig6.png" alt="Fig.6 Biological results on Perturb-CITE-seq single-cell data" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Biological validation: CIV identifies the CDH19 knockout as optimal for cell-state transition in melanoma cells, outperforming random and greedy baselines across 50 runs.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Extended Data contains 10 figures covering ablations on graph size, structure misspecification, and additional target genes. Supplementary Information contains 18 figures and full proofs of all theorems.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization, public-health policy).</p>
+
+    <div class="idea">
+      <h3>① Relax the known-DAG assumption using joint structure-and-weight active learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's CIV framework requires the DAG structure to be known in advance — a strong assumption satisfied in well-characterized gene regulatory networks but difficult to enforce in practice. The Supplementary Information D of the paper discusses extending to unknown DAGs via the Bayesian Gaussian equivalence score, but leaves this as future work. A direct extension: embed the paper's posterior update inside an outer loop that simultaneously refines DAG structure using a score-based causal discovery method (e.g., a deep learning approach for high-dimensional causal structure discovery), so each intervention both improves edge-weight estimates <em>and</em> sharpens the graph topology. The CIV acquisition function would then jointly minimize uncertainty over both the structure and the weights.</p>
+      <p><span class="lab mine">Added value to my research</span>In health geography, the causal graph linking neighborhood exposures (green space, transit, food environment) to health outcomes is rarely specified a priori. This joint structure-and-weight framework would let me move beyond associational MGWR/GWR regression toward a <em>causally grounded sequential experiment</em> — iteratively selecting which spatial interventions (clinic placement, transit stop additions) to evaluate, while simultaneously learning the causal structure of how facilities propagate accessibility and health outcomes through the urban network.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning of causal structures in high dimensions under data limitations — <a href="https://doi.org/10.1038/s42256-023-00744-z" target="_blank">10.1038/s42256-023-00744-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Generalize CIV to nonlinear causal mechanisms via graph neural network posteriors</h3>
+      <p><span class="lab paper">Extending this paper</span>The DAG–BLR prior and the closed-form CIV formula depend critically on <em>linearity of the SCM</em> — allowing the optimality gap to be expressed as a quadratic in B and integrated analytically. The authors explicitly list nonlinear extension via kernel methods as a future direction. A concrete step forward: replace the DAG–BLR prior with a <em>graph neural network (GNN) that respects the DAG topology</em> and outputs approximate posteriors over nonlinear causal mechanisms using variational inference. The CIV acquisition function would then approximate the integrated variance via Monte Carlo over GNN posterior samples, maintaining the paper's core idea (causally informed uncertainty) while extending applicability to biological networks governed by nonlinear gene–gene interactions such as transcription factor binding cooperativity.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning research directly maps here: the GNN backbone can encode known structural constraints (road network topology, spatial adjacency, accessibility decay laws) as hard architectural priors in the causal model. The result is a <em>physics-informed causal active learner</em> for spatial systems — for example, learning nonlinear effects of transit interventions on job-housing accessibility while respecting the directionality of the transport network and the spatial autocorrelation structure of demand.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> When causal inference meets deep learning — <a href="https://doi.org/10.1038/s42256-020-0218-x" target="_blank">10.1038/s42256-020-0218-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply the CIV loop to population-level spatial interventions for health accessibility</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's biological application targets individual cells via gene knockouts. The mathematical structure — a distribution over system states, a target mean, and shift interventions on the causal graph — is directly generalizable to <em>population-level geographic interventions</em>. Each "cell" becomes a geographic area; each "gene" becomes a neighborhood-level factor (facility density, transit access, socioeconomic indicator); the target mean is a desired health or accessibility distribution; and interventions are facility placements or infrastructure changes. Extending the paper: recast the CIV active learning loop as a <em>sequential facility-location experiment</em> guided by a causal model of how infrastructure changes propagate to health outcomes, and apply CIV-OW to concentrate sampling on the most promising intervention zones.</p>
+      <p><span class="lab mine">Added value to my research</span>This translates directly to my 2SFCA/R2SFCA accessibility work: the "target mean" becomes an equity-weighted accessibility distribution over underserved areas, and CIV guides iterative decisions about where to place the next clinic, pharmacy, or mental-health center to most efficiently close the health access gap. The causal posterior replaces the ad hoc distance-decay assumptions in standard 2SFCA, grounding the allocation model in a principled causal framework that explicitly models how facilities interact through shared populations and overlapping catchment areas.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Conditional Monge Gap enables generalizable single-cell perturbation modelling — <a href="https://doi.org/10.1038/s42256-026-01242-8" target="_blank">10.1038/s42256-026-01242-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Combine the converged causal posterior with counterfactual prediction for policy evaluation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper focuses on <em>identifying</em> the optimal intervention through active sampling — once CIV converges, the Bayesian causal posterior is fully updated but is used only to select a* and not further exploited. Extending the paper: use the converged DAG–BLR posterior to generate <em>counterfactual predictions</em> under hypothetical interventions that were never actually performed — answering "what would have happened if we had perturbed gene X instead of gene Y?" without additional experiments. This would turn the paper's active learning pipeline into a complete causal inference engine: efficient exploration to identify the optimal intervention, followed by rich counterfactual simulation under the updated posterior, enabling principled sensitivity analyses and drug-target prioritization from a single experiment campaign.</p>
+      <p><span class="lab mine">Added value to my research</span>Counterfactual simulation is essential for public-health policy: "what would health outcomes look like if we built a clinic in zone A instead of zone B?" My current explainable ML spatial models produce associational predictions; embedding them within the CIV causal posterior framework would enable <em>causally valid counterfactual policy evaluation</em> — replacing correlation-trained "what if" scenarios with Bayesian causal inference, directly strengthening the credibility of my policy recommendations for urban health governance.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Causal inference and counterfactual prediction in machine learning for actionable healthcare — <a href="https://doi.org/10.1038/s42256-020-0197-y" target="_blank">10.1038/s42256-020-0197-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Scale CIV to high-dimensional gene or spatial networks via hardware-accelerated Bayesian inference</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's experiments focus on systems with p ≤ 36 nodes (biological) and p = 30 (synthetic), noting that "all methods can be run efficiently on a CPU for a moderate number of variables." As the DAG grows — to hundreds or thousands of genes in a genome-wide perturbation screen, or to thousands of spatial zones in a city-scale causal model — the DAG–BLR posterior update and the CIV gradient computation become bottlenecks due to the O(p²) covariance matrices involved. Extending the paper: implement the posterior update and CIV optimization on <em>in-memory computing hardware</em> that natively parallelizes dense matrix operations, enabling CIV-guided active experiments at the scale of full transcriptomic networks or city-wide spatial causal graphs without sacrificing the closed-form efficiency that makes CIV attractive.</p>
+      <p><span class="lab mine">Added value to my research</span>Large-scale geospatial analysis involves data matrices of similar scale to genome-wide perturbation data — mobile-phone trajectory matrices, remote-sensing raster stacks, origin-destination flow arrays. Hardware-accelerated Bayesian active learning would let me apply the CIV framework to <em>high-dimensional spatiotemporal causal graphs</em> at city or regional scale, identifying optimal spatial interventions (transit expansions, facility placements, land-use changes) in systems described by thousands of interacting zones, without the computational bottleneck that currently limits causal active learning to small graphs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep Bayesian active learning using in-memory computing hardware — <a href="https://doi.org/10.1038/s43588-024-00744-y" target="_blank">10.1038/s43588-024-00744-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

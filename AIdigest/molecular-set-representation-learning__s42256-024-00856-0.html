@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Molecular set representation learning — AI Digest</title>
+<meta name="description" content="AI Digest: Molecular set representation learning (Nature Machine Intelligence, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Molecular ML</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Drug Discovery</span>
+      <span class="tag">Cheminformatics</span>
+    </div>
+    <h1>Molecular set representation learning</h1>
+    <div class="meta">
+      <span class="authors">Maria Boulougouri · Pierre Vandergheynst · Daniel Probst</span>
+      <span><b>Published</b> 2024-07-05</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-024-00856-0" target="_blank">10.1038/s42256-024-00856-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-024-00856-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Treating molecules as <strong>unordered sets of atom invariants</strong> — rather than as explicit graphs — is both a competitive alternative and a powerful extension to graph neural networks (GNNs) for molecular machine learning. The simplest set model (MSR1) matches or surpasses D-MPNN and GIN on 5–9 of 11 MoleculeNet benchmarks <em>without any explicit bond topology</em>, and replacing a GNN's global-pooling layer with a <strong>set representation layer</strong> (SR-GINE) improves performance across chemistry, biology, and materials science tasks — including pharmacokinetics, protein–ligand binding, and reaction-yield prediction — without additional precomputed descriptors.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Challenges the graph-as-default assumption.</b> The paper shows that many molecular benchmarks reward graph-based GNNs not because of topology but because the datasets are insensitive to it — set-only models can match or beat GNNs, suggesting the field may be over-investing in complex graph architectures for certain tasks.</li>
+      <li><b>Elegant fix for fuzzy chemical bonds.</b> Ionic, metallic, delocalized, and π-stacking interactions cannot be cleanly encoded as edges; the set formulation avoids this problem entirely by dropping explicit connectivity, which turns out to be especially useful for conjugated molecules and protein–ligand complexes.</li>
+      <li><b>Plug-in upgrade for any existing GNN.</b> Replacing the global-pooling layer with a RepSet layer is a drop-in modification (SR-GINE outperforms GINE in virtually all benchmarks), giving practitioners an immediate performance boost without redesigning their pipeline.</li>
+      <li><b>Unified framework spanning four task domains.</b> A single paradigm — molecular set representation — is shown to work for quantum-chemical property prediction (QM7/QM8/OCELOT), pharmacokinetics (Biogen ADME), protein–ligand binding affinity (PDBbind), and reaction-yield prediction (Buchwald–Hartwig HTE/ELN).</li>
+      <li><b>Open, pip-installable codebase.</b> All code and data (except PDBbind, which requires free registration) are MIT-licensed on GitHub (<a href="https://github.com/daenuprobst/molsetrep" target="_blank">daenuprobst/molsetrep</a>), lowering the barrier for adoption.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Conceptual reframing, not incremental tuning:</b> the paper redefines the molecular representation primitive (graph → set), which is the kind of foundational shift NMI prioritizes over yet-another-benchmark-record paper.</li>
+      <li><b>Cross-domain empirical breadth:</b> benchmarks span chemistry, biology, and materials science — showing generality is a Nature-caliber ambition.</li>
+      <li><b>Critical re-evaluation of community practice:</b> the finding that MoleculeNet datasets may not be suitable for evaluating GNN advantages is a constructive community critique, fitting NMI's interest in methodology and standards.</li>
+      <li><b>Practical impact plus theoretical insight:</b> both the drop-in SR layer and the atom-invariant-only MSR1 have immediate practical utility, while the set-versus-graph debate raises deeper representational questions about molecular structure.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>MoleculeNet</dt><dd>11 classification and regression benchmark datasets: HIV, BACE, BBBP (<em>n</em> = 2,039), Tox21, SIDER, ClinTox, ESOL, FreeSolv, Lipo, QM7, QM8. Splits use Murcko scaffold strategy. Four large datasets (ToxCast, MUV, PCBA, QM9) excluded from main benchmarks due to size; QM9 (<em>N</em><sub>train</sub> = 107,108) used for scalability testing only.</dd>
+      <dt>OCELOT chromophore</dt><dd>Chemically diverse π-conjugated molecules. 5-fold cross-validation; 20,201 training samples (inferred from 6.2% runtime increase test). Used for physico- and quantum-chemical property prediction tasks (HOMO, LUMO, H–L gap, etc.). Original publication: Joung et al. (ref. 24).</dd>
+      <dt>Biogen ADME</dt><dd>3,521 commercially available compounds tested against 6 in vitro ADME endpoints (HLM, MDR1-MDCK efflux, solubility pH 6.8, RLM, hPPB, rPPB). Predefined train/test split from the original Fang et al. publication (ref. 31).</dd>
+      <dt>PDBbind</dt><dd>Protein–ligand complex binding-affinity dataset. Refined set used for training; core set as test set, following Jiménez-Luna et al. (ref. 39). Data must be downloaded from <a href="http://www.pdbbind.org.cn" target="_blank">pdbbind.org.cn</a> after free registration. Exact count not stated in the article.</dd>
+      <dt>Buchwald–Hartwig HTE</dt><dd>High-throughput experiment (HTE) dataset of Buchwald–Hartwig cross-coupling reaction yields, from Ahneman et al. (ref. 47). Used for ablation (random splits Rand x/y) and out-of-distribution (test n) evaluation.</dd>
+      <dt>Buchwald–Hartwig ELN</dt><dd>Electronic laboratory notebook (ELN) dataset of Buchwald–Hartwig yields, from Perera et al. (ref. 48). Used to assess performance on real-world, noisier conditions.</dd>
+      <dt>Code &amp; data repo</dt><dd>All datasets (except PDBbind) and code at <a href="https://github.com/daenuprobst/molsetrep" target="_blank">github.com/daenuprobst/molsetrep</a> under MIT License.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MoleculeNet (11 datasets)</td><td>Primary GNN benchmarking</td><td>HIV, BACE, BBBP (n=2,039), Tox21, SIDER, ClinTox, ESOL, FreeSolv, Lipo, QM7, QM8; Murcko scaffold splits</td><td><a href="https://moleculenet.org" target="_blank">moleculenet.org</a></td></tr>
+        <tr><td>OCELOT chromophore dataset</td><td>Physico/quantum-chemical prediction (π-conjugated mols)</td><td>N_train ≈ 20,201; 5-fold CV; multiple property tasks</td><td>Joung et al. (ref. 24)</td></tr>
+        <tr><td>Biogen ADME in vitro assay data</td><td>Pharmacokinetic property prediction</td><td>3,521 compounds; 6 ADME endpoints; predefined split</td><td>Fang et al. (ref. 31)</td></tr>
+        <tr><td>PDBbind (refined + core sets)</td><td>Protein–ligand binding affinity</td><td>Refined set (training), core set (test); exact count not stated</td><td><a href="http://www.pdbbind.org.cn" target="_blank">pdbbind.org.cn</a> (free registration)</td></tr>
+        <tr><td>Buchwald–Hartwig HTE &amp; ELN</td><td>Reaction-yield prediction</td><td>HTE: random + OOD splits; ELN: noisier lab-notebook records</td><td>Ahneman et al. ref. 47; Perera et al. ref. 48</td></tr>
+        <tr><td>molsetrep GitHub repo</td><td>Code + preprocessed data</td><td>All above (except PDBbind), MIT license</td><td><a href="https://github.com/daenuprobst/molsetrep" target="_blank">github.com/daenuprobst/molsetrep</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact molecule counts for PDBbind splits are not stated explicitly in the article; all other dataset sizes are taken verbatim from the text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Molecular set representation:</b> each molecule is encoded as a <strong>multiset of one-hot-encoded atom-invariant vectors</strong> (133-dimensional, encoding degree, atomic number ≤100, formal charge, hybridization, chiral tag, ring membership, hydrogen count) — no explicit bonds, no graph edges.</li>
+      <li><b>MSR1 (single-set model):</b> atom-invariant multiset → RepSet permutation-invariant layer → MLP regressor/classifier. Essentially ECFP radius-0 passed through a set network.</li>
+      <li><b>MSR2 (dual-set model):</b> two parallel RepSet layers for atom and bond invariants respectively; outputs concatenated before MLP.</li>
+      <li><b>SR-GINE (set-enhanced GNN):</b> standard GINE graph convolution (GINEConv) with <strong>global mean-pooling replaced by a RepSet layer</strong> — the key plug-in enhancement tested across all benchmarks.</li>
+      <li><b>SR-BIND (binding-affinity model):</b> dual-set architecture encoding ligand and protein atom subsets within radius r = 5.5 Å of each other, enabling implicit geometric information without 3D coordinates.</li>
+      <li><b>MSR2-RXN (reaction model):</b> dual-set on ECFP (r=3, 2,048 bits) fingerprint vectors of reactant and product molecule sets.</li>
+      <li><b>Set representation layer — RepSet:</b> chosen over DeepSets and Set-Transformer based on empirical performance and interpretability; configured with 128 hidden sets × 64 elements each.</li>
+      <li><b>Benchmark evaluation:</b> Murcko scaffold splits (MoleculeNet), 5-fold CV (OCELOT), predefined splits (Biogen ADME, PDBbind, Buchwald–Hartwig); paired t-tests for significance; MolFormer large language model finetuned as an additional baseline.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/molecular-set-representation-learning__s42256-024-00856-0/fig1.png" target="_blank">
+        <img src="assets/molecular-set-representation-learning__s42256-024-00856-0/fig1.png" alt="Fig.1 Overview of set-based and set-enhanced models" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of all five molecular set architectures (MSR1, MSR2, SR-GINE, SR-BIND, MSR2-RXN) — their encoding, RepSet layer, and readout components.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table" style="margin-top:12px">Main-text tables: <strong>5 tables</strong> (Table 1: MoleculeNet benchmarks; Table 2: OCELOT chromophore; Table 3: Biogen ADME; Table 4: SR-BIND vs GNN baselines on PDBbind; Table 5: MSR2-RXN vs state of the art on Buchwald–Hartwig). Extended data: 4 tables (set-layer comparison, GNN-set combination classification/regression benchmarks, QM9 scalability). Only 1 main figure (Fig. 1) had an image URL in figures.json; remaining entries (Extended Data Tables 1–4) had no image URLs.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, graph learning, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Transfer the set-pooling upgrade from molecules to spatial facility networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central finding — that replacing global-pooling with a RepSet layer in a GNN (SR-GINE) consistently improves performance — was demonstrated on molecular graphs. A direct extension would apply the same plug-in to <strong>heterogeneous spatial graphs</strong> where node types differ qualitatively (e.g., facility types, population cells, road junctions): rather than mean-pooling over all neighbors during graph convolution, a RepSet layer could learn a permutation-invariant aggregation that is sensitive to the <em>composition</em> of the neighborhood, potentially improving spatial prediction tasks beyond molecular chemistry.</p>
+      <p><span class="lab mine">Added value to my research</span>In my GeoAI work on <strong>2SFCA/R2SFCA accessibility modeling</strong>, the service-area aggregation step (summing supply over catchment cells) is essentially a fixed-weight global pooling. Replacing it with a learned RepSet-style aggregation over the <em>set of facilities within a catchment</em> could yield a <strong>learned, permutation-invariant accessibility integrator</strong> — sensitive to the mix of facility types and capacities rather than their mere sum, directly applicable to primary-care or mental-health accessibility delineation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use the set-of-atoms analogy to rethink spatial POI representation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper treats a molecule as a <em>multiset of atoms</em> without requiring explicit bond topology, on the grounds that bonds are often approximate or undefined. An analogous argument applies to urban point-of-interest (POI) ensembles: a neighborhood's "identity" may emerge from the unordered composition of its service types rather than a fixed spatial graph connecting them. Extending this paper: replace the paper's atom invariants with <strong>POI category embeddings</strong> and apply MSR1/MSR2-style architectures to predict neighborhood-level outcomes (health metrics, mobility demand), treating each neighborhood as a multiset of co-located POIs.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>urban analytics and healthy cities</strong> — especially 15-minute neighborhood scoring and public-facility accessibility — currently encodes neighborhood context through fixed spatial buffers or fixed graph connectivity. A set-based POI representation would be <strong>invariant to the order in which POIs are encountered</strong> and robust to missing connectivity data (e.g., in rapidly developing cities with incomplete road network data), directly improving spatial prediction in my multi-source data fusion pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace the MolFormer baseline with a geospatial foundation model comparison</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's comparison with MolFormer (a large language model pretrained on ~100 million molecules) showed no significant advantage for MolFormer over SR-GINE on recent benchmarks — a notable finding given MolFormer's scale. An extension would <strong>replicate this set-vs-pretrained-LLM head-to-head in a spatial domain</strong>: compare a RepSet-based neighborhood encoder against a fine-tuned geospatial foundation model (e.g., Urban-FM or GeoCLIP) on urban property prediction tasks, testing whether the same "small-but-well-structured set model" principle holds geographically.</p>
+      <p><span class="lab mine">Added value to my research</span>One of my active directions is <strong>fine-tuning geospatial foundation models</strong>. This paper's methodology offers a principled lightweight alternative: before committing to large-model fine-tuning, test whether a RepSet over well-chosen spatial invariants already captures most of the predictive signal — a valuable null hypothesis for my foundation-model benchmarking work and a potential efficiency argument for data-scarce health-geography settings.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Adapt SR-BIND's radius-based dual-set to model patient–facility interaction zones</h3>
+      <p><span class="lab paper">Extending this paper</span>SR-BIND creates two parallel sets — ligand atoms within radius r of the protein, and protein atoms within radius r of the ligand — enabling implicit geometric encoding without 3D coordinates. An extension of this paper would <strong>generalize the dual-set radius formulation to arbitrary proximity graphs</strong>: instead of atomic radius, use a travel-time or network-distance threshold, producing dual neighborhood sets for any two interacting spatial entities. This turns SR-BIND's insight into a general <em>proximity-aware dual-set encoder</em> for spatial interaction problems.</p>
+      <p><span class="lab mine">Added value to my research</span>In my <strong>healthcare accessibility and telehealth research</strong>, a patient population cell and a healthcare facility both have neighborhood contexts (nearby competing facilities, road infrastructure, demographic composition). A dual-set encoder parameterized by the 2SFCA catchment radius could capture the <em>mutual context</em> of patient and provider — an expressively richer accessibility score than scalar supply-to-demand ratios, applicable to both physical and digital (telehealth) access measurement.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein–ligand complexes for structure-based drug discovery — <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Challenge benchmark datasets in spatial ML the same way this paper challenges MoleculeNet</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most impactful contributions is the demonstration that MoleculeNet may not be well-suited to reveal the advantages of GNNs, because simpler set models match or surpass GNNs on those datasets. The paper proposes more modern datasets (OCELOT, Biogen ADME) as better discriminators. Extending this framework: conduct a <strong>systematic benchmark audit for spatial prediction tasks</strong> (e.g., crime, health outcomes, mobility demand) to test whether graph-based spatial models actually outperform non-graph baselines, or whether the commonly used datasets similarly fail to discriminate model complexity.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>explainable ML for spatial prediction</strong> (MGWR, GWR, ML ensembles applied to health/urban outcomes) could benefit from this audit methodology: systematically testing whether spatial graph structure adds predictive value beyond tabular features with spatial lag terms. If it does not on standard benchmarks, that is itself a publishable finding that strengthens the case for my explainability-focused approach over opaque GNN pipelines, and identifies which spatial problem classes genuinely require graph inductive biases.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Traversing chemical space with active deep learning for low-data drug discovery — <a href="https://doi.org/10.1038/s43588-024-00697-2" target="_blank">10.1038/s43588-024-00697-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

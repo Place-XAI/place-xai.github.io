@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Bayesian active learning using in-memory computing hardware — AI Digest</title>
+<meta name="description" content="AI Digest: Deep Bayesian active learning using in-memory computing hardware (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Bayesian Active Learning</span>
+      <span class="tag">Neuromorphic Hardware</span>
+      <span class="tag">In-Memory Computing</span>
+      <span class="tag">Uncertainty Quantification</span>
+    </div>
+    <h1>Deep Bayesian active learning using in-memory computing hardware</h1>
+    <div class="meta">
+      <span class="authors">Yudeng Lin · Bin Gao · Jianshi Tang · Qingtian Zhang · He Qian · Huaqiang Wu</span>
+      <span><b>Published</b> 2024-12-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00744-y" target="_blank">10.1038/s43588-024-00744-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00744-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>memristor-based computation-in-memory (CIM)</strong> system can natively execute deep Bayesian active learning (DBAL) by exploiting the <strong>intrinsic stochasticity</strong> of memristor read and write operations to generate Gaussian random numbers in situ — eliminating the von Neumann bottleneck of conventional hardware. A four-layer memristor Bayesian deep neural network trained via the proposed <strong>memristor stochastic gradient Langevin dynamics (mSGLD)</strong> method achieved a <strong>44% speed boost</strong> and <strong>153× energy savings</strong> versus cutting-edge CMOS implementations, successfully demonstrated on a robot pouring skill-learning task with as few as 64 labeled samples.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the labeling bottleneck at the edge.</b> DBAL exponentially reduces the number of labeled samples needed; this paper is the first hardware-native implementation, enabling efficient on-device learning without cloud offloading.</li>
+      <li><b>Turns device noise into computational asset.</b> Rather than fighting memristor stochasticity as a defect, the work weaponizes it as a built-in Gaussian random-number generator — a paradigm shift for probabilistic computing.</li>
+      <li><b>Dramatic efficiency gains.</b> 153× lower energy and 44% faster than GPU-class CMOS hardware for the same DBAL task, with further room for improvement through advanced ADC design and high-parallelism modulation.</li>
+      <li><b>Demonstrates real-world applicability.</b> The robot pouring skill-learning task is a concrete, measurable benchmark showing the full active-learning loop — uncertainty estimation, oracle querying, in situ retraining — running on a physical chip.</li>
+      <li><b>Opens a hardware pathway for probabilistic AI.</b> Bayesian and uncertainty-aware methods have long been software-heavy; this work shows that memristor CIM can be the natural substrate for trustworthy, calibrated AI at the edge.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Hardware-algorithm co-design at the frontier:</b> unifying memristor physics, Bayesian statistics, and active learning into a single system — a truly cross-disciplinary contribution matching the journal's scope.</li>
+      <li><b>Novel algorithmic contribution on real hardware:</b> mSGLD is not a simulation — it is validated on a custom 4K-cell memristor ESCIM chip, meeting the journal's bar for experimental demonstration.</li>
+      <li><b>Broadly applicable paradigm:</b> the approach is domain-agnostic (catalyst discovery, drug discovery, robotics, protein optimization), giving the result societal breadth beyond a niche engineering paper.</li>
+      <li><b>Quantified energy-efficiency story:</b> the 153× energy figure is concrete, reproducible, and policy-relevant in the era of AI energy consumption debates.</li>
+      <li><b>Open science:</b> all code and data are deposited on Zenodo and GitHub, aligning with the journal's reproducibility expectations.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd>Robot pouring skill-learning dataset deposited on <strong>Zenodo</strong> at <a href="https://doi.org/10.5281/zenodo.14168532" target="_blank">doi.org/10.5281/zenodo.14168532</a>. Labeling involves binary success/failure outcomes for pouring actions under varying context parameters (bowl/cup dimensions) and control parameters (rotation axis, frame, final pitch).</dd>
+      <dt>Training regime</dt><dd>Initial training set: <strong>64 labeled samples</strong>. Active learning loop: 64 additional queries, growing the training set to <strong>128 samples</strong>. Unlabeled pool queried per loop: <strong>10,000 constraints</strong>. In situ learning: <strong>110 epoch</strong> iterations per loop (early stopping at ≥98% accuracy).</dd>
+      <dt>3D simulator</dt><dd><strong>PyBullet</strong> physics engine (open source) used to generate the tabletop robot environment and provide ground-truth labels for pouring outcomes. Real-world bowl and cup dimension dataset provided variability.</dd>
+      <dt>Hardware platform</dt><dd><strong>ESCIM system</strong> (Expandable Stochastic CIM): integrates three 4K memristor chips (TiN/TaO<sub>x</sub>/HfO<sub>x</sub>/TiN, 1T1R cells, 32×128 array per chip). Measurement of ~2K devices per conductance state; 1,000 read cycles for noise characterization per array.</dd>
+      <dt>Benchmark</dt><dd><strong>MNIST</strong> dataset used in simulation experiments (Supplementary) to validate mSGLD noise management; exact sample count not stated in the main text (standard 60K train / 10K test split implied).</dd>
+      <dt>Code availability</dt><dd>ESCIM platform code: <a href="https://github.com/YudengLin/Code_ESCIM_Hardware" target="_blank">GitHub</a> / Zenodo <a href="https://doi.org/10.5281/zenodo.14168528" target="_blank">14168528</a>. DBAL loop: <a href="https://github.com/YudengLin/BDAL_for_Robot_Skill_Learning" target="_blank">GitHub</a>. Robot simulator: <a href="https://github.com/caelan/LTAMP" target="_blank">LTAMP</a>. Memristor BDNN model: <a href="https://github.com/YudengLin/memristorBDNN" target="_blank">GitHub</a>.</dd>
+      <dt>Time period</dt><dd>Experiments conducted and published 2024; dataset deposited Nov 2024 (Zenodo accession implies this from version metadata).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Zenodo robot pouring dataset</td><td>Labeled training &amp; test samples for skill learning</td><td>128 labeled samples (64 initial + 64 queried); 10K unlabeled pool per loop</td><td><a href="https://doi.org/10.5281/zenodo.14168532" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>PyBullet 3D simulator (LTAMP)</td><td>Oracle label generation; forward kinematics; collision detection</td><td>Open-source; randomized bowl/cup dimensions &amp; liquid particle parameters</td><td><a href="https://github.com/caelan/LTAMP" target="_blank">github.com/caelan/LTAMP</a></td></tr>
+        <tr><td>ESCIM memristor chip (4K array)</td><td>In situ learning &amp; inference hardware</td><td>3 chips × 32×128 1T1R cells; TiN/TaO<sub>x</sub>/HfO<sub>x</sub>/TiN; ~2K devices characterized per state</td><td>Custom hardware (not publicly distributed)</td></tr>
+        <tr><td>MNIST (simulation validation)</td><td>Ablation / noise analysis for mSGLD (Supplementary)</td><td>Standard split; exact count not stated in main text</td><td><a href="http://yann.lecun.com/exdb/mnist/" target="_blank">yann.lecun.com</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper is primarily a hardware demonstration paper; dataset volumes are small by design (the point is minimal labeling). Numbers above are taken verbatim from the main text and Methods.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Memristor stochastic CIM (ESCIM):</b> crossbar array of 1T1R memristor cells performs in-memory vector–matrix multiplication (VMM) via Ohm's law + Kirchhoff's current law in a single parallel read, eliminating memory–processor data transfer.</li>
+      <li><b>In situ Gaussian random number generation:</b> the intrinsic read noise of memristors follows a double-exponential (Laplace) distribution; summing currents from three devices invokes the Lindeberg–Feller central limit theorem to produce a Gaussian weight — no external RNG circuit needed.</li>
+      <li><b>mSGLD (memristor Stochastic Gradient Langevin Dynamics):</b> sign-backpropagation maps gradient sign to set/reset device operations; conductance modulation stochasticity provides the Gaussian noise injection required by SGLD; a smooth transition method gradually reduces the weight update ratio to shift from gradient-dominated to noise-dominated phases.</li>
+      <li><b>Deep Bayesian active learning loop:</b> (i) ex situ pre-training on digital computer using a small labeled set; (ii) deploy weights to ESCIM; (iii) memristor BDNN predicts uncertainty of 10K unlabeled candidates via repeated stochastic forward passes; (iv) straddle algorithm selects highest-uncertainty sample; (v) oracle labels it; (vi) in situ mSGLD retraining; repeat.</li>
+      <li><b>Uncertainty quantification via straddle algorithm:</b> U<sub>y</sub> = −|μ<sub>y</sub>| + 1.96σ<sub>y</sub>, computed from M repeated stochastic forward passes over memristor crossbar; no dropout required — device variability provides natural weight sampling.</li>
+      <li><b>Bayesian loss function (KL + log-likelihood):</b> KL divergence between approximate posterior weight distribution and Gaussian prior, plus expected log-likelihood, balanced by hyperparameter β; gradients computed on a digital computer via PyTorch automatic differentiation.</li>
+      <li><b>Energy and latency benchmarking:</b> ESCIM system measured against a CMOS GPU baseline; breakdown shows ADC dominates energy cost (95.2% at 130 nm), pointing to the key optimization target.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig1.png" target="_blank">
+        <img src="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig1.png" alt="Fig.1 DBAL overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The DBAL process, application domains (embodied learning, catalyst/drug discovery, protein optimization), and the memristor-based neuromorphic hardware concept.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig2.png" target="_blank">
+        <img src="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig2.png" alt="Fig.2 Stochastic characteristics of memristors" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Stochastic characteristics of memristors: I–V curve, read noise distribution (double exponential), analog switching under pulse trains, and conductance transition Gaussian distributions at 4K array.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig3.png" target="_blank">
+        <img src="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig3.png" alt="Fig.3 In-memory DBAL and mSGLD" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> In-memory DBAL framework and mSGLD in situ learning: Gaussian weight realization in crossbar, DBAL flowchart, initial/latter mSGLD phases, weight update strategy, and uncertainty prediction via multiple forward passes.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig4.png" target="_blank">
+        <img src="assets/deep-bayesian-active-learning-using-in-memory-computing-hardware__s43588-024-00744-y/fig4.png" alt="Fig.4 Robot skill learning results" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Robot pouring skill learning task: training accuracy evolution across dataset sizes (64–124 samples), conductance state distribution, active vs. passive learning accuracy gap (~13%), pouring performance, and visualization of decision boundary learned by memristor BDNN.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Extended Data Table 1 — energy cost and latency breakdown of ESCIM per learning iteration). Supplementary contains 11 figures, 3 tables, and 9 notes.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal modeling, open science).</p>
+
+    <div class="idea">
+      <h3>① Extend mSGLD to fully analogue reinforcement learning for adaptive spatial decision-making</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates mSGLD for <strong>supervised Bayesian active learning</strong> — the oracle provides a binary label per query. A direct extension is to replace the external oracle with a <strong>reward signal from the environment</strong>, turning the framework into an analogue RL loop. The ESCIM's stochastic weights already provide natural exploration noise (an analogue of ε-greedy or policy entropy), and the mSGLD update rule generalizes naturally to policy gradients. The paper's smooth-transition trick (decreasing update ratio) could govern exploitation annealing. This would make the system the first fully analogue Bayesian RL chip, removing the digital computer from the inner loop entirely and completing the vision sketched in the Discussion section.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatiotemporal facility-location problems — EV charging station placement, healthcare facility siting — are sequential decision problems where labeling costs are real (installing or moving facilities is expensive). An analogue Bayesian RL agent running on neuromorphic hardware could <strong>explore candidate locations</strong> on-device with uncertainty-aware sample efficiency, directly relevant to my equity-efficiency optimization agenda where repeated simulation evaluations are the labeling bottleneck.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fully analogue reinforcement learning with memristors — <a href="https://doi.org/10.1038/s42256-025-01157-w" target="_blank">10.1038/s42256-025-01157-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Combine DBAL uncertainty sampling with random-sketch compression for geospatial foundation-model fine-tuning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's DBAL loop selects the single highest-uncertainty sample per round to query for a label — a conservative batch-size-1 policy that works well on a small memristor BDNN (11×50×50×2) but does not scale to large-parameter foundation models. A natural extension: apply <strong>random-sketch dimensionality reduction</strong> (compressing the gradient or weight space) before deploying the DBAL loop on a larger memristor array, so the stochastic CIM system can handle BDNN layers with orders-of-magnitude more parameters without blowing the memory budget. The sketch preserves the Gaussian structure exploited by mSGLD, so uncertainty capture remains valid.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models (e.g., SatMAE, GeoCLIP) for localized health-geography tasks faces exactly this label-scarcity / compute-budget tension. A sketch-compressed DBAL strategy would let me <strong>identify which satellite tiles or geographic subregions to label first</strong> for a downstream accessibility prediction task, reducing annotation cost while maximizing model calibration — directly coupling my GeoAI agenda to hardware-efficient active learning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Random sketch learning for deep neural networks in edge computing — <a href="https://doi.org/10.1038/s43588-021-00039-6" target="_blank">10.1038/s43588-021-00039-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Port the paper's uncertainty-driven query strategy to interatomic-potential-style spatiotemporal prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's straddle uncertainty metric — U<sub>y</sub> = −|μ<sub>y</sub>| + 1.96σ<sub>y</sub> — is domain-agnostic: it selects the unlabeled point whose predicted distribution most straddles the decision boundary. A direct paper extension is to replace the robot pouring task with a <strong>regression-style active learning</strong> scenario (e.g., predicting a continuous outcome) by swapping the straddle criterion for query-by-committee variance or max-entropy, and testing whether the mSGLD training still converges on the same 4K chip. This would validate the framework's generality beyond binary classification and is the natural next experiment the Discussion section calls for.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatiotemporal kernel density estimation and healthcare utilization modeling involve continuous outcomes (e.g., disease rate, service demand) with sparse ground-truth labels over large spatial domains. The mSGLD uncertainty quantification could prioritize <strong>which census tracts or hexagonal grid cells to impute or survey first</strong> in a 2SFCA demand-surface pipeline, acting as an active spatial sampling framework that is directly transferable to my methods toolkit.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Replace the digital-computer gradient backend with an on-chip synaptic learning rule toward a fully integrated system</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper is explicit that gradient computation (backpropagation) still runs on a tethered digital computer, which is the system's remaining von-Neumann bottleneck. The Discussion calls this out as a key limitation. A direct extension: exploit recent findings that <strong>standard silicon transistors can mimic synaptic and neural dynamics</strong> (short-term plasticity, spike-timing-dependent plasticity) to implement local learning rules — such as contrastive Hebbian learning or equilibrium propagation — on-chip, eliminating the digital compute tile entirely. The mSGLD sign-gradient rule is already a step in this direction (it only needs the sign, not the full gradient magnitude), making the transition architecturally feasible.</p>
+      <p><span class="lab mine">Added value to my research</span>For mobile-health and telehealth applications where patient data cannot leave the device (regulatory constraints), a fully on-chip Bayesian learner would enable <strong>privacy-preserving active learning of spatial health patterns</strong> — querying only the most informative patient records for labeling without centralizing raw data. This connects my digital-divide and telehealth access research to federated, hardware-native probabilistic AI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Synaptic and neural behaviours in a standard silicon transistor — <a href="https://doi.org/10.1038/s41586-025-08742-4" target="_blank">10.1038/s41586-025-08742-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Scale mSGLD to nanomaterial discovery by coupling in-memory uncertainty sampling with physics-infused graph neural networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper lists catalyst and drug discovery as motivating applications but demonstrates only a binary robot task. Extending to a materials-discovery setting: use the paper's mSGLD uncertainty sampling to select <strong>which candidate nanomaterial configurations to synthesize and measure next</strong>, while replacing the flat BDNN with a <strong>physics-infused heterogeneous graph neural network</strong> that encodes symmetry and bond constraints. The memristor CIM architecture handles the VMM bottleneck of large graphs, and the stochastic weights provide the uncertainty needed to rank candidates. The mSGLD smooth-transition method would need adaptation to graph-structured gradients, but the sign-update rule applies node-wise.</p>
+      <p><span class="lab mine">Added value to my research</span>The methodological bridge here is the physics-informed graph learning theme in my spatiotemporal methods. Just as physical symmetry priors are baked into the graph structure for nanomaterials, <strong>spatial autocorrelation and network topology priors</strong> (e.g., road-network constraints on service accessibility) can be encoded as graph constraints in a memristor BDNN that actively selects which POI locations or mobility edges to observe next — a hardware-native active GeoAI sensing pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

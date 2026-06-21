@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning — AI Digest</title>
+<meta name="description" content="AI Digest: Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Quantum chemistry</span>
+      <span class="tag">Multi-task learning</span>
+      <span class="tag">Electronic structure</span>
+      <span class="tag">Graph neural networks</span>
+    </div>
+    <h1>Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning</h1>
+    <div class="meta">
+      <span class="authors">Hao Tang · Brian Xiao · Wenhao He · Pero Subasic · Avetik R. Harutyunyan · Yao Wang · Fang Liu · Haowei Xu · Ju Li</span>
+      <span><b>Published</b> 2024-12-27</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00747-9" target="_blank">10.1038/s43588-024-00747-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00747-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MEHnet, a <strong>multi-task E3-equivariant graph neural network</strong>, learns from gold-standard CCSD(T) coupled-cluster calculations to predict <strong>multiple molecular electronic properties simultaneously</strong> — energy, dipole/quadrupole moments, atomic charges, bond orders, energy gap, and polarizability — with better accuracy than popular hybrid and double-hybrid DFT functionals at <strong>far lower computational cost</strong>. The model generalizes from small hydrocarbon training molecules (molecular weight &lt;100 u) to large aromatic compounds and semiconducting polymers with hundreds of atoms that are <strong>beyond the reach of CCSD(T) due to its O(N<sup>7</sup>) scaling</strong>, demonstrating the viability of using high-accuracy wavefunction data to train a transferable, physics-informed machine learning electronic structure method.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the DFT ceiling.</b> Virtually all prior ML molecular property models train on DFT data and therefore cannot exceed DFT accuracy. MEHnet is among the first to demonstrate <strong>beyond-DFT accuracy</strong> at DFT-like cost by learning directly from CCSD(T).</li>
+      <li><b>Multi-task learning as a force multiplier.</b> By jointly predicting eight distinct electronic properties from a shared effective Hamiltonian, the model achieves superior <strong>data efficiency</strong> — its energy RMSE decays as N<sup>−0.38</sup> vs. ~N<sup>−0.25</sup> for single-task potentials.</li>
+      <li><b>Bridges small-molecule accuracy to polymer-scale systems.</b> The model is trained on molecules with up to ~100 u but reliably predicts energy gaps and polarizabilities of semiconducting polymers with 400+ atoms — enabling property screening at a scale that was previously computationally infeasible.</li>
+      <li><b>Physics-informed design ensures interpretable outputs.</b> Rather than fitting raw properties with a black box, MEHnet learns an effective Hamiltonian whose eigenvalues and orbitals are solved by quantum-mechanical equations, keeping the outputs physically interpretable and the gradients numerically stable via perturbation theory.</li>
+      <li><b>Fully open data and code.</b> Dataset (7,440+ CCSD(T) calculations) published on FigShare; training code on GitHub — enabling community extension and reproducibility.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodology-level advance:</b> introduces a new computational paradigm — ML trained on coupled-cluster data rather than DFT — which repositions the entire DFT-ML pipeline for molecular science.</li>
+      <li><b>Scope and generality:</b> tested on multiple chemical classes (hydrocarbons, aromatics, polymers, and the QM9 multi-element benchmark), demonstrating cross-domain transferability rather than a narrow case study.</li>
+      <li><b>Interdisciplinary impact:</b> relevant to computational chemistry, materials design, and semiconductor physics simultaneously, matching the journal's broad computational-science mandate.</li>
+      <li><b>Quantitative benchmarking:</b> head-to-head comparisons with B3LYP, DSD-PBEP86, DM21, and AIQM1 on seven simultaneous properties provide a rigorous, reproducible baseline that the community can build on.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>Custom CCSD(T) hydrocarbon dataset</strong> — 85 small hydrocarbon molecules collected from the <strong>PubChem database</strong>. Training domain: 70 molecules / 20 chemical formulae; out-of-domain test: 15 molecules / 3 chemical formulae. Total configurations: 7,440 training + in-domain test quarter + 500 out-of-domain. Molecular dynamics sampling at 2,000 K with TeaNet / PreFerred Potential v4.0.0 to generate conformer ensembles (up to 500 conformers per formula).</dd>
+      <dt>Quantum chem. labels</dt><dd>CCSD(T)/cc-pVTZ (energy, dipole/quadrupole, Mulliken charge, Mayer bond order) and EOM-CCSD/cc-pVDZ (first excitation energy) and CCSD/cc-pVDZ (polarizability) — all computed with <strong>ORCA v5.0.4</strong>.</dd>
+      <dt>Generalization benchmark</dt><dd><strong>QM9 dataset</strong> (Ramakrishnan et al.) — 10,000 molecules randomly sampled for training; 4,000 held out for testing; covers H, C, N, O, F chemical space.</dd>
+      <dt>Experimental validation</dt><dd><strong>NIST Chemistry WebBook</strong> — infrared spectra of benzene and other common hydrocarbons. Standard enthalpies of formation from a published experimental review (ref. 38 in paper) for <strong>11 aromatic molecules</strong>. Polymer energy gaps and polarizabilities compared to published experimental and MP2/correlated-calculation literature.</dd>
+      <dt>Molecular scope</dt><dd>Training molecules have MW &lt; 100 u. Generalization tested on naphthalene (128 u) and three semiconducting polymers (trans-polyacetylene, cyclic polyacetylene, polyphenylene) with chains up to &gt;400 atoms.</dd>
+      <dt>Code &amp; data</dt><dd>Training/testing datasets: <a href="https://doi.org/10.6084/m9.figshare.25762212" target="_blank">FigShare 10.6084/m9.figshare.25762212</a>. Source code: <a href="https://github.com/htang113/Multi-task-electronic" target="_blank">github.com/htang113/Multi-task-electronic</a> (branches v1.6 for hydrocarbons, v2.0 for QM9).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Custom CCSD(T) hydrocarbon corpus</td><td>Primary training &amp; test labels</td><td>85 molecules; 7,440+ configurations; cc-pVTZ/cc-pVDZ basis</td><td><a href="https://doi.org/10.6084/m9.figshare.25762212" target="_blank">FigShare</a></td></tr>
+        <tr><td>PubChem database</td><td>Initial molecule structure source</td><td>85 hydrocarbon structures collected</td><td><a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank">pubchem.ncbi.nlm.nih.gov</a></td></tr>
+        <tr><td>QM9 dataset</td><td>Cross-element generalization benchmark</td><td>10,000 training + 4,000 test; H,C,N,O,F molecules</td><td>public benchmark</td></tr>
+        <tr><td>NIST Chemistry WebBook</td><td>Experimental IR spectrum validation</td><td>Benzene and common hydrocarbons</td><td><a href="https://webbook.nist.gov/" target="_blank">webbook.nist.gov</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all numerical volumes are stated explicitly in the article; polymer chain lengths are not given as a single headline count — the paper reports "up to more than 400 atoms" for the longest chains studied.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>E3-equivariant graph neural network (E3NN):</b> two-layer message-passing graph convolution with SO(3)-equivariant tensor features (spherical harmonics Y<sub>lm</sub> with l ≤ 2) encoding atomic configurations as molecular graphs; rotational symmetry is preserved exactly.</li>
+      <li><b>Physics-informed Hamiltonian correction (MEHnet):</b> the network predicts a correction matrix V<sup>θ</sup> to a fast BP86/cc-pVDZ mean-field Hamiltonian F′ computed by ORCA; the total effective Hamiltonian H<sup>eff</sup> = F′ + V<sup>θ</sup> is diagonalized to yield molecular orbitals and energy levels from which all properties are derived analytically.</li>
+      <li><b>Multi-task learning:</b> eight properties (E, dipole, quadrupole, atomic charge, bond order, energy gap, polarizability) jointly trained from the shared H<sup>eff</sup> via a weighted MSE loss balancing convergence across tasks.</li>
+      <li><b>Perturbation-theory back-propagation:</b> custom analytic gradient scheme derived from quantum perturbation theory avoids numerical instability when differentiating through Hamiltonian diagonalization with near-degenerate energy levels.</li>
+      <li><b>Molecular dynamics conformer generation:</b> Langevin NVT MD at 2,000 K (TeaNet / PreFerred Potential, 100,000 steps, 2 fs timestep) samples diverse out-of-equilibrium conformers to increase training-set diversity.</li>
+      <li><b>Benchmarking:</b> RMSE comparison on in-domain (ID) and out-of-domain (OOD) hydrocarbon datasets against B3LYP, B3PW91, DSD-PBEP86, PWPB95 (with DFT-D3), DM21 (ML functional), and AIQM1 (ML potential).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig1.png" target="_blank">
+        <img src="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig1.png" alt="Fig.1 Schematic of the MEHnet electronic structure workflow" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> MEHnet workflow: (a) computation graph from atomic configurations to multi-property outputs; (b) E3NN architecture with two graph-convolution layers; (c) training and testing dataset coverage by molecular formula and size.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig2.png" target="_blank">
+        <img src="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig2.png" alt="Fig.2 Benchmark of model performance on testing dataset" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Benchmark: (a) testing RMSE vs. training set size; (b) computational cost scaling vs. number of electrons; (c) prediction RMSE for seven properties vs. DFT functionals and ML baselines.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig3.png" target="_blank">
+        <img src="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig3.png" alt="Fig.3 Validation on gas-phase aromatic hydrocarbons" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Experimental validation: (a) standard enthalpies of formation for 11 aromatic molecules vs. literature values; (b) infrared spectrum of benzene compared to NIST WebBook measurements.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig4.png" target="_blank">
+        <img src="assets/approaching-coupled-cluster-accuracy-for-molecular-electronic-structures-with-multi-task-l__s43588-024-00747-9/fig4.png" alt="Fig.4 MEHnet predictions for semiconducting polymers" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Semiconducting polymers: (a) HOMO/LUMO wavefunctions for t-PA, PPP, c-PA; (b) energy gap vs. chain length compared to experiment; (c) static polarizability vs. chain length compared to MP2 correlated calculations.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables — Table 1 (RMSE benchmark on ID and OOD hydrocarbon datasets for all seven properties) and Table 2 (RMSE for the QM9 version of MEHnet on 4,000 test configurations).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, multi-source data fusion, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Adapt MEHnet's "physics baseline + learned correction" architecture to spatial accessibility modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>MEHnet's defining design move is to never train from zero: it starts with a cheap but physically principled mean-field Hamiltonian F′ (BP86/cc-pVDZ DFT) and learns only the residual correction V<sup>θ</sup> that captures non-local exchange-correlation beyond what F′ can express. This keeps the model physically grounded and dramatically reduces the effective label complexity the network must learn. A natural extension of the paper: replace the fixed BP86 starting point with a <strong>learned orbital-free DFT (OF-DFT) baseline</strong> — itself a neural network — so that both the baseline and the correction co-evolve, potentially enabling fully end-to-end linear-scaling electronic-structure prediction without any legacy quantum-chemistry solver at inference time.</p>
+      <p><span class="lab mine">Added value to my research</span>The "principled baseline + data-driven residual" architecture maps exactly onto my <strong>2SFCA/R2SFCA accessibility framework</strong>: the classic floating catchment score plays the role of F′ — a fast, interpretable supply-demand ratio — while a GNN correction V<sup>θ</sup> trained on observed healthcare utilization data accounts for unmeasured barriers (transport, digital access, social trust) that the catchment formula ignores. This two-stage explainable design separates what the spatial interaction model already knows from what empirical data adds, directly improving the interpretability of my spatial accessibility pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Overcoming the barrier of orbital-free density functional theory for molecular systems using deep learning — <a href="https://doi.org/10.1038/s43588-024-00605-8" target="_blank">10.1038/s43588-024-00605-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Leverage multi-task data efficiency to improve small-sample geospatial health prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>MEHnet achieves a steeper data-efficiency curve (RMSE ∝ N<sup>−0.38</sup>) than single-task potentials (~N<sup>−0.25</sup>) by forcing all seven properties to share a single underlying Hamiltonian representation — mutual regularization across tasks restricts the function space the model can overfit into. An important extension of the paper: systematically ablate <em>which property combinations</em> drive the data-efficiency gain most. The paper's Fig. 2a shows the aggregate improvement, but it does not test whether removing, say, polarizability from the loss degrades energy convergence — answering this would yield principled design rules for multi-task molecular ML.</p>
+      <p><span class="lab mine">Added value to my research</span>Small labeled datasets are a structural constraint across health geography: county-level mental-health utilization, telehealth adoption, or food-access audits are expensive to collect. MEHnet's result motivates <strong>multi-task spatial ML</strong> where jointly predicting correlated outcomes (primary-care accessibility, mental-health burden, digital divide) from a shared spatiotemporal representation improves label efficiency in data-sparse counties — a direct analogue of the molecular multi-task efficiency gain. The perturbation-theory gradient trick also suggests a numerically stable way to differentiate through graph Laplacian eigenmodes in my spatial-smoothing pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Data as the next challenge in atomistic machine learning — <a href="https://doi.org/10.1038/s43588-024-00636-1" target="_blank">10.1038/s43588-024-00636-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Pre-train MEHnet's E3NN backbone with contrastive molecular learning to reduce CCSD(T) data needs</h3>
+      <p><span class="lab paper">Extending this paper</span>MEHnet's bottleneck is the cost of generating CCSD(T)-quality training labels — 7,440 calculations at the cc-pVTZ level is already substantial, and scaling to new chemical families (transition metals, open-shell species) would require new expensive datasets. A direct extension: <strong>self-supervised contrastive pre-training</strong> of the E3NN backbone on large, unlabeled molecular conformer databases (PubChem, ZINC) before fine-tuning only the correction layer V<sup>θ</sup> with a small CCSD(T) set. This mirrors the pre-train + fine-tune paradigm that has transformed NLP and vision and would test how much the geometric encoder can learn without quantum-chemistry supervision.</p>
+      <p><span class="lab mine">Added value to my research</span>The CCSD(T) label-scarcity problem is structurally identical to my challenge of <strong>fine-tuning geospatial foundation models</strong> with sparse ground-truth labels (health survey records, traffic counts, facility audits). Just as a pre-trained E3NN encodes molecular geometry richly from unlabeled data and then receives a lightweight high-accuracy correction, a geospatial foundation model pre-trained on remote sensing can be fine-tuned with few labeled observations to estimate health-access patterns in data-poor regions — directly relevant to my work on digital divides and rural telehealth.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Characterize MEHnet's local-to-global generalization as a model for cross-scale geospatial transfer</h3>
+      <p><span class="lab paper">Extending this paper</span>MEHnet's most striking empirical finding is scale-free generalization: a model trained on molecules with MW &lt;100 u accurately predicts properties of semiconducting polymers with &gt;400 atoms — a roughly 10x scale jump with zero re-training. The paper attributes this to the locality of the E3NN message-passing (each atom sees only a 2 Å neighborhood) combined with the shared-Hamiltonian representation that prevents the model from memorizing global structure. A direct extension: <strong>systematically probe the scale-generalization limit</strong> as training-domain diversity and molecule size vary, and test whether the principle extends to qualitatively new long-range correlations (metal-organic frameworks, conjugated 2D materials) where purely local neighborhoods may be insufficient.</p>
+      <p><span class="lab mine">Added value to my research</span>The local-to-global generalization principle maps onto the core challenge in GeoAI: <strong>models trained on data-rich cities must generalize to data-sparse cities and rural areas</strong>. Just as MEHnet learns local atomic-environment features (2 Å neighborhoods) that compose globally into polymer properties, a spatiotemporal GNN trained on densely instrumented metros can infer mobility, health-access, or pollution patterns in sparsely monitored counties — a principled framework for addressing the urban-rural data divide that underlies my work on healthcare accessibility and digital health equity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Couple MEHnet's uncertainty structure with active learning for spatial and molecular sampling</h3>
+      <p><span class="lab paper">Extending this paper</span>MEHnet produces point predictions with no uncertainty estimates. This is a notable gap: the paper's own Fig. 2a shows rapidly diminishing returns beyond ~2,000 training configurations, suggesting that a large fraction of the 7,440-configuration dataset carries little information — an ideal candidate for <strong>active learning</strong> that selects the most informative configurations for CCSD(T) labeling. Adding ensemble-based or conformal uncertainty quantification to MEHnet would enable an uncertainty-driven training loop: compute cheap DFT geometries, identify high-uncertainty regions of conformer space via the ensemble, and selectively label those with CCSD(T), potentially reducing labeling cost by an order of magnitude.</p>
+      <p><span class="lab mine">Added value to my research</span>Uncertainty-driven sampling is a direct analogue of <strong>active spatial data collection</strong> in my multi-source data fusion work: given a budget for expensive ground-truth surveys (health facility audits, GPS mobility tracking), selecting measurement locations where a trained spatiotemporal model is most uncertain maximizes information gain per label. The MEHnet perturbation-theory framework for stable gradient estimation through eigendecompositions also informs numerically stable sensitivity analysis in my graph-based spatial models — useful for explainable-ML attribution of which geographic features drive accessibility inequities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

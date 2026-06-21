@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A generalizable deep learning framework for inferring fine-scale germline mutation rate maps — AI Digest</title>
+<meta name="description" content="AI Digest: A generalizable deep learning framework for inferring fine-scale germline mutation rate maps (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Genomics</span>
+      <span class="tag">Mutation Rate</span>
+      <span class="tag">Transfer Learning</span>
+    </div>
+    <h1>A generalizable deep learning framework for inferring fine-scale germline mutation rate maps</h1>
+    <div class="meta">
+      <span class="authors">Yiyuan Fang · Shuyi Deng · Cai Li</span>
+      <span><b>Published</b> 2022-12-08</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00574-5" target="_blank">10.1038/s42256-022-00574-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00574-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MuRaL (Mutation Rate Learner) is a <strong>dual-module deep learning framework</strong> that predicts single-nucleotide germline mutation rates from <strong>DNA sequence alone</strong>, without requiring functional genomic features. Trained on rare variants as proxies for de novo mutations, it <strong>outperforms state-of-the-art models</strong> at fine scales (10 Kb bins) while demanding far fewer training mutations. Transfer learning further reduces data and computation needs, enabling high-quality mutation rate maps for four phylogenetically diverse species — human, rhesus macaque, Drosophila, and Arabidopsis — and revealing that <strong>developmental genes carry a disproportionately high mutational burden</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First deep learning framework that needs only DNA sequence as input.</b> Previous state-of-the-art methods required functional genomic features (methylation, replication timing, recombination rate) unavailable for most species; MuRaL eliminates this bottleneck and opens fine-scale mutation rate inference to any sequenced genome.</li>
+      <li><b>Demonstrated cross-species generalizability.</b> The same framework was successfully applied to organisms spanning over one billion years of evolution (Homo sapiens, Macaca mulatta, Drosophila melanogaster, Arabidopsis thaliana), with transfer learning substantially cutting training data and compute time for phylogenetically related species.</li>
+      <li><b>Biologically meaningful downstream discovery.</b> High-resolution MuRaL maps enabled K-means clustering of human coding genes into three functionally distinct mutational groups — pinpointing developmental genes under elevated mutational pressure, with implications for evolutionary biology and disease genetics.</li>
+      <li><b>Open science infrastructure.</b> Both the MuRaL software (<a href="https://github.com/CaiLiLab/MuRaL" target="_blank">GitHub</a>) and pre-computed genome-wide mutation rate maps for four species are publicly released, giving the community immediately usable resources for downstream analyses.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel methodological contribution at the AI–life-sciences interface:</b> MuRaL is the first application of deep learning to fine-scale germline mutation rate estimation, matching NMI's mandate of impactful AI methods advancing scientific discovery.</li>
+      <li><b>Generalizability as a core claim:</b> the framework is benchmarked across four evolutionarily diverse species and released as open software, demonstrating reusability rather than a one-off genomic result.</li>
+      <li><b>Addresses a long-standing data-scarcity problem:</b> working with as few as 100 sequenced genomes and using rare variants as de novo proxies substantially lowers the barrier to entry for the field — a practically significant advance for non-model organisms.</li>
+      <li><b>Technically rigorous evaluation:</b> the paper introduces two quantitative metrics (k-mer correlation, regional correlation) calibrated across multiple scales and multiple baselines, meeting NMI's standard of thorough benchmarking.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Human variants</dt><dd><strong>gnomAD v2.1.1</strong> — whole-genome sequencing of <strong>15,708 individuals</strong>; downsampled to allele counts of 200 / 2,000 / 7,000 / 20,000 to generate rare-variant datasets ('1in200', '1in2000', '1in7000', '10in20000'). High-mappability autosomal sites retained: 2,626,258,019 bp.</dd>
+      <dt>Human de novo mutations</dt><dd><strong>gene4denovo database</strong> — <strong>445,467 unique de novo SNVs</strong> drawn from three large-scale studies used for transfer learning experiments.</dd>
+      <dt>Rhesus macaque</dt><dd><strong>853 sequenced genomes</strong> from UCSC Genome Browser (rheMac10 assembly); 19.6 M singleton variants for AT/non-CpG training; mappability-filtered autosomal space: 2,620,098,971 bp.</dd>
+      <dt>Arabidopsis thaliana</dt><dd><strong>1001 Genomes project</strong> — 1,135 inbred lines; 12,883,854 polymorphic sites; genome ~119 Mb; 100,000 rare variants used per model.</dd>
+      <dt>Drosophila melanogaster</dt><dd><strong>Drosophila Genetic Reference Panel (DGRP2)</strong> — <strong>205 inbred lines</strong>; 3,837,601 polymorphic sites; genome ~169 Mb; 702,864 singleton rare variants extracted.</dd>
+      <dt>Gene annotations</dt><dd><strong>GENCODE v37</strong> for human protein-coding gene annotations; <strong>ClinVar (2022-07-30 snapshot)</strong> for pathogenic variant benchmarking in the depletion rank analysis.</dd>
+      <dt>Training scale</dt><dd>Primary human models: 500,000 mutated + 10,000,000 non-mutated sites per sub-model (AT, non-CpG, CpG), totalling ~1.5 million training mutations across three models.</dd>
+      <dt>Availability</dt><dd>Genome-wide mutation rate maps for all four species at <a href="https://doi.org/10.11922/sciencedb.01173" target="_blank">ScienceDB (doi:10.11922/sciencedb.01173)</a>. Software: <a href="https://github.com/CaiLiLab/MuRaL" target="_blank">GitHub</a> and <a href="https://doi.org/10.5281/zenodo.6989025" target="_blank">Zenodo v1.0.0</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>gnomAD v2.1.1</td><td>Rare-variant training data for human models</td><td>15,708 genomes; ~2.6 Gb autosomal high-mappability sites</td><td><a href="https://gnomad.broadinstitute.org/downloads" target="_blank">gnomad.broadinstitute.org</a></td></tr>
+        <tr><td>gene4denovo</td><td>De novo mutations for transfer learning</td><td>445,467 unique de novo SNVs (3 large studies)</td><td><a href="http://www.genemed.tech/gene4denovo/download/" target="_blank">genemed.tech</a></td></tr>
+        <tr><td>UCSC rheMac10 SNVs</td><td>Training data for M. mulatta models</td><td>853 genomes; 85.7 M variants</td><td><a href="https://hgdownload.soe.ucsc.edu/gbdb/rheMac10/rhesusSNVs/" target="_blank">UCSC Genome Browser</a></td></tr>
+        <tr><td>1001 Genomes (A. thaliana)</td><td>Training data for Arabidopsis models</td><td>1,135 inbred lines; 12.9 M polymorphic sites; genome ~119 Mb</td><td><a href="https://1001genomes.org/" target="_blank">1001genomes.org</a></td></tr>
+        <tr><td>DGRP2 (D. melanogaster)</td><td>Training data for Drosophila models</td><td>205 inbred lines; 3.8 M polymorphic sites; genome ~169 Mb</td><td><a href="http://dgrp2.gnets.ncsu.edu/" target="_blank">dgrp2.gnets.ncsu.edu</a></td></tr>
+        <tr><td>GENCODE v37</td><td>Human gene annotations for downstream analysis</td><td>Protein-coding genes, genome-wide</td><td><a href="https://www.gencodegenes.org/human/" target="_blank">gencodegenes.org</a></td></tr>
+        <tr><td>ClinVar (2022-07-30)</td><td>Pathogenic variant benchmarking for depletion rank</td><td>SNVs genome-wide, GRCh37</td><td><a href="https://ftp.ncbi.nlm.nih.gov/pub/clinvar/" target="_blank">NCBI FTP</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all training counts are drawn verbatim from the article's Methods and Supplementary Tables. Training sizes for non-human species are smaller (100,000 mutated sites for A. thaliana and D. melanogaster); exact per-species configurations are in Supplementary Tables 5–11 of the original paper.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Dual-module neural network (MuRaL):</b> a <strong>'local' module</strong> (k-mer embedding + 3 fully connected layers, 15 bp radius on each side of the focal nucleotide) captures immediate sequence context; an <strong>'expanded' module</strong> (one-hot encoding + ResNet, 1 Kb radius on each side) captures long-range mutability signals. Both output four-class mutation probability vectors, combined at equal weight (0.5 P<sub>local</sub> + 0.5 P<sub>expanded</sub>).</li>
+      <li><b>Probability calibration:</b> Dirichlet calibration is applied post-training to obtain well-calibrated class probabilities, enabling direct interpretation as per-nucleotide mutation rates (quantified via ECE, classwise-ECE, and Brier score).</li>
+      <li><b>Rare-variant proxy strategy:</b> extremely rare variants (allele frequency ≤ 1/200 to ≤ 5/1,000 after hypergeometric downsampling) serve as proxies for de novo mutations, sidestepping the rarity and cost of observed de novo mutation datasets.</li>
+      <li><b>Transfer learning:</b> weights pre-trained on rare-variant models are used to initialize models fine-tuned on de novo mutations or on phylogenetically related species (rhesus macaque), reducing training data requirements by 70% with no significant loss in performance.</li>
+      <li><b>Evaluation metrics:</b> k-mer correlation (Pearson r across all k-mer subtypes at k = 3, 5, 7, 9) and regional correlation (Pearson r across binned genomic windows at 10 Kb, 100 Kb, 1 Mb scales) allow multi-resolution benchmarking against observed rare variants and de novo mutations.</li>
+      <li><b>Downstream analyses:</b> K-means clustering (K=3) of human coding genes by mutation rate profiles using DeepTools (v3.5.1); GO enrichment with clusterProfiler (v4.4.4); depletion rank (DR) scoring across 500 bp sliding windows (50 bp step) genome-wide for pathogenic variant prioritization.</li>
+      <li><b>Implementation stack:</b> PyTorch v1.10.2; hyperparameter tuning via Ray Tune (ASHAScheduler); Adam optimizer + StepLR scheduler; ~260,712 total trainable parameters across three human sub-models (AT, non-CpG, CpG).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig1.png" target="_blank">
+        <img src="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig1.png" alt="Fig.1 MuRaL model architecture and evaluation strategies" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> MuRaL dual-module architecture (local k-mer embedding + expanded ResNet) and the two evaluation metrics: k-mer correlation and regional binned correlation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig2.png" target="_blank">
+        <img src="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig2.png" alt="Fig.2 Comparison of MuRaL models trained with different rare-variant data" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> k-mer and regional correlations for models trained on rare variants from as few as 100 diploid genomes, showing MuRaL's data efficiency.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig3.png" target="_blank">
+        <img src="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig3.png" alt="Fig.3 Comparison of MuRaL and existing models" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Genome-wide benchmarking: MuRaL vs. Carlson 7-mer, Carlson 7-mer+features, Aggarwala 7-mer, and Karczewski 3-mer — MuRaL leads at fine scales and 9-mer resolution.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig4.png" target="_blank">
+        <img src="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig4.png" alt="Fig.4 Training DNM models and transfer learning" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Transfer learning from rare-variant models to de novo mutation models: validation losses and k-mer/regional correlations comparing ab initio, transfer, and rare-variant models.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig5.png" target="_blank">
+        <img src="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig5.png" alt="Fig.5 Application of MuRaL to other species" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Cross-species generalizability: k-mer and regional correlations for M. mulatta (ab initio vs. transfer) and A. thaliana, demonstrating robust performance outside the human genome.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig6.png" target="_blank">
+        <img src="assets/a-generalizable-deep-learning-framework-for-inferring-fine-scale-germline-mutation-rate-ma__s42256-022-00574-5/fig6.png" alt="Fig.6 Clustering human coding genes by mutation rate profiles" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> K-means clustering (K=3) of human coding genes by MuRaL mutation rate profiles reveals a cluster of developmental genes with elevated mutational burden and enriched developmental GO terms.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary Information includes 11 tables (training configurations, comparison details) and 24 extended figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, geospatial foundation models, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Replace the fixed sequence-window modules with a DNA language model backbone</h3>
+      <p><span class="lab paper">Extending this paper</span>MuRaL's expanded module uses a fixed 2 Kb window with hand-engineered ResNet blocks, and the local module is limited to 15 bp k-mer embeddings. A direct extension: swap the backbone for a <strong>pre-trained DNA sequence language model that encodes explicit cross-strand and long-range interactions</strong>, potentially capturing epigenomic correlates (chromatin looping, replication timing) that MuRaL deliberately avoids encoding. This would eliminate the need to manually tune 'local radius' and 'distal radius' hyperparameters while potentially improving performance at the finest (10 Kb and below) scales where MuRaL still shows high variance-of-variance relative to observations.</p>
+      <p><span class="lab mine">Added value to my research</span>The design pattern — pre-train a sequence/space encoder on large corpora, then fine-tune on a downstream regression target — is identical whether the input is DNA sequence or geospatial raster tiles. MuRaL's dual-module fusion (local + expanded context) directly parallels <strong>multi-scale spatial encoding strategies</strong> for urban health prediction tasks, providing a concrete architectural template for fine-tuning geospatial foundation models at neighborhood vs. city scale simultaneously.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Explicit dynamic cross-strand interactions for DNA sequence language modelling — <a href="https://doi.org/10.1038/s42256-026-01249-1" target="_blank">10.1038/s42256-026-01249-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Add spatially explicit uncertainty quantification to MuRaL's mutation rate maps</h3>
+      <p><span class="lab paper">Extending this paper</span>MuRaL reports point-estimate mutation rates with Dirichlet calibration, but provides no per-nucleotide uncertainty intervals. The paper itself flags that predicted CVs of regional mutation rates are much smaller than observed CVs — an indirect signal of unresolved uncertainty in structurally complex or low-data regions. A natural extension: augment MuRaL with <strong>conformal prediction or deep ensembling</strong> to output credible intervals per nucleotide, enabling explicit reliability maps. This would be particularly valuable for segmental-duplication regions and non-model species where the paper acknowledges poor calibration.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors my interest in <strong>uncertainty-aware geospatial ML</strong>: in spatial accessibility modeling, point predictions from MGWR or ML ensembles need coverage-conditional confidence regions for robust policy use. MuRaL's framework for per-position calibration offers a methodological template for attaching heteroscedastic uncertainty to spatial predictions — directly applicable to healthcare facility accessibility scores in regions with uneven data coverage or sparse POI records.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles — <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply MuRaL's transfer learning strategy to under-represented populations and low-resource genomes</h3>
+      <p><span class="lab paper">Extending this paper</span>MuRaL demonstrates that models trained on one human population's rare variants can be fine-tuned with fewer DNMs from the same species. The logical extension: build <strong>population-specific mutation rate maps for ancestrally diverse or under-represented populations</strong> (African, South Asian, Indigenous) that have far fewer sequenced genomes, by transferring from the gnomAD-trained model and fine-tuning with as few as 100 genomes. The paper's own '1in200' experiments establish this threshold as feasible — but it has not been demonstrated for populations with divergent ancestry and mutation spectra.</p>
+      <p><span class="lab mine">Added value to my research</span>The data-efficient transfer learning logic closely mirrors challenges in <strong>GeoAI for data-sparse regions</strong>: training a foundation model on data-rich cities/countries and fine-tuning to low-income urban environments with limited sensor or POI coverage. MuRaL's demonstrated "minimum viable data" threshold (~100 individuals sufficient) provides a concrete benchmark analogy for analogous minimum data analyses in spatial accessibility modeling for under-resourced geographies and healthcare deserts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A software framework for end-to-end genomic sequence analysis with deep learning — <a href="https://doi.org/10.1038/s43588-023-00557-5" target="_blank">10.1038/s43588-023-00557-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Couple MuRaL's mutation rate maps to multi-modal variant effect prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>MuRaL's depletion rank (DR) analysis demonstrates enrichment of ClinVar pathogenic variants in low-DR regions, but this downstream application is a brief proof-of-concept. A substantial extension: integrate MuRaL-derived per-nucleotide expected mutation counts into a <strong>joint model that simultaneously predicts variant pathogenicity and selection coefficients</strong> — moving from "this region is mutation-intolerant" to "this specific variant is likely deleterious given its local mutation rate background." This fully exploits MuRaL's single-nucleotide resolution, which the Carlson-based 500 bp DR score cannot match.</p>
+      <p><span class="lab mine">Added value to my research</span>The DR scoring framework — <em>(O − E) / √E</em> — is formally equivalent to a <strong>spatial z-score used in disease cluster detection</strong> in spatial epidemiology. In both cases, a background rate (expected mutation frequency / expected healthcare demand) identifies anomalous deficit regions (mutation intolerance / accessibility deprivation). This structural parallel suggests mutual methodological transfer: spatial-scan statistics from my accessibility work could sharpen genomic intolerance scoring, and MuRaL's per-nucleotide calibration offers inspiration for sub-census-tract accessibility anomaly detection.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting tumour mutational burden from histopathological images using multiscale deep learning — <a href="https://doi.org/10.1038/s42256-020-0190-5" target="_blank">10.1038/s42256-020-0190-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Generalize MuRaL's dual-module multi-scale design to spatiotemporal prediction tasks</h3>
+      <p><span class="lab paper">Extending this paper</span>MuRaL's core architectural innovation — <strong>parallel local and expanded encoders at different spatial scales, fused by equal-weight averaging</strong> — was motivated by genomic sequence analysis but carries no inherent genomic constraint. Extending the paper as a general framework: apply this dual-encoder design to model any 1D or 2D spatial signal where local context and long-range dependencies make distinct, complementary contributions. For genomics itself, this would include modeling insertion/deletion mutation rates, structural variant breakpoints, and organellar genomes — all listed as future extensions in the paper.</p>
+      <p><span class="lab mine">Added value to my research</span>The dual-module local-vs-expanded architecture directly informs my <strong>spatiotemporal kernel density and physics-informed graph learning</strong> work: urban space can be treated as a 2D field with both neighborhood-scale (local module) and city-scale (expanded module) influences on health outcomes. MuRaL's calibrated four-class probability output — reframing a regression as well-calibrated class-probability estimation — also offers a direct template for converting deterministic GeoAI accessibility predictions into probabilistic outputs, enabling uncertainty-aware facility placement and policy ranking under data heterogeneity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Modeling context-dependent RNA splicing by deep learning — <a href="https://doi.org/10.1038/s43588-026-00987-x" target="_blank">10.1038/s43588-026-00987-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morphological and molecular breast cancer profiling through explainable machine learning — AI Digest</title>
+<meta name="description" content="AI Digest: Morphological and molecular breast cancer profiling through explainable machine learning (Nature Machine Intelligence, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Explainable AI</span>
+      <span class="tag">Breast Cancer</span>
+      <span class="tag">Computational Pathology</span>
+      <span class="tag">Molecular Profiling</span>
+    </div>
+    <h1>Morphological and molecular breast cancer profiling through explainable machine learning</h1>
+    <div class="meta">
+      <span class="authors">Alexander Binder · Michael Bockmayr · Miriam Hägele · Stephan Wienert · Daniel Heim · Katharina Hellweg · Masaru Ishii · Albrecht Stenzinger · Andreas Hocke · Carsten Denkert · Klaus-Robert Müller · Frederick Klauschen</span>
+      <span><b>Published</b> 2021-03-08</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-021-00303-4" target="_blank">10.1038/s42256-021-00303-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-021-00303-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>An explainable machine-learning pipeline combining <strong>layer-wise relevance propagation (LRP)</strong> with kernel SVMs can simultaneously detect cancer cells and tumour-infiltrating lymphocytes from histological images with over <strong>90% accuracy</strong>, and predict multiple molecular features (DNA methylation, gene expression, copy number variations, somatic mutations, proteins) directly from H&amp;E slides — reaching balanced accuracies up to <strong>78%</strong> overall and over <strong>95% for identifiable subgroups</strong>. Crucially, the approach generates spatial heatmaps linking morphological regions to predicted molecular properties, turning black-box predictions into interpretable, experimentally validated <strong>morphomolecular maps</strong> that bridge imaging and omics for precision oncology.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges the spatial-molecular gap in cancer biology.</b> Molecular omics profiling lacks spatial resolution; microscopy lacks throughput for multi-omics. This is the first integrated XAI framework to computationally assign molecular profiles to spatial tissue regions using only standard H&amp;E stains.</li>
+      <li><b>Turns predictions into testable hypotheses.</b> LRP-generated heatmaps do not just say <em>what</em> is predicted — they say <em>where</em> the evidence is. This enables biologically meaningful, spatially explicit hypothesis generation validated here against immunohistochemistry for p53, E-cadherin, and MSH2.</li>
+      <li><b>Opens precision medicine for resource-limited settings.</b> Predicting expensive molecular assays (methylation panels, RPPA protein arrays) from cheap H&amp;E whole-slide images could dramatically reduce the cost of personalized cancer diagnostics globally.</li>
+      <li><b>Establishes clinical stratification potential.</b> By identifying high-confidence "tail" prediction subgroups, the method can flag patients for whom histology-derived molecular estimates are already clinically actionable (&gt;95% accuracy achievable for on average 8.2% of cases for the top 50 proteins).</li>
+      <li><b>Ships an open annotated image database.</b> The Berlin Cancer Image Base (B-CIB, &gt;200,000 manually annotated patches) and all analysis code are released for non-commercial use, serving as a benchmark resource for the computational pathology community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological breadth and novelty:</b> the paper advances XAI (LRP extended from image classification to molecular profiling) while simultaneously delivering a biomedical application — fitting NMI's appetite for AI methods with real-world impact.</li>
+      <li><b>Scale and rigor:</b> over 60,000 molecular features tested, 565 TCGA cases, nested cross-validation, Hoeffding's inequality with BH multiple-testing correction, and Monte Carlo FDR validation — a high-bar statistical treatment rare in biomedical AI at the time.</li>
+      <li><b>Interpretability as a first-class result:</b> NMI consistently prioritizes papers where explainability is not an afterthought but a core contribution; here, LRP heatmaps are the scientific output, not just a visualization layer.</li>
+      <li><b>Translational positioning:</b> the paper situates results on a spectrum from basic research to clinical utility — matching NMI's dual readership of ML researchers and applied scientists.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Morphological training data</dt><dd><strong>Berlin Cancer Image Base (B-CIB)</strong> — over 1,000 pathological images, yielding over 200,000 manually annotated patches from brightfield (H&amp;E, H) and confocal fluorescence microscopy, annotated by pathologists at Charité University Hospital, Berlin. Patch size: 100×100 pixels at ×400 magnification. Cell types: carcinoma cells, stromal cells, lymphocytes, normal glands, vessels.</dd>
+      <dt>Molecular + histology (training/test)</dt><dd><strong>The Cancer Genome Atlas (TCGA) Breast Cancer dataset</strong> — 565 cases with paired whole-slide H&amp;E images and multi-omics data. One 2,000×2,000 pixel ROI per patient selected by a board-certified pathologist.</dd>
+      <dt>Molecular feature types tested</dt><dd>Simple somatic mutations (23 genes with &gt;10 cases mutated), copy number variations (24,775 genes; 555 patients), RNA-seq gene expression (20,530 genes; 563 patients), DNA methylation (19,953 genes), protein/phosphoprotein expression (190 proteins/phosphoproteins; 565 patients). Total &gt;60,000 features tested.</dd>
+      <dt>Molecular data source</dt><dd>TCGA via GDAC Firehose: CNV at <code>gdac.broadinstitute.org</code> (2015-08-21 run); protein (MD Anderson RPPA level 3, 2015-11-01 run); methylation (level 3 preprocess, 2015-11-01 run); RNA-seq via TCGA data portal.</dd>
+      <dt>IHC validation data</dt><dd>9 tumours (triplicates for 3 markers: p53, E-cadherin, MSH2) from Charité routine diagnostics; informed consent under IRB approval.</dd>
+      <dt>Availability</dt><dd>Data and code deposited at <a href="https://doi.org/10.6084/m9.figshare.13078835" target="_blank">figshare (10.6084/m9.figshare.13078835)</a> for non-commercial use.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Berlin Cancer Image Base (B-CIB)</td><td>Morphological classifier training</td><td>&gt;200,000 annotated patches; brightfield + confocal; breast cancer</td><td><a href="https://doi.org/10.6084/m9.figshare.13078835" target="_blank">figshare</a></td></tr>
+        <tr><td>TCGA Breast Cancer (BRCA)</td><td>Molecular feature prediction training/evaluation</td><td>565 cases; paired WSI + multi-omics (somatic mutations, CNV, RNASEQ, methylation, RPPA proteins)</td><td><a href="https://tcga-data.nci.nih.gov" target="_blank">NCI GDC / GDAC</a></td></tr>
+        <tr><td>GDAC Firehose (CNV, protein, methylation)</td><td>Molecular profiles for TCGA BRCA</td><td>24,775 CNV genes; 190 proteins; 19,953 methylation genes; 20,530 mRNA genes</td><td><a href="http://gdac.broadinstitute.org" target="_blank">gdac.broadinstitute.org</a></td></tr>
+        <tr><td>Charité IHC validation set</td><td>Experimental validation of heatmap predictions</td><td>9 tumours, 3 markers (p53, E-cadherin, MSH2), in triplicate</td><td>In-house (IRB approved)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: patient counts for individual molecular modalities differ slightly because not all TCGA cases have all data types (e.g., 563 patients for RNASEQ, 555 for CNV). All numbers are taken verbatim from the paper's Results and Methods sections.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Layer-wise Relevance Propagation (LRP):</b> a backward-propagation XAI technique that assigns a pixel-wise relevance score to every input pixel, explaining which image regions drove a given classification or regression output. Adapted here from the original Bach et al. 2015 formulation.</li>
+      <li><b>Bag-of-Words (BoW) feature extraction:</b> local SIFT descriptors combined with quantiles of gradient norms and colour intensities are soft-mapped via rank-weighted aggregation onto visual vocabularies (510 visual words) obtained by k-means clustering, yielding a fixed-length feature vector per image tile.</li>
+      <li><b>Kernel SVMs:</b> sum-of-χ² kernels (cancer detection), sum-of-histogram-intersection kernels (lymphocyte detection), and histogram-intersection kernels (molecular prediction) normalized to unit Hilbert-space variance. High-vs-low binary classification for each molecular target with threshold chosen from nine equally-spaced quantiles.</li>
+      <li><b>Nested cross-validation:</b> 10-fold outer / 9-fold inner CV on the TCGA cohort (~565 patients); prevents data leakage and accounts for small sample size. Regularization swept over C ∈ {10<sup>k/2</sup>, k=−2…2}.</li>
+      <li><b>Statistical evaluation:</b> Hoeffding's inequality-based significance test for each molecular target; Benjamini–Hochberg (BH) FDR correction at α = 0.05 across all &gt;60,000 features; complementary Monte Carlo FDR estimation via random label permutation.</li>
+      <li><b>Tail accuracy analysis:</b> SVM decision scores are used to identify high-confidence subsets of cases, enabling high-accuracy sub-population stratification without changing the model.</li>
+      <li><b>Quadrat test (geospatial statistics):</b> borrowed from spatial point-process analysis to quantify and test the statistical significance of co-localization between morphological predictions and IHC staining patterns in image patches — avoiding pixel-level misregistration artefacts between consecutive tissue sections.</li>
+      <li><b>Synthetic validation:</b> geometric shapes with assigned molecular properties used to confirm that morphomolecular heatmaps are non-random and biologically specific.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig1.png" target="_blank">
+        <img src="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig1.png" alt="Fig.1 Workflow of ML-based morphological and molecular feature prediction and heatmapping" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overall pipeline: morphological training database (B-CIB), classifier heatmaps for cell-type localization, and TCGA-based molecular feature prediction with integrated interpretation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig2.png" target="_blank">
+        <img src="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig2.png" alt="Fig.2 Spatial heatmapping results for carcinoma cells and TiLs" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> LRP heatmaps for cancer cells and tumour-infiltrating lymphocytes (TiLs) on H&amp;E slides — pixel-wise scores from blue (absent) to red (present).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig3.png" target="_blank">
+        <img src="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig3.png" alt="Fig.3 Explainable ML avoids black-box limitation" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Fine-grain heatmap classification from coarse-grain training labels — demonstrating XAI's spatial precision vs. traditional patch-level classifiers.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig4.png" target="_blank">
+        <img src="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig4.png" alt="Fig.4 Positive tail accuracies for molecular property prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Tail accuracies: how many molecular properties can be predicted at &gt;90%, &gt;95%, &gt;98% accuracy for increasing fractions of patients.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig5.png" target="_blank">
+        <img src="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig5.png" alt="Fig.5 Computationally generated fluorescence microscopy for spatiomolecular features" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Computational pseudo-fluorescence: heatmap of spatial correlations between predicted morphological components (cancer, TiLs, stroma) and predicted molecular features across 190 proteins and 409 CNVs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig6.png" target="_blank">
+        <img src="assets/morphological-and-molecular-breast-cancer-profiling-through-explainable-machine-learning__s42256-021-00303-4/fig6.png" alt="Fig.6 Validation of computational morphomolecular predictions against IHC" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Experimental validation: computational heatmap predictions for p53, E-cadherin, and MSH2 compared with immunohistochemistry (IHC) staining in matched consecutive sections.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary Information contains 13 supplementary tables (classification performance, statistical results, patient cohorts) and 17 supplementary figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, health geography &amp; accessibility, physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Replace BoW+SVM with a spatial foundation model for whole-slide images</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's morphological and molecular predictors use Bag-of-Words features and kernel SVMs — an architecture chosen carefully to avoid overfitting in the small TCGA cohort (~565 cases). A direct extension of the paper: replace BoW+SVM with a <strong>pretrained pathology foundation model</strong> (trained on millions of WSIs) as the encoder, then fine-tune only the classification head for each molecular target. This would inherit richer spatial features while preserving the paper's XAI layer — LRP can be applied to transformer attention maps as well as to SVM decision planes. The paper itself notes that deep nets challenged by small samples at the time; foundation models solve precisely this problem.</p>
+      <p><span class="lab mine">Added value to my research</span>The same transfer-then-explain pattern maps directly onto my <strong>geospatial foundation model fine-tuning</strong> agenda: a pretrained spatial encoder (e.g., on remote-sensing imagery) + task-specific head + LRP-style backward attribution lets me explain what spatial features in a satellite image drive predicted health outcomes — a cross-domain methodological transfer from pathology XAI to GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A pathology foundation model for cancer diagnosis and prognosis prediction — <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Spatially resolved gene expression prediction at spot resolution</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper predicts <em>bulk</em> molecular profiles from histology — it does not attempt spatially resolved molecular prediction within each slide, acknowledging that "bulk" omics are non-spatial by nature. A direct extension: couple the paper's LRP heatmaps with <strong>spatial transcriptomics data</strong> (Visium/MERFISH) as supervision signals, so the model learns to predict gene expression at spot resolution (&lt;55 µm grid) rather than slide-level averages. This would validate whether the paper's morphomolecular associations actually reflect subcellular-level spatial biology, not just slide-level correlations.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial transcriptomics prediction from H&amp;E mirrors my interest in <strong>predicting unobserved spatial attributes from cheap proxy data</strong> — analogous to predicting health service utilization from street-view imagery or mobile-phone activity. The method of using spatial co-registration between a high-resolution spatial assay and a cheap image to train a spatially explicit predictor is transferable across domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> HESpotEx: a dual-stream deep learning framework for spot-level gene expression prediction from histological images — <a href="https://doi.org/10.1038/s43588-026-00992-0" target="_blank">10.1038/s43588-026-00992-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend heatmap calibration with uncertainty quantification for clinical triage</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's "tail accuracy" approach is a practical but informal way to express model confidence — patients far from the SVM hyperplane are predicted with higher accuracy. A more principled extension: replace the point-estimate SVM with a <strong>conformal prediction or calibrated Bayesian classifier</strong> that outputs coverage-guaranteed confidence sets for each molecular target and patient. This would turn the paper's current binary high/low-confidence split into a continuous uncertainty map overlaid on the LRP heatmap — directly informative for clinical routing decisions (which patients to send to molecular testing vs. which to diagnose from histology alone).</p>
+      <p><span class="lab mine">Added value to my research</span>Uncertainty-calibrated predictions are essential in my <strong>2SFCA accessibility modelling</strong>: catchment-level demand estimates inherit uncertainty from population projections and travel-time models. Integrating conformal prediction into spatial accessibility scores would give planners explicit coverage guarantees — "this sub-district's unmet demand estimate is within ±X% with 95% coverage" — matching the clinical triage logic above.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> High-accuracy prostate cancer pathology using deep learning — <a href="https://doi.org/10.1038/s42256-020-0200-7" target="_blank">10.1038/s42256-020-0200-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Multi-cancer transfer: test whether morphomolecular associations generalize across tumour types</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates its approach on breast cancer and mentions applicability to other cancer types (gastrointestinal, bladder, lung cited in related work), but all of its quantitative results are breast-specific. A natural extension: train a <strong>pan-cancer morphomolecular model</strong> on TCGA's multi-tumour cohorts (BRCA + LUAD + CRC + BLCA) using a shared LRP backbone, and explicitly test whether morphomolecular associations transfer (e.g., does TiL–cyclin-B1 correlation hold across lung and breast cancer?). This would determine whether the paper's discovered associations reflect general cancer biology or breast-specific artefacts.</p>
+      <p><span class="lab mine">Added value to my research</span>Cross-domain transfer testing is the core of my <strong>geospatial foundation model fine-tuning</strong> work: a model pre-trained on one city's mobile-phone patterns should fine-tune to a new city with minimal data. The methodological question — how much of what is learned in one context transfers to another — is identical whether the domain is cancer histology or urban health data. The evaluation framework for pan-cancer transfer (held-out cancer types, per-feature AUC) directly parallels held-out city evaluation in GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting tumour mutational burden from histopathological images using multiscale deep learning — <a href="https://doi.org/10.1038/s42256-020-0190-5" target="_blank">10.1038/s42256-020-0190-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ From morphomolecular maps to a multi-omics representation-learning framework</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper treats each molecular target independently — a separate classifier is trained for each of the &gt;60,000 features. A fundamental extension: learn a <strong>joint latent embedding of histological patches and molecular profiles</strong> (e.g., via a contrastive or variational autoencoder) so that the morphomolecular space is modelled as a single manifold rather than thousands of independent binary problems. LRP heatmaps applied to the shared embedding would then reveal <em>which morphological directions in image space correspond to which molecular axes</em> — a richer interpretability than per-feature classification. This would also address the multiple-testing burden inherent in the current approach.</p>
+      <p><span class="lab mine">Added value to my research</span>Learning joint latent spaces across heterogeneous data modalities is central to my <strong>multi-source data fusion</strong> work (mobile-phone, social media, remote sensing, POIs). A contrastive embedding between spatial images and tabular health/activity data would let me ask: "which spatial visual features co-vary with which health-outcome dimensions?" — directly analogous to the morphomolecular embedding above, but for urban health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Decoding omics via representation learning — <a href="https://doi.org/10.1038/s43588-025-00909-3" target="_blank">10.1038/s43588-025-00909-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

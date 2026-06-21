@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning with explainable trees — AI Digest</title>
+<meta name="description" content="AI Digest: Learning with explainable trees (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Explainable AI</span>
+      <span class="tag">Tree-based models</span>
+      <span class="tag">Feature importance</span>
+    </div>
+    <h1>Learning with explainable trees</h1>
+    <div class="meta">
+      <span class="authors">Wojciech Samek</span>
+      <span><b>Published</b> 2020-01-17</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-019-0142-0" target="_blank">10.1038/s42256-019-0142-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-019-0142-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Tree-based models — from simple decision trees to complex ensembles — are among the most widely used machine learning algorithms in practice, yet their ensemble form is practically a <strong>black box</strong>. The paper reviews how <strong>TreeExplainer</strong> (Lundberg et al., <em>Nat. Mach. Intell.</em> 2020) bridges this gap: by computing <strong>exact Shapley values</strong> for any tree ensemble in polynomial time, it makes feature contributions and <strong>feature interaction effects</strong> globally interpretable without sacrificing predictive power — turning the black-box into a transparent, trustworthy model.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves the accuracy–explainability trade-off for a dominant model class.</b> Gradient-boosted and random-forest models consistently top benchmarks on tabular data; making them rigorously explainable removes a primary objection to deploying them in high-stakes settings.</li>
+      <li><b>Introduces exact, game-theoretically grounded attributions.</b> TreeExplainer computes true <strong>Shapley values</strong> rather than heuristic approximations, satisfying the axioms of efficiency, symmetry, dummy and additivity — providing a principled contractual basis for model explanations.</li>
+      <li><b>Exposes feature interactions, not just individual contributions.</b> Beyond per-feature SHAP scores, the method surfaces <strong>pairwise interaction effects</strong> (SHAP interaction values), revealing joint dependencies that marginal importance measures systematically miss.</li>
+      <li><b>Bridges global and local interpretability.</b> The same mechanism that explains a single prediction can be aggregated across a dataset to characterize <strong>global model behavior</strong>, unifying both interpretation scales under one coherent framework.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Timely commentary on a field-defining tool:</b> TreeExplainer targets the most-used model class in data science (Kaggle 2017 survey: &gt;50% of practitioners use tree ensembles) — the editorial reach is broad.</li>
+      <li><b>Connects to foundational theory:</b> grounding attribution in cooperative game theory (Shapley, 1953) positions explainability as a rigorous mathematical discipline, not just a visualization trick.</li>
+      <li><b>Cross-disciplinary significance:</b> tree ensemble models are the workhorse in medicine, finance, climate science, and urban analytics — making explainability advances relevant to any domain that uses tabular data.</li>
+      <li><b>Platform-forming contribution:</b> the companion paper (Lundberg et al., same issue) introduces the actual algorithm; this News &amp; Views contextualizes its societal and scientific significance — a classic Nature editorial role.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>News &amp; Views (Brief Communication) — this is an editorial commentary on Lundberg et al. (2020), not a primary empirical study. No original dataset is introduced by this article.</dd>
+      <dt>Referenced survey</dt><dd><strong>Kaggle State of Data Science and Machine Learning Survey 2017</strong> — cited to establish that tree-based models are the most-used algorithm in practice (&gt;50% of respondents). Publicly available at <a href="https://www.kaggle.com/surveys/2017" target="_blank">kaggle.com/surveys/2017</a>.</dd>
+      <dt>Primary source paper</dt><dd><strong>Lundberg et al., "From local explanations to global understanding with explainable AI for trees," <em>Nat. Mach. Intell.</em></strong> (DOI: <a href="https://doi.org/10.1038/s42256-019-0138-9" target="_blank">10.1038/s42256-019-0138-9</a>, same issue). That companion paper benchmarks TreeExplainer on multiple real-world datasets; this News &amp; Views article contextualizes those results.</dd>
+      <dt>Key reference</dt><dd><strong>Chen &amp; Guestrin, XGBoost</strong> (Proc. KDD 2016) — the dominant gradient-boosted tree implementation that TreeExplainer targets.</dd>
+      <dt>Data availability</dt><dd>No original data is deposited by this article. The metadata field <code>data_availability</code> is empty.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Kaggle ML Survey 2017</td><td>Motivation — usage prevalence of tree models</td><td>~16,000 data-science practitioners, global</td><td><a href="https://www.kaggle.com/surveys/2017" target="_blank">kaggle.com/surveys/2017</a></td></tr>
+        <tr><td>Lundberg et al. 2020 (companion paper)</td><td>Primary technical reference — TreeExplainer algorithm and benchmarks</td><td>Multiple benchmark datasets (details in companion paper)</td><td><a href="https://doi.org/10.1038/s42256-019-0138-9" target="_blank">10.1038/s42256-019-0138-9</a></td></tr>
+        <tr><td>XGBoost (Chen &amp; Guestrin, 2016)</td><td>Target model framework for TreeExplainer</td><td>Open-source library</td><td><a href="https://github.com/dmlc/xgboost" target="_blank">github.com/dmlc/xgboost</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: as a News &amp; Views article, this paper introduces no new datasets; numbers above describe sources cited within the text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Decision-path visualization:</b> simple decision trees remain transparent because a prediction can be traced through a single root-to-leaf path — all feature thresholds are directly readable.</li>
+      <li><b>TreeExplainer (Shapley-value attribution):</b> for ensemble models (random forests, gradient-boosted trees), TreeExplainer computes <strong>exact Shapley values</strong> in <em>O(TLD²)</em> time (T = trees, L = leaves, D = depth), making per-prediction feature attributions tractable at scale.</li>
+      <li><b>SHAP interaction values:</b> extends the Shapley framework to second-order <strong>feature interaction effects</strong>, decomposing the model's output into main effects and pairwise interactions for global insight.</li>
+      <li><b>Global aggregation:</b> individual Shapley values are pooled across the dataset to produce <strong>SHAP summary plots</strong> (bee-swarm or bar), turning local explanations into global behavior profiles without a separate global-model step.</li>
+      <li><b>Model-class positioning:</b> the paper conceptually contrasts (a) inherently interpretable models (simple trees) vs. (b) post-hoc approximate explanations vs. (c) TreeExplainer's exact post-hoc explanations for a specific — but extremely common — model class.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/learning-with-explainable-trees__s42256-019-0142-0/fig1.png" target="_blank">
+        <img src="assets/learning-with-explainable-trees__s42256-019-0142-0/fig1.png" alt="Fig.1 Explanation of tree-based models" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Explanation of tree-based models: (a) simple decision-tree decision path, (b) ensemble as black box, (c) TreeExplainer extracting relevant features and interaction effects.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). This is a Brief Communication (News &amp; Views) with 1 figure and 8 references.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, public/urban health).</p>
+
+    <div class="idea">
+      <h3>① Export TreeExplainer from tabular to spatially-indexed prediction — geographically weighted SHAP</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper celebrates TreeExplainer's ability to reveal <em>global</em> feature behavior by pooling Shapley values across a dataset, but the pooling is spatially blind: it averages over all observations regardless of where they are. A direct extension: <strong>weight the SHAP aggregation by spatial location</strong> — computing a kernel-smoothed surface of feature importance across geographic space. This gives a "SHAP heatmap" that shows not just <em>which</em> features matter, but <em>where</em> they matter most, turning a global summary into a spatially varying explanation layer that the paper's framework does not currently provide.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the missing bridge between SHAP-based explainability and my <strong>MGWR/GWR spatially non-stationary regression</strong> work. Geographically weighted SHAP lets me ask whether a gradient-boosted health-outcome predictor places its feature weight in the same spatial zones that MGWR identifies as non-stationary — providing a cross-validation of spatial heterogeneity from two entirely different methodological lineages.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead — <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② From feature importance to causal identification — TreeExplainer as a confounder-screening step</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper presents Shapley values as <em>attribution</em> tools — they quantify how much each feature contributes to a prediction — but attributions are fundamentally correlational. A natural extension: use TreeExplainer's SHAP interaction matrix as a <strong>prior for causal graph discovery</strong>. Strong SHAP interactions flag candidate confounders; near-zero main-effect but high interaction SHAP signals mediation pathways. Pairing TreeExplainer's output with a causal structure-learning algorithm would convert the paper's black-box-opening tool into a first-pass causal screening pipeline.</p>
+      <p><span class="lab mine">Added value to my research</span>In my telehealth digital-divide and healthcare-accessibility studies, SHAP on a gradient-boosted outcome model can pre-screen which socioeconomic features are strongly interactive with spatial access scores before I run a formal causal mediation analysis — reducing the dimension of the causal graph without losing important interactions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiple stakeholders drive diverse interpretability requirements for machine learning in healthcare — <a href="https://doi.org/10.1038/s42256-023-00698-2" target="_blank">10.1038/s42256-023-00698-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Adapt TreeExplainer to spatiotemporal gradient-boosted forecasters for public-health surveillance</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper frames TreeExplainer as a post-hoc lens on a static tabular model. Extending it: apply exact Shapley attribution to a <strong>gradient-boosted spatiotemporal ensemble</strong> — e.g. one that forecasts disease incidence across time and space jointly. The extension requires handling temporal lags in the feature set (T − k covariates) and spatial neighbors as engineered inputs, then decomposing the Shapley surface into spatial, temporal, and cross-domain interaction components. The paper's polynomial-time guarantee still holds; what changes is the feature-engineering frame around it.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps directly onto my spatiotemporal kernel density and SIR modeling for public health: a SHAP-instrumented XGBoost forecaster for mental health service demand could tell me not only which socioeconomic predictors drive demand, but <em>how far in advance</em> (temporal SHAP lag) and <em>at what spatial radius</em> (neighborhood SHAP) those predictors are informative — yielding actionable lead-time windows for resource reallocation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Forecasting SARS-CoV-2 transmission and clinical risk at small spatial scales by the application of machine learning architectures to syndromic surveillance data — <a href="https://doi.org/10.1038/s42256-022-00538-9" target="_blank">10.1038/s42256-022-00538-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend SHAP interaction values to multi-source geospatial data fusion for land-use classification</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper highlights that SHAP interaction values reveal <strong>joint feature dependencies</strong> that marginal importance misses. A direct extension: when the feature set consists of heterogeneous geospatial data streams (remote sensing bands, POI counts, mobility flows, census demographics), the SHAP interaction matrix identifies which <em>cross-modal pairs</em> are jointly informative for prediction. This turns TreeExplainer into a <strong>multi-source fusion auditor</strong>: it not only explains what the model learned, but validates whether the fusion of diverse data streams is contributing complementary information or redundant noise.</p>
+      <p><span class="lab mine">Added value to my research</span>In my multi-source data fusion work (mobile phone, social media, remote sensing, POIs), SHAP interaction values computed on a gradient-boosted classifier could identify which data-source <em>pairs</em> genuinely complement each other for a given prediction task — informing principled feature selection and reducing the cost of data acquisition by flagging redundant sources.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Morphological and molecular breast cancer profiling through explainable machine learning — <a href="https://doi.org/10.1038/s42256-021-00303-4" target="_blank">10.1038/s42256-021-00303-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use TreeExplainer's global SHAP profiles to enforce reproducibility and FAIR standards in GeoAI pipelines</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper emphasizes that TreeExplainer produces <strong>consistent, mathematically guaranteed attributions</strong> — a property that heuristic explainability methods cannot claim. This consistency makes SHAP a natural artifact for <strong>reproducibility documentation</strong>: publishing the full SHAP value matrix alongside a model (not just accuracy metrics) creates a machine-readable, theoretically grounded model card. Extending this paper: propose a SHAP-based model-transparency protocol where the Shapley value distribution itself is versioned and compared across model updates as a reproducibility checkpoint, not merely a visualization.</p>
+      <p><span class="lab mine">Added value to my research</span>My open-science / FAIR data agenda gains a concrete, quantitative transparency artifact: for any GeoAI model I publish (health-access predictors, EV-charging efficiency classifiers, 2SFCA demand estimators), releasing the SHAP value matrix — not only the model weights — constitutes a FAIR-compliant, interpretable model card that allows peer reviewers and policymakers to audit feature reliance without rerunning the full pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Interpretability and implicit model semantics in biomedicine and deep learning — <a href="https://doi.org/10.1038/s42256-026-01177-0" target="_blank">10.1038/s42256-026-01177-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

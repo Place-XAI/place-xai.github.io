@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partially shared multi-modal embedding learns holistic representation of cell state — AI Digest</title>
+<meta name="description" content="AI Digest: Partially shared multi-modal embedding learns holistic representation of cell state (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Multi-modal integration</span>
+      <span class="tag">Single-cell biology</span>
+      <span class="tag">Disentangled representation</span>
+      <span class="tag">Autoencoder</span>
+    </div>
+    <h1>Partially shared multi-modal embedding learns holistic representation of cell state</h1>
+    <div class="meta">
+      <span class="authors">Zhang, Xinyi &middot; Shivashankar, G. V. &middot; Uhler, Caroline</span>
+      <span><b>Published</b> 2026-02-25</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00948-w" target="_blank">10.1038/s43588-025-00948-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00948-w" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>APOLLO (Autoencoder with Partially Overlapping Latent space via Latent Optimization) is a general computational framework that learns to <strong>automatically separate shared and modality-specific information</strong> across diverse single-cell data types &mdash; including paired RNA-seq/ATAC-seq, scRNA-seq/protein, and multiplexed imaging &mdash; without manual feature alignment. By explicitly disentangling what is <strong>jointly captured</strong> across modalities from what is <strong>modality-exclusive</strong>, APOLLO enables accurate cross-modality prediction (predicting unmeasured protein stains from chromatin images) and provides an interpretable, holistic view of cell state that existing integration methods cannot achieve.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves a fundamental ambiguity in multi-modal biology.</b> Current methods either process modalities separately (losing cross-modal information) or integrate them into a single shared space (losing modality-specific signal). APOLLO is the first autoencoder framework to <strong>explicitly partition</strong> the latent space into shared and private components, making the contributions of each data type traceable.</li>
+      <li><b>Enables prediction of unmeasured modalities at single-cell resolution.</b> By routing information through the shared latent space as a bridge, APOLLO accurately predicts protein fluorescence images from chromatin images alone, with performance on downstream phenotype classification matching that of real protein images.</li>
+      <li><b>Biologically interpretable by design.</b> PC analysis of the partitioned latent spaces reveals that cell-cycle genes dominate RNA-specific dimensions, transcription-factor activity genes dominate shared dimensions, and heterochromatin volume &mdash; a marker of aging &mdash; is exclusively captured in the shared imaging space; distinctions invisible to black-box integration methods.</li>
+      <li><b>Broadly applicable beyond single-cell genomics.</b> The framework is directly applicable to any paired multi-modal data, including medical imaging biobanks combining diverse modalities (MRI, omics, clinical records) at the individual level, wherever partial information sharing between data types is expected but unknown.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty with theoretical grounding:</b> APOLLO builds on recent identifiability theory for shared/private decomposition and demonstrates empirically on five simulation settings with ground-truth latent structure &mdash; a rare combination of theoretical motivation and rigorous empirical validation.</li>
+      <li><b>Cross-domain breadth:</b> a single framework is validated across three distinct data paradigms (paired sequencing data, multiplexed imaging of 32,345 PBMCs from 40 patients, Human Protein Atlas U2OS images with 37,674 single-cell images) &mdash; the generality Nature Computational Science prizes.</li>
+      <li><b>Solves a concrete, pressing bottleneck:</b> multi-modal single-cell measurement is now routine; the integration-with-interpretability gap is widely felt. APOLLO directly addresses an unmet need rather than incrementing an existing pipeline.</li>
+      <li><b>Open-source, reproducible, modular:</b> code deposited on Zenodo and GitHub with step-by-step instructions; all datasets publicly available via GEO, PSI Repository, and Human Protein Atlas &mdash; matching high open-science standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9651;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>SHARE-seq</dt><dd>Paired scRNA-seq and scATAC-seq from mouse skin cells (GEO <code>GSE140203</code>). After filtering: <strong>28,098 cells</strong>, 9,153 genes (RNA), 58,170 ATAC peaks. Used to demonstrate shared vs. modality-specific gene program disentanglement.</dd>
+      <dt>CITE-seq</dt><dd>Paired scRNA-seq and surface protein abundance from mouse spleen and lymph nodes (GEO <code>GSE150599</code>). Top 4,005 highly variable genes; 110 proteins; data from 2 wild-type mice across 2 experimental batches. Used to demonstrate batch-effect disentanglement.</dd>
+      <dt>PBMCs imaging</dt><dd>Multiplexed single-cell images of human PBMCs (PSI Public Data Repository). <strong>32,345 cells</strong> from <strong>40 patients</strong> with 4 diagnoses (healthy, meningioma, glioma, head and neck tumor); stained with DAPI plus 6 antibodies (CD4, CD8, CD16, lamin, CD3, &#947;H2AX). Training used 29,174 cell images.</dd>
+      <dt>Human Protein Atlas</dt><dd>Fluorescence images of U2OS cells stained for nucleus, microtubule, ER, and one target protein. <strong>141 proteins</strong> retained (&#8805;150 cells each); <strong>25 proteins</strong> with highest localization variability selected for interpretation; <strong>37,674 single-cell images</strong> for intranuclear proportion analysis.</dd>
+      <dt>Simulations</dt><dd>Five synthetic datasets with known ground-truth latent structure; 2,000 samples per simulation, generated in-house to evaluate disentanglement accuracy.</dd>
+      <dt>Code</dt><dd>Zenodo: <a href="https://doi.org/10.5281/zenodo.17841315" target="_blank">doi.org/10.5281/zenodo.17841315</a> &nbsp;|&nbsp; GitHub: <a href="https://github.com/uhlerlab/APOLLO/" target="_blank">github.com/uhlerlab/APOLLO</a></dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>SHARE-seq (GEO GSE140203)</td><td>Paired scRNA-seq + scATAC-seq; disentanglement benchmark</td><td>28,098 cells; 9,153 genes; 58,170 ATAC peaks (mouse skin)</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE140203" target="_blank">GEO</a></td></tr>
+        <tr><td>CITE-seq (GEO GSE150599)</td><td>Paired scRNA-seq + surface protein; batch disentanglement</td><td>2 mice &times; 2 batches; 4,005 genes; 110 proteins (mouse spleen/lymph)</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150599" target="_blank">GEO</a></td></tr>
+        <tr><td>PBMCs multiplexed imaging (PSI)</td><td>Cross-modality protein prediction; phenotype classification</td><td>32,345 cells; 40 patients; 4 diagnoses; 6 proteins + chromatin</td><td><a href="https://doi.org/10.16907/b039dc4e-9366-413c-8f34-92ce9110cc14" target="_blank">PSI Repository</a></td></tr>
+        <tr><td>Human Protein Atlas (U2OS cells)</td><td>Protein localization variability vs. cellular compartment morphology</td><td>37,674 single-cell images; 141 proteins analyzed; 25 top-variability proteins</td><td><a href="https://www.proteinatlas.org" target="_blank">proteinatlas.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all datasets are publicly available. Cell/image/protein counts are taken verbatim from the article's Methods and figure captions. The HPA protein count (141) reflects the filtered subset (&#8805;150 cells per protein) used for model training.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Partially overlapping autoencoder (APOLLO):</b> one autoencoder per modality; latent space partitioned into a large <strong>shared subspace</strong> and smaller per-modality <strong>private subspaces</strong>. Architecture is modality-agnostic: fully connected layers for sequencing data, convolutional layers for imaging.</li>
+      <li><b>Two-step latent optimization:</b> Step&nbsp;1 jointly trains decoders and directly optimizes latent coordinates as free parameters via reconstruction loss (BCE for both seq and image) plus L2 regularization and Gaussian noise injection. Step&nbsp;2 trains modality-specific encoders to generalize to held-out cells by regressing onto Step-1 latent coordinates via MSE.</li>
+      <li><b>Cross-modality prediction:</b> a sample from modality j is encoded to its latent space; the shared dimensions are extracted and decoded through the target-modality decoder &mdash; enabling prediction of unmeasured proteins from chromatin images in held-out patients.</li>
+      <li><b>Conditional multi-protein imaging model:</b> a trainable 64-dimensional protein-ID embedding concatenated to encoder hidden layers and decoder inputs allows a single model to handle multiple protein channels.</li>
+      <li><b>Latent space interpretation:</b> PCA of each latent subspace; cells binned along each PC; differential gene expression (Scanpy <code>rank_genes_groups</code>) or differential image-feature analysis (234 predefined morphological features from ref.&nbsp;43); GO enrichment analysis. Feature ablation via ResNet-18 phenotype classifiers.</li>
+      <li><b>Benchmarking:</b> Seurat WNN, standard multi-modal autoencoder (single-step), and image inpainting model. Metrics: cell-type classification accuracy, cross-modal prediction L1 loss, phenotype classification accuracy (ResNet-18 on 4 diagnoses from 40 patients).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig1.png" target="_blank">
+        <img src="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig1.png" alt="Fig.1 Overview of APOLLO framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of APOLLO: the partially overlapping latent space design, two-step training procedure, cross-modality prediction, and interpretability concept.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig2.png" target="_blank">
+        <img src="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig2.png" alt="Fig.2 APOLLO on SHARE-seq and CITE-seq" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Shared vs. modality-specific gene programs in SHARE-seq (scRNA/scATAC); CITE-seq batch disentanglement compared with Seurat WNN.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig3.png" target="_blank">
+        <img src="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig3.png" alt="Fig.3 Cross-modality protein prediction from chromatin imaging" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Chromatin-to-protein image prediction: reconstruction accuracy, ablation study, and phenotype classification using predicted vs. real protein images.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig4.png" target="_blank">
+        <img src="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig4.png" alt="Fig.4 Interpretable morphological features in APOLLO latent spaces" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> PC-guided identification of shared vs. modality-specific morphological features (PBMCs imaging); &#947;H2AX foci count confirmed as protein-exclusive via feature ablation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig5.png" target="_blank">
+        <img src="assets/partially-shared-multi-modal-embedding-learns-holistic-representation-of-cell-state__s43588-025-00948-w/fig5.png" alt="Fig.5 HPA protein subcellular localization vs. cellular compartments" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> HPA U2OS cells: three APOLLO models (nucleus/microtubule, nucleus/ER, microtubule/ER) link compartment morphology to protein localization variability across 25 proteins.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Extended Data contains 10 additional figures; Supplementary Information contains 15 supplementary figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal fusion, explainable ML, multi-source data integration, foundation model fine-tuning).</p>
+
+    <div class="idea">
+      <h3>&#9312; Scale APOLLO's disentanglement to foundation-model cell embeddings</h3>
+      <p><span class="lab paper">Extending this paper</span>APOLLO trains from scratch on each paired dataset; for small cohorts the latent optimization in Step&nbsp;1 is data-hungry and cell-type coverage may be sparse. A direct extension: replace the modality-specific encoders with a <strong>pre-trained single-cell foundation model</strong> (such as a cell-atlas transformer) and fine-tune only the shared/private decoder heads. This lets APOLLO inherit universal gene-expression priors from hundreds of millions of cells while still learning the partial-sharing structure specific to the target paired dataset &mdash; dramatically reducing the data needed to disentangle new modality combinations.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors my agenda of fine-tuning geospatial foundation models for domain-specific tasks. In place of cell-type embeddings, a <strong>pre-trained spatiotemporal encoder</strong> (trained on GPS, mobile-phone, or remote-sensing streams) could serve as a fixed backbone, with APOLLO-style shared/private heads learning what is jointly captured by, say, satellite imagery and social-media activity vs. what is unique to each data stream &mdash; directly improving my multi-source data fusion pipeline for urban health analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A cell atlas foundation model for scalable search of similar human cells &mdash; <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Benchmark APOLLO rigorously within the emerging autoencoder ecosystem for omics</h3>
+      <p><span class="lab paper">Extending this paper</span>APOLLO is validated by direct ablation against Seurat WNN and a standard multi-modal autoencoder, but it is not positioned against the broader landscape of autoencoder architectures (variational, beta-VAE, contrastive, diffusion-decoder variants) recently systematically compared for biological molecular profiling. Running APOLLO through the <strong>AUTOENCODIX benchmarking framework</strong> would objectively locate where APOLLO's two-step latent optimization adds value over simpler architectures on reconstruction quality, clustering accuracy, and cross-modality transfer, and identify regimes where it may be outperformed.</p>
+      <p><span class="lab mine">Added value to my research</span>The same benchmarking logic applies to my spatiotemporal prediction tasks. A systematic comparison of autoencoder variants for fusing heterogeneous geospatial data (GPS trajectories, POI counts, remote-sensing spectral bands) would clarify whether a partial-sharing design beats standard multi-input VAEs for producing interpretable spatial representations &mdash; directly informing which architecture to adopt for my explainable geospatial ML pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning and beyond &mdash; <a href="https://doi.org/10.1038/s43588-025-00916-4" target="_blank">10.1038/s43588-025-00916-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Adapt APOLLO to federated multi-site settings without raw data sharing</h3>
+      <p><span class="lab paper">Extending this paper</span>APOLLO requires co-measured paired data on the same cell; many clinical datasets collect overlapping but never fully paired modalities across sites, and raw data cannot be pooled due to privacy constraints. Extending the paper: incorporate APOLLO's latent-optimization strategy into a <strong>federated learning</strong> setting where each site trains its modality-specific encoder/decoder locally and only the shared latent coordinates (or gradient updates) are communicated across sites &mdash; following the federated disentangled representation approach already demonstrated for unsupervised brain anomaly detection across hospitals.</p>
+      <p><span class="lab mine">Added value to my research</span>In my telehealth and health-geography work, electronic health records, mobile-phone mobility data, and remote-sensing environmental exposures are held by different custodians under strict access constraints. A federated APOLLO-style architecture would let me learn <strong>what is jointly captured</strong> by mobility and clinical records vs. what is environment-specific, without centralizing sensitive data &mdash; enabling privacy-compliant digital-divide and healthcare accessibility analysis across health systems.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Federated disentangled representation learning for unsupervised brain anomaly detection &mdash; <a href="https://doi.org/10.1038/s42256-022-00515-2" target="_blank">10.1038/s42256-022-00515-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Extend APOLLO to spatial transcriptomics: disentangle tissue context from intrinsic cell state</h3>
+      <p><span class="lab paper">Extending this paper</span>The Discussion explicitly flags extension to <strong>unpaired measurements</strong> (e.g. spatial transcriptomics and multiplexed protein stains on adjacent tissue slices) as a key future direction and sketches a distribution-matching approach. APOLLO currently operates on isolated single cells; applying it to spatially resolved data would add a <strong>neighborhood-context modality</strong> &mdash; disentangling what a cell's microenvironment contributes vs. what is intrinsic to the cell &mdash; a distinction APOLLO's shared/private design is perfectly suited to capture but has not yet been applied to spatial data.</p>
+      <p><span class="lab mine">Added value to my research</span>The analogy to my urban-analytics work is direct. In spatiotemporal analysis of public-health outcomes, the "intrinsic" risk of a location (local socio-economic deprivation) vs. its "contextual" risk (spillover from neighboring areas) is precisely the shared/private decomposition APOLLO models. Adapting this framework to decompose <strong>place-based vs. neighborhood-spillover health signals</strong> in spatial panel data would enrich my 2SFCA accessibility models with a mechanism for separating supply-side access from demand-side contextual effects.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Decoding omics via representation learning &mdash; <a href="https://doi.org/10.1038/s43588-025-00909-3" target="_blank">10.1038/s43588-025-00909-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Feed APOLLO's interpretable latent axes into hierarchical single-cell clustering</h3>
+      <p><span class="lab paper">Extending this paper</span>APOLLO produces interpretable, disentangled latent spaces, but the paper stops at PC-level interpretation and binary k-means clustering. A natural extension: feed the separate shared and modality-specific embeddings into a <strong>hierarchical autoencoder</strong> that first clusters within each subspace and then aligns the resulting hierarchical cluster trees across modalities &mdash; revealing cell-state hierarchies driven by shared biology (e.g. lineage) vs. modality-specific processes (e.g. cell cycle captured only in RNA). This gives APOLLO a richer downstream analysis layer beyond UMAP visualization.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatiotemporal kernel density estimation and community-detection work, the analogous challenge is decomposing spatial clusters that reflect <strong>universal urban structure</strong> (shared across cities) from those that reflect <strong>local context</strong> (specific to each city's economy or history). An APOLLO-style shared/private decomposition at the cluster level would improve my network-community detection pipeline by first aligning cross-city patterns before modeling city-specific deviations &mdash; directly relevant to my urban agglomeration and regional-collaboration research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast and precise single-cell data analysis using a hierarchical autoencoder &mdash; <a href="https://doi.org/10.1038/s41467-021-21312-2" target="_blank">10.1038/s41467-021-21312-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A machine learning-based multiscale model to predict bone formation in scaffolds — AI Digest</title>
+<meta name="description" content="AI Digest: A machine learning-based multiscale model to predict bone formation in scaffolds (Nature Computational Science, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Multiscale modeling</span>
+      <span class="tag">Neural network surrogate</span>
+      <span class="tag">Tissue engineering</span>
+      <span class="tag">Bone regeneration</span>
+    </div>
+    <h1>A machine learning-based multiscale model to predict bone formation in scaffolds</h1>
+    <div class="meta">
+      <span class="authors">Chi Wu · Ali Entezari · Keke Zheng · Jianguang Fang · Hala Zreiqat · Grant P. Steven · Michael V. Swain · Qing Li</span>
+      <span><b>Published</b> 2021-08-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-021-00115-x" target="_blank">10.1038/s43588-021-00115-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-021-00115-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A three-neural-network pipeline replaces the computationally prohibitive conventional multilevel finite element (FE<sup>2</sup>) homogenization at the microscopic scale, reducing prediction time for 12-month bone ingrowth from <strong>over 150 hours to 300 seconds</strong> — a &gt;1,800-fold speedup. The ML model achieves a linear regression of R = 0.997 against FE<sup>2</sup> ground truth and successfully predicts species-specific bone remodeling in a sheep tibia scaffold by <strong>inverse identification of Wolff's law parameters from longitudinal in vivo X-ray images</strong>, validating at a withheld 12-month time point.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the computational bottleneck in multiscale tissue engineering.</b> Conventional FE<sup>2</sup> requires individual micro-FE analyses across all 2,333 representative volume elements (RVEs) at each monthly time step — the ML surrogate converts this into a one-time offline training plus instant inference, making scaffold optimization at clinically relevant scales feasible.</li>
+      <li><b>Closes the loop between simulation and in vivo data.</b> By coupling the surrogate with inverse identification (optimizing 5,000 candidate remodeling parameter sets via neural network NN-3 and a genetic algorithm), the authors extract animal-specific bone remodeling constants that match longitudinal X-ray data — a rare example of ML-assisted model calibration in biomechanics.</li>
+      <li><b>Predicts what animal experiments cannot measure.</b> The in silico pipeline generates full 3D bone density distributions and virtual X-ray images across micro and macro scales simultaneously, providing spatial resolution unattainable by in vivo imaging alone.</li>
+      <li><b>Opens the path to subject-specific scaffold design.</b> Because the trained networks encode scaffold geometry and loading conditions, the framework can be re-applied to new patient geometries derived from CT, directly supporting personalized implant engineering.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty at a disciplinary junction:</b> the paper bridges computational mechanics (FE<sup>2</sup> homogenization), machine learning (fully connected networks, Bayesian-style inverse identification), and biomedical engineering — precisely the cross-disciplinary computational contribution Nature Computational Science targets.</li>
+      <li><b>Order-of-magnitude performance gain with rigorous validation:</b> a &gt;1,800× speedup demonstrated on a real longitudinal animal study meets the journal's standard for transformative efficiency contributions rather than incremental improvements.</li>
+      <li><b>Reproducibility and open data:</b> source data, trained neural networks, and code are all deposited in a public Zenodo repository, aligning with the journal's open-science mandate.</li>
+      <li><b>Translational significance:</b> in silico bone scaffold prediction reduces reliance on costly, ethically constrained animal experiments, carrying direct clinical and societal impact.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Animal study</dt><dd>Dedicated longitudinal in vivo study: <strong>one Merino sheep</strong> (male, 43 kg, 3–4 years), tibia mid-shaft segmental defect (3 cm), treated with a 3D-printed Sr-HT-Gahnite ceramic scaffold. In vivo X-ray images taken at months 0, 3, 6, 9 and 12. Histological section stained with Goldner's trichrome at month 12. Approved by Queensland University of Technology Animal Ethics Committee (approval no. 1400000025).</dd>
+      <dt>In silico model</dt><dd>CT-reconstructed sheep tibia; <strong>123,308 tetrahedral elements</strong> at macroscopic level, <strong>2,333 RVEs</strong> in scaffold region, each meshed with 13,008 tetrahedral elements (element size 0.15 mm) at microscopic level. Solved in commercial FE code Abaqus.</dd>
+      <dt>NN training data</dt><dd><strong>95,992 RVE samples</strong> total: 40,000 randomly generated ground-truth micro-FE runs + 55,992 sequentially generated samples (2,333 RVEs × 12 months × 2 parameter sets). Virtual X-ray images at 512 × 512 pixels resolution. Inverse identification searched 5,000 candidate remodeling parameter sets.</dd>
+      <dt>Computational setup</dt><dd>Training: single NVIDIA V100 GPU; inference: Intel i7 3.60 GHz 8-core CPU, 128 GB RAM, Windows 10. FE<sup>2</sup> baseline: &gt;545,513 s (≈150 h); ML inference: 300 s; total ML training: 115,200 s (32 h).</dd>
+      <dt>Data repository</dt><dd>Source data for Figs. 1–2, training data, raw and processed data, code, and trained neural networks available at <a href="https://zenodo.org/record/5017032" target="_blank">Zenodo record 5017032</a> (open access to academic researchers).</dd>
+      <dt>Validation metric</dt><dd>Pearson correlation coefficients P<sub>1</sub> (3–6 month interval) = 0.848 in silico vs. 0.842 with NN-3 (error 0.71%); P<sub>2</sub> (3–9 month) = 0.667 vs. 0.671 (error 0.60%); validation at 12 months P = 0.642.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>In vivo sheep tibia X-ray images</td><td>Ground truth for inverse identification and validation</td><td>1 sheep, 5 time points (0, 3, 6, 9, 12 months), 8 ROIs per image</td><td><a href="https://zenodo.org/record/5017032" target="_blank">Zenodo 5017032</a></td></tr>
+        <tr><td>CT-reconstructed tibia model</td><td>Macroscopic FE geometry</td><td>1 sheep tibia, 123,308 elements</td><td><a href="https://zenodo.org/record/5017032" target="_blank">Zenodo 5017032</a></td></tr>
+        <tr><td>RVE micro-FE samples (ground truth)</td><td>NN-1 and NN-2 training data</td><td>40,000 randomly generated + 55,992 sequential = 95,992 total RVE samples</td><td><a href="https://zenodo.org/record/5017032" target="_blank">Zenodo 5017032</a></td></tr>
+        <tr><td>Inverse identification parameter samples</td><td>NN-3 training and genetic algorithm optimization</td><td>5,000 candidate (R<sub>1</sub>, R<sub>2</sub>, R<sub>3</sub>, K, s) sets with associated bone remodeling results</td><td><a href="https://zenodo.org/record/5017032" target="_blank">Zenodo 5017032</a></td></tr>
+        <tr><td>Goldner's trichrome histology</td><td>Qualitative validation of bone distribution at month 12</td><td>1 longitudinal section, 30–50 µm thickness, Zeiss Axio Imager 2</td><td>Source Data Fig. 4 (paper supplement)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this is a subject-specific case study of a single sheep; the authors acknowledge that additional in vivo cases are required to generalize the remodeling parameters statistically. Numbers are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>FE<sup>2</sup> multilevel framework (baseline):</b> macroscopic FE model treats scaffold RVEs as homogenized solid media; micro-FE analyses run asymptotic homogenization on each RVE to derive effective elastic tensors and strain energy densities (SEDs), iterated monthly per Wolff's law bone remodeling equations.</li>
+      <li><b>Three-neural-network surrogate pipeline:</b> NN-1 (20 neurons, single hidden layer, sigmoid activation) maps RVE bone density → homogenized elastic tensor (9 independent orthotropic components, R = 0.997); NN-2 (2,522 neurons per output, 21 independent unit SED components) maps RVE bone density → unit SED field; NN-3 (10 neurons) maps 5 remodeling parameters → Pearson correlation coefficients P<sub>1</sub> and P<sub>2</sub>.</li>
+      <li><b>Sequential data generation:</b> initial 40,000 random RVE samples for first training round; ML model then generates 55,992 samples from physically plausible bone formation trajectories; second training incorporates both batches to improve distribution coverage and regression values.</li>
+      <li><b>Inverse identification:</b> 5,000 candidate Wolff's law parameter sets (R<sub>1</sub>, R<sub>2</sub>, R<sub>3</sub>, K, s) evaluated via the ML pipeline and correlated with in vivo X-ray signal densities; a <strong>genetic algorithm</strong> maximizes P<sub>1</sub> + P<sub>2</sub> using NN-3 as a differentiable objective function surrogate.</li>
+      <li><b>Virtual X-ray generation:</b> Abaqus plugin converts predicted bone density distributions to 512 × 512 pixel virtual X-ray images at each time point; ROI-level signal densities compared with in vivo X-rays via Pearson correlation coefficients.</li>
+      <li><b>Bone remodeling rule (Wolff's law):</b> SED-driven adaptive density update: bone apposition if SED/density exceeds K(1+s), resorption below K(1−s), lazy zone in between; density updated monthly via Euler forward integration.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig1.png" target="_blank">
+        <img src="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig1.png" alt="Fig.1 Statistical analysis results of predictive accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Linear regression between NN predictions and FE analyses — R = 0.997 for elastic tensors (NN-1) and R = 0.972 for SEDs (NN-2) after two-stage training.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig2.png" target="_blank">
+        <img src="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig2.png" alt="Fig.2 Histogram errors of ML-based model vs FE2" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Histogram error distributions for macroscopic (2,333 RVEs) and microscopic (35.3 million elements) bone densities — majority concentrated near zero error over 12 months.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig3.png" target="_blank">
+        <img src="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig3.png" alt="Fig.3 Comparison FE2 vs ML-based results" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Side-by-side SED distributions inside RVE and macroscopic bone density maps at month 12 — ML matches FE<sup>2</sup> spatially in magnitude and pattern.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig4.png" target="_blank">
+        <img src="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig4.png" alt="Fig.4 Virtual X-ray and histological images" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Virtual in silico X-ray images at months 3, 6, 9, 12 alongside in vivo histological section — confirming stress-shielding pattern opposite to the fixation plate.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig5.png" target="_blank">
+        <img src="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig5.png" alt="Fig.5 In vivo X-ray images and ROI signal densities" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> In vivo X-ray images (5 time points) and net ROI signal-density changes comparing in silico vs. in vivo results for 3–6, 3–9 and 3–12 month intervals.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig6.png" target="_blank">
+        <img src="assets/a-machine-learning-based-multiscale-model-to-predict-bone-formation-in-scaffolds__s43588-021-00115-x/fig6.png" alt="Fig.6 von Mises strain distributions over 12 months" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Equivalent von Mises strain distributions in the scaffold from month 0 to 12 — strain magnitude declines as neobone stiffens the construct; stress-shielding visible on fixation-plate side.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (tables_in_main_text = 0); Supplementary contains Tables 1–3 (remodeling parameters, Pearson coefficients, material properties) and Figs. 1–3 (CAD model, NN architecture, flowchart).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal prediction, explainable ML, physics-informed graph learning, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Replace sequential data generation with uncertainty-driven active learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's sequential data generation strategy (first 40,000 random RVE samples, then 55,992 trajectory-informed samples) is a hand-crafted two-stage heuristic. The second-stage samples improve regression from R = 0.932 to R = 0.972, but the boundary between informative and redundant samples is chosen by trial and error. A principled extension: replace this with an <strong>uncertainty-driven active learning loop</strong> where an ensemble of NNs measures predictive disagreement across the RVE bone density space and queries only those FE analyses that reduce uncertainty most. This would require far fewer than 95,992 training samples while likely achieving comparable or better accuracy — and generalizes the approach to new scaffold geometries without manual re-tuning of the two-stage scheme.</p>
+      <p><span class="lab mine">Added value to my research</span>Uncertainty-driven sample selection maps directly to my work on <strong>spatiotemporal kernel density estimation with adaptive bandwidth</strong>: instead of querying FE analyses, an analogous active scheme selects new mobile-phone measurement locations to fill spatial uncertainty gaps in service-area delineation, reducing survey costs while maintaining R2SFCA catchment precision. The same ensemble-disagreement criterion also applies to my multi-source data fusion pipelines (GPS + social media + remote sensing) to identify where additional data would most reduce predictive uncertainty in health-outcome models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Upgrade NN-3's inverse identification to a physics-informed graph neural network</h3>
+      <p><span class="lab paper">Extending this paper</span>NN-3 is a shallow fully connected network that maps five scalar Wolff's law parameters to two Pearson correlation coefficients. It can only capture global correlations and discards all spatial structure in the bone density field. A direct extension: replace NN-3 with a <strong>physics-infused heterogeneous graph neural network</strong> where nodes are RVEs, edges encode mechanical connectivity (adjacent RVEs share boundary tractions), and the Wolff's law differential equation is embedded as a soft physical constraint on node updates. This would allow the inverse identification to leverage the full 3D spatial pattern of bone formation rather than eight ROI-level signal densities, increasing the information content of each in vivo X-ray data point and improving validation Pearson coefficients beyond the current P = 0.642 at month 12.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a concrete instantiation of my <strong>physics-informed graph learning</strong> agenda for spatial health modeling: substitute RVEs with census tracts, mechanical connectivity with spatial adjacency, and Wolff's law with a spatial diffusion/interaction equation governing disease spread or service-demand dynamics. The inverse identification framework then becomes a GeoAI approach to calibrate spatial interaction models (SIR, gravity models) from sparse observational data — unifying my Monte Carlo and spatial-entropy methods under a differentiable graph framework.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the surrogate from single scaffold to a library of scaffold architectures via transfer learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper trains three NNs specifically for a single orthogonal-configuration scaffold with fixed strut diameter (500 µm) and pore size (1 mm). Re-training from scratch for a different scaffold architecture (honeycomb, gyroid, gradient porosity) would require a new full FE dataset. An extension: pre-train NN-1 and NN-2 on a <strong>diverse library of scaffold RVE geometries</strong> using a graph representation of the microstructure, then fine-tune on a small number of FE samples for each new design. This converts the paper's single-case surrogate into a reusable <strong>foundation model for scaffold mechanics</strong>, dramatically reducing the data cost of exploring design spaces and supporting the personalized implant engineering the authors envision.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning a pre-trained geometric foundation model on a target scaffold parallels my work on <strong>fine-tuning geospatial foundation models</strong> for region-specific accessibility and health predictions. The key methodological insight transfers: encode structural priors (scaffold topology / road network topology) in the pre-training phase so downstream task fine-tuning requires only small labeled datasets — reducing the data burden for under-resourced healthcare systems or cities without comprehensive open data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting bone regeneration from machine learning — <a href="https://doi.org/10.1038/s43588-021-00116-w" target="_blank">10.1038/s43588-021-00116-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Add explainability: which RVE regions drive bone remodeling predictions?</h3>
+      <p><span class="lab paper">Extending this paper</span>NN-1 and NN-2 are black-box fully connected networks — the paper validates accuracy (R = 0.997) but never interrogates <em>which input features</em> (which of the 1,261 bone density variables per RVE) most influence elastic tensor or SED predictions. An extension using <strong>gradient-based saliency maps or integrated gradients</strong> would identify the spatial loci within RVEs whose bone density most determines macroscopic stiffness and remodeling rate. This could reveal whether bone at strut junctions, pore surfaces, or scaffold core drives mechanics — informing scaffold design rules that are currently derived only from intuition or full parameter sweeps. A causal-perspective lens (avoiding dataset bias from the specific sheep's loading conditions) would further strengthen generalizability of the identified relationships.</p>
+      <p><span class="lab mine">Added value to my research</span>Gradient-based feature attribution for spatial inputs directly improves my <strong>explainable machine learning for spatial prediction</strong> pipeline. In my MGWR/GWR and ML-ensemble models for health outcomes or accessibility, analogous saliency maps reveal which spatial covariates (POI density, road connectivity, socioeconomic indicators) drive predictions in specific sub-regions — providing the mechanism-level insight that pure accuracy metrics miss, and satisfying open-science interpretability requirements for public health policy recommendations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging — <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Port the in silico pipeline to epidemiological spatiotemporal prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's architecture — (i) a surrogate that replaces expensive forward simulations, (ii) a sequential data generation strategy that samples from plausible trajectories, and (iii) an inverse identification module that calibrates model parameters against sparse observational signals — is generic. An extension maps this to <strong>epidemiological modeling</strong>: replace RVEs with spatial census units, FE<sup>2</sup> homogenization with spatial SIR/SEIR transmission equations, Wolff's law with disease remodeling dynamics, and in vivo X-rays with administrative case counts. The ML surrogate would then make county-level spatiotemporal disease forecasting orders of magnitude faster while enabling Bayesian-style parameter calibration from incomplete surveillance data.</p>
+      <p><span class="lab mine">Added value to my research</span>This pipeline extension connects directly to my <strong>spatiotemporal analysis for public health policy</strong>. My current Monte Carlo and agent-based models for service-demand or infection spread face the same computational bottleneck as the FE<sup>2</sup> framework. Adopting a three-NN surrogate + sequential sampling + inverse identification architecture would let me calibrate spatially varying transmission or healthcare-utilization parameters from mobile-phone mobility proxies and POI data — unifying my geospatial methods with the computational efficiency gains demonstrated in this paper.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatiotemporal prediction of COVID-19 cases using inter- and intra-county proxies of human interactions — <a href="https://doi.org/10.1038/s41467-021-26742-6" target="_blank">10.1038/s41467-021-26742-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

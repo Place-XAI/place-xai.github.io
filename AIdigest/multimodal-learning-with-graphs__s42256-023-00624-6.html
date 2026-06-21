@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multimodal learning with graphs — AI Digest</title>
+<meta name="description" content="AI Digest: Multimodal learning with graphs (Nature Machine Intelligence, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Multimodal Learning</span>
+      <span class="tag">Cross-modal Fusion</span>
+      <span class="tag">Review</span>
+    </div>
+    <h1>Multimodal learning with graphs</h1>
+    <div class="meta">
+      <span class="authors">Yasha Ektefaie &middot; George Dasoulas &middot; Ayush Noori &middot; Maha Farhat &middot; Marinka Zitnik</span>
+      <span><b>Published</b> 2023-04-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-023-00624-6" target="_blank">10.1038/s42256-023-00624-6</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-023-00624-6" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>This review introduces the <strong>Multimodal Graph Learning (MGL) blueprint</strong> &#8212; a four-component framework (entity identification, topology uncovering, information propagation, representation mixing) that unifies how graph neural networks fuse heterogeneous data modalities (images, language, scientific knowledge). By organizing existing methods into three families &#8212; <strong>image-intensive</strong>, <strong>language-intensive</strong>, and <strong>knowledge-intensive</strong> graphs &#8212; the blueprint provides a principled vocabulary and actionable design guidelines for building multimodal architectures that overcome <strong>modality collapse</strong> and <strong>missing modalities</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Unifies a fragmented landscape.</b> MGL brings together methods from computer vision, NLP, drug discovery, protein science, and physics under one theoretical framework, ending the need to reinvent fusion strategies domain by domain.</li>
+      <li><b>Names and formalizes core failure modes.</b> The concepts of <em>modality collapse</em> (models ignoring non-dominant modalities) and <em>missing modalities</em> (incomplete data at inference) are formally defined within the blueprint, giving practitioners diagnostic vocabulary to detect and fix these problems.</li>
+      <li><b>Actionable design guidelines for new architectures.</b> The four-component blueprint &#8212; not merely a taxonomy &#8212; guides practitioners in constructing novel MGL models by specifying which design choices belong to each component and what inductive biases they encode.</li>
+      <li><b>Living resource for the community.</b> The authors maintain a continuously updated summary at <a href="https://yashaektefaie.github.io/mgl" target="_blank">yashaektefaie.github.io/mgl</a>, making the review an evolving infrastructure resource rather than a static snapshot.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-domain impact at flagship scope:</b> the MGL blueprint applies simultaneously to vision, language, chemistry, biology, and physics &#8212; a breadth matching Nature Machine Intelligence's mission of high-impact AI research across disciplines.</li>
+      <li><b>Timely synthesis at an inflection point:</b> published as graph-based deep learning and large language models converged, the review positions GNNs as the principled integration layer &#8212; precisely the architecture question the field was asking in 2023.</li>
+      <li><b>Formal theoretical contribution:</b> unlike typical survey papers, MGL provides Box 1 with formal mathematical definitions for all four components, satisfying the journal's standard for methodological rigor alongside breadth.</li>
+      <li><b>Community infrastructure:</b> the live-table companion resource aligns with Nature MI's preference for reproducible, open contributions that extend utility beyond a single publication cycle.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &#8212; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Paper type</dt><dd>This is a <strong>review article</strong>. It does not introduce a new primary dataset; instead it synthesizes the methods and datasets used across the literature it covers.</dd>
+      <dt>Literature corpus</dt><dd>The paper surveys 130+ graph AI and multimodal learning references spanning computer vision, NLP, drug discovery, protein science, and physics simulation. The exact count of methods catalogued is maintained at the live resource rather than stated as a headline figure in the article text.</dd>
+      <dt>MGL live resource</dt><dd>A continuously updated method table hosted at <a href="https://yashaektefaie.github.io/mgl" target="_blank"><code>yashaektefaie.github.io/mgl</code></a> catalogues MGL methods as they are published, serving as the community's canonical enumeration.</dd>
+      <dt>Application domains</dt><dd>Computer vision (image classification, segmentation, restoration, human&#8211;object interaction, VQA), NLP (text classification, relation extraction, aspect-based sentiment analysis), natural sciences (particle jet classification, molecular property prediction, chemical reaction prediction, protein structure prediction, protein&#8211;ligand binding).</dd>
+      <dt>Representative datasets used by reviewed methods</dt><dd>ImageNet, particle-jet collision data, MoleculeNet benchmarks, PDB protein structure databases, and biomedical knowledge graphs &#8212; these are datasets of the <em>reviewed methods</em>, not datasets collected by this paper.</dd>
+      <dt>Data availability</dt><dd>Method summaries available at <a href="https://yashaektefaie.github.io/mgl" target="_blank">yashaektefaie.github.io/mgl</a>. No primary dataset is released by this article.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MGL live table</td><td>Evolving catalogue of multimodal graph learning methods</td><td>Continuously updated; 100+ methods at publication</td><td><a href="https://yashaektefaie.github.io/mgl" target="_blank">yashaektefaie.github.io/mgl</a></td></tr>
+        <tr><td>Nature MI article</td><td>Blueprint formulation, taxonomy, and design guidelines</td><td>5 figures; 130+ references; Box 1 formalism</td><td><a href="https://www.nature.com/articles/s42256-023-00624-6" target="_blank">nature.com</a></td></tr>
+        <tr><td>Supplementary Notes 1&#8211;2</td><td>GNN background + extended MGL method summaries</td><td>PDF supplement</td><td>Via article page</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: as a review, the paper's data footprint is its literature synthesis, not a primary dataset. Numbers of reviewed methods are tracked in the live table at yashaektefaie.github.io/mgl, which is the authoritative count.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Four-component MGL blueprint:</b> (1) <em>Identifying entities</em> &#8212; project inputs from k modalities into a shared namespace; (2) <em>Uncovering topology</em> &#8212; construct adjacency matrices from explicit or implicit cross-modal relationships; (3) <em>Propagating information</em> &#8212; apply message-passing or graph convolution over the resulting graph; (4) <em>Mixing representations</em> &#8212; aggregate node/subgraph/graph-level outputs for downstream tasks.</li>
+      <li><b>Taxonomy into three graph families:</b> Image-Intensive Graphs (IIGs) for visual reasoning, Language-Intensive Graphs (LIGs) for NLP, and Knowledge-Intensive Graphs (KIGs) for natural sciences &#8212; each encoding domain-specific inductive biases.</li>
+      <li><b>Modality-collapse analysis:</b> systematic identification of when multimodal models revert to unimodal solutions, with prescriptions for avoiding this via end-to-end joint optimization and inductive bias alignment across all modalities.</li>
+      <li><b>Missing-modality framework:</b> analysis of strategies for handling incomplete modality sets at training and inference, including graph-based imputation and masked-modality training variants.</li>
+      <li><b>Mathematical formalization (Box 1):</b> formal definitions of the Identify, Connect, Propagate, and Mix modules with matrix notation, enabling rigorous comparison of existing architectures within the blueprint.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig1.png" target="_blank">
+        <img src="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig1.png" alt="Fig.1 Graph-centric multimodal learning overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Graph-centric multimodal learning &#8212; data modalities on the left, ML tasks on the right; MGL blueprint as the unifying bridge.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig2.png" target="_blank">
+        <img src="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig2.png" alt="Fig.2 Overview of MGL blueprint" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Overview of the MGL blueprint &#8212; contrasts standard unimodal pipelines (a) with the all-in-one multimodal architecture (b), and details the four components (c).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig3.png" target="_blank">
+        <img src="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig3.png" alt="Fig.3 Applications of MGL to images" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Applications to image-intensive graphs &#8212; superpixel segmentation (a), denoising via patch graphs (b), human&#8211;object interaction (c, d).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig4.png" target="_blank">
+        <img src="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig4.png" alt="Fig.4 Applications of MGL to language datasets" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Applications to language-intensive graphs &#8212; multi-level text context (a), LIG construction (b), aspect-based sentiment analysis (c, d).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig5.png" target="_blank">
+        <img src="assets/multimodal-learning-with-graphs__s42256-023-00624-6/fig5.png" alt="Fig.5 Applications of MGL to natural sciences" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Applications to knowledge-intensive graphs &#8212; physics-informed particle interaction (a), quantum chemistry-augmented reaction prediction (b), multiscale protein topology (c).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); mathematical formalism is in Box 1; Supplementary Notes 1&#8211;2 provide extended GNN background and method summaries.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&#8212; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &#8212; GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, urban health policy).</p>
+
+    <div class="idea">
+      <h3>&#9312; Instantiate the MGL blueprint for spatiotemporal urban data modalities</h3>
+      <p><span class="lab paper">Extending this paper</span>The MGL blueprint's three graph families (IIG, LIG, KIG) all originate in computer vision, NLP, and natural sciences. The paper explicitly flags "novel uses of graph-centric multimodal learning" as a future direction but provides no urban or geospatial instantiation. A direct extension: define a fourth family &#8212; <strong>Spatiotemporal-Intensive Graphs (SIGs)</strong> &#8212; where nodes are spatial units (census tracts, POIs, road segments) and edges encode temporal co-movement or network proximity. SIGs fuse remote sensing imagery (IIG component), place-descriptive text from social media (LIG component), and urban knowledge graphs (KIG component) through the same four MGL components, completing the blueprint for the geospatial domain.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the conceptual backbone needed for geospatial foundation model fine-tuning: the MGL blueprint provides a principled schema for fusing remote sensing rasters, POI text embeddings, and street-network topology into a single GNN backbone for accessibility prediction (2SFCA/R2SFCA) and urban health outcome modeling, replacing ad-hoc data stacking with theory-grounded architecture choices.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatiotemporal prediction of COVID-19 cases using inter- and intra-county proxies of human interactions &#8212; <a href="https://doi.org/10.1038/s41467-021-26742-6" target="_blank">10.1038/s41467-021-26742-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Apply MGL's topology-uncovering component to adaptive service-area delineation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's second MGL component &#8212; uncovering topology &#8212; addresses a core open problem: when no explicit graph is given, how do you discover the right adjacency from multimodal features? In the paper this is solved domain by domain (k-NN in pixel space for images, dependency trees for NLP). Extending the blueprint: develop a <strong>generalizable topology-discovery module</strong> that learns when to connect nodes across modalities based on both spatial proximity and semantic similarity, and benchmark it on tasks where topology is contested (e.g., spatial vs. functional connectivity networks in urban systems).</p>
+      <p><span class="lab mine">Added value to my research</span>This directly extends my 2SFCA/R2SFCA service-area delineation: instead of fixing catchment radii by expert judgment, the MGL topology-uncovering module can learn adaptive service areas from joint signals &#8212; travel time, demographic similarity, and facility capacity &#8212; producing data-driven catchment boundaries that vary by context and population subgroup.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating network layouts using graph neural networks &#8212; <a href="https://doi.org/10.1038/s41467-023-37189-2" target="_blank">10.1038/s41467-023-37189-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Diagnose and cure modality collapse in multimodal health prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper defines modality collapse &#8212; the tendency of multimodal models to rely on only the most predictive modality &#8212; but treats it as a known challenge without a general cure beyond qualitative guidelines. A systematic extension: build a <strong>modality-contribution audit</strong> using Shapley-value attribution across MGL's four components to quantify per-modality contribution at each phase (entity, topology, propagation, mixing), then introduce a <strong>modality-balancing regularizer</strong> into the Propagate module that penalizes collapsed solutions during training.</p>
+      <p><span class="lab mine">Added value to my research</span>Modality collapse is the central failure mode in multi-source data fusion (mobile phone + social media + remote sensing). The MGL audit framework, combined with my existing SHAP-based explainable ML pipeline, would provide a theoretically motivated diagnostic for detecting when one data stream dominates &#8212; and a training-time remedy &#8212; in spatiotemporal health outcome models where each modality captures a distinct dimension of community health risk.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multimodal language and graph learning of adsorption configuration in catalysis &#8212; <a href="https://doi.org/10.1038/s42256-024-00930-7" target="_blank">10.1038/s42256-024-00930-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Encode physics-informed spatial interaction priors into the MGL Propagate module</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's section on physics MGL shows how Newton's laws are encoded as constraints on the Propagate module for particle simulation. The principle &#8212; encoding domain equations as message-passing constraints &#8212; is generalizable but the paper applies it only to physics and chemistry. Extending the blueprint: formalize <strong>physics-informed MGL</strong> where the adjacency update in component 3 is constrained by spatial interaction theory (gravity model, radiation model, spatial diffusion equations), and benchmark on urban flow simulation tasks where such "physics" is known but rarely encoded in neural architectures.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly advances my physics-informed graph learning agenda: encode spatial interaction theory as soft constraints in the Propagate module of a GNN predicting healthcare utilization flows or telehealth adoption patterns. The result is a spatially grounded, interpretable model that cannot violate known geographic principles &#8212; moving beyond current ML ensemble approaches toward physics-constrained GeoAI for spatial accessibility forecasting.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein&#8211;ligand affinities &#8212; <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Fuse street-view imagery, neighborhood text, and risk-factor knowledge graphs for place health scoring</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper names "fully multimodal graph architectures" &#8212; single models handling image, language, and structured graph inputs simultaneously &#8212; as its most important open frontier. Providing a concrete urban-health instantiation: design a <strong>place-health MGL</strong> that ingests (i) street-view images as an IIG, (ii) social media text about neighborhoods as a LIG, and (iii) a knowledge graph of disease risk factors as a KIG &#8212; fusing all three through shared node entities (neighborhoods) via the MGL Propagate and Mix modules to produce spatially continuous health scores. This would be the first demonstration of the blueprint's "fully multimodal" tier in the urban domain.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the architectural blueprint for a GeoAI health model: street-view images capture physical environment quality, social media captures perceived safety and food environment, and epidemiological knowledge graphs encode risk-factor co-occurrence. MGL's formal framework specifies exactly where each modality fits in the four-component pipeline, answering the architecture question that current multi-source fusion approaches solve only heuristically. The output &#8212; spatially continuous, multi-modal health scores &#8212; feeds directly into the need-estimation layer of 2SFCA spatial accessibility analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks &#8212; <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

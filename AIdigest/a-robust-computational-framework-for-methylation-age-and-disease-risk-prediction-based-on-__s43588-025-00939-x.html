@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A robust computational framework for methylation age and disease-risk prediction based on pairwise learning — AI Digest</title>
+<meta name="description" content="AI Digest: A robust computational framework for methylation age and disease-risk prediction based on pairwise learning (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Epigenetic clock</span>
+      <span class="tag">Pairwise learning</span>
+      <span class="tag">Disease-risk prediction</span>
+      <span class="tag">Batch-effect mitigation</span>
+    </div>
+    <h1>A robust computational framework for methylation age and disease-risk prediction based on pairwise learning</h1>
+    <div class="meta">
+      <span class="authors">Yu Zhang · Yichen Yao · Yuanhao Tang · Yuan Cheng · Yinghui Xu · Ying He · Yuan Qi · Li Jin</span>
+      <span><b>Published</b> 2026-01-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00939-x" target="_blank">10.1038/s43588-025-00939-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00939-x" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MAPLE, a Siamese-network framework for DNA methylation analysis, resolves the longstanding <strong>batch-effect problem</strong> of epigenetic clocks by predicting <em>relative</em> age or disease-risk differences between sample pairs rather than absolute values. Across <strong>31 benchmark tests</strong> spanning multiple sequencing platforms, preprocessing pipelines and tissue types, MAPLE achieves a median absolute error of <strong>1.6 years</strong> for epigenetic age — outperforming all five competing clocks. It further achieves mean AUROCs of <strong>0.97 for disease identification</strong> and <strong>0.85 for pre-disease detection</strong> in cardiovascular disease and type 2 diabetes cohorts, demonstrating its potential for privacy-preserving clinical methylation-based risk assessment.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves the generalizability crisis of epigenetic clocks.</b> Existing clocks (HorvathAge, HannumAge, PhenoAge, AltumAge, cAge) degrade sharply when applied to platforms or cohorts outside their training data; MAPLE's pairwise design encodes data into a unified latent space that is insensitive to these technical confounders.</li>
+      <li><b>Converts a high-dimensional, low-sample-size problem into a tractable one.</b> Pairwise construction of training samples grows the effective training set quadratically, directly attacking the over-fitting risk endemic to genome-wide methylation arrays.</li>
+      <li><b>Extends epigenetic clocks to clinical disease risk.</b> Beyond age estimation, MAPLE reliably distinguishes pre-disease states (insulin resistance, prediabetes, coronary artery ectasia, subclinical atherosclerosis) from controls — a clinically meaningful capability not demonstrated by earlier clocks.</li>
+      <li><b>Respects privacy constraints of large cohort studies.</b> By training against publicly released Cox-model risk scores rather than raw patient data, MAPLE circumvents the data-sharing barriers that limit most advanced prediction frameworks.</li>
+      <li><b>Ships reproducible, open-source software.</b> MAPLE code and documentation are available on GitHub, and all training/test datasets are publicly accessible via NCBI GEO and the EWAS Data Hub — enabling immediate replication and extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>General-purpose computational innovation:</b> pairwise learning for batch-effect mitigation is a technique transferable beyond methylation to any high-dimensional, multi-source omics setting.</li>
+      <li><b>Rigorous, large-scale benchmarking:</b> 31 benchmark tests across sequencing platforms, preprocessing pipelines and 7 tissue types demonstrate breadth that goes beyond typical single-cohort biomedical papers.</li>
+      <li><b>Bridges computational methods and clinical application:</b> the transition from a computer-science architecture (Siamese networks) to clinical biomarkers for aging-related chronic disease aligns with the journal's translational remit.</li>
+      <li><b>Reproducibility and open science:</b> full code release (GitHub), publicly traceable GEO accession numbers, and source data for every figure conform to the journal's reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary data hub</dt><dd><strong>EWAS Data Hub</strong> (<a href="https://ngdc.cncb.ac.cn/ewas/datahub/index" target="_blank">ngdc.cncb.ac.cn/ewas/datahub</a>) — curated, well-normalized DNAm 450K array data; provides most of the control blood samples used in training.</dd>
+      <dt>Platforms</dt><dd>Illumina Infinium Methylation <strong>450K</strong> and <strong>EPIC</strong> arrays; three normalization pipelines tested: SWAN, BMIQ, GMQN.</dd>
+      <dt>CpG features</dt><dd>285,898 CpG sites (age task); 307,457 (CVD task); 303,212 (T2D task) after quality filtering (&gt;10% missing removed).</dd>
+      <dt>Blood cohorts (training/test)</dt><dd>LOLIPOP (n=2,711, 450K, GSE55763); Grady Trauma Project (n=422 450K GSE72680 + n=795 EPIC GSE132203); Johansson et al. (n=732, 450K, GSE87571); GENOA (n=418 450K GSE210254 + n=1,394 EPIC GSE210255); CIBMTR (n=570, EPIC, GSE196696); AIRWAVE (n=1,129, EPIC, GSE147740); EU-GEI (n=558, EPIC, GSE152026).</dd>
+      <dt>Non-blood tissues</dt><dd>Adipose (n=157, 450K); brain (n=876, 450K); buccal epithelium (n=27, 450K); muscle (n=132, 450K); saliva (n=131, 450K); skin (n=15, 450K); liver (n=177, 450K) — drawn from multiple GEO datasets.</dd>
+      <dt>CVD cohorts</dt><dd>MESA (n=863 AS + 339 controls, 450K, GSE56046); PESA (n=255 AS + 136 controls, EPIC, GSE220622); CAE (n=11, 450K, GSE87016); stroke (n=678 450K GSE203399 + n=32 EPIC GSE69138). CVD embedding space: N<sub>control</sub>=13,321; N<sub>AS</sub>=1,118; N<sub>stroke</sub>=710.</dd>
+      <dt>T2D cohorts</dt><dd>SIR (n=40, 450K, GSE76285); PreD (n=47+46 controls, EPIC, GSE199700); T2D (n=74, 450K, GSE62003 + GSE197881). T2D embedding space: N<sub>control</sub>=12,576; N<sub>T2D</sub>=74.</dd>
+      <dt>Accelerated aging datasets</dt><dd>Down syndrome (n=29 vs. 19); HIV (n=229 vs. 45); smoking (n=72 vs. 80); obesity (n=84 vs. 82); AD in brain (n=64 vs. 63).</dd>
+      <dt>Access</dt><dd>All datasets publicly available via NCBI GEO; MAPLE code at <a href="https://github.com/Drizzle-Zhang/MAPLE" target="_blank">github.com/Drizzle-Zhang/MAPLE</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>EWAS Data Hub</td><td>Curated DNAm 450K controls (training backbone)</td><td>Large, well-normalized collection; exact N not specified for controls subset</td><td><a href="https://ngdc.cncb.ac.cn/ewas/datahub/index" target="_blank">ngdc.cncb.ac.cn</a></td></tr>
+        <tr><td>NCBI GEO (multiple accessions)</td><td>All training and test DNAm datasets</td><td>~20 GEO accessions; total samples &gt;25,000 across all tasks</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">ncbi.nlm.nih.gov/geo</a></td></tr>
+        <tr><td>LOLIPOP project (GSE55763)</td><td>Blood training cohort — 450K</td><td>n=2,711 blood samples</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE55763" target="_blank">GEO</a></td></tr>
+        <tr><td>MESA (GSE56046)</td><td>Atherosclerosis CVD risk training/test</td><td>n=863 AS + 339 controls, 450K</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE56046" target="_blank">GEO</a></td></tr>
+        <tr><td>Grady Trauma Project (GSE72680, GSE132203)</td><td>Blood test cohort — 450K + EPIC</td><td>n=422 (450K) + 795 (EPIC)</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE72680" target="_blank">GEO</a></td></tr>
+        <tr><td>GENOA (GSE210254, GSE210255)</td><td>Blood arteriopathy cohort — 450K + EPIC</td><td>n=418 (450K) + 1,394 (EPIC)</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE210254" target="_blank">GEO</a></td></tr>
+        <tr><td>EWAS Atlas (external)</td><td>Age-related CpG reference sets for validation</td><td>Two independent aging studies; CpG sets for enrichment comparison</td><td><a href="https://ngdc.cncb.ac.cn/ewas/atlas" target="_blank">ngdc.cncb.ac.cn</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: aggregate sample counts across all tasks exceed 25,000 methylation profiles drawn from &gt;20 GEO accessions. Exact per-task split sizes are detailed in the paper's Supplementary Tables 1–3. Numbers above are taken verbatim from the data availability statement and figure legends.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Pairwise (Siamese) learning:</b> two DNAm profiles are simultaneously fed through a weight-shared MLP encoder; the decoder predicts the age <em>difference</em> (age task) or risk-score <em>difference</em> (disease task) between the pair, encoding data into a unified latent space free of dataset-specific offsets.</li>
+      <li><b>Two-step training:</b> (1) the Siamese encoder is trained with Huber loss (age) or epsilon-insensitive SVR loss (disease) on pairwise differences; (2) a downstream age predictor (regression) or disease classifier (cross-entropy softmax) is fine-tuned on the frozen encoder outputs.</li>
+      <li><b>Batch-effect quantification:</b> PCA + Principal Variance Component Analysis (PVCA) confirms that batch variance drops from 0.88 to 0.53 after MAPLE encoding, while age-explained variance rises from &lt;0.01 to 0.42.</li>
+      <li><b>Data augmentation for disease imbalance:</b> minority disease samples are augmented by randomly masking 20% of beta values and imputing with per-CpG cohort means; ablation confirms this outperforms SMOTE and SVMSMOTE.</li>
+      <li><b>Interpretability via Integrated Gradients (IG):</b> top-2,000 CpG sites ranked by IG scores are used for GO enrichment analysis; robustness confirmed across SHAP, DeepLIFT and Feature Ablation.</li>
+      <li><b>Disease risk scoring at inference:</b> risk scores are computed as normalized Euclidean distances from test embeddings to healthy and disease anchor centroids in latent space — avoiding the need to share raw patient data.</li>
+      <li><b>Benchmarking:</b> 31 benchmark tests (24 blood + 7 tissue types) against HorvathAge, HannumAge, PhenoAge, AltumAge and cAge; Cox-LASSO models for CVD/T2D baselines. Evaluation via MAE, PCC, AUROC and AUPRC (1,000-bootstrap CI).</li>
+      <li><b>Hardware:</b> trained on NVIDIA A100 GPU (12.92 h age; 26.85 h CVD; 22.86 h T2D); inference for 1,000 profiles takes ~3 min.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig1.png" target="_blank">
+        <img src="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig1.png" alt="Fig.1 Overview of MAPLE" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of MAPLE: data heterogeneity, two-step training pipeline (Siamese encoder + predictor), and inference workflow including pairwise learning strategies for age and disease tasks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig2.png" target="_blank">
+        <img src="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig2.png" alt="Fig.2 Performance across 31 benchmark tests" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Heatmaps of MAE across (a) six blood-derived test datasets with three preprocessing methods and (b) seven non-blood tissue types — MAPLE consistently achieves the lowest mean MAE.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig3.png" target="_blank">
+        <img src="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig3.png" alt="Fig.3 Aging-related biological processes and accelerated aging" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> GO pathway enrichment of MAPLE-identified age-related CpGs; sex-specific aging trajectories near menopause; age acceleration in Down syndrome, HIV, smoking, obesity and Alzheimer's disease cohorts.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig4.png" target="_blank">
+        <img src="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig4.png" alt="Fig.4 CVD risk estimation" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> CVD risk estimation: PCA of methylation embeddings colored by age and disease status; CVD risk score distributions vs. Cox model; AUROC/AUPRC for stroke, CAE and AS; enriched CVD-related pathways.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig5.png" target="_blank">
+        <img src="assets/a-robust-computational-framework-for-methylation-age-and-disease-risk-prediction-based-on-__s43588-025-00939-x/fig5.png" alt="Fig.5 T2D risk estimation" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> T2D risk estimation: PCA of embeddings by age and disease status; T2D risk score distributions vs. Cox model; AUROC/AUPRC for T2D, prediabetes and systemic insulin resistance; enriched T2D-related pathways.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 tables in the main text. Supplementary contains Tables 1–3 (training/test dataset splits for all three tasks) and Figs. 1–16.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable ML for spatial prediction, spatiotemporal data fusion, health geography).</p>
+
+    <div class="idea">
+      <h3>&#9312; Combine MAPLE's representation learning with spatial health geography to map epigenetic aging across populations</h3>
+      <p><span class="lab paper">Extending this paper</span>MAPLE produces a 32-dimensional latent embedding per individual that encodes biological age irrespective of technical batch. A direct extension of the paper: aggregate individual embeddings by residential region (neighborhood, city, census tract) and map the <strong>spatial distribution of epigenetic age acceleration</strong> using geocoded cohort data. This would test whether MAPLE-derived acceleration correlates with known environmental-risk gradients (pollution, poverty, urban heat) and reveal which local factors most explain population-level biological aging — a dimension the paper leaves entirely unexplored despite having cohort metadata that often includes rough geographic labels.</p>
+      <p><span class="lab mine">Added value to my research</span>My health geography agenda (spatial accessibility, health divides) could integrate MAPLE-derived biological age as a <strong>health-outcome variable in place-based models</strong>. Rather than relying solely on self-reported health or disease incidence, MAPLE embeddings could supply a continuous, objective epigenetic health score for geospatial regression or 2SFCA demand weighting — linking molecular aging data to my existing spatial-analytical toolkit.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Access to care affects electronic health record reliability and AI-driven disease prediction — <a href="https://doi.org/10.1038/s44360-026-00054-9" target="_blank">10.1038/s44360-026-00054-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Apply pairwise learning's batch-effect mitigation to multi-source geospatial data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>MAPLE's core insight — encode relative differences between two samples to wash out source-specific biases while preserving the signal — is a general training principle applicable to any multi-source high-dimensional dataset suffering from dataset-shift. An extension of the paper: test whether the same Siamese-encoder design applied to <strong>spatial multi-omics</strong> (e.g., spatial transcriptomics combined with spatial epigenomics) can integrate tissue-level molecular profiles without batch distortion, extending MAPLE from bulk arrays to spatially resolved data. The SWITCH framework (spatial multi-omics integration via deep learning) in the corpus offers a natural comparison baseline.</p>
+      <p><span class="lab mine">Added value to my research</span>In my multi-source data fusion work (mobile phone + social media + remote sensing), different data providers introduce systematic offsets analogous to sequencing-platform batch effects. A MAPLE-style pairwise encoder that predicts <strong>relative differences between city-tiles from different data sources</strong> rather than absolute values could yield a unified spatiotemporal representation immune to source-specific biases — advancing my spatiotemporal kernel density estimation and fine-tuning of geospatial foundation models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrative deep learning of spatial multi-omics with SWITCH — <a href="https://doi.org/10.1038/s43588-025-00891-w" target="_blank">10.1038/s43588-025-00891-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Integrate MAPLE with a foundation model to separate genetically determined from environmentally induced methylation change</h3>
+      <p><span class="lab paper">Extending this paper</span>The Discussion explicitly proposes pairing MAPLE with sequence-based models (MethylGPT) to disentangle genetic and environmental determinants of DNAm. A concrete extension: use a pre-trained genomic foundation model to generate predicted DNAm profiles from DNA sequence alone, then train MAPLE on the <em>residuals</em> (empirical minus predicted methylation). The pairwise encoder would then encode only the environmentally modulated component — yielding epigenetic age and disease-risk scores that are genuinely independent of genetic architecture. This directly addresses the current limitation that MAPLE cannot separate inherited from acquired epigenetic variation.</p>
+      <p><span class="lab mine">Added value to my research</span>The residual-encoding strategy mirrors my fine-tuning approach for geospatial foundation models: a pre-trained global model captures generic spatial structure, and task-specific learning targets the residuals. Applying this paradigm to MAPLE would validate the architectural pattern — <strong>foundation model for structure, pairwise learning for domain-specific residuals</strong> — that I am developing for GeoAI prediction tasks like urban health outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Extend MAPLE's Integrated Gradients attribution to spatial explainability maps for genomic-health linkages</h3>
+      <p><span class="lab paper">Extending this paper</span>MAPLE uses Integrated Gradients to identify the top-2,000 CpG sites driving age or disease predictions, then performs GO enrichment analysis. A methodological extension: apply spatially resolved attribution — for instance, IG scores computed separately per chromosomal region or per tissue biopsy location in spatial epigenomics data — to produce <strong>locus-level explainability maps</strong>. This would enable MAPLE to highlight not just which genes are aging-relevant but <em>where in the genome</em> the clock's signal is strongest within different tissue compartments, directly linking molecular geography to biological aging.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable ML for spatial prediction is a central method in my GeoAI toolkit. MAPLE's IG pipeline — attribution scores over high-dimensional features, benchmarked against SHAP/DeepLIFT — is a well-validated, transferable template I can adapt to my spatial prediction models (e.g., attributing MGWR predictions to fine-grained spatial features of the built environment) for the same purpose: finding which features, where, drive a health outcome.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles — <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Use MAPLE's pre-disease detection capability as a digital-health equity lens</h3>
+      <p><span class="lab paper">Extending this paper</span>MAPLE achieves AUROC 0.89 for prediabetes and 0.82 for systemic insulin resistance — conditions often asymptomatic and underdiagnosed in under-resourced populations. A societal extension of the paper: deploy MAPLE on cohorts stratified by socioeconomic status, race/ethnicity and health-system access, then measure whether <strong>epigenetic pre-disease detection accuracy is equitable across strata</strong>. If MAPLE's embeddings absorb social-environmental exposures into biological age, its predictions may already carry socioeconomic signal — or conversely, it may exhibit disparate performance when training cohorts under-represent certain groups (a risk the paper acknowledges in its ethics section).</p>
+      <p><span class="lab mine">Added value to my research</span>My health geography and telehealth/digital-divide work is precisely about whether advanced health tools reach disadvantaged populations equitably. MAPLE's pre-disease detection framework offers a high-stakes test case for evaluating <strong>algorithmic equity in molecular diagnostics</strong> — complementing my 2SFCA-based spatial accessibility analyses with a molecular-level view of who benefits from epigenetic screening and who is left behind.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation models in healthcare require rethinking reliability — <a href="https://doi.org/10.1038/s42256-024-00924-5" target="_blank">10.1038/s42256-024-00924-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Increasing generality in machine learning through procedural content generation — AI Digest</title>
+<meta name="description" content="AI Digest: Increasing generality in machine learning through procedural content generation (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Procedural Content Generation</span>
+      <span class="tag">Generalization</span>
+      <span class="tag">Reinforcement Learning</span>
+      <span class="tag">Sim-to-Real Transfer</span>
+    </div>
+    <h1>Increasing generality in machine learning through procedural content generation</h1>
+    <div class="meta">
+      <span class="authors">Sebastian Risi · Julian Togelius</span>
+      <span><b>Published</b> 2020-08-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-0208-z" target="_blank">10.1038/s42256-020-0208-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-0208-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Procedural content generation (PCG) — the algorithmic creation of game levels, maps, characters, and rules — is not merely a game-design technique: it is a <strong>systematic toolbox for making ML systems more general</strong>. By exposing training agents to algorithmically varied environments (domain randomization, curriculum generation, co-evolution), PCG counteracts <strong>overfitting to fixed training scenarios</strong>, enables robust sim-to-real transfer (e.g., a robot hand solving a Rubik's cube trained entirely in simulation), and provides a principled path toward <strong>open-ended, lifelong machine intelligence</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Names the core failure mode of modern ML.</b> Deep RL agents overfit to fixed training environments — training on a single set of Atari levels produces brittle policies that fail when any parameter changes. PCG is reframed as the principled antidote to this <em>task-level overfitting</em>.</li>
+      <li><b>Bridges two previously separate communities.</b> The review synthesizes 40+ years of game-PCG practice with recent ML generalization research, surfacing shared solutions (domain randomization, latent variable evolution, co-evolutionary curricula) that neither community had fully mapped together.</li>
+      <li><b>Demonstrates high-profile real-world payoff.</b> The OpenAI Rubik's cube robot hand — trained only in simulation with expanding domain randomization — shows that PCG-based training already enables physical robots to operate in the real world without additional training.</li>
+      <li><b>Charts a roadmap for general AI.</b> Six open challenges (limited data, complete game generation, lifelong learning, new RL benchmarks, sim-to-real gap, PCG beyond games) constitute a concrete research agenda for more general, adaptive AI systems.</li>
+      <li><b>Reframes data augmentation as PCG.</b> ImageNet augmentation, domain randomization, and AutoAugment are all instances of constructive PCG — unifying disparate literatures under a single conceptual umbrella with decades of richer prior art.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary synthesis at a defining moment:</b> the paper appeared when RL generalization was recognized as a critical unsolved problem; it introduced the games-AI community's decades of PCG experience to the broader ML audience — exactly the "bridging" contribution Nature MI targets.</li>
+      <li><b>Universal framing, not a point result:</b> rather than reporting a single benchmark, it proposes PCG as a general paradigm for ML generality — matching the journal's preference for conceptual frameworks with broad impact over isolated empirical findings.</li>
+      <li><b>Timely evidence of impact:</b> multiple high-profile results (OpenAI robot hand, Quake III Capture the Flag agent) anchor the review in immediate real-world credibility, satisfying Nature MI's requirement for demonstrated significance.</li>
+      <li><b>Sets a new research agenda:</b> the six challenges section is actionable, guiding future research directions in a rapidly growing area — the forward-looking framing Nature MI values in reviews.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <p style="color:var(--muted);font-size:14px">This is a <strong>review article</strong>, not an empirical study. No new datasets or experiments are introduced by the authors. The paper synthesizes findings from approximately 96 cited works spanning game-AI and ML generalization research. The "data" are the reviewed game environments, RL benchmarks, and experimental systems described in the cited literature.</p>
+    <dl class="kv">
+      <dt>Article type</dt><dd><strong>Review / Perspective</strong> — synthesizes existing PCG and ML generalization literature; no new experiments or primary data are introduced.</dd>
+      <dt>Game benchmarks covered</dt><dd>Arcade Learning Environment (Atari 2600, hundreds of games with fixed levels), OpenAI Gym (CarRacing-v0 with procedurally generated tracks, BipedalWalker), Quake III Arena Capture the Flag, Super Mario Bros, Doom, Angry Birds, StarCraft, CoinRun, GVG-AI framework, Obstacle Tower, Minecraft, Spelunky, and others — used as illustrative cases from the cited literature.</dd>
+      <dt>Robotics systems</dt><dd>OpenAI Dactyl (Rubik's cube robot hand trained in simulation with automatic domain randomization across ~6,000 physical parameters); quadrotor vision-navigation (Sadeghi et al.) — both described from cited published work.</dd>
+      <dt>Image datasets</dt><dd>ImageNet (~1.2 M images) and its stylized variant (Geirhos et al. 2019) — cited to illustrate data augmentation as constructive PCG and the texture-vs-shape bias in deep CNNs.</dd>
+      <dt>PCG methods surveyed</dt><dd>Table 1 systematically compares methods: constructive PCG (Perlin noise, L-systems, cellular automata), search-based PCG (CMA-ES, evolutionary algorithms, Map-Elites, answer set programming), PCG via ML (GANs, LSTMs, Markov chains, RL-based PCG), and domain randomization (uniform, guided, automatic). Approximately 96 references cited.</dd>
+      <dt>Data availability</dt><dd>Not applicable — review article. No new data or code released by the authors.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Environment / System</th><th>Role in Review</th><th>Coverage / Scale</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Arcade Learning Environment</td><td>Canonical RL overfitting benchmark</td><td>Hundreds of Atari 2600 games; all with fixed levels</td><td><a href="https://github.com/mgbellemare/Arcade-Learning-Environment" target="_blank">github: ALE</a></td></tr>
+        <tr><td>OpenAI Gym</td><td>PCG training environments (CarRacing, BipedalWalker)</td><td>Multiple tasks; procedurally generated tracks and terrain per episode</td><td><a href="https://github.com/openai/gym" target="_blank">github: openai/gym</a></td></tr>
+        <tr><td>OpenAI Dactyl (Rubik's cube)</td><td>Automatic domain randomization sim-to-real case study</td><td>Single robot hand; trained on variation of ~6,000 simulation parameters</td><td><a href="https://openai.com/research/solving-rubiks-cube" target="_blank">openai.com/research</a></td></tr>
+        <tr><td>GVG-AI / CoinRun / Obstacle Tower</td><td>PCG-based RL generalization benchmarks</td><td>Multiple procedurally generated game environments across cited studies</td><td><a href="https://github.com/openai/coinrun" target="_blank">github: openai/coinrun</a></td></tr>
+        <tr><td>ImageNet (standard + stylized)</td><td>Data augmentation as constructive PCG illustration</td><td>~1.2 M images (standard); stylized variant from Geirhos et al. 2019</td><td><a href="https://image-net.org" target="_blank">image-net.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all environments and datasets above are from <em>cited</em> works, not introduced by the review authors. Scales are as reported in the cited papers.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Constructive PCG:</b> fixed-time, non-iterative generation without search — fractal noise (Perlin), L-systems, cellular automata; the simplest and fastest category, conceptually equivalent to image data augmentation (cropping, padding, noise, stylization).</li>
+      <li><b>Search-based PCG:</b> stochastic optimization (evolutionary algorithms, CMA-ES, differential evolution, Map-Elites) over a content space, guided by an evaluation function — generates game levels (Mario, Doom, Angry Birds), board games (Yavalath), and diverse artifact populations.</li>
+      <li><b>PCG via ML:</b> generative models (GANs, LSTMs, Markov chains) trained on existing content; latent variable evolution searches the GAN latent space; RL-based PCG treats content generation as a sequential decision process rewarded by content quality.</li>
+      <li><b>Domain randomization (uniform / guided / automatic):</b> training across simulated environments with randomized parameters (textures, masses, lighting, geometry) to create policies robust to distribution shift; automatic domain randomization scales parameter diversity as agent performance improves.</li>
+      <li><b>Procedurally generated learning environments / curriculum:</b> co-evolutionary methods (MCC, POET) simultaneously evolve environments and agents; Progressive PCG adjusts level difficulty based on agent performance — enables curriculum learning and promotes meta-learning emergence in RNNs.</li>
+      <li><b>Bootstrapping for functional content:</b> only newly generated artefacts passing a verifiable functionality check (e.g., A*-confirmed level playability) are added back to the training set, iteratively biasing generation toward valid functional content despite limited initial data.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/increasing-generality-in-machine-learning-through-procedural-content-generation__s42256-020-0208-z/fig1.png" target="_blank">
+        <img src="assets/increasing-generality-in-machine-learning-through-procedural-content-generation__s42256-020-0208-z/fig1.png" alt="Fig.1 PCG-based games" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> PCG-based games: procedurally generated 3D games (a), 2D game rules (b), Petalz flower-breeding game (c), first-person shooter maps and character classes (d), and the commercially sold board game Yavalath whose rules were generated by evolutionary search (e).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/increasing-generality-in-machine-learning-through-procedural-content-generation__s42256-020-0208-z/fig2.png" target="_blank">
+        <img src="assets/increasing-generality-in-machine-learning-through-procedural-content-generation__s42256-020-0208-z/fig2.png" alt="Fig.2 Learning environments created by PCG-based approaches" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> PCG-created learning environments: POET bipedal walker with co-evolved terrain complexity (a), Quake III Capture the Flag with procedurally generated indoor/outdoor maps (b), OpenAI robot hand with automatic domain randomization for Rubik's cube manipulation (c, d).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — systematic comparison of PCG and domain randomization methods across representation type, evaluation approach, and diversity mechanism). No supplementary tables reported.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, open science).</p>
+
+    <div class="idea">
+      <h3>① Apply PCG-style domain randomization to geospatial foundation model fine-tuning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central prescription — train in procedurally varied environments to avoid overfitting to one scenario — has a direct but unexplored application to <strong>geospatial models</strong>. A concrete extension: build a PCG pipeline that algorithmically varies spatial covariates (urban density gradients, road topology, land-use mix ratios) across synthetic city instances, then fine-tune a geospatial foundation model on this procedurally varied corpus. The paper explicitly names "PCG beyond game-like environments" as an open challenge, noting neural architecture search and general ML could benefit; spatially indexed prediction tasks are exactly such a domain.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models for urban and health applications is a core direction of my lab. PCG-style spatial randomization — varying population density profiles, street network connectivity, and POI distributions across synthetic city patches — would create a richer, less geographically overfitted training curriculum than the fixed-city corpora I currently use. This could directly improve the cross-city transferability of my R2SFCA accessibility models and GWR-based spatial prediction systems, especially for rare urban morphologies (sparse rural, polycentric mega-regions) underrepresented in real data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training data composition determines machine learning generalization and biological rule discovery — <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use POET-style co-evolutionary curriculum for facility-location optimization across city morphologies</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's POET and PPCG frameworks generate <strong>progressively harder environments matched to agent capability</strong> — the key insight being that a fixed-difficulty environment either frustrates or bores a learning agent, and that a fixed set of training environments overfits the agent to those specific configurations. A direct paper extension: apply co-evolutionary curriculum to the <strong>facility-location optimization problem</strong>, where an RL optimizer (agent) places services to maximize spatial accessibility. Instead of presenting all city topologies at once, PCG would generate progressively more complex city morphologies — from regular grids to polycentric, dendritic, and fragmented networks — so the optimizer generalizes across morphologies never seen during training, exactly the challenge the paper proposes for "PCG beyond game-like environments."</p>
+      <p><span class="lab mine">Added value to my research</span>My EV charging-station efficiency-vs-equity optimization work currently solves each city instance independently. A curriculum-guided RL agent trained with PCG-varied city topologies would learn a <em>transferable placement policy</em> — the key step toward a GeoAI facility-location solver that generalizes across cities without per-city re-optimization. This directly extends my facility-location and urban accessibility research lines, and aligns with the physics-informed graph learning direction where city topologies are encoded as graph structures.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning — <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Bootstrapped functional-content generation for verified synthetic spatiotemporal scenarios</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper highlights that GAN-based PCG generates content that "looks right but doesn't function" — a Super Mario Bros level with an impossible jump is unplayable and worthless. Its solution, <strong>bootstrapping</strong>, verifies generated content (e.g., A* confirms level traversability) and adds only verified-functional artefacts back to the training set. This exact problem recurs in <strong>synthetic spatiotemporal data generation</strong>: a generated mobility trajectory or epidemic-spread scenario may look statistically plausible but violate geographic constraints (impossible road traversal times, population flows through closed borders, negative density values). Extending the paper: define a <em>geographic functionality oracle</em> — a constraint checker analogous to A*-based level verification — and bootstrap synthetic scenario generation so only geographically valid synthetic data enters the training corpus for spatiotemporal ML.</p>
+      <p><span class="lab mine">Added value to my research</span>My work fuses mobile-phone GPS trajectories and social media data to model spatiotemporal phenomena (SIR epidemics, job-housing flows, health service utilization). Bootstrapped PCG for synthetic spatiotemporal data would let me train models on a much larger verified corpus, directly addressing data scarcity for rare-event scenarios (disease outbreaks, extreme commuting disruptions, post-disaster mobility). This supports both my data-science/reproducibility agenda and the need for robust, geographically transferable spatiotemporal models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Continual learning of context-dependent processing in neural networks — <a href="https://doi.org/10.1038/s42256-019-0080-x" target="_blank">10.1038/s42256-019-0080-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Close the digital-twin gap in urban health modeling via automatic domain randomization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper discusses the <strong>content gap</strong> in sim-to-real transfer: even excellent domain randomization fails when real environments contain scenarios outside the simulation's PCG distribution. The solution it proposes — <strong>automatic domain randomization</strong> that progressively expands parameter diversity as the agent improves — is also the prescription for urban modeling. A direct extension: apply automatic domain randomization to urban digital twins, progressively broadening the synthetic distribution of city parameters (population sparsity, road density, facility count, socioeconomic gradient) during training, so a model covers the tail of the real-world distribution and does not fail in underrepresented city types. This is precisely "from simulation to the real world" applied outside robotics.</p>
+      <p><span class="lab mine">Added value to my research</span>My health geography work — modeling spatial accessibility of primary care and telehealth across U.S. counties — faces exactly this content-gap challenge: models calibrated on dense urban counties fail systematically in rural frontier areas. Automatic domain randomization over synthetic county configurations (population sparsity, road network density, facility ratios) would harden my 2SFCA/R2SFCA accessibility models against distributional shift without requiring expensive rural data collection campaigns, directly improving their policy utility for underserved populations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> High-speed quadrupedal locomotion by imitation-relaxation reinforcement learning — <a href="https://doi.org/10.1038/s42256-022-00576-3" target="_blank">10.1038/s42256-022-00576-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Build a PCG-based incremental benchmark for geographic generalization of spatial ML models</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's six open challenges is creating <strong>PCG-based benchmarks</strong> in which environments become progressively harder, revealing whether an RL agent truly generalizes or merely memorizes — a benchmark property the existing Atari suite entirely lacks. The analogous gap exists in GeoAI: there is no agreed benchmark that tests whether a spatial ML model generalizes across increasing levels of geographic heterogeneity (mono-centric to polycentric, dense to sparse, homogeneous to mixed land-use). Extending the paper: design a PCG-generated suite of synthetic cities spanning a controlled difficulty axis (urban morphology complexity, data density, population heterogeneity) and release it as an open geographic generalization benchmark — the GeoAI equivalent of CoinRun or GVG-AI for the geospatial ML community.</p>
+      <p><span class="lab mine">Added value to my research</span>My lab's open-science and FAIR data directions position me to lead exactly this kind of benchmark contribution. A PCG-generated geographic generalization benchmark would provide a reproducible evaluation scaffold for explainable spatial ML prediction, MGWR/GWR non-stationarity testing, and physics-informed graph learning for urban networks — giving the GeoAI community a common generalization axis analogous to what the arcade learning environment provided to RL research, and directly supporting my research-reproducibility agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Three types of incremental learning — <a href="https://doi.org/10.1038/s42256-022-00568-3" target="_blank">10.1038/s42256-022-00568-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

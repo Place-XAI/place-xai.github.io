@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solving the Rubik's cube with deep reinforcement learning and search — AI Digest</title>
+<meta name="description" content="AI Digest: Solving the Rubik's cube with deep reinforcement learning and search (Nature Machine Intelligence, 2019)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Deep Reinforcement Learning</span>
+      <span class="tag">Combinatorial Optimization</span>
+      <span class="tag">Heuristic Search</span>
+      <span class="tag">Planning</span>
+    </div>
+    <h1>Solving the Rubik's cube with deep reinforcement learning and search</h1>
+    <div class="meta">
+      <span class="authors">Forest Agostinelli · Stephen McAleer · Alexander Shmakov · Pierre Baldi</span>
+      <span><b>Published</b> 2019-07-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-019-0070-z" target="_blank">10.1038/s42256-019-0070-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-019-0070-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>DeepCubeA</strong> combines deep approximate value iteration with batch weighted A* search (BWAS) to solve <strong>100% of all test Rubik's cube configurations</strong> — finding a shortest path 60.3% of the time — without any domain-specific knowledge. The same algorithm generalizes to six other combinatorial puzzles (15-puzzle through 48-puzzle, Lights Out, and Sokoban), using <strong>far less memory than pattern databases</strong> and running over 200× faster than classical solvers on the 24-puzzle, demonstrating that a single learned cost-to-go function can serve as a <strong>universal heuristic for large-state-space planning</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Beats domain-engineered solvers without hand-crafted knowledge.</b> Classical pattern-database (PDB) solvers require 182 GB of memory and hand-tuned group-theory heuristics; DeepCubeA replaces this with a single trained DNN, solving the same problems faster with dramatically less memory.</li>
+      <li><b>Demonstrates scalable generalization.</b> A single algorithm architecture solves puzzles spanning state spaces from 10<sup>13</sup> (15-puzzle) to 10<sup>62</sup> (48-puzzle) and a planning domain (Sokoban) with irreversible actions — without re-engineering for each environment.</li>
+      <li><b>Solves the "sparse reward" problem without reward shaping.</b> The reverse-scrambling training curriculum elegantly sidesteps the fundamental difficulty that random play almost never reaches the goal state in large combinatorial spaces.</li>
+      <li><b>Opens a path to general planning AI.</b> Problems with large state spaces and few goal states — common in robotics, logistics, and molecular design — are natural targets for this approach, well beyond puzzle-solving.</li>
+      <li><b>Ships a publicly accessible solver.</b> A web server at <a href="http://deepcube.igb.uci.edu/" target="_blank">deepcube.igb.uci.edu</a> and a Code Ocean compute capsule make the approach immediately reproducible and usable by the community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Landmark AI capability result:</b> first domain-knowledge-free method to reliably solve the Rubik's cube at 100% success with near-optimal solutions — a clear demonstration of a step change in AI planning ability.</li>
+      <li><b>Generalizable algorithm, not a narrow engineering trick:</b> DeepCubeA succeeds across seven structurally distinct combinatorial environments, supporting a universal claim that fits NMI's appetite for transferable machine-learning science.</li>
+      <li><b>Bridges theory and practice:</b> combines classical dynamic programming and heuristic search (value iteration, A*) with deep learning in a principled way, with formal analysis of admissibility and empirical solution-length bounds.</li>
+      <li><b>Open and reproducible:</b> all code, environments, training-data generators, and test states are deposited in a Code Ocean compute capsule, aligning with NMI's open-science emphasis.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd>All training states are <strong>synthetically generated</strong> by randomly scrambling the goal state up to K moves (K = 30 for Rubik's cube; K = 500–1,000 for other puzzles). No real-world dataset is used. The DNN saw <strong>10 billion training examples</strong> over 1 million iterations (36 hours on two NVIDIA Titan V GPUs).</dd>
+      <dt>Test set — Rubik's cube</dt><dd><strong>1,000 states</strong> randomly scrambled between 1,000 and 10,000 times, plus the <strong>3 known states furthest from the goal</strong> (26 moves in quarter-turn metric, per Rokicki et al.).</dd>
+      <dt>Test set — sliding puzzles</dt><dd><strong>500 states</strong> per puzzle (15, 24, 35, 48 puzzles), scrambled 1,000–10,000 times. Additionally, the <strong>17 hardest known 15-puzzle states</strong> are tested separately.</dd>
+      <dt>Test set — Sokoban</dt><dd><strong>900,000 training / 1,000 test</strong> examples from the standard Sokoban benchmark used by prior single-agent policy tree-search research.</dd>
+      <dt>Comparison baseline</dt><dd>Rokicki et al.'s optimal solver (PDB-based, 182 GB memory) for the Rubik's cube; Korf's PDB and additive PDB solvers for sliding puzzles. These are classical, non-learned systems.</dd>
+      <dt>Hyperparameter search</dt><dd>Grid search over λ ∈ {0.0, 0.2, 0.4, 0.6, 0.8, 1.0} and N ∈ {1, 100, 1,000, 10,000} on a <strong>separate set of 100 Rubik's cube states</strong> not used for testing.</dd>
+      <dt>Code &amp; reproducibility</dt><dd>All puzzle environments, training-data generators, and test states released via a <strong>Code Ocean compute capsule</strong> at <a href="https://doi.org/10.24433/CO.4958495.v1" target="_blank">doi.org/10.24433/CO.4958495.v1</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Environment</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Rubik's cube synthetic states</td><td>Training + test evaluation</td><td>10B training examples; 1,000-state test set + 3 hardest states</td><td><a href="https://doi.org/10.24433/CO.4958495.v1" target="_blank">Code Ocean</a></td></tr>
+        <tr><td>Sliding tile puzzles (15 / 24 / 35 / 48)</td><td>Generalization test</td><td>500 states per puzzle; 17 known-hardest 15-puzzle states</td><td><a href="https://doi.org/10.24433/CO.4958495.v1" target="_blank">Code Ocean</a></td></tr>
+        <tr><td>Sokoban benchmark</td><td>Irreversible-action planning test</td><td>900,000 train / 1,000 test (standard benchmark)</td><td><a href="https://doi.org/10.24433/CO.4958495.v1" target="_blank">Code Ocean</a></td></tr>
+        <tr><td>Korf / Rokicki PDB solvers</td><td>Optimality comparison baseline</td><td>182 GB PDB for Rubik's cube; puzzle-specific PDBs for sliding puzzles</td><td>Prior literature (Korf 1997; Rokicki et al. 2014)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all training data are generated algorithmically from environment simulators; no external real-world dataset is used. Numbers above are taken verbatim from the article text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Deep Approximate Value Iteration (DAVI):</b> trains a DNN to approximate the optimal cost-to-go function J*(s) using one-step Bellman updates (Eq. 1). A slowly updated target network θ<sub>e</sub> provides stable training targets; θ<sub>e</sub> is only updated when loss falls below threshold ε = 0.05.</li>
+      <li><b>DNN architecture:</b> two fully connected hidden layers (5,000 and 1,000 units) followed by four residual blocks (each with two 1,000-unit layers), batch normalization, ReLU activations, and a single linear output unit. One-hot encoding of puzzle states (e.g., 324-dim for Rubik's cube). Trained with ADAM, batch size 10,000.</li>
+      <li><b>Batch Weighted A* Search (BWAS):</b> uses the learned J(x) as heuristic h(x) in f(x) = λg(x) + h(x). Expands N lowest-cost nodes in parallel per iteration to maximize GPU throughput. Hyperparameters λ = 0.6, N = 10,000 for Rubik's cube; λ = 0.8, N = 20,000 for 15/24/35-puzzles.</li>
+      <li><b>Reverse curriculum training:</b> each training state is generated by scrambling the goal state k ∈ [1, K] times, ensuring the reward signal propagates outward from the solved state without manual curriculum engineering.</li>
+      <li><b>Admissibility empirical analysis:</b> the learned heuristic does not overestimate in 66.8% of states and overestimates by at most 1 in 97.4% of states (mean overestimation: 0.24 moves), providing a practical bound in lieu of a theoretical guarantee.</li>
+      <li><b>Distributed training:</b> data generation across 6 GPUs, training on 2 GPUs, inference on 4 GPUs (NVIDIA Titan V / Pascal). Full Rubik's cube training completed in 36 hours with 10 billion examples seen.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig1.png" target="_blank">
+        <img src="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig1.png" alt="Fig.1 Visualization of scrambled states and goal states" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Scrambled (top) and goal (bottom) states for four puzzles: Rubik's cube, 15-puzzle, Lights Out, and Sokoban — all environments tested by DeepCubeA.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig2.png" target="_blank">
+        <img src="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig2.png" alt="Fig.2 DeepCubeA vs PDBs in BWAS" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> DeepCubeA vs. Korf's PDB heuristic under BWAS (N = 10,000, λ ∈ {0.0, 0.1, 0.2}): DeepCubeA produces shorter solutions and runs faster across all 1,000 test states.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig3.png" target="_blank">
+        <img src="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig3.png" alt="Fig.3 Training performance curves" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Training progress curves: DeepCubeA first learns to solve near-goal states, then progressively harder ones. Dashed lines show the true average cost-to-go.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig4.png" target="_blank">
+        <img src="assets/solving-the-rubik-s-cube-with-deep-reinforcement-learning-and-search__s42256-019-0070-z/fig4.png" alt="Fig.4 Symmetric solutions to symmetric states" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Symmetric solutions discovered by DeepCubeA for mirror-image Rubik's cube states — conjugate triplets (aba⁻¹) highlighted in green, revealing learned group-theoretic structure.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 5 main-text tables comparing DeepCubeA to PDB solvers on solution length, % optimal, nodes generated, solve time, and memory across all puzzle environments.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>① Replace the flat DNN heuristic with a GNN that generalizes across puzzle sizes</h3>
+      <p><span class="lab paper">Extending this paper</span>DeepCubeA trains a separate flat DNN for each puzzle family and size, requiring retraining from scratch when the environment changes (e.g., 24-puzzle to 35-puzzle). A direct extension is to replace the MLP with a <strong>graph neural network</strong> that encodes each puzzle state as a graph (tiles as nodes, adjacency as edges), enabling a <em>single cost-to-go model</em> to transfer across grid sizes without full retraining. This would test whether the learned heuristic is truly compositional or merely memorized for each state-space dimensionality, and could dramatically cut per-environment training cost.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning work faces the same transferability challenge: GNN models trained on one city's road network need to generalize to another without full retraining. DeepCubeA's reverse-curriculum training — start from the solved state, explore outward — is directly analogous to training a spatial graph model on small, tractable subgraphs before scaling to city-wide networks. Combining <strong>reverse curriculum + GNN</strong> could yield a spatially transferable accessibility heuristic that avoids re-fitting 2SFCA service-area delineations for every new city or time period.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating network layouts using graph neural networks — <a href="https://doi.org/10.1038/s41467-023-37189-2" target="_blank">10.1038/s41467-023-37189-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Apply the reverse-curriculum principle to combinatorial facility-location optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>DeepCubeA's pivotal insight — train on states generated in reverse from the goal — is a general strategy for any combinatorial search where forward random sampling almost never reaches the optimum. Extending it: treat <strong>facility-location problems</strong> (e.g., siting healthcare clinics across a city) as a puzzle where the "goal" is an optimal service distribution. Generate training states by randomly removing or displacing facilities from the optimal arrangement, then train a cost-to-go DNN on these reverse-scrambled configurations and deploy BWAS to find near-optimal placements. This would bring DeepCubeA's 100%-solve guarantee paradigm into spatial optimization.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly reframes my EV-charging and primary-care facility placement work: instead of solving a mixed-integer program for each city, a DeepCubeA-style value function trained on synthetically scrambled service distributions could let BWAS find near-optimal placements orders of magnitude faster. The reverse curriculum elegantly handles the sparse-reward problem that plagues RL for facility placement — most random arrangements score poorly, making reinforcement signals extremely thin, but starting from the optimum and scrambling outward guarantees dense, informative training data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning — <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use DeepCubeA's admissibility analysis as a template for calibrated uncertainty in spatial ML</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's empirical admissibility analysis — showing the heuristic overestimates the cost to reach the goal in only 33.2% of states, and by at most 1 move in 97.4% of states — is a pragmatic substitute for the theoretical guarantee that A* requires. Extending it: <strong>model the overestimation distribution as a function of scramble depth</strong> (state difficulty) and use a conformal-prediction wrapper around the DNN to produce calibrated confidence intervals on move counts. This would let BWAS decide dynamically when to trust the heuristic and when to revert to a more conservative search strategy, yielding provable approximation guarantees in domains where admissibility is intractable to prove analytically.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work for spatial prediction suffers from the same calibration gap: point estimates without uncertainty bounds are hard for planners to act on. The DeepCubeA admissibility-analysis workflow — empirically characterize where and by how much the model overestimates, then bound the overestimation — is directly transferable as a <strong>conformal prediction framework for spatial ML</strong> (e.g., 2SFCA demand estimates, travel-time accessibility scores), giving policymakers probabilistic assurance rather than opaque point predictions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reinforcement learning in artificial and biological systems — <a href="https://doi.org/10.1038/s42256-019-0025-4" target="_blank">10.1038/s42256-019-0025-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend BWAS to time-varying routing problems for dynamic spatiotemporal accessibility</h3>
+      <p><span class="lab paper">Extending this paper</span>All seven environments in this paper are <em>static</em> — the state space and transition costs are fixed. A natural extension is to benchmark DeepCubeA on <strong>time-varying combinatorial problems</strong> (e.g., dynamic vehicle routing or time-dependent shortest paths on congested road networks) where the optimal cost-to-go changes with time. This would test whether the value function can be conditioned on time as an additional input dimension and whether BWAS remains competitive under non-stationary heuristics — a significant open question for real-world planning applications.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatiotemporal accessibility — how primary-care or telehealth catchment areas expand and contract by time of day, or how broadband availability shifts digital-health access — is a core theme in my research. A time-conditioned DeepCubeA value function trained on time-sliced GPS trajectory or mobile-phone record data could yield a <strong>dynamic 2SFCA solver</strong> that automatically adapts service-area delineations to time-varying travel times, replacing the static radius assumption with a learned, data-driven boundary updated per time slice.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Mine DeepCubeA's solution traces for emergent spatial symmetries in urban networks</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most striking findings is that DeepCubeA <em>rediscovers</em> group-theory properties (conjugate triplets aba⁻¹ appear in 13.11% of solution moves vs. 9.15% in the optimal solver; 58.3% of mirror-state solutions are symmetric) without being told about them. Extending the paper: <strong>systematically mine solution traces across environments</strong> (sliding puzzles, Sokoban) for analogous latent structural regularities, and ask whether the learned cost-to-go implicitly encodes graph automorphisms or other algebraic invariances. This could reveal what a DNN actually learns about combinatorial topology — a key question for interpretable planning AI.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban road networks exhibit local symmetries (grid blocks, radial arterials, hub-and-spoke transit structures) that current GeoAI models treat as arbitrary spatial structure. If DeepCubeA's mechanism for discovering algebraic regularities can be transplanted — training a cost-to-go on reverse-scrambled spatial configurations and mining solution traces for recurring move patterns — it could expose <strong>functional spatial motifs</strong> (commuting loop structures, accessibility corridors) that are invisible to MGWR or ML ensembles, directly enriching my spatiotemporal kernel density estimation and network community detection methods.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Free-energy machine for combinatorial optimization — <a href="https://doi.org/10.1038/s43588-025-00782-0" target="_blank">10.1038/s43588-025-00782-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

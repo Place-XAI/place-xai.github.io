@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constructing custom thermodynamics using deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Constructing custom thermodynamics using deep learning (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&larr; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Physics-informed deep learning</span>
+      <span class="tag">Thermodynamic discovery</span>
+      <span class="tag">Interpretable AI</span>
+      <span class="tag">Stochastic dynamics</span>
+    </div>
+    <h1>Constructing custom thermodynamics using deep learning</h1>
+    <div class="meta">
+      <span class="authors">Xiaoli Chen &middot; Beatrice W. Soh &middot; Zi-En Ooi &middot; Eleonore Vissol-Gaudin &middot; Haijun Yu &middot; Kostya S. Novoselov &middot; Kedar Hippalgaonkar &middot; Qianxiao Li</span>
+      <span><b>Published</b> 2023-12-29</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00581-5" target="_blank">10.1038/s43588-023-00581-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00581-5" target="_blank">nature.com &nearr;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>S-OnsagerNet &mdash; a deep learning framework grounded in a <strong>generalized stochastic Onsager principle</strong> &mdash; automatically discovers interpretable, low-dimensional thermodynamic coordinates and governing equations directly from high-dimensional microscopic trajectory data. Applied to polymer chain stretching (300-bead, 900-degree-of-freedom systems), it recovers <strong>three macroscopic coordinates</strong> with physically meaningful interpretations, reveals a free-energy landscape with stable states and saddle points, and enables <strong>data-driven control</strong> of stretching rate &mdash; outperforming human labeling and validating against single-molecule DNA experiments.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Automates thermodynamic description for arbitrary complex systems.</b> Previously, constructing macroscopic equations of state for non-equilibrium systems required significant expert intuition; this framework does it from trajectory data alone, opening pathways in polymer science, biophysics, and soft matter.</li>
+      <li><b>Simultaneously discovers coordinates and dynamics.</b> Unlike previous dimensionality-reduction methods, S-OnsagerNet solves the harder <em>closure problem</em> &mdash; finding the minimal set of coordinates and their closed governing equations at the same time.</li>
+      <li><b>Handles stochasticity explicitly.</b> The framework captures thermal fluctuations central to non-equilibrium processes, explaining heterogeneous behavior (why identical polymer chains unfold at vastly different rates) that deterministic models cannot.</li>
+      <li><b>Delivers actionable control.</b> By learning the free-energy landscape and its saddle points, the method yields a physics-based control protocol that modifies polymer stretching rates using simple flow switching &mdash; reducing mean unfolding time by ~14% or increasing it by ~15% without any reinforcement learning exploration.</li>
+      <li><b>Validated experimentally.</b> Predictions from simulation-trained models transfer to single-molecule DNA stretching experiments in a microfluidic cross-slot device, distinguishing fast versus slow trajectories beyond human-labeling capability.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>General methodology with cross-domain demonstrations:</b> the framework is applied to both polymer dynamics and spatial epidemic modeling (SIR), showing broad transferability &mdash; matching the journal's emphasis on widely applicable computational methods.</li>
+      <li><b>Physics-AI integration at a principled level:</b> the architecture encodes Onsager's reciprocal relations structurally rather than as post-hoc regularization, representing a clean and rigorous union of classical physics and modern deep learning.</li>
+      <li><b>Both theoretical guarantees and experimental validation:</b> the paper proves long-time stability (Theorem 2) and then validates against real DNA single-molecule experiments &mdash; rigor rarely achieved simultaneously in AI-for-science papers.</li>
+      <li><b>Open data and code:</b> datasets on Harvard Dataverse and code on GitHub enable full reproducibility, consistent with the journal's open-science standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulation data</dt><dd>Bead-rod polymer chain simulations: <strong>300-bead chains</strong> (900 degrees of freedom) in planar elongational flow, subject to hydrodynamic and Brownian forces. 500 trajectories sampled per initial configuration; multiple initial conditions tested. Time measured in units of rod diffusion time &tau;<sub>d</sub>. Generated by the authors using methods in the 'Data preparation' section.</dd>
+      <dt>New experiments</dt><dd>Single-molecule DNA stretching experiments in a <strong>microfluidic cross-slot device</strong> with platinum electrodes. DNA molecules trapped at channel center by applied electric field; image sequences recorded at multiple time points through the unfolding process. Exact trajectory count not stated in the article.</dd>
+      <dt>Prior experiments</dt><dd>Previously published single-molecule DNA stretching data from two independent sources (refs. 31 and 49 in the paper), used to validate the learned fluctuation correlations of thermodynamic coordinates Z<sub>1</sub> and Z<sub>2</sub> near the stretched stable state.</dd>
+      <dt>Epidemic data</dt><dd>Synthetic trajectories from a spatial <strong>SIR (Susceptible-Infectious-Recovered)</strong> model on a spatial domain, generated by the authors, used to demonstrate generality beyond polymer dynamics (Extended Data Figs. 1&ndash;3).</dd>
+      <dt>Repository</dt><dd>All simulation and experimental datasets publicly available in the <a href="https://dataverse.harvard.edu/" target="_blank">Harvard Dataverse</a> (ref. 51 in paper). Code: <a href="https://github.com/MLDS-NUS/DeepLearningCustomThermodynamics" target="_blank">github.com/MLDS-NUS/DeepLearningCustomThermodynamics</a>.</dd>
+      <dt>Volume note</dt><dd>Exact trajectory counts for experimental data and exact spatial dimensions for the SIR domain are not explicitly stated in the article; simulation counts (e.g., 500 trajectories per initial condition for polymer) are stated for specific figures.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Polymer chain simulations (bead-rod)</td><td>Training and testing S-OnsagerNet on stochastic stretching dynamics</td><td>300 beads / 900 DOF; 500 trajectories per initial condition (multiple configs)</td><td><a href="https://dataverse.harvard.edu/" target="_blank">Harvard Dataverse (ref. 51)</a></td></tr>
+        <tr><td>Single-molecule DNA experiments (this work)</td><td>Experimental validation of learned thermodynamic description</td><td>Microfluidic cross-slot device; image time-series; exact count not stated</td><td><a href="https://dataverse.harvard.edu/" target="_blank">Harvard Dataverse (ref. 51)</a></td></tr>
+        <tr><td>Prior DNA stretching data</td><td>Validate equation of state (Z<sub>1</sub>-Z<sub>2</sub> fluctuation correlations)</td><td>Two published datasets (refs. 31 and 49)</td><td>Published literature</td></tr>
+        <tr><td>Spatial SIR epidemic simulation</td><td>Demonstrate generality to epidemic dynamics</td><td>Synthetic spatial domain; exact grid size not stated</td><td><a href="https://dataverse.harvard.edu/" target="_blank">Harvard Dataverse (ref. 51)</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: the paper focuses on methodology; exact dataset sizes for experimental trajectories are not stated explicitly. Numbers above are taken verbatim from figures and methods sections.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Generalized stochastic Onsager principle:</b> the evolution law is parameterized as d<b>Z</b> = &minus;[M(<b>Z</b>) + W(<b>Z</b>)]&nabla;V(<b>Z</b>)dt + &sigma;(<b>Z</b>)d<b>B</b>(t), where M is symmetric positive-semidefinite (dissipation), W is antisymmetric (conservative forces), V is a learned generalized potential, and &sigma; captures thermal noise. The structure encodes Onsager's reciprocal relations and thermodynamic stability by architectural design.</li>
+      <li><b>PCA-ResNet encoder:</b> a residual network with approximate PCA orthogonality regularization maps high-dimensional microscopic coordinates X to low-dimensional closure variables Z-hat. Dimensionality of Z-hat is selected empirically (3 chosen for polymer system).</li>
+      <li><b>End-to-end training:</b> encoder and dynamics network are jointly optimized on microscopic trajectory data by minimizing trajectory prediction error while maintaining physics constraints throughout.</li>
+      <li><b>Automatic differentiation for interpretability:</b> directional perturbations computed via automatic differentiation of the encoder reveal physical meaning of coordinates: Z<sub>2</sub> correlates with end-to-end distance; Z<sub>3</sub> with degree of chain foldedness.</li>
+      <li><b>Free-energy landscape analysis:</b> critical points (stable states and saddle points) of V(Z) found via BFGS optimization; Taylor expansion around critical points yields local equations of state describing fluctuation correlations.</li>
+      <li><b>Data-driven control:</b> saddle-point geometry from the learned landscape guides a flow-switching protocol that aligns or misaligns polymer reduced coordinates with the unstable manifold of the saddle, speeding or slowing unfolding without reinforcement learning.</li>
+      <li><b>Theoretical guarantees:</b> Theorem 2 proves long-time stability (energy dissipation up to thermal fluctuation order); the model encompasses Langevin and generalized Poisson dynamics as special cases.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig1.png" target="_blank">
+        <img src="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig1.png" alt="Fig.1 Overall workflow of S-OnsagerNet" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overall S-OnsagerNet workflow: PCA-ResNet learns closure coordinates; S-OnsagerNet learns stochastic dynamics on them, illustrated against the ideal-gas law analogy.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig2.png" target="_blank">
+        <img src="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig2.png" alt="Fig.2 Polymer stretching simulation and predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Simulation set-up (300-bead chain) and predicted vs. true stretching trajectories, means, standard deviations, and unfolding-time distributions for three initial configurations.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig3.png" target="_blank">
+        <img src="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig3.png" alt="Fig.3 Physical interpretation of closure coordinates" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Interpretation of learned coordinates via automatic differentiation: Z<sub>2</sub> encodes end-to-end distance; Z<sub>3</sub> encodes degree of chain foldedness.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig4.png" target="_blank">
+        <img src="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig4.png" alt="Fig.4 Learned free-energy landscape" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Learned potential V projected onto three 2D planes: contour and surface plots reveal two stable (stretched) and two saddle (folded) states, with fast/slow trajectories overlaid.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig5.png" target="_blank">
+        <img src="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig5.png" alt="Fig.5 Data-driven control of stretching dynamics" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Data-driven control: flow switching guided by saddle-point geometry reduces mean unfolding time by 14.14% (speed-up) or increases it by 14.96% (slow-down).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig6.png" target="_blank">
+        <img src="assets/constructing-custom-thermodynamics-using-deep-learning__s43588-023-00581-5/fig6.png" alt="Fig.6 Experimental validation on DNA stretching" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Experimental validation with single-molecule DNA in a microfluidic cross-slot device: S-OnsagerNet distinguishes fast from slow trajectories beyond human-labeling capability.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 tables appear in Extended Data (not in main text); main text contains 0 tables. Extended Data also includes 3 figures for the spatial SIR epidemic application (Extended Data Figs. 1&ndash;3).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, physics-informed graph learning, explainable ML for spatial prediction).</p>
+
+    <div class="idea">
+      <h3>&#9312; Learn transition pathways in the energy landscape without pre-specified collective variables</h3>
+      <p><span class="lab paper">Extending this paper</span>S-OnsagerNet identifies stable and saddle points of V(Z) via BFGS optimization but does not discover <em>minimum-energy paths</em> connecting them. A direct extension is to integrate the learned free-energy landscape with committor-based path learning &mdash; automatically discovering transition pathways between folded and stretched polymer states without requiring human-specified reaction coordinates. This would also provide a more principled criterion for selecting the closure variable dimension (choose the dimensionality that yields committor-consistent paths) rather than the current trial-and-error procedure.</p>
+      <p><span class="lab mine">Added value to my research</span>Committor-consistent path discovery maps onto spatiotemporal tipping-point detection in my GeoAI work. Just as polymer unfolding has saddle points on a learned energy surface, urban systems (epidemic onset, gentrification, service-demand surge) have spatial tipping points. Learning committor functions on <strong>spatial state spaces derived from mobile-phone or POI data</strong> would let me identify which urban configurations are on the verge of a phase transition &mdash; a novel framing for early-warning indicators in public health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Iterative variational learning of committor-consistent transition pathways using artificial neural networks &mdash; <a href="https://doi.org/10.1038/s43588-025-00828-3" target="_blank">10.1038/s43588-025-00828-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Replace the PCA-ResNet encoder with a graph neural network for structured collective variable discovery</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's PCA-ResNet encoder maps bead-rod polymer coordinates to macroscopic variables through a residual network with approximate orthogonality, effective but agnostic to the polymer's bond topology. Replacing the encoder with a geometric GNN that operates on the molecular graph (beads as nodes, bonds as edges, SE(3)-equivariant features) would leverage structural symmetry, discover more physically grounded closure coordinates without the PCA approximation, and generalize to molecular topologies the original network was not trained on &mdash; branched polymers, ring polymers, or protein backbones.</p>
+      <p><span class="lab mine">Added value to my research</span>In urban spatial analysis, cities are graphs (census units as nodes, adjacency/mobility as edges). Borrowing the GNN encoder idea from this extension, I can learn <strong>graph-structured latent coordinates of urban systems</strong>: a GNN encoder compresses a spatiotemporal mobility or POI graph into a small set of interpretable macroscopic variables (regional hub centrality, accessibility gradient, connectivity assortativity), and S-OnsagerNet-style dynamics on those coordinates model how cities evolve. This is a principled bridge from molecular dynamics to physics-informed graph learning for urban analytics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning the committor without collective variables &mdash; <a href="https://doi.org/10.1038/s43588-026-00958-2" target="_blank">10.1038/s43588-026-00958-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Extract conservation laws from the learned antisymmetric component of S-OnsagerNet dynamics</h3>
+      <p><span class="lab paper">Extending this paper</span>The antisymmetric matrix W(Z) in the learned dynamics encodes conservative (non-dissipative) forces. Since conservative dynamics preserve certain quantities, the learned W could be analyzed &mdash; via manifold learning and optimal transport on trajectory data &mdash; to identify conserved quantities embedded in the complex polymer dynamics that are not known a priori. This extends S-OnsagerNet's interpretability beyond stable states and saddle points: the user would also know what physical invariants constrain the motion, providing a second layer of scientific insight alongside the free-energy landscape.</p>
+      <p><span class="lab mine">Added value to my research</span>Identifying conserved or near-invariant quantities in spatial systems is an underexplored dimension of GeoAI. Applied to urban mobility data, a conservation-law discovery step could reveal invariants such as total daily travel demand being approximately conserved under network perturbations, or spatial entropy remaining stable across temporal slices. These theoretically grounded invariants would provide principled features for my explainable ML models of urban health outcomes, replacing ad-hoc spatial indicators with physics-discovered quantities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Discovering conservation laws using optimal transport and manifold learning &mdash; <a href="https://doi.org/10.1038/s41467-023-40325-7" target="_blank">10.1038/s41467-023-40325-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Drive the closure-problem framework with real mobility data to discover macroscopic epidemic coordinates</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper applies S-OnsagerNet to a synthetic spatial SIR model using idealized diffusion on a spatial grid, discovering a single closure coordinate (spatial overlap of infective and susceptible individuals). A more powerful extension would feed <em>real mobile-phone mobility trajectories</em> as microscopic inputs &mdash; replacing the idealized diffusion kernel with observed human movement patterns &mdash; and apply S-OnsagerNet to discover macroscopic epidemic coordinates that naturally encode superspreader locations, commuter corridors, and socioeconomic heterogeneity in transmission. This would also test whether the learned closure variable generalizes across epidemic waves or geographic regions.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly enriches my SIR-based spatial epidemic modeling and health geography work. I already use multi-source data (mobile phone records, social media, remote sensing) to study disease spread; plugging these microscopic trajectories into an S-OnsagerNet-style framework would yield <strong>interpretable macroscopic epidemic coordinates</strong> from real observational data. The learned coordinates could serve as novel spatial risk indices beyond R<sub>0</sub>, capturing mobility-driven heterogeneity for public health policy &mdash; and would be directly interpretable through the automatic differentiation probe the paper introduces.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine-guided path sampling to discover mechanisms of molecular self-organization &mdash; <a href="https://doi.org/10.1038/s43588-023-00428-z" target="_blank">10.1038/s43588-023-00428-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Use the automatic differentiation interpretability probe as a standard for evaluating geospatial encoder quality</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most underrated contribution is its interpretability protocol: compute &part;Z<sub>i</sub>/&part;X via automatic differentiation, perturb the input in those directions, and identify what physical structure each latent coordinate encodes. The paper uses this ad hoc to interpret Z<sub>2</sub> and Z<sub>3</sub> for polymer chains. A systematic extension would turn this into a <em>standard evaluation metric</em> for latent representations: given any encoder of a physical system, the gradient-perturbation test checks whether each latent dimension has a clean physical interpretation, and ranks encoders accordingly &mdash; providing a principled alternative to dimension selection by predictive accuracy alone.</p>
+      <p><span class="lab mine">Added value to my research</span>When fine-tuning geospatial foundation models, choosing which latent layer or representation to use for downstream spatial prediction is currently done by validation loss. Adopting the gradient-perturbation probe, I can evaluate whether each latent dimension of a geospatial encoder corresponds to interpretable spatial features (terrain, density gradient, network centrality). This upgrades spatial deep learning interpretability from post-hoc attribution (SHAP/LIME applied after training) to <strong>intrinsic gradient probing</strong> during architecture design &mdash; a methodological contribution to explainable GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning and beyond &mdash; <a href="https://doi.org/10.1038/s43588-025-00916-4" target="_blank">10.1038/s43588-025-00916-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A machine learning algorithm for studying how molecules self-assemble and function — AI Digest</title>
+<meta name="description" content="AI Digest: A machine learning algorithm for studying how molecules self-assemble and function (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Molecular self-assembly</span>
+      <span class="tag">Rare events</span>
+      <span class="tag">Transition path sampling</span>
+      <span class="tag">Symbolic regression</span>
+    </div>
+    <h1>A machine learning algorithm for studying how molecules self-assemble and function</h1>
+    <div class="meta">
+      <span class="authors">Hendrik Jung · Roberto Covino · Gerhard Hummer (Max Planck Institute of Biophysics; Frankfurt Institute for Advanced Studies)</span>
+      <span><b>Published</b> 2023-04-24</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00441-2" target="_blank">10.1038/s43588-023-00441-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00441-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A new machine learning algorithm combines <strong>transition path sampling</strong> with <strong>deep learning</strong> to efficiently sample and characterize rare molecular events — such as crystal nucleation, protein folding, and membrane protein assembly — that are inaccessible to brute-force molecular dynamics. The algorithm iteratively learns to predict the <strong>committor function</strong> (the probability of reaching the target state), uses that prediction to concentrate sampling on genuine transition paths, and then distills the learned mechanism into a <strong>human-readable mathematical expression</strong> via symbolic regression. Applied to four qualitatively different molecular systems, it achieves orders-of-magnitude speed-up while producing interpretable mechanistic insight.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Unlocks previously inaccessible timescales.</b> Many biologically and industrially critical molecular processes — protein misfolding, drug efflux, crystallization — occur on timescales far beyond what classical MD can reach. This algorithm directly targets the transition region and bypasses the waiting time, opening up that timescale for study.</li>
+      <li><b>Interpretability without sacrifice.</b> Unlike standard deep learning "black boxes," the method uses symbolic regression to compress the learned neural-network committor into a compact, human-readable formula — preserving mechanism alongside efficiency.</li>
+      <li><b>Self-improving closed loop.</b> The algorithm iteratively samples, retrains, and re-samples: each cycle uses existing knowledge to bias toward informative paths, so accuracy and efficiency increase together without manual tuning.</li>
+      <li><b>Domain-generality demonstrated.</b> Four chemically distinct systems (ion-pair formation, methane hydrate nucleation, transmembrane protein assembly, polymer folding) all yielded mechanistic insight, establishing the method as a general tool rather than a domain-specific one.</li>
+      <li><b>Reduced human intervention.</b> The algorithm autonomously initializes trajectories and extracts mechanisms, lowering the expertise barrier for studying rare molecular events in silico.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty at the intersection of ML and physics-based simulation:</b> the committor-learning + transition-path-sampling + symbolic-regression pipeline is a principled, novel integration, not an incremental improvement.</li>
+      <li><b>Breadth of application:</b> demonstrating the same algorithm on four fundamentally different molecular processes signals broad scientific impact across chemistry, biophysics, and materials science.</li>
+      <li><b>Interpretability as a first-class result:</b> by extracting human-readable expressions, the work addresses the explainability gap in ML-driven science — a priority area for Nature Computational Science.</li>
+      <li><b>Computational efficiency breakthrough:</b> the orders-of-magnitude speed-up translates directly into research capacity — more systems, more temperatures, more conditions — with immediate community adoption potential.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulation systems</dt><dd>Four molecular systems studied: (1) <strong>ion-pair formation</strong> in solution (Na<sup>+</sup>/Cl<sup>-</sup>); (2) <strong>methane hydrate (clathrate) nucleation</strong> — "burning ice" — across multiple temperatures; (3) <strong>transmembrane protein assembly</strong> (membrane protein oligomerization); (4) <strong>polymer folding</strong>. No experimental datasets — all data generated from molecular dynamics (MD) simulations.</dd>
+      <dt>Data generation</dt><dd>Molecular dynamics trajectories generated by the algorithm's own <strong>transition path sampling</strong> (TPS) engine. Simulations conducted at the quantum-mechanical / force-field level of accuracy appropriate to each system (exact force fields cited in the primary article referenced by this briefing: Jung et al., <em>Nature Computational Science</em> 2023). Trajectory volumes not specified in this briefing article.</dd>
+      <dt>Code &amp; reproducibility</dt><dd>Algorithm described conceptually; the peer-reviewed primary article (DOI referenced via this briefing) is the definitive code source. Data availability and code availability statements are in the primary research article. This article is a <em>Research Briefing</em> and does not independently specify data volumes.</dd>
+      <dt>Collaborators</dt><dd>Christoph Dellago group (polymer simulations); Peter G. Bolhuis group (methane clathrate simulations). Both contributed simulation trajectories to the test suite.</dd>
+      <dt>Data scope note</dt><dd>Because this is a simulation-only study, there are no observational databases or geographic datasets. "Data" are generated trajectories whose volumes depend on the system and convergence criterion — exact counts are not stated in the briefing text.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / System</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Ion-pair (Na<sup>+</sup>/Cl<sup>-</sup>) MD trajectories</td><td>Validation of committor learning for a textbook rare event</td><td>Simulation-generated; count not specified in briefing</td><td>Primary article (Jung et al.)</td></tr>
+        <tr><td>Methane hydrate nucleation MD</td><td>Test of temperature transferability of learned mechanism</td><td>Multiple temperatures; trajectory count not specified</td><td>Bolhuis group simulations</td></tr>
+        <tr><td>Transmembrane protein assembly MD</td><td>Test on biologically relevant membrane-protein oligomerization</td><td>Not specified in briefing</td><td>Primary article (Jung et al.)</td></tr>
+        <tr><td>Polymer folding MD</td><td>Test on conformational rare event</td><td>Not specified in briefing</td><td>Dellago group simulations</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this is a Nature Computational Science <em>Research Briefing</em> summarizing the primary article. Exact trajectory counts, system sizes, and simulation durations are reported in the referenced primary research article and its supplementary information, not in this briefing text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Transition path sampling (TPS):</b> concentrates computational effort on the brief windows of actual state-to-state transitions, bypassing long waiting times in metastable basins.</li>
+      <li><b>Committor learning:</b> a deep neural network learns <em>p</em><sub>B</sub>(<em>x</em>), the probability that a configuration <em>x</em> commits to product state B before returning to reactant state A — the fundamental mechanistic quantity for rare events.</li>
+      <li><b>Iterative active sampling:</b> the algorithm closes a self-improving loop — sample paths → retrain committor → use committor to sample more informative paths — so efficiency increases each iteration.</li>
+      <li><b>Symbolic regression:</b> the trained neural-network committor is distilled into a compact, human-readable mathematical expression, converting a black-box model into a mechanistic formula.</li>
+      <li><b>Cross-system generalization test:</b> the learned mechanisms are tested for transferability across chemical conditions (ion type) and thermodynamic conditions (temperature), confirming that the extracted expressions describe physics rather than overfit trajectories.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-machine-learning-algorithm-for-studying-how-molecules-self-assemble-and-function__s43588-023-00441-2/fig1.png" target="_blank">
+        <img src="assets/a-machine-learning-algorithm-for-studying-how-molecules-self-assemble-and-function__s43588-023-00441-2/fig1.png" alt="Fig.1 Learning assembly mechanisms from path sampling" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Learning assembly mechanisms from path sampling. The method iterates between sampling transition paths connecting states A and B, and learning the committor p<sub>B</sub>(x) of reaching state B first. Symbolic regression then produces a human-interpretable expression of the learned assembly mechanism.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0). This is a Research Briefing (1 figure); full figures and tables are in the primary research article.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, healthcare/urban accessibility).</p>
+
+    <div class="idea">
+      <h3>① Replace fixed symbolic regression with an iterative variational committor learner</h3>
+      <p><span class="lab paper">Extending this paper</span>The algorithm uses symbolic regression as a post-hoc distillation step after the neural-network committor converges. A direct extension: replace this two-stage pipeline with an <strong>iterative variational procedure that enforces committor consistency throughout training</strong>, so that the transition pathways themselves are constrained to be physically meaningful at every iteration — not just at the end. This would tighten the loop between interpretability and sampling, yielding expressions that are guaranteed committor-consistent rather than approximated post-hoc.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatiotemporal analysis, I often fit a model and then post-hoc apply SHAP/LIME for interpretability — the same two-stage weakness. Borrowing this paper's idea of <strong>variational interpretability constraints</strong> could seed a spatiotemporal prediction architecture where the spatial feature weights are enforced to satisfy physical conservation laws (e.g., flow conservation) during training, not merely explained afterward — directly relevant to my physics-informed graph learning agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Iterative variational learning of committor-consistent transition pathways using artificial neural networks — <a href="https://doi.org/10.1038/s43588-025-00828-3" target="_blank">10.1038/s43588-025-00828-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Drive the active sampling loop with uncertainty quantification rather than committor alone</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's iterative loop resamples based on the current committor estimate, but it has no explicit <strong>uncertainty model</strong> — it cannot distinguish "I am confident this region is unimportant" from "I have not sampled this region yet." An extension: inject <strong>uncertainty-driven dynamics</strong> (as in Bayesian neural network or ensemble-based uncertainty potentials) so the sampling engine actively seeks configurations where the committor estimate is least certain, accelerating convergence and reducing redundant path sampling.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML models for spatial prediction (MGWR, ensemble methods) similarly have no principled uncertainty-aware active data-collection strategy — predictions degrade silently in data-sparse regions. This paper's closed-loop resampling pattern, augmented with uncertainty quantification, could motivate an <strong>active geospatial data-collection framework</strong> where the next sensor placement or survey location is chosen where the spatiotemporal model is most uncertain.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Generalize the committor concept to spatiotemporal "fate" prediction in urban systems</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper notes its algorithm is applicable "whenever a dynamic system has a notion of likely fate." Molecular self-assembly uses the committor as the ideal reaction coordinate; this paper makes learning the committor itself the central task. A bold extension: apply the same mathematical framework to <strong>nucleation-like phenomena in social or urban systems</strong> — e.g., the transition of a neighborhood from low to high disease prevalence, or a city district from walkable to car-dependent — treating urban state change as a rare event with a spatial committor.</p>
+      <p><span class="lab mine">Added value to my research</span>In health geography, epidemic threshold crossings and healthcare access collapses are exactly rare-but-consequential transitions in high-dimensional sociospatial state spaces. Formulating a <strong>spatial committor for healthcare access collapse</strong> — learned from mobility, facility, and population trajectories — would let me predict which neighborhoods are "on the verge" of losing access, not just which are currently underserved. This reframes my 2SFCA/R2SFCA work as rare-event detection rather than static snapshot analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning — <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Scale committor learning to data-scarce molecular systems via foundation model pre-training</h3>
+      <p><span class="lab paper">Extending this paper</span>The algorithm requires an initial transition path as a "seed." For biologically critical systems where even a single transition is computationally prohibitive (e.g., amyloid nucleation, viral capsid assembly), the algorithm cannot bootstrap. An extension: <strong>pre-train a universal committor backbone</strong> on the large library of accessible molecular systems (ion pairs, small peptides, simple crystals) and fine-tune on the hard system with minimal trajectories — analogous to how large language models transfer to new tasks. The symbolic-regression distillation step would then produce a fine-tuned interpretable formula rather than training from scratch.</p>
+      <p><span class="lab mine">Added value to my research</span>I work on fine-tuning geospatial foundation models for urban/health applications. The two challenges are structurally analogous: a large pre-trained model must be specialized to a data-scarce target domain while retaining generalizable structure. This paper's interpretability-through-symbolic-regression idea translates directly: <strong>fine-tune a geospatial FM, then symbolic-regress its attention weights</strong> into a compact spatial accessibility formula — a new approach to explainable GeoAI that I have not yet explored.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Data as the next challenge in atomistic machine learning — <a href="https://doi.org/10.1038/s43588-024-00636-1" target="_blank">10.1038/s43588-024-00636-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Couple the symbolic-regression output to a physics-informed graph neural network for cluster/network nucleation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper currently treats each molecular system independently — it learns one committor expression per system. An extension: use the symbolic formulas extracted from multiple systems as <strong>soft physical constraints in a graph neural network</strong>, where nodes are atomic configurations and edges encode interaction energies. This physics-informed GNN would then generalize the committor across the chemical space of molecular clusters, enabling prediction of nucleation rates for molecules never explicitly simulated — a leap from system-specific mechanistic insight to a transferable nucleation theory.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning work models spatial networks (transport, social, utility). The idea of distilling a trained model into a formula and then re-encoding that formula as a constraint in the next-generation model is a <strong>cascade interpretability-to-constraint workflow</strong> I can apply to urban accessibility networks: distill MGWR spatial weights into a scaling law, encode that law as a GNN edge-weight prior, and train a transferable accessibility GNN — closing the loop between statistical spatial models and graph-based GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Current and future machine learning approaches for modeling atmospheric cluster formation — <a href="https://doi.org/10.1038/s43588-023-00435-0" target="_blank">10.1038/s43588-023-00435-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature / Jung et al. (CC BY 4.0); shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

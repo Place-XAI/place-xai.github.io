@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Improving generalization of ML-identified biomarkers using causal modelling — AI Digest</title>
+<meta name="description" content="AI Digest: Improving generalization of machine learning-identified biomarkers using causal modelling with examples from immune receptor diagnostics (Nature Machine Intelligence, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Causal Inference</span>
+      <span class="tag">Biomarker Discovery</span>
+      <span class="tag">ML Generalization</span>
+      <span class="tag">Immune Repertoires</span>
+    </div>
+    <h1>Improving generalization of machine learning-identified biomarkers using causal modelling with examples from immune receptor diagnostics</h1>
+    <div class="meta">
+      <span class="authors">Milena Pavlovi&#263; &middot; Ghadi S. Al Hajj &middot; Chakravarthi Kanduri &middot; Johan Pensar &middot; Mollie E. Wood &middot; Ludvig M. Sollid &middot; Victor Greiff &middot; Geir K. Sandve</span>
+      <span><b>Published</b> 2024-01-24</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-023-00781-8" target="_blank">10.1038/s42256-023-00781-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-023-00781-8" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>ML-based diagnostics trained on high-dimensional molecular data &mdash; here, adaptive immune receptor repertoires (AIRRs) &mdash; <strong>fail to generalize</strong> when confounders, selection biases, or batch effects differ between training and deployment populations. A <strong>causal modelling perspective</strong> formalizes these failure modes through directed acyclic graphs and do-calculus, enabling principled identification and correction of spurious associations. Simulation experiments confirm that <strong>accounting for causal structure substantially improves balanced error rates</strong> under distribution shift, establishing causal reasoning as an essential component of robust biomarker discovery.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Diagnoses the root cause of clinical AI failures.</b> The paper shows that ML performance collapse on new cohorts is not random &mdash; it traces back to identifiable causal graph structures (confounding, selection bias, batch effects) that can be diagnosed and corrected before deployment.</li>
+      <li><b>Provides a unified language for bias sources.</b> By mapping confounder shift, selection-collider bias, and batch effects to formal causal graph motifs, the framework lets practitioners systematically audit study designs rather than debugging models post-hoc.</li>
+      <li><b>Generalizes beyond AIRRs.</b> Although grounded in immune receptor diagnostics, the authors explicitly frame the causal perspective as applicable to any high-dimensional molecular biomarker (gene expression, DNA methylation, gut microbiota), amplifying the paper's scope.</li>
+      <li><b>Ships open simulation benchmarks and reporting standards.</b> All simulation experiments are openly available on Zenodo (four records), the code on GitHub, and the paper proposes concrete MiAIRR-compliant reporting standards for future AIRR diagnostic studies.</li>
+      <li><b>Highlights the anticausal trap.</b> ML models predicting the cause from the effect (anticausal direction, e.g., immune state from AIRR) are structurally less stable than causal-direction models &mdash; a principled warning that reshapes how diagnostic objectives should be framed.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Bridges two active communities:</b> causal inference (Pearl's do-calculus) and applied ML, with a domain case study &mdash; fitting NMI's mission of foundational ML research with real-world relevance.</li>
+      <li><b>Review/Perspective format with empirical grounding:</b> combines conceptual framework, simulation experiments, and practical guidelines, matching NMI's appetite for methodological perspectives that advance the field.</li>
+      <li><b>Clinical urgency:</b> diagnostic robustness is a high-stakes problem; the paper directly addresses why promising ML diagnostics fail in clinical translation &mdash; a concern NMI has elevated repeatedly.</li>
+      <li><b>Transferable framework across molecular datatypes:</b> the causal graph perspective applies to genomics, transcriptomics, microbiome, and imaging, making it broadly impactful for the NMI readership.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Data type</dt><dd>All data in this paper are <strong>fully simulated</strong> &mdash; no real patient cohorts are used. The simulation framework generates synthetic AIRR data (TCR&beta; sequences) under controlled causal models, enabling exact manipulation of confounder distributions, selection biases, and batch effects.</dd>
+      <dt>Simulation scale</dt><dd>Each experiment uses <strong>500 AIRRs for training/validation and 500 for testing</strong>, with <strong>500 TCR&beta;s per repertoire</strong>, repeated across <strong>30 independent repetitions</strong>. Immune signals consist of 3-mer motifs implanted in CDR3 sequences.</dd>
+      <dt>Experiment 1</dt><dd>Confounder shift: varying confounder probability from stable to slight shift (P=0.6&#8594;0.8) to substantial shift (P=0.8&#8594;0.01). Zenodo: <a href="https://zenodo.org/record/7756163" target="_blank">zenodo.org/record/7756163</a></dd>
+      <dt>Experiment 2</dt><dd>Selection bias: selection node placed on collider, confounder, or effect in causal DAG. Zenodo: <a href="https://zenodo.org/record/7752837" target="_blank">zenodo.org/record/7752837</a></dd>
+      <dt>Experiment 3 (AIRR)</dt><dd>Batch effect in AIRR setting using k-mer frequencies and L1-regularized logistic regression. Zenodo: <a href="https://zenodo.org/record/7752115" target="_blank">zenodo.org/record/7752115</a></dd>
+      <dt>Experiment 3 (transcriptomic)</dt><dd>Batch effect in transcriptomic setting (gene-expression analogue, comparison domain with established batch-correction methods). Zenodo: <a href="https://zenodo.org/record/7727894" target="_blank">zenodo.org/record/7727894</a></dd>
+      <dt>Code</dt><dd>Openly available on GitHub: <a href="https://github.com/uio-bmi/causalairr" target="_blank">github.com/uio-bmi/causalairr</a></dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Zenodo 7756163</td><td>Experiment 1 &mdash; confounder shift</td><td>Simulated AIRR, 500+500 repertoires &times; 30 reps</td><td><a href="https://zenodo.org/record/7756163" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>Zenodo 7752837</td><td>Experiment 2 &mdash; selection bias</td><td>Simulated AIRR, 500+500 repertoires &times; 30 reps</td><td><a href="https://zenodo.org/record/7752837" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>Zenodo 7752115</td><td>Experiment 3 &mdash; batch effects (AIRR)</td><td>Simulated TCR&beta; data with implanted 3-mer signals</td><td><a href="https://zenodo.org/record/7752115" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>Zenodo 7727894</td><td>Experiment 3 &mdash; batch effects (transcriptomic)</td><td>Simulated gene-expression data with biological signal overlay</td><td><a href="https://zenodo.org/record/7727894" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>GitHub: uio-bmi/causalairr</td><td>Simulation framework and analysis code</td><td>Python code for all three experiments</td><td><a href="https://github.com/uio-bmi/causalairr" target="_blank">github.com</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: this is a simulation/review paper &mdash; no real patient data are used. All numbers (500 repertoires, 30 repetitions) are taken verbatim from the article's figure captions.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Causal graphical modelling (DAGs):</b> biological and experimental variables (immune state, AIRR, HLA, age, batch, selection node) are encoded as directed acyclic graphs; edges represent direct causal mechanisms. The causal structure determines which biases arise and how to correct them.</li>
+      <li><b>Do-calculus (Pearl's framework):</b> used to formalize identifiability of diagnostic causal effects under confounding, selection bias, and covariate shift &mdash; distinguishing stable (causal-direction) from unstable (anticausal-direction) prediction tasks.</li>
+      <li><b>Structural causal models:</b> each simulation experiment instantiates a specific structural causal model, allowing exact control of confounder distributions, selection mechanisms, and batch effect magnitudes.</li>
+      <li><b>k-mer frequency representation:</b> TCR&beta; CDR3 sequences are encoded as 3-mer frequency vectors; L1-regularized logistic regression is used as the ML classifier throughout all experiments.</li>
+      <li><b>Batch-effect correction:</b> linear regression on k-mer frequencies removes batch effects in experiment 3; performance compared against uncorrected and control (no batch effects) scenarios.</li>
+      <li><b>Performance metric:</b> balanced error rate (BER) reported as median across 30 repetitions, enabling comparison across class-balanced and imbalanced settings.</li>
+      <li><b>Reporting standards proposal:</b> the paper derives concrete study-design guidelines and MiAIRR-compliant metadata reporting standards from the causal analysis framework.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig1.png" target="_blank">
+        <img src="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig1.png" alt="Fig.1 AIRR-based diagnostic pipeline and causal graph" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> AIRR-based diagnostic pipeline (a), example causal DAG for a viral-infection setting (b), and causal vs. anticausal prediction directions (c).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig2.png" target="_blank">
+        <img src="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig2.png" alt="Fig.2 Selection bias in causal models" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Three DAG patterns generating selection bias: selecting on a collider (a), confounder-driven selection (b), and selecting on the effect variable (c).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig3.png" target="_blank">
+        <img src="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig3.png" alt="Fig.3 HLA causal roles across immune diseases" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> HLA as precision covariate in viral infection (a), as confounder and moderator in coeliac disease (b), and as mediator in cancer (c).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig4.png" target="_blank">
+        <img src="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig4.png" alt="Fig.4 Prediction performance under confounder shift and selection bias" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Balanced error rate under confounder distribution shift (a&ndash;b) and selection bias present in training but not test (c&ndash;d); 500 repertoires &times; 30 repetitions.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig5.png" target="_blank">
+        <img src="assets/improving-generalization-of-machine-learning-identified-biomarkers-using-causal-modelling-__s42256-023-00781-8/fig5.png" alt="Fig.5 Batch effects in transcriptomic and AIRR settings" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Batch effects raise error rates in transcriptomic (a&ndash;b) and AIRR (c&ndash;d) settings; uncorrected batch effects cause classifiers to learn spurious k-mer signals, especially in the AIRR domain.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); supplementary text contains experiment details and proposed reporting checklists.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, health geography, explainable &amp; physics-informed graph learning, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>&#9312; Translate the paper's causal DAG audit to spatial health datasets with geographic confounders</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper focuses on biological confounders (HLA, age, sex) and experimental batch effects in AIRR diagnostics. However, the same causal DAG framework applies wherever unmeasured population-level variables correlate with both predictor and outcome &mdash; a situation endemic in spatial health data. An extension would construct causal DAGs for geographic confounders (neighborhood deprivation, built environment, environmental exposures) that co-determine both health outcomes and the features used by ML classifiers. The paper's approach of encoding the confounder as a DAG node and using do-calculus to specify adjustment sets could be directly translated to a "spatial-causal diagnostic" pipeline that audits whether geographic covariates act as confounders, precision covariates, or mediators &mdash; mirroring the HLA role analysis of Fig. 3 of this paper.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work on spatial health outcomes (healthcare accessibility disparities, digital-divide predictors) faces exactly the same confounding problem: neighborhood socioeconomic status co-determines both the "treatment" (e.g., telehealth availability) and the "outcome" (health utilization). Adopting this paper's causal DAG audit before fitting GWR/MGWR or ML ensemble models would formalize which variables to condition on vs. leave open, replacing ad hoc covariate selection with principled backdoor-criterion adjustment &mdash; directly improving causal credibility in spatial health diagnostics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Causal inference and counterfactual prediction in machine learning for actionable healthcare &mdash; <a href="https://doi.org/10.1038/s42256-020-0197-y" target="_blank">10.1038/s42256-020-0197-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Apply stable learning to spatially heterogeneous ML models to isolate environment-invariant health signals</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper proposes invariant prediction &mdash; learning features that produce stable predictions across different environments &mdash; as one path to robust biomarkers. In the AIRR domain, "environments" are study cohorts from different hospitals or countries. An extension would operationalize invariant risk minimization (IRM) or stable learning directly within the AIRR simulation pipeline: rather than correcting observed confounders via do-calculus, learn representations whose predictive relationship to immune state is invariant across cohort-environments (e.g., across age-stratified or geography-stratified subgroups), and benchmark against the paper's logistic-regression baseline under the same BER metric.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatiotemporal health models (e.g., predicting mental health service utilization across counties), the "environments" are naturally defined by administrative regions or census tracts with heterogeneous socioeconomic contexts. Applying stable learning to identify spatial predictors that are invariant across geographic environments would produce health models that generalize across cities rather than overfitting to local confounders &mdash; enabling transferable GeoAI models for health equity analysis directly relevant to my 2SFCA/R2SFCA research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stable learning establishes some common ground between causal inference and machine learning &mdash; <a href="https://doi.org/10.1038/s42256-022-00445-z" target="_blank">10.1038/s42256-022-00445-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Combine the paper's causal audit with active experimental design to prioritize which confounders to measure</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies that unmeasured confounders (e.g., geographic environment as an unobserved DAG node) are the most dangerous because they cannot be adjusted for without measurement. However, measuring every potential confounder is expensive. An extension would integrate the paper's causal graph with active learning for intervention design: given a partial DAG and a budget for additional measurements, sequentially query the most informative confounder to observe, maximizing the reduction in bias of the ML diagnostic. This would make the paper's framework actionable for prospective AIRR study design, not just retrospective diagnosis of what went wrong.</p>
+      <p><span class="lab mine">Added value to my research</span>In my health geography studies, collecting ground-truth accessibility data (e.g., actual travel times to clinics by mode) is expensive relative to proxy measures (straight-line distance, census statistics). An active-learning confounder-selection strategy derived from this paper's causal framework would indicate which spatial variables are most worth measuring in a new city or region, optimizing field data collection budgets for 2SFCA accessibility and telehealth-divide studies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Active learning for optimal intervention design in causal models &mdash; <a href="https://doi.org/10.1038/s42256-023-00719-0" target="_blank">10.1038/s42256-023-00719-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Stress-test the paper's correction strategies against OOD deployment using functionally invariant path engineering</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that batch-effect correction (linear regression on k-mer frequencies) and confounder adjustment reduce BER under moderate distribution shifts, but does not characterize <em>how much</em> shift the corrections can tolerate before breaking. An extension would build an OOD stress-test suite: fix the correction strategy, then systematically increase the magnitude of distribution shift and measure when each correction fails. Pairing this with "functionally invariant path" engineering &mdash; identifying the subset of model parameters consistent across environments &mdash; would isolate which components of the AIRR classifier are genuinely causal-direction stable vs. fragile, providing a principled model hardening step.</p>
+      <p><span class="lab mine">Added value to my research</span>My ML ensemble models for spatial prediction (e.g., predicting EV charging demand or hospital utilization across cities) face similar OOD stress: a model trained in one city is deployed in a city with very different land-use structure. This paper's BER-under-shift experiments provide a methodological template for my own OOD benchmarking, and the "invariant path" framing suggests a way to identify which spatial features of my ensemble are genuinely transferable vs. city-specific artifacts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Engineering flexible machine learning systems by traversing functionally invariant paths &mdash; <a href="https://doi.org/10.1038/s42256-024-00902-x" target="_blank">10.1038/s42256-024-00902-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Adapt the paper's causal DAG batch-node framework to multi-modal spatial data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper treats batch effects as a DAG node whose edges to the AIRR node represent systematic protocol-level biases corrupting the biological signal. This is formally identical to the problem of fusing data from heterogeneous sensors or platforms &mdash; remote sensing vs. mobile phone vs. social media &mdash; where each source introduces its own systematic "batch" bias (spatial resolution, temporal sampling, population representativeness). An extension would map each data source to a "batch node" in a causal graph and ask: when does fusing heterogeneous sources introduce spurious associations that corrupt a spatial ML predictor, and how can do-calculus guide the adjustment? The paper's simulation experiments could be adapted to spatial feature vectors to benchmark multi-source fusion strategies.</p>
+      <p><span class="lab mine">Added value to my research</span>My data-fusion research combines mobile-phone records, social media, remote sensing, and POI data to predict urban health outcomes. Each source has known biases (mobile-phone data over-represents young urban males; social media is geographically clustered near city centers). Treating each source as a "batch variable" in a causal DAG &mdash; exactly as this paper treats sequencing protocol as a batch node &mdash; gives a principled framework for diagnosing and correcting cross-source confounding in my multi-source GeoAI models, improving both reproducibility and spatial generalizability of my FAIR open-science pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging &mdash; <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

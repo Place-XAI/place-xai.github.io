@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep contrastive learning of molecular conformation for efficient property prediction — AI Digest</title>
+<meta name="description" content="AI Digest: Deep contrastive learning of molecular conformation for efficient property prediction (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Contrastive Learning</span>
+      <span class="tag">Molecular Property Prediction</span>
+      <span class="tag">Domain Adaptation</span>
+      <span class="tag">Graph Neural Networks</span>
+    </div>
+    <h1>Deep contrastive learning of molecular conformation for efficient property prediction</h1>
+    <div class="meta">
+      <span class="authors">Yang Jeong Park &middot; HyunGi Kim &middot; Jeonghee Jo &middot; Sungroh Yoon</span>
+      <span><b>Published</b> 2023-12-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00560-w" target="_blank">10.1038/s43588-023-00560-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00560-w" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Existing GNN models for quantum-chemical property prediction require expensive DFT-relaxed geometries at inference, creating a computational bottleneck that limits their use in large-scale screening. The proposed <strong>Local Atomic environment Contrastive Learning (LACL)</strong> method bridges the domain gap between DFT-level and cost-effective MMFF/ML-generated conformations via contrastive alignment, achieving <strong>quantum-chemical accuracy (&lt;1 kcal mol&#8315;&#185; error) using only MMFF-relaxed inputs</strong>. Validated on QM9 (134,000 small organic molecules) and QMugs (68,206 drug-relevant conformations), LACL generalizes from small organics to long-chain pharmacological compounds and enables fast, accurate large-scale molecular screening without additional geometry optimization.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Removes the DFT bottleneck for high-throughput screening.</b> DFT relaxation scales cubically with atom count; LACL bypasses it entirely by accepting cheap MMFF or ML-generated conformations, accelerating virtual screening by orders of magnitude for the same prediction accuracy.</li>
+      <li><b>Domain-agnostic representation is principled, not a data workaround.</b> Rather than fine-tuning on target-domain data (which requires expensive labels), LACL explicitly trains the encoder to be indifferent to the conformation-generation method, capturing the semantics of the local atomic environment independent of geometric artifacts.</li>
+      <li><b>Enables inverse molecular engineering at scale.</b> Because LACL decouples property prediction from expensive geometry optimization, it plugs into iterative design loops (reinforcement learning, active learning, generative models) where millions of candidates must be scored quickly.</li>
+      <li><b>Generalizes to biological and pharmacological molecules.</b> The QMugs benchmark (biologically relevant chains up to 20 heavy atoms) confirms the approach is not confined to small-molecule chemistry, positioning LACL for real drug discovery pipelines targeting proteins and polypeptides.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Addresses a universal bottleneck in computational chemistry:</b> the domain-shift problem between training and inference geometries affects any GNN trained on DFT data, giving the contribution broad relevance across cheminformatics, materials science, and drug discovery communities.</li>
+      <li><b>Methodological novelty with rigorous theory:</b> LACL adds an E(3)-equivariant latent-vector representation to the ALIGNN backbone and combines BGRL-style contrastive loss with property prediction loss end-to-end, a clean and reproducible technical advance.</li>
+      <li><b>Dual-benchmark validation at scale:</b> results on two independent benchmarks (QM9 and QMugs) with multiple target properties and multiple conformation domains (MMFF and CGCF) provide strong evidence of generality not overfitting to a single dataset.</li>
+      <li><b>Open science standard:</b> preprocessed data, model checkpoints, and full training code released on GitHub and figshare with persistent DOIs, exemplifying Nature Computational Science's reproducibility requirements.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>QM9 dataset</dt><dd><strong>134,000 small organic molecules</strong> with quantum-chemical properties computed at DFT B3LYP/6-31G(2df,p) level. Split: 110,000 training / 10,000 validation / remainder test. Source: Ramakrishnan et al. 2014.</dd>
+      <dt>QMugs dataset</dt><dd><strong>665,000 biologically and pharmacologically relevant molecules</strong> (full dataset); authors extract <strong>68,206 conformations with &le;20 heavy atoms (QMugs20)</strong>, each representing the lowest-energy conformation. Split: 65,000 training / 1,500 validation / 1,706 test.</dd>
+      <dt>Conformation methods</dt><dd>Three target-domain generators evaluated: <strong>MMFF relaxation</strong> (RDKit), <strong>CGCF-confgen</strong> (deep learning-based), and <strong>ETKDG</strong> (RDKit probabilistic). Source domain: DFT geometry (PySCF library).</dd>
+      <dt>Properties predicted</dt><dd>Multiple QM9 targets: dipole moment (&mu;), HOMO&#8211;LUMO bandgap, internal energy at 0K (U0), free energy at 298.15K (G), and others. QMugs adds pharmacologically relevant targets (Supplementary Tables 1&#8211;2).</dd>
+      <dt>Long-chain test</dt><dd>12 pairs of compact and open conformers selected from 390 QMugs20 test molecules with 20 heavy atoms. Labels obtained via XTB semiempirical relaxation + ASE package dipole moments.</dd>
+      <dt>Code &amp; data</dt><dd>Preprocessed data: <a href="https://doi.org/10.6084/m9.figshare.24445129" target="_blank">figshare 24445129</a>. Model checkpoints + training code: <a href="https://github.com/parkyjmit/LACL" target="_blank">github.com/parkyjmit/LACL</a> and <a href="https://doi.org/10.6084/m9.figshare.24456802" target="_blank">figshare 24456802</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>QM9</td><td>Primary benchmark; source domain = DFT B3LYP/6-31G geometry</td><td>134,000 small organic molecules; 110k train / 10k val</td><td><a href="https://doi.org/10.1038/sdata.2014.22" target="_blank">nature.com</a></td></tr>
+        <tr><td>QMugs20</td><td>Biological/pharmacological benchmark (&le;20 heavy atoms)</td><td>68,206 conformations; 65k train / 1,500 val / 1,706 test</td><td><a href="https://doi.org/10.1038/s41597-022-01390-7" target="_blank">nature.com</a></td></tr>
+        <tr><td>RDKit (MMFF + ETKDG)</td><td>Target-domain cost-effective conformation generation</td><td>Applied to all SMILES in QM9 and QMugs20</td><td><a href="https://www.rdkit.org" target="_blank">rdkit.org</a></td></tr>
+        <tr><td>CGCF-confgen</td><td>Deep learning target-domain conformation generation</td><td>Applied to QM9 and QMugs SMILES strings</td><td><a href="https://github.com/MinkaiXu/ConfGF" target="_blank">GitHub</a></td></tr>
+        <tr><td>PySCF</td><td>DFT relaxation for source domain and runtime comparison</td><td>Subset of molecules; runtime benchmarked vs. LACL+MMFF</td><td><a href="https://pyscf.org" target="_blank">pyscf.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: the full QMugs dataset contains 665,000 molecules but this study uses only the 68,206-conformation subset with &le;20 heavy atoms. All volumes are taken verbatim from the article; no numbers have been estimated or extrapolated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Modified ALIGNN backbone:</b> the atomistic line graph neural network (ALIGNN) models three-body bond-angle interactions via dual-graph convolution on an atom-bond graph and its bond-angle line graph, with radial basis function (RBF) expansions of interatomic distances and angles.</li>
+      <li><b>Equivariant latent-vector representation:</b> a displacement-vector equivariant layer computes v<sub>ij</sub> = (&phi;<sub>ij</sub>) &otimes; u<sub>ij</sub>, where u<sub>ij</sub> is the unit vector of the displacement r<sub>ij</sub>, ensuring predictions of vector properties (dipole moment) satisfy E(3) equivariance.</li>
+      <li><b>BGRL-based contrastive alignment:</b> two views of the same molecule (DFT geometry vs. MMFF/CGCF geometry) are encoded by online and target encoders; cosine-similarity loss maximizes agreement between online projection Z&#771;&#8321; and target representation H&#771;&#8322;. Target encoder weights updated by exponential moving average (EMA).</li>
+      <li><b>Joint end-to-end training:</b> total loss = contrastive BGRL loss + &alpha; &times; MSE property prediction loss, trained simultaneously to prevent representational collapse while maintaining predictive accuracy.</li>
+      <li><b>Evaluation protocol:</b> MAE on multiple QM9 and QMugs20 property targets; runtime benchmarking against DFT+ALIGNN baseline; Tanimoto distance for conformation dissimilarity quantification; t-SNE visualization of node/graph embeddings to confirm domain-agnostic alignment.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-contrastive-learning-of-molecular-conformation-for-efficient-property-prediction__s43588-023-00560-w/fig1.png" target="_blank">
+        <img src="assets/deep-contrastive-learning-of-molecular-conformation-for-efficient-property-prediction__s43588-023-00560-w/fig1.png" alt="Fig.1 Comparison of molecular prediction methodologies" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Comparison of previous DFT-constrained approach vs. LACL &mdash; illustrates the domain-shift problem in the encoded space and how contrastive alignment achieves domain-agnostic representations and improved parity-plot accuracy.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-contrastive-learning-of-molecular-conformation-for-efficient-property-prediction__s43588-023-00560-w/fig2.png" target="_blank">
+        <img src="assets/deep-contrastive-learning-of-molecular-conformation-for-efficient-property-prediction__s43588-023-00560-w/fig2.png" alt="Fig.2 Overall LACL schematic" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Overall LACL architecture &mdash; (a) dual-view contrastive alignment pipeline; (b) modified ALIGNN encoder with bond-angle line graph; (c) sequential graph convolutions; (d) equivariant latent-vector update rule via outer product.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 in the main text (tables_in_main_text = 0). Supplementary contains Tables 1&ndash;4 (per-property MAE on QM9 and QMugs20 for all baseline comparisons) and Figs. 1&ndash;10 (parity plots, t-SNE embeddings, conformer generalization experiments, symmetric edge-embedding ablation).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, physics-informed graph learning, 2SFCA/R2SFCA accessibility modeling).</p>
+
+    <div class="idea">
+      <h3>&#9312; Transfer LACL's domain-adaptation strategy to distribution-shifted geospatial label sources</h3>
+      <p><span class="lab paper">Extending this paper</span>LACL's core innovation is training a GNN to align two views of the same object produced by different cost-accuracy pipelines (DFT vs. MMFF). The paper validates this on two molecular benchmarks but leaves open whether the BGRL-based alignment generalizes across larger distribution gaps, such as semi-empirical XTB vs. DFT geometries, or whether the EMA target-encoder trick remains stable for very long-chain molecules. A direct extension: benchmark LACL against adversarial domain-adaptation and MMD-based baselines across diverse molecular families (proteins, metal-organic frameworks), and quantify how the contrastive loss coefficient &alpha; trades off domain alignment against property-prediction accuracy as the domain gap grows.</p>
+      <p><span class="lab mine">Added value to my research</span>The LACL paradigm maps directly onto a core tension in GeoAI spatial prediction: a high-quality but expensive label source (e.g., survey-measured primary care access) vs. a cheap noisy proxy (OSM-inferred proximity). Applying LACL-style contrastive alignment to <strong>spatial accessibility modeling</strong> &mdash; where the "source domain" is survey-calibrated 2SFCA scores and the "target domain" is POI-proximity estimates &mdash; could yield domain-agnostic healthcare-access embeddings that generalize across data-scarce cities, reducing dependence on expensive ground-truth accessibility surveys for every new city.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks &mdash; <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Extend LACL's equivariant GNN layer to physics-informed spatial graph operators</h3>
+      <p><span class="lab paper">Extending this paper</span>LACL adds a displacement-vector equivariant layer v<sub>ij</sub> = &phi;<sub>ij</sub> &otimes; u<sub>ij</sub> to ensure E(3)-equivariant predictions of vector properties like dipole moments. The paper demonstrates this for small organic molecules and QMugs20 chains, but the equivariance architecture is not yet tested on aperiodic macromolecular systems (proteins, polymers) or on tensor properties (polarizability). A direct extension: systematically ablate the equivariant head across property types and molecule sizes, and explore whether the outer-product equivariance can be generalized to higher-rank tensors by replacing the unit-vector outer product with a spherical harmonics expansion (as in SE(3)-Transformers or MACE).</p>
+      <p><span class="lab mine">Added value to my research</span>The equivariant-graph-operator design in LACL provides a direct blueprint for my <strong>physics-informed graph learning for spatiotemporal phenomena</strong>. Just as molecular geometry constrains valid atomic interactions, urban geometry (street network topology, Euclidean distances between neighborhoods) constrains valid spatial interactions. Encoding these geometric constraints as equivariant message-passing operations &mdash; rather than learning them from scratch &mdash; would make spatiotemporal GNNs for health-outcome prediction (mental health, telehealth access) more data-efficient and physically interpretable, particularly for sparse rural health-access mapping scenarios.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Overcoming the barrier of orbital-free density functional theory for molecular systems using deep learning &mdash; <a href="https://doi.org/10.1038/s43588-024-00605-8" target="_blank">10.1038/s43588-024-00605-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Replace LACL's single-conformer pairwise loss with a multi-conformer ensemble encoder</h3>
+      <p><span class="lab paper">Extending this paper</span>LACL trains on pairs of conformations (DFT source + one MMFF/CGCF target). However, a molecule does not have a single equilibrium conformation &mdash; it has a Boltzmann-weighted ensemble of low-energy structures. The paper selects a single lowest-energy conformation from QMugs, leaving ensemble-level conformational uncertainty entirely unexploited. A direct extension: incorporate multiple conformers per molecule using a set-level encoder that aggregates across the ensemble before the contrastive alignment step, so LACL learns property predictions robust to conformational uncertainty rather than over-fitted to one geometry. The molecular set representation learning paradigm from the corpus offers a ready architecture for this aggregation.</p>
+      <p><span class="lab mine">Added value to my research</span>This ensemble-robustness framing resonates directly with my <strong>multi-source data fusion</strong> research: mobile-phone records, social media, and remote sensing each produce a different stochastic "view" of the same urban phenomenon (population mobility during a health event, neighborhood-level wellbeing). A LACL-style set-level contrastive encoder that aligns heterogeneous multi-source urban data views would yield a domain-agnostic urban representation &mdash; analogous to LACL's domain-agnostic molecular latent space &mdash; enabling more robust spatiotemporal health predictions from any available subset of sensors.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular set representation learning &mdash; <a href="https://doi.org/10.1038/s42256-024-00856-0" target="_blank">10.1038/s42256-024-00856-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Embed LACL as a fast property oracle inside an active learning molecular design loop</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies large-scale screening and inverse molecular engineering as the primary downstream applications of LACL. Currently the framework is demonstrated only in passive prediction (given a molecule, predict its property). A direct extension: embed LACL as the <strong>scoring oracle within an active learning loop</strong> where a surrogate queries the cheapest next candidate to label, LACL scores candidates at MMFF-geometry cost, and the loop iteratively concentrates sampling on promising chemical sub-spaces. This would empirically test whether LACL's speed advantage (bypassing DFT at inference) translates to more candidate molecules explored per wall-clock hour compared to DFT-constrained oracles, and whether the domain-adapted latent space also improves surrogate interpolation.</p>
+      <p><span class="lab mine">Added value to my research</span>The active-learning-oracle framing has a direct spatial analogue in my <strong>healthcare facility siting and EV charging optimization</strong> research: the "molecule" is a candidate facility location, the "quantum property" is a ground-truth accessibility score or equity metric, and "DFT relaxation" is an expensive network simulation or household survey. A LACL-inspired fast oracle &mdash; scoring candidate sites from cheap OSM-proximity features while remaining aligned to expensive survey-measured accessibility &mdash; would dramatically accelerate search over the combinatorially large facility-location space, enabling equitable placement decisions at city scale with a fraction of the data collection cost.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Traversing chemical space with active deep learning for low-data drug discovery &mdash; <a href="https://doi.org/10.1038/s43588-024-00697-2" target="_blank">10.1038/s43588-024-00697-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Interrogate LACL's latent space with explainability tools to audit domain-adaptation fidelity</h3>
+      <p><span class="lab paper">Extending this paper</span>LACL uses t-SNE to show that atoms cluster by local structural role rather than atomic number after contrastive training &mdash; suggesting the model has learned chemically meaningful representations. However, t-SNE is purely descriptive and does not identify which atoms or bonds drive a given property prediction. A direct extension: apply attribution methods (GNNExplainer, integrated gradients on graph inputs) to quantify which atoms and bonds in the domain-adapted latent space contribute most to each property, and whether the contrastive-aligned representations retain, amplify, or distort the structure-property relationships that the DFT-trained baseline had learned. This would expose failure modes &mdash; e.g., properties where alignment hurts chemical interpretability &mdash; and provide a principled audit of domain-adaptation fidelity beyond aggregate MAE metrics.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainability of graph neural networks is central to my <strong>explainable ML for spatial prediction</strong> research agenda. The LACL result that contrastive training changes the latent-space structure in interpretable ways is a proof-of-concept that domain-adapted GNNs can be made more transparent. Translating this to urban graphs: a contrastively trained GeoAI model for predicting health outcomes across cities should be attributable to specific neighborhood features (POI diversity, network centrality) rather than geography-specific noise &mdash; directly improving the interpretability and transferability of my spatially-varying-coefficient and MGWR models and building researcher trust in cross-city generalization.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Navigating molecular OOD-ness &mdash; <a href="https://doi.org/10.1038/s42256-026-01251-7" target="_blank">10.1038/s42256-026-01251-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

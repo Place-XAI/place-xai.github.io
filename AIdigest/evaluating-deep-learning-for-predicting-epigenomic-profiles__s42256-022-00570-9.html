@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluating deep learning for predicting epigenomic profiles — AI Digest</title>
+<meta name="description" content="AI Digest: Evaluating deep learning for predicting epigenomic profiles (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Regulatory Genomics</span>
+      <span class="tag">Model Evaluation</span>
+      <span class="tag">Deep Learning Benchmark</span>
+    </div>
+    <h1>Evaluating deep learning for predicting epigenomic profiles</h1>
+    <div class="meta">
+      <span class="authors">Shushan Toneyan &middot; Ziqi Tang &middot; Peter K. Koo</span>
+      <span><b>Published</b> 2022-12-05</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00570-9" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A unified evaluation framework called <strong>GOPHER</strong> is introduced to fairly compare binary and quantitative deep learning models trained on chromatin accessibility (ATAC-seq) data across <strong>15 human cell lines</strong>. The study finds that <strong>quantitative (regression) models consistently outperform binary (classification) models</strong> in generalization and out-of-distribution variant effect prediction. A novel <strong>robustness metric</strong> based on translational shifts improves model selection and can rescue underperforming models, and quantitative models yield <strong>more interpretable and biologically consistent representations</strong> of transcription factor motifs and their cooperative interactions.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes a critical evaluation gap.</b> As deep learning models for regulatory genomics multiply rapidly, the lack of a unified evaluation standard makes it impossible to determine what actually drives performance improvements &mdash; GOPHER provides this missing infrastructure.</li>
+      <li><b>Settles a key modelling debate.</b> The classification vs. regression framing of epigenomic prediction has persisted without direct comparison; this paper builds a conversion bridge and demonstrates quantitative models are broadly superior across the whole chromosome, not just peak-centred regions.</li>
+      <li><b>Robustness as a new evaluation axis.</b> The translational-shift robustness metric reveals that prediction performance and model trustworthiness are not the same thing, offering a practical selection criterion that improves variant effect predictions in 50 out of 56 tested models without any retraining.</li>
+      <li><b>Biological interpretability is measurable.</b> Quantitative models learn cooperative transcription factor binding interactions (AP-1 cooperativity) that binary models fail to capture, directly linking modelling choices to biological discovery capacity.</li>
+      <li><b>Downstream clinical relevance.</b> Better variant effect prediction on CAGI5 saturation mutagenesis data directly impacts the ability to prioritize disease-associated non-coding variants, connecting model evaluation to human health.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Framework contribution, not just a model:</b> GOPHER is open-source infrastructure for an entire research community &mdash; matching NMI's preference for foundational methodological contributions that enable subsequent research.</li>
+      <li><b>Cross-disciplinary impact:</b> the work bridges machine learning methodology (regression vs. classification, robustness metrics, loss functions) and genomic biology (epigenomics, transcription factor cooperativity, variant effects) &mdash; precisely NMI's mission.</li>
+      <li><b>Empirical rigour at scale:</b> systematic comparison of more than 50 model configurations with multiple metrics and biological validation sets places this above a standard model paper.</li>
+      <li><b>Open science posture:</b> all data and code deposited in Zenodo with stable versioning; GitHub repository available &mdash; aligned with NMI reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>ATAC-seq data</dt><dd><strong>ENCODE database</strong> &mdash; fold-change-over-control bigWig files and IDR peak bed files for <strong>15 human cell lines</strong>. Replicate 1 used for training/validation/test; replicate 2 used as experimental ceiling. Data acquired via ENCODE experimental accessions (listed in Supplementary Table 6) and processed into Zenodo deposit.</dd>
+      <dt>Training split</dt><dd>Chromosome 8 = test set; chromosome 9 = validation set; all remaining autosomes (excluding Y) = training set. Input sequences: 3,072 bp chunks; target region: central 2,048 bp. Unmappable regions removed across all splits.</dd>
+      <dt>Target resolution</dt><dd>Models evaluated across multiple bin sizes &mdash; base resolution (1 bp), 32, 64, 128, 256, 512, 1,024 bp bins, and single quantitative output &mdash; enabling a systematic resolution comparison.</dd>
+      <dt>Motif database</dt><dd><strong>JASPAR 2022</strong> non-redundant vertebrates core motif database. Focus motifs: AP-1 (MA0491.1), GATA, ATAAA. Used for filter matching via Tomtom.</dd>
+      <dt>Variant benchmark</dt><dd><strong>CAGI5 challenge dataset</strong> &mdash; massively parallel reporter assay measurements of single-nucleotide variant effect sizes across <strong>15 regulatory elements</strong> in different cell types. Sequences range from 187 to 600 bp. Evaluated using Pearson correlation averaged across all 15 experiments.</dd>
+      <dt>Data availability</dt><dd>Processed ATAC-seq data, JASPAR 2022 motifs, and CAGI5 data available at <a href="https://doi.org/10.5281/zenodo.6464031" target="_blank">zenodo.org/record/6464031</a>. Code at <a href="https://github.com/shtoneyan/gopher" target="_blank">github.com/shtoneyan/gopher</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ENCODE ATAC-seq (bigWig + IDR peaks)</td><td>Training / validation / test targets</td><td>15 human cell lines; chromosome-split; replicate 1 &amp; 2</td><td><a href="https://www.encodeproject.org" target="_blank">encodeproject.org</a></td></tr>
+        <tr><td>JASPAR 2022 vertebrates core motifs</td><td>Motif matching for filter interpretability</td><td>Non-redundant vertebrate TF motifs (exact count not stated in main text)</td><td><a href="https://jaspar.elixir.no" target="_blank">jaspar.elixir.no</a></td></tr>
+        <tr><td>CAGI5 challenge dataset</td><td>Out-of-distribution variant effect benchmark</td><td>15 regulatory elements; saturation mutagenesis SNVs; multiple cell types</td><td><a href="https://doi.org/10.5281/zenodo.6464031" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>Human reference genome</td><td>Sequence extraction for variant prediction</td><td>2,048 bp windows centred on each regulatory element</td><td>Public (UCSC/Ensembl)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the exact number of ATAC-seq peaks and total training sequences is not stated in the main text; data are described by chromosomal coverage thresholds rather than absolute sequence counts. All numbers above are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>GOPHER evaluation framework:</b> Python/TensorFlow-Keras package supporting data processing, augmentation strategies (random reverse complement, random shift), and comprehensive evaluation for binary and quantitative models of epigenomic profiles.</li>
+      <li><b>Binary vs. quantitative prediction task framing and conversion:</b> binary classification uses IDR peak caller labels; quantitative regression predicts log-fold-normalized bigWig coverage values. A prediction format conversion bridge (logits as pseudo-coverage; coverage vs. binary labels via AUROC/AUPR) enables cross-task comparison without retraining.</li>
+      <li><b>Multi-resolution target evaluation:</b> systematic down-sampling of higher-resolution predictions to lower-resolution bin sizes isolates resolution-induced Pearson's r inflation, enabling fair comparison across models trained at different target resolutions (base to 1 kb bins).</li>
+      <li><b>Loss function comparison:</b> five loss functions (Poisson NLL, MSE, Pearson's r, and combinations) evaluated across eight resolution levels; Poisson NLL consistently superior.</li>
+      <li><b>Translational-shift robustness metric:</b> N=20 randomly shifted 2,048 bp subsequences generated from each 3,072 bp sequence; predictions aligned in overlapping region; per-position standard deviation normalized by mean coverage = variation score (lower = more robust).</li>
+      <li><b>Variant effect prediction with robust averaging:</b> 20 randomly shifted sequences generated separately for reference and alternative alleles; log ratio of averaged summed coverage values as effect size; evaluated against CAGI5 saturation mutagenesis measurements.</li>
+      <li><b>Model interpretability:</b> first-layer filter visualization via activation-based alignments and Tomtom motif matching; global importance analysis (GIA) via dinucleotide-shuffled background sequences with embedded patterns; occlusion-based interventional experiments on AP-1 motif instances.</li>
+      <li><b>Architecture benchmarking:</b> Basenji (dilated residual CNN), BPNet (dilated CNN with task-specific heads), baseline CNN, ResidualBind-base, and ResidualBind-32, with both ReLU and exponential first-layer activations; hyperparameter search via WandB tracking.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig1.png" target="_blank">
+        <img src="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig1.png" alt="Fig.1 GOPHER overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> GOPHER overview &mdash; comparison of binary and quantitative prediction tasks (a) and the three main evaluation pipeline components: preprocessing, training, and evaluation (b).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig2.png" target="_blank">
+        <img src="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig2.png" alt="Fig.2 Evaluation of Basenji-based quantitative models" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Evaluation of Basenji-based quantitative models &mdash; loss function, resolution, training set selection, and test set selection analyses across cell lines.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig3.png" target="_blank">
+        <img src="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig3.png" alt="Fig.3 Testing model robustness against translational shifts" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Robustness test against translational shifts &mdash; variation score vs. prediction performance; robustness and accuracy are not strictly correlated.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig4.png" target="_blank">
+        <img src="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig4.png" alt="Fig.4 Performance comparison between binary and quantitative models" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Binary vs. quantitative model performance &mdash; AUROC vs. Pearson's r on peak-centred and whole-chromosome test sets; quantitative models dominate whole-chromosome evaluation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig5.png" target="_blank">
+        <img src="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig5.png" alt="Fig.5 Comparison of functional effect predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Variant effect predictions &mdash; robust predictions outperform standard single-pass predictions in 50/56 models; whole-chromosome Pearson's r reliably predicts CAGI5 performance.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig6.png" target="_blank">
+        <img src="assets/evaluating-deep-learning-for-predicting-epigenomic-profiles__s42256-022-00570-9/fig6.png" alt="Fig.6 GIA for ResidualBind-32 on PC-3 cell line" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Global importance analysis (GIA) for ResidualBind-32 &mdash; flanking nucleotides modulate AP-1 importance 2&ndash;3x; cooperative motif interactions captured by quantitative but not binary models.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (tables = 0); Supplementary contains Tables 1&ndash;6, Figs. 1&ndash;4, and Notes 1&ndash;3; Supplementary Data 1&ndash;3 (CSV/ZIP) provide complete model evaluation logs, hyperparameters, and CAGI5 results.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal prediction, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>&#9312; Port GOPHER's robustness metric to spatiotemporal prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>GOPHER's translational-shift robustness test is a domain-agnostic concept: perturb the input slightly, measure prediction variance, and use this as a model selection criterion independent of accuracy. The paper demonstrates this for DNA sequences; a direct extension would formalise how different augmentation choices (reverse complement alone vs. combined with random shifts) interact with model architecture, and develop an automated robustness-guided training curriculum so models are explicitly trained to be robust rather than relying on post-hoc selection. The paper's finding that augmentations sufficient for one training set may be redundant for another (coverage-threshold data provides natural diversity) motivates adaptive augmentation strategies.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML models for spatial prediction (disease-risk mapping, EV charging demand) currently use only accuracy metrics for model selection. Applying GOPHER's robustness logic &mdash; perturbing input spatial windows and measuring prediction variance across neighbouring regions &mdash; would yield a <strong>spatial robustness score</strong> identifying models that overfit local spatial autocorrelation. Models sensitive to small geographic perturbations may be learning spatial noise rather than true structure; this metric, borrowed from genomics, would identify them before deployment in health geography or urban analytics contexts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training data composition determines machine learning generalization and biological rule discovery &mdash; <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Extend GOPHER's task-conversion bridge to multi-threshold spatial accessibility models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most technically elegant contribution is the <strong>prediction format conversion strategy</strong>: a way to compare binary and quantitative models using a common metric space without retraining. The conversion is currently ad hoc (logits used as coverage proxies without theoretical grounding). A rigorous extension would formalise the conversion with calibration correction &mdash; ensuring that binary logit distributions are properly scaled to match quantitative coverage distributions &mdash; and extend the framework to probabilistic models and multi-label outputs. This would transform GOPHER's current pragmatic bridge into a principled task-interoperability standard for any field that debates classification vs. regression framing.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA/R2SFCA accessibility models face an analogous binary-vs-continuous debate: healthcare accessibility is either classified (accessible/inaccessible given a threshold travel time) or quantified (a continuous score). The paper's conversion bridge inspires a <strong>unified spatial accessibility comparison framework</strong> where binary-threshold access models (within/outside a 15-minute isochrone) and continuous-score models (R2SFCA) are evaluated in the same metric space. This would clarify when spatial access thresholds discard actionable heterogeneity &mdash; a direct policy implication for health equity research and facility siting decisions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A software framework for end-to-end genomic sequence analysis with deep learning &mdash; <a href="https://doi.org/10.1038/s43588-023-00557-5" target="_blank">10.1038/s43588-023-00557-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Apply GIA-style global importance analysis to spatial feature interactions in GeoAI models</h3>
+      <p><span class="lab paper">Extending this paper</span>Global Importance Analysis (GIA) is the paper's primary interpretability tool: embed hypothesis patterns in randomised background sequences, measure prediction change, and reveal model-learned feature interactions independently of specific input context. This is a <strong>marginalization-based explanation method</strong> that is more powerful than gradient-based attribution because it directly tests causal hypotheses. A direct extension of this paper would scale GIA to multi-task settings: currently applied per cell line, it could be run across all 15 simultaneously to identify which motif cooperativities are universal vs. cell-type-specific, directly expanding the AP-1 cooperativity finding into a cell-type atlas of regulatory grammar.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatial ML models use SHAP/LIME for local feature attribution, but these are sensitive to correlated spatial features (POI density and income are spatially co-located). GIA's marginalization logic translates directly to a <strong>spatial GIA</strong>: replace a specific spatial feature type with background noise across many units, measure mean prediction change across the dataset. This would reveal whether co-presence of a primary care clinic and a transit stop produces a cooperativity bonus for health accessibility that additive SHAP decomposition misses &mdash; directly improving explainable GeoAI for health policy and facility-location optimization.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Interpretability and implicit model semantics in biomedicine and deep learning &mdash; <a href="https://doi.org/10.1038/s42256-026-01177-0" target="_blank">10.1038/s42256-026-01177-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Leverage the paper's training-set-selection findings for spatial training data curation</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most practically important findings is that <strong>training set composition dominates generalization</strong>: models trained only on high-activity genomic peaks generalize poorly genome-wide, while models including low-activity coverage-threshold regions generalize far better. The paper notes a trade-off: peak-centred models scale peak heights better but produce more false positives genome-wide. An extension would resolve this trade-off through curriculum learning &mdash; beginning with coverage-threshold data to learn global structure, then fine-tuning on peak-centred data to sharpen peak-region predictions &mdash; combining the best of both regimes rather than choosing one.</p>
+      <p><span class="lab mine">Added value to my research</span>In urban/health GeoAI, training data are almost always dominated by data-rich urban cores &mdash; the spatial analogue of peak-centred data. My spatial prediction models (disease burden, EV demand, housing prices) trained on dense-city data notoriously generalize poorly to peri-urban or rural areas, exactly paralleling the paper's peak-centred generalization failure. The paper's finding motivates a <strong>coverage-threshold sampling strategy for spatial training data</strong>: deliberately including low-signal, low-density spatial units to improve whole-geography generalization. This is a principled, experimentally validated solution to spatial extrapolation failure in GeoAI that I can implement directly by analogy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training data composition determines machine learning generalization and biological rule discovery &mdash; <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Use GOPHER's multi-resolution framework to design scale-adaptive geospatial foundation models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's resolution analysis reveals a subtle and important artefact: Pearson's r increases mechanically as bin size grows because binning smooths high-frequency noise, making coarser predictions appear better than they are. The paper's remedy &mdash; evaluate higher-resolution models at lower resolution by down-sampling &mdash; is a rigorous resolution-calibration principle. An extension would pair this evaluation framework with transformer architectures (explicitly noted in Discussion as future work), testing whether transformers genuinely capture long-range regulatory interactions or merely benefit from implicit smoothing effects that the paper's down-sampling evaluation would reveal.</p>
+      <p><span class="lab mine">Added value to my research</span>Geospatial foundation models face an identical multi-resolution evaluation problem: models trained at 100 m resolution appear to outperform those trained at 1 km resolution because spatial aggregation reduces variance, not because of genuine signal learning. The paper's down-sampling calibration strategy gives me a principled framework for <strong>scale-adaptive evaluation of geospatial foundation models</strong>: evaluate higher-resolution spatial outputs at the lower-resolution target to isolate resolution artefacts from genuine information gain. This is directly applicable when comparing models trained at different spatial resolutions for urban accessibility, health geography, or land use prediction, enabling honest comparison across spatial scales.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiomics and deep learning dissect regulatory syntax in human development &mdash; <a href="https://doi.org/10.1038/s41586-026-10326-9" target="_blank">10.1038/s41586-026-10326-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

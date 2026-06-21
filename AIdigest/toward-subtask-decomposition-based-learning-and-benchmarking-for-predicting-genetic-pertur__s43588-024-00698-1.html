@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toward subtask-decomposition-based learning and benchmarking for predicting genetic perturbation outcomes — AI Digest</title>
+<meta name="description" content="AI Digest: Toward subtask-decomposition-based learning and benchmarking for predicting genetic perturbation outcomes and beyond (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Genetic Perturbation</span>
+      <span class="tag">Single-Cell AI</span>
+      <span class="tag">Subtask Decomposition</span>
+      <span class="tag">Benchmarking</span>
+    </div>
+    <h1>Toward subtask-decomposition-based learning and benchmarking for predicting genetic perturbation outcomes and beyond</h1>
+    <div class="meta">
+      <span class="authors">Yicheng Gao · Zhiting Wei · Kejing Dong · Ke Chen · Jingya Yang · Guohui Chuai · Qi Liu</span>
+      <span><b>Published</b> 2024-09-27</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00698-1" target="_blank">10.1038/s43588-024-00698-1</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00698-1" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>STAMP (Subtask Decomposition Modeling for Genetic Perturbation Prediction) is an AI framework that <strong>decomposes the hard genetic perturbation prediction problem into three progressive subtasks</strong>: identifying differentially expressed genes, determining their expression change directions, and estimating expression-change magnitudes. By coupling this decomposition strategy with pretrained single-cell foundation-model embeddings (scGPT, Geneformer, scBERT), STAMP <strong>substantially outperforms existing methods</strong> across single-gene, multiple-gene, and cross-cell-line prediction scenarios, and is able to identify key regulatory genes and diverse genetic interaction subtypes from as few as 24 perturbation samples.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Addresses combinatorial explosion in genetic screening.</b> The space of multi-gene perturbation combinations is astronomically large; wet-lab profiling of every combination is infeasible. STAMP provides a principled computational path to screen that space in silico.</li>
+      <li><b>Unifies three challenges under one principled framework.</b> Predicting single-gene outcomes, multi-gene outcomes, and cross-cell-line generalization have historically required separate tools; STAMP's plug-in decomposition strategy handles all three.</li>
+      <li><b>Provides a reusable benchmark decomposition for the field.</b> By formalizing the three subtasks with clear metrics (ROC-AUC, PR-AUC, Pearson correlation, MSE), the paper delivers a structured evaluation protocol other methods can adopt — raising the bar for future model comparison.</li>
+      <li><b>Demonstrates few-shot cross-cell-line transfer.</b> STAMP achieves rapid adaptation to a new cell line using as few as 10–20 perturbation samples, opening the door to clinical-relevant cell lines where data are scarce.</li>
+      <li><b>Enables detection of diverse genetic interaction subtypes.</b> Beyond simple additive interactions, STAMP identifies synergy, suppression, neomorphism, redundancy, and epistasis with higher Precision@10 than competing methods, directly informing drug combination design.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Conceptual innovation, not just a new model:</b> the subtask decomposition paradigm is a broadly transferable algorithmic idea, analogous to how human cognition decomposes complex problems — positioning it as a methodological contribution rather than an incremental improvement.</li>
+      <li><b>Comprehensive benchmarking across multiple public datasets:</b> the paper uses more than ten distinct scCRISPR datasets spanning multiple cell lines and perturbation types, producing evidence that is not artifact of a single dataset.</li>
+      <li><b>Integration of foundation models with structured decomposition:</b> STAMP demonstrates how large pretrained single-cell models (scGPT, Geneformer, scBERT) can be upgraded by a principled task-decomposition plug-in — a contribution directly relevant to the rapidly growing single-cell AI literature.</li>
+      <li><b>Biomedical and translational significance:</b> predicting perturbation outcomes computationally is directly relevant to target identification, drug repurposing, and synthetic biology, aligning with Nature Computational Science's emphasis on computational approaches that address fundamental biological questions.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary data type</dt><dd>Single-cell CRISPR (scCRISPR) perturbation datasets profiling transcriptional responses (scRNA-seq) to gene knockouts or activation via Perturb-seq, CROP-seq, and ECCITE-seq technologies.</dd>
+      <dt>Single-gene datasets</dt><dd><strong>RPE1_essential, K562_essential, K562_GW</strong> (Broad/MIT Genome-Wide Perturbation Study, <a href="https://gwps.wi.mit.edu/" target="_blank">gwps.wi.mit.edu</a>); <strong>TFatlas</strong> (NCBI BioProject PRJNA893678) — covering essential genes and transcription factors across RPE1 and K562 cell lines.</dd>
+      <dt>Multi-gene datasets</dt><dd><strong>PRJNA551220</strong> (two-gene perturbation, used for cross-cell-line evaluation), <strong>Perturb-CITE-seq</strong> (Broad Single Cell Portal <a href="https://singlecell.broadinstitute.org/single_cell/data/public/SCP1064/" target="_blank">SCP1064</a>) and <strong>PRJNA787633</strong> — multi-modal pooled screens in patient cancer models.</dd>
+      <dt>Cross-cell-line datasets</dt><dd>Eight datasets used: 3 CRISPRi and 5 CRISPRa, sourced from NCBI BioProjects PRJNA641125, PRJNA609688, PRJNA641353 and others. Fine-tuning tested with 0–40 perturbation samples from target cell lines.</dd>
+      <dt>Small-data application</dt><dd><strong>PRJNA641125 / Papalexi et al.</strong> ECCITE-seq dataset — only 24 perturbations available; used to demonstrate few-shot PD-L1 regulator identification.</dd>
+      <dt>Genetic interaction data</dt><dd>GI scores for 125 two-gene perturbation pairs sourced from <a href="https://www.science.org/doi/10.1126/science.aax4438" target="_blank">Norman et al. 2019 (<em>Science</em>)</a>.</dd>
+      <dt>Gene embeddings</dt><dd>Pretrained embeddings from <strong>scGPT</strong>, <strong>Geneformer</strong>, and <strong>scBERT</strong> foundation models; ontology-based embeddings from <strong>GEARS</strong>.</dd>
+      <dt>Benchmark archive</dt><dd>All benchmark datasets available at <a href="https://zenodo.org/records/12779567" target="_blank">zenodo.org/records/12779567</a>; code at <a href="https://github.com/bm2-lab/STAMP" target="_blank">github.com/bm2-lab/STAMP</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>RPE1_essential, K562_essential, K562_GW</td><td>Single-gene perturbation benchmarks</td><td>Essential genes, K562 &amp; RPE1 cell lines</td><td><a href="https://gwps.wi.mit.edu/" target="_blank">gwps.wi.mit.edu</a></td></tr>
+        <tr><td>TFatlas (PRJNA893678)</td><td>Transcription factor perturbation dataset</td><td>Multiple TFs, single cell lines</td><td><a href="https://www.ncbi.nlm.nih.gov/" target="_blank">NCBI</a></td></tr>
+        <tr><td>PRJNA551220</td><td>Two-gene perturbation &amp; cross-cell-line evaluation</td><td>Two-gene combos; used as both source and target cell line</td><td><a href="https://www.ncbi.nlm.nih.gov/" target="_blank">NCBI</a></td></tr>
+        <tr><td>Perturb-CITE-seq (SCP1064)</td><td>Multi-modal pooled screen</td><td>Cancer patient models, multi-omic</td><td><a href="https://singlecell.broadinstitute.org/single_cell/data/public/SCP1064/" target="_blank">Broad SCP</a></td></tr>
+        <tr><td>PRJNA641125 / Papalexi et al.</td><td>Small-data PD-L1 regulator identification</td><td>24 perturbations (CRISPRa)</td><td><a href="https://www.ncbi.nlm.nih.gov/" target="_blank">NCBI</a></td></tr>
+        <tr><td>Norman et al. 2019 GI scores</td><td>Genetic interaction subtype labels</td><td>125 two-gene perturbation pairs</td><td><a href="https://www.science.org/doi/10.1126/science.aax4438" target="_blank">Science</a></td></tr>
+        <tr><td>scGPT / Geneformer / scBERT embeddings</td><td>Pretrained gene embeddings (plug-in to STAMP)</td><td>Genome-scale; pretrained on large human cell corpora</td><td>Supplementary Info &amp; original model repos</td></tr>
+        <tr><td>Zenodo benchmark archive</td><td>Reproducible dataset release</td><td>All above datasets packaged</td><td><a href="https://zenodo.org/records/12779567" target="_blank">zenodo.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact cell counts per dataset are not stated in the abstract or main text; the article references BioProject IDs and institutional portals for access. Numbers reported here are taken verbatim from the article's data availability and methods sections — no figures have been fabricated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Subtask decomposition framework:</b> STAMP formalizes genetic perturbation prediction as three progressive subtasks — (1) DEG identification (binary classification), (2) expression-change direction (binary classification per DEG), and (3) fold-change magnitude estimation (regression per DEG) — tackled sequentially with shared representations.</li>
+      <li><b>Gene embedding as input:</b> STAMP is embedding-agnostic; it accepts pretrained gene embeddings from foundation models (scGPT, Geneformer, scBERT) or learnable ontology-based embeddings (GEARS), enabling modular plug-in use.</li>
+      <li><b>Multitask learning with intermediate supervision:</b> the three subtask learners are trained jointly using a combined weighted loss (α·L₁ + β·L₂ + (1−α−β)·L₃, α=0.1, β=0.5); subtask 2 output serves as an intermediate supervisory signal for subtask 3.</li>
+      <li><b>Batch-level reweighting for class imbalance:</b> since most genes are not differentially expressed after perturbation, STAMP applies batch-level positive-class reweighting in subtasks 1 and 2 to mitigate extreme label imbalance.</li>
+      <li><b>Cross-cell-line transfer via pretraining and fine-tuning:</b> STAMP can be pretrained on a source cell-line dataset and fine-tuned on as few as 10–40 perturbation samples from a target cell line; zero-shot evaluation is also included.</li>
+      <li><b>Decision-tree GI classification:</b> a decision tree is trained on ground-truth GI scores to build an interpretable threshold system for classifying the six genetic interaction subtypes, improving on the single-threshold approach used previously.</li>
+      <li><b>Evaluation metrics:</b> ROC-AUC and PR-AUC (subtasks 1 and 2), Pearson correlation coefficient and MSE (subtask 3), with additional evaluation focusing on top-40 DEGs; fivefold cross-validation throughout.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig1.png" target="_blank">
+        <img src="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig1.png" alt="Fig.1 STAMP framework illustration" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> STAMP framework — task decomposition into three progressive subtasks and the model architecture with embedding inputs and sequential learners.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig2.png" target="_blank">
+        <img src="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig2.png" alt="Fig.2 Challenge 1 single-gene perturbation results" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Challenge 1 — single-gene perturbation prediction on RPE1_essential: ROC-AUC and PR-AUC for all three subtasks, with top-40 DEG focus.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig3.png" target="_blank">
+        <img src="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig3.png" alt="Fig.3 Challenge 2 multiple-gene perturbation results" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Challenge 2 — multi-gene perturbation prediction on PRJNA551220 across three unseen-gene scenarios (0/2, 1/2, 2/2 genes unseen).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig4.png" target="_blank">
+        <img src="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig4.png" alt="Fig.4 Challenge 3 cross-cell-line prediction results" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Challenge 3 — cross-cell-line transfer: few-shot and zero-shot performance as a function of target-cell-line sample count; PD-L1 regulator identification and Gene Ontology analysis.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig5.png" target="_blank">
+        <img src="assets/toward-subtask-decomposition-based-learning-and-benchmarking-for-predicting-genetic-pertur__s43588-024-00698-1/fig5.png" alt="Fig.5 GI subtype identification results" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Genetic interaction subtype identification — Precision@10 across five GI subtypes (synergy, suppression, neomorphism, redundancy, epistasis) and decision-tree classification accuracy.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (tables = 0); Supplementary contains 29 tables and 23 figures including ablation studies, time costs, and differential expression testing comparisons.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable ML, physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Apply STAMP's subtask decomposition principle to spatial accessibility prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>STAMP's core insight — decomposing a hard regression problem into progressive classification then regression subtasks with shared intermediate supervision — is a domain-agnostic algorithmic principle. A direct extension of the paper would test whether the same three-subtask structure (identify which locations have access deficits, classify the deficit direction relative to a threshold, then estimate the magnitude) improves spatial prediction tasks in other domains, validating that the strategy generalizes beyond single-cell biology. The cross-domain benchmark would be a natural follow-on paper for the authors and for NCS.</p>
+      <p><span class="lab mine">Added value to my research</span>In my 2SFCA / R2SFCA accessibility work, the central prediction problem is structurally analogous: identify underserved zones (binary), classify severity tier (ordinal), then estimate the magnitude of the gap. Adopting STAMP's sequential subtask decomposition with intermediate supervision would turn my accessibility prediction pipeline from a single regression into a hierarchically structured model — likely more robust on sparse data and more interpretable at each stage. This is directly applicable to my healthcare facility access and telehealth digital divide projects.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Conditional Monge Gap enables generalizable single-cell perturbation modelling — <a href="https://doi.org/10.1038/s42256-026-01242-8" target="_blank">10.1038/s42256-026-01242-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace fixed gene embeddings with spatially conditioned embeddings for cross-context transfer</h3>
+      <p><span class="lab paper">Extending this paper</span>STAMP is a plug-in that consumes frozen pretrained embeddings from scGPT / Geneformer / scBERT; it does not adapt the embedding itself to the target cell line. An extension of the paper would introduce <strong>context-adaptive embedding fine-tuning</strong>: a lightweight adapter layer that shifts the gene embedding toward the target cell line's transcriptomic context, jointly trained with STAMP's subtask heads. This would be especially valuable in the zero-shot and very-few-shot regimes (samples = 0–10) where current performance leaves the most room for improvement.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps directly onto fine-tuning geospatial foundation models for local context adaptation — a core theme of my work on adapting pretrained spatial models to city-specific mobility or POI data. The "adapter + frozen backbone" paradigm STAMP depends on is the same architecture I use for domain-adaptive geospatial prediction; STAMP demonstrates it works for a challenging high-dimensional biological task, strengthening the theoretical justification for context-adaptive fine-tuning in GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use STAMP's benchmark protocol to design a systematic evaluation for spatial prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>One of STAMP's most transferable contributions is not the model but the <strong>evaluation protocol</strong>: three clearly defined subtasks with distinct metrics, tested on held-out perturbations across multiple datasets. The paper identifies where existing methods fail at each subtask rather than reporting a single composite score — a much more diagnostic benchmark design. An extension would apply this subtask-based evaluation philosophy to other genomics prediction challenges where composite metrics obscure where models fail (e.g., distinguishing failure at identifying the affected genes from failure at predicting direction or magnitude).</p>
+      <p><span class="lab mine">Added value to my research</span>In my explainable ML for spatial prediction work, model evaluation often conflates prediction accuracy with spatial structure fidelity. Borrowing STAMP's decomposed evaluation paradigm, I can design a three-level benchmark for spatiotemporal prediction: (1) correctly identifying <em>which</em> areas deviate from baseline (detection), (2) correctly classifying the deviation <em>direction</em> (increase vs. decrease), and (3) estimating the magnitude. This structured benchmark would make my open-science / FAIR reproducibility contributions more rigorous and comparable across models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning training dynamics analysis for single-cell data — <a href="https://doi.org/10.1038/s43588-024-00728-y" target="_blank">10.1038/s43588-024-00728-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend STAMP's few-shot cross-cell-line transfer to multi-site healthcare data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>STAMP's cross-cell-line scenario (pretrain on source, fine-tune on 10–40 target samples) is structurally identical to the multi-site transfer learning problem in biomedicine: a model trained on one hospital / population is fine-tuned on very few samples from a new clinical site. An extension of the paper would benchmark STAMP-style few-shot pretraining across clinical cell lines (e.g., patient-derived organoids) where data scarcity is not experimental but regulatory, and where the cost of prediction errors is high — a more urgent practical case than the current academic datasets used.</p>
+      <p><span class="lab mine">Added value to my research</span>My health geography and healthcare accessibility work increasingly involves multi-site data fusion: mobile health records from multiple cities, digital divide indicators from different counties, or telehealth usage across rural vs. urban settings. STAMP's pretraining-plus-few-shot-fine-tuning protocol, proven robust with as few as 10–20 samples, is directly applicable to my low-data regional transfer problems. It suggests a principled architecture for my spatiotemporal models to transfer knowledge from data-rich cities to data-sparse ones — exactly the rural-urban digital health divide scenario.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning for deciphering cell heterogeneity and gene regulation — <a href="https://doi.org/10.1038/s43588-021-00038-7" target="_blank">10.1038/s43588-021-00038-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Integrate causal inference into STAMP's subtask structure to detect spatial intervention effects</h3>
+      <p><span class="lab paper">Extending this paper</span>The Discussion explicitly identifies causal machine learning as a priority future direction: perturbation data are interventional by design, making them ideal for causal analysis frameworks. An extension of the paper would embed a causal graph layer — e.g., a directed acyclic gene regulatory graph — as a structural prior in STAMP's subtask 1 learner, using it to constrain which DEGs are plausible downstream effects of a given perturbation. This would improve prediction on sparse data and make STAMP's outputs mechanistically interpretable rather than purely associative.</p>
+      <p><span class="lab mine">Added value to my research</span>In my urban health and healthy-cities research, understanding the <em>causal effect</em> of interventions (e.g., adding a healthcare facility, expanding broadband) on health outcomes is the core policy question — yet most spatial ML models are correlational. STAMP's proposed integration of causal gene regulatory networks into a deep learning prediction framework is a direct template for integrating causal spatial graphs (e.g., graph-based difference-in-differences over urban networks) into my physics-informed graph learning models. The analogy between gene regulatory networks and urban infrastructure networks is structurally tight: both are directed, sparse, and only partially observed.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A cell atlas foundation model for scalable search of similar human cells — <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

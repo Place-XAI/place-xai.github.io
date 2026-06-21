@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Molecular contrastive learning of representations via graph neural networks — AI Digest</title>
+<meta name="description" content="AI Digest: Molecular contrastive learning of representations via graph neural networks (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Self-Supervised Learning</span>
+      <span class="tag">Drug Discovery</span>
+      <span class="tag">Molecular Representation</span>
+    </div>
+    <h1>Molecular contrastive learning of representations via graph neural networks</h1>
+    <div class="meta">
+      <span class="authors">Yuyang Wang · Jianren Wang · Zhonglin Cao · Amir Barati Farimani</span>
+      <span><b>Published</b> 2022-03-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00447-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MolCLR, a <strong>self-supervised contrastive learning framework</strong> for molecule graphs, pre-trains GNN encoders on ~10 million unlabelled molecules from PubChem using three novel augmentations — atom masking, bond deletion, and subgraph removal. After fine-tuning, MolCLR <strong>surpasses all competing self-supervised baselines</strong> on 12 of 13 molecular property benchmarks and even <strong>matches or beats state-of-the-art supervised models</strong> on several tasks, without requiring labelled data for pre-training. The learned representations encode <strong>chemically meaningful molecular similarities</strong>, validating the power of contrastive self-supervision at scale for molecular intelligence.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the label bottleneck.</b> Labelling molecular properties requires costly wet-lab experiments; MolCLR shows that pre-training on ~10 million <em>unlabelled</em> SMILES strings can substitute for large labelled datasets, opening molecular ML to the vast unlabelled chemical space.</li>
+      <li><b>Three principled graph augmentations for chemistry.</b> Unlike image or text contrastive learning, molecule graphs need domain-aware augmentations. Atom masking, bond deletion, and subgraph removal reflect real chemical perturbations (bond-breaking, substructure variation), making the self-supervised signal chemically grounded.</li>
+      <li><b>Generalizes across property types and data scales.</b> MolCLR improves both classification (ROC-AUC +12–17% over supervised GCN/GIN on average) and regression (RMSE improvement ratio 28–34%), spanning quantum mechanics to biophysics to clinical toxicology.</li>
+      <li><b>Produces transferable, interpretable embeddings.</b> t-SNE and fingerprint similarity analyses show that MolCLR representations cluster chemically similar molecules without any labels — the embedding space encodes functional groups and substructure motifs in a chemically interpretable way.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Landmark scale and generality:</b> pre-training on 10 million molecules and benchmarking on 13 tasks across both classification and regression sets a new reference point for molecular self-supervised learning — the kind of large-scale empirical foundation Nature MI values.</li>
+      <li><b>Principled methodological contribution:</b> the three graph augmentations are not ad-hoc but theoretically motivated by chemistry (bond-breaking, substructure motifs), addressing a known gap between general graph contrastive learning and molecular graph learning.</li>
+      <li><b>Clear societal relevance:</b> drug discovery and molecular property prediction are high-impact application domains; reducing reliance on expensive experimental labels accelerates drug development pipelines.</li>
+      <li><b>Reproducibility and openness:</b> code and data released on both GitHub and CodeOcean, enabling full reproduction — consistent with Nature MI's push for verifiable ML research.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Pre-training data</dt><dd><strong>PubChem</strong> (Kim et al., 2019) — approximately <strong>10 million unique unlabelled molecule SMILES</strong> collected by ChemBERTa (Chithrananda et al., 2020). Split 95/5 into training and validation. RDKit used to convert SMILES to molecular graphs with atom and bond features.</dd>
+      <dt>Downstream benchmarks</dt><dd><strong>MoleculeNet</strong> (Wu et al., Chem. Sci., 2018) — <strong>13 datasets covering 44 binary classification tasks and 24 regression tasks</strong>. Named datasets include BBBP, Tox21, ToxCast, SIDER, ClinTox, MUV, BACE (classification) and FreeSolv, ESOL, Lipo, QM7, QM8, QM9 (regression). Scaffold split (80/10/10) used for all except QM9 (random split).</dd>
+      <dt>Code &amp; data release</dt><dd>Full pre-training data and benchmarks available at <a href="https://doi.org/10.24433/CO.8582800.v1" target="_blank">CodeOcean</a> and <a href="https://github.com/yuyangw/MolCLR" target="_blank">github.com/yuyangw/MolCLR</a>.</dd>
+      <dt>Molecular features</dt><dd>Each atom encoded by atomic number and chirality type; each bond by bond type and direction. Five-layer GCN or GIN with 512-dimensional molecular representations.</dd>
+      <dt>Time period</dt><dd>Data accessed circa 2020–2021; paper published March 2022.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>PubChem (via ChemBERTa)</td><td>Pre-training (unlabelled)</td><td>~10 million unique molecules (SMILES)</td><td><a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank">pubchem.ncbi.nlm.nih.gov</a></td></tr>
+        <tr><td>MoleculeNet (13 datasets)</td><td>Fine-tuning benchmarks</td><td>44 classification + 24 regression tasks</td><td><a href="https://moleculenet.org/" target="_blank">moleculenet.org</a></td></tr>
+        <tr><td>CodeOcean capsule</td><td>Reproducible data + code</td><td>Full pipeline, DOI-citable</td><td><a href="https://doi.org/10.24433/CO.8582800.v1" target="_blank">CodeOcean</a></td></tr>
+        <tr><td>GitHub (MolCLR)</td><td>Open-source code</td><td>PyTorch Geometric implementation</td><td><a href="https://github.com/yuyangw/MolCLR" target="_blank">github.com/yuyangw/MolCLR</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the exact molecule counts per MoleculeNet dataset are reported in Supplementary Tables 1 and 2 (not reproduced in the main text). The 10 million figure for pre-training is stated in the abstract and methods as "approximately."</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Molecule graph construction:</b> SMILES strings converted to molecular graphs via RDKit — nodes = atoms (features: atomic number, chirality), edges = bonds (features: bond type, direction). Each molecule becomes a typed attributed graph.</li>
+      <li><b>Graph augmentations (3 strategies):</b> <em>Atom masking</em> — randomly replace atom features with a mask token (ratio 25%); <em>Bond deletion</em> — randomly remove edges from the molecular graph (ratio 25%); <em>Subgraph removal</em> — iteratively mask a contiguous subgraph starting from a random origin atom until a given proportion is masked and corresponding edges deleted. Subgraph removal alone achieves the best average performance.</li>
+      <li><b>GNN encoders:</b> Graph Convolutional Network (GCN) and Graph Isomorphism Network (GIN), both five-layer with mean pooling readout, producing 512-dimensional molecular representations. A two-layer MLP projection head maps to a 256-dimensional latent space.</li>
+      <li><b>Contrastive loss (NT-Xent):</b> Normalized temperature-scaled cross-entropy loss (SimCLR framework) applied to the 2N latent vectors per batch (N=512). Cosine similarity used between latent vectors; temperature parameter τ tuned via supplementary ablation.</li>
+      <li><b>Pre-training then fine-tuning:</b> GNN backbone pre-trained on ~10M unlabelled molecules for 50 epochs (Adam, lr 5×10<sup>-4</sup>, cosine decay). Fine-tuning adds a randomly initialized MLP head and trains for 100 epochs per downstream task using scaffold split; reported over 3 seeds.</li>
+      <li><b>Evaluation:</b> ROC-AUC for classification tasks; RMSE (FreeSolv, ESOL, Lipo) and MAE (QM7, QM8, QM9) for regression; t-SNE for representation visualization; fingerprint similarity (ECFP, RDKFP) for chemical validity of learned embeddings.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig1.png" target="_blank">
+        <img src="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig1.png" alt="Fig.1 Overview of MolCLR" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of MolCLR — pre-training pipeline, three graph augmentation strategies, and the pre-train/fine-tune framework.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig2.png" target="_blank">
+        <img src="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig2.png" alt="Fig.2 Augmentation ablation study" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Augmentation ablation — comparison of augmentation compositions on classification benchmarks; subgraph removal (25%) achieves the best average ROC-AUC.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig3.png" target="_blank">
+        <img src="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig3.png" alt="Fig.3 t-SNE of MolCLR representations" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> t-SNE visualization of 100,000 molecules from PubChem validation set, coloured by molecular weight — MolCLR clusters structurally similar molecules without labels.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig4.png" target="_blank">
+        <img src="assets/molecular-contrastive-learning-of-representations-via-graph-neural-networks__s42256-022-00447-x/fig4.png" alt="Fig.4 MolCLR vs conventional fingerprints" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> MolCLR representations vs. ECFP/RDKFP fingerprints — cosine distances in MolCLR space correlate with chemical fingerprint similarities, confirming chemically meaningful embedding.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables — Table 1 (classification ROC-AUC on 7 benchmarks) and Table 2 (regression RMSE/MAE on 6 benchmarks). Supplementary Tables 1–6 provide per-dataset statistics, QM9 per-property breakdown, pre-training database ablation, temperature ablation, and fine-tuning hyperparameters.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, spatial accessibility, urban health policy).</p>
+
+    <div class="idea">
+      <h3>① Apply MolCLR's graph augmentation logic to spatial networks for pre-training GeoAI encoders</h3>
+      <p><span class="lab paper">Extending this paper</span>MolCLR's key insight is that <strong>domain-aware graph augmentations</strong> — perturbations that preserve the semantic meaning of the graph — make contrastive self-supervision effective. The paper is limited to molecular graphs; a direct extension would design analogous augmentations for <strong>spatial graphs</strong> (road networks, POI access graphs, health facility catchment networks): edge deletion analogous to road closure, node masking analogous to facility removal, and subgraph removal analogous to neighbourhood excision. Pre-training a GNN encoder on millions of unlabelled spatial graphs using these augmentations would parallel MolCLR's success, potentially yielding a foundation encoder for urban spatial structure. The corpus paper on molecular set representation learning (Molecular set representation learning, NMI 2024) provides complementary perspectives on set-level vs. graph-level embeddings that could inform the spatial extension.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly motivates a <strong>GeoAI foundation encoder</strong> for spatial accessibility graphs: pre-train on unlabelled city-scale POI and road network graphs using spatial augmentations (road closures, facility removals), then fine-tune for R2SFCA catchment delineation or 2SFCA demand estimation with limited labelled accessibility surveys. The self-supervised pre-training step reduces dependence on scarce labelled healthcare utilization data — exactly the bottleneck in my spatial accessibility of primary care and mental health work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular set representation learning — <a href="https://doi.org/10.1038/s42256-024-00856-0" target="_blank">10.1038/s42256-024-00856-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace hand-crafted molecular features with self-supervised embeddings in spatial health prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>MolCLR demonstrates that a pre-trained GNN encoder dramatically outperforms both classical fingerprints (ECFP, RDKFP) and supervised GNNs trained from scratch when labelled data is scarce. An extension of this paper would test whether <strong>MolCLR-style embeddings improve ADMET property prediction</strong> — absorption, distribution, metabolism, excretion and toxicity — tasks that directly constrain drug exposure and population-level health outcomes. The paper already covers ClinTox and Tox21 but does not analyse environmental or population-level exposures; an extension incorporating geographically stratified toxicity benchmarks would link molecular ML to health geography. The deep contrastive learning of molecular conformation paper (NCS 2023) extends MolCLR with 3D conformational information, which would sharpen ADMET predictions.</p>
+      <p><span class="lab mine">Added value to my research</span>Methodologically, MolCLR's pre-train/fine-tune paradigm is a direct template for my <strong>fine-tuning of geospatial foundation models</strong>: pre-train an encoder on large unlabelled spatial datasets (remote sensing tiles, GPS trajectories, POI graphs) and fine-tune on labelled health outcome data. The lesson — that self-supervised scale beats small labelled sets when domain-appropriate augmentations are designed — justifies investing in augmentation design for spatial data rather than just collecting more labels.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep contrastive learning of molecular conformation for efficient property prediction — <a href="https://doi.org/10.1038/s43588-023-00560-w" target="_blank">10.1038/s43588-023-00560-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the out-of-distribution (OOD) robustness analysis to graph-based spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>MolCLR uses scaffold split to evaluate generalization to structurally dissimilar molecules — a crucial design choice that tests out-of-distribution generalization. But the paper does not systematically characterize <em>when</em> MolCLR fails versus succeeds on OOD molecules, nor does it explicitly train for OOD robustness. An extension would combine MolCLR pre-training with the invariant representation learning framework recently proposed for molecular OOD-ness (Navigating molecular OOD-ness, NMI 2026), which targets bioactive molecules that fall outside the training distribution — exactly the failure mode MolCLR's scaffold split is designed to stress-test but not resolve.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatial prediction, OOD generalization maps to <strong>spatial transferability across regions or cities</strong>: a model trained on one city's health data should generalize to another city's spatial structure. MolCLR's scaffold-split philosophy — evaluate on structurally dissimilar held-out sets — directly translates to <strong>spatial cross-validation that withholds entire geographic regions</strong> rather than random grid cells, which would make my GWR/MGWR and ML models more honestly evaluated for policy transfer across cities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Navigating molecular OOD-ness — <a href="https://doi.org/10.1038/s42256-026-01251-7" target="_blank">10.1038/s42256-026-01251-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use MolCLR's subgraph motif logic to learn interpretable spatial substructure features</h3>
+      <p><span class="lab paper">Extending this paper</span>MolCLR's subgraph removal augmentation works by forcing the encoder to infer missing substructures from context — implicitly learning that certain subgraph motifs (functional groups, rings) are the dominant predictors of molecular properties. An extension would make this explicit: after pre-training, apply <strong>GNN explainability tools</strong> (GNNExplainer, attention-weighted subgraph extraction) to identify which spatial substructures MolCLR most relies on, analogous to interpreting which functional groups drive drug activity. The machine learning-aided generative molecular design paper (NMI 2024) extends the pre-training/generation paradigm further, and its interpretability modules connect back to MolCLR's encoder.</p>
+      <p><span class="lab mine">Added value to my research</span>This is precisely my <strong>explainable machine learning for spatial prediction</strong> agenda: if a GNN encoder trained on spatial accessibility graphs learns that certain subgraph motifs (dense hospital clusters, well-connected transit hubs) dominate catchment accessibility, those motifs become explainable spatial determinants of health access — actionable for planners in a way that a black-box score is not. The subgraph removal logic could be repurposed as a spatial attribution mechanism, isolating which neighbourhood subgraphs drive model predictions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Bridge MolCLR's data-scarce transfer learning to small-area health geography</h3>
+      <p><span class="lab paper">Extending this paper</span>MolCLR's most striking result is its performance on datasets with very few labelled molecules (ClinTox: ~1,478 molecules; BACE: ~1,513 molecules), where it surpasses supervised SOTA despite having far fewer task-specific labels. This is a <strong>few-shot transfer learning regime</strong>. An extension would explicitly frame MolCLR as a few-shot learner — using meta-learning or prototypical networks on top of the pre-trained encoder to generalize to entirely new molecular property benchmarks from as few as 10–50 labelled examples. The GNN interpretability study on protein-ligand affinity (NMI 2023) shows complementary evidence that what GNNs learn in molecular settings is highly transferable, which motivates formal few-shot benchmarking.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps directly to my challenge of <strong>telehealth and digital divide analysis at small-area level</strong>: labelled outcomes (telehealth utilization by census tract) are extremely sparse in rural areas. A self-supervised pre-training step on large unlabelled spatial graphs (national road/POI networks) followed by few-shot fine-tuning on the sparse labelled tracts would extend MolCLR's data-efficiency to health geography — enabling reliable spatial predictions even for underserved areas where administrative data is fragmentary.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein-ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

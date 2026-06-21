@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Envisioning better benchmarks for machine learning PDE solvers — AI Digest</title>
+<meta name="description" content="AI Digest: Envisioning better benchmarks for machine learning PDE solvers (Nature Machine Intelligence, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">ML PDE Solvers</span>
+      <span class="tag">Benchmarking</span>
+      <span class="tag">Scientific ML</span>
+    </div>
+    <h1>Envisioning better benchmarks for machine learning PDE solvers</h1>
+    <div class="meta">
+      <span class="authors">Johannes Brandstetter</span>
+      <span><b>Published</b> 2024-12-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-024-00962-z" target="_blank">10.1038/s42256-024-00962-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-024-00962-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Machine learning–based PDE solvers have been evaluated against <strong>weak numerical baselines</strong> and with a pervasive <strong>reporting bias favouring positive results</strong>, producing an overly optimistic view of the field. The path forward lies not in incremental academic comparisons but in defining <strong>open, rigorous benchmark challenges</strong> — akin to an "ImageNet for PDEs" or a "CASP competition for PDE modelling" — that genuinely expose where machine learning adds unique value over classical numerical methods.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Diagnoses a credibility crisis in scientific ML.</b> The companion analysis (McGreivy &amp; Hakim, 2024) systematically documented that most ML–PDE papers beat deliberately weak numerical baselines; this piece gives the community a constructive roadmap to fix it.</li>
+      <li><b>Frames the benchmark gap as structural, not cosmetic.</b> PDEs span an enormous space of geometries, resolutions, boundary conditions, dimensionalities, and solver stability requirements — no single dataset can cover it. The piece articulates <em>why</em> this is intrinsically harder than ImageNet or ERA5.</li>
+      <li><b>Calls for community-level infrastructure.</b> By drawing on analogies to CASP (protein folding) and ImageNet (vision), it positions the solution as a shared competition format with clear evaluation metrics, not just better individual papers.</li>
+      <li><b>Identifies where ML may genuinely excel.</b> Speed, generalization across PDE families, uncertainty quantification, and handling of complex geometries are flagged as unique ML advantages that rigorous benchmarks should specifically probe.</li>
+      <li><b>Reframes the conversation from competition to complementarity.</b> The piece argues ML and numerical methods should be viewed as jointly powerful, once honest benchmarks reveal which criteria each approach actually wins on.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Field-level perspective with broad impact:</b> a News &amp; Views piece that reframes an entire subfield's evaluation culture — squarely within NMI's remit of shaping directions in machine intelligence.</li>
+      <li><b>Responds to a high-profile companion study:</b> directly engages the McGreivy &amp; Hakim (2024) analysis published in the same journal, creating an editorially coherent scientific dialogue.</li>
+      <li><b>Author credibility:</b> Johannes Brandstetter (JKU Linz, NXAI GmbH) is a leading figure in neural PDE solvers, lending authority to the call for better benchmarks.</li>
+      <li><b>Science-policy translation:</b> the CASP analogy shows how formal benchmark competitions can transform entire fields — a model NMI readers from multiple disciplines can apply.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>News &amp; Views (Brief Communication) — a perspective/opinion piece, not an empirical study. No new datasets are collected or released by this article.</dd>
+      <dt>Analysed literature</dt><dd>Builds on the systematic review by McGreivy &amp; Hakim (<i>Nat. Mach. Intell.</i> 6, 1256–1269, 2024; DOI <code>10.1038/s42256-024-00897-5</code>), which covers machine learning–based fluid-PDE solvers across a broad set of published papers.</dd>
+      <dt>Reference benchmarks cited</dt><dd><strong>ImageNet</strong> (Deng et al., CVPR 2009) — 1.2 M images, 1,000 classes, the canonical computer-vision benchmark. <strong>CASP competition</strong> (protein-structure prediction, running since 1994). <strong>ERA5</strong> (Hersbach et al., 2020) — ECMWF reanalysis dataset, 1940–present, global atmospheric state at ~31 km resolution; underpins weather-forecasting ML benchmarks.</dd>
+      <dt>ML success cases cited</dt><dd>AlphaFold2 (<i>Nature</i> 596, 583–589, 2021), Pangu-Weather (<i>Nature</i> 619, 533–538, 2023), GraphCast (<i>Science</i> 382, 1416–1421, 2023) — used as comparators showing where ML has already disrupted science with strong benchmarks.</dd>
+      <dt>Data availability</dt><dd>No original data; all referenced datasets are publicly available (ERA5 via ECMWF, ImageNet, CASP via PDB).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role in Paper</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ERA5 (ECMWF Reanalysis v5)</td><td>Cited benchmark for weather ML (GraphCast, Pangu)</td><td>Global, 1940–present, ~31 km, hourly</td><td><a href="https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5" target="_blank">ECMWF</a></td></tr>
+        <tr><td>ImageNet</td><td>Analogy: the standard benchmark ML-PDE solvers lack</td><td>1.2 M images, 1,000 classes (ILSVRC)</td><td><a href="https://www.image-net.org" target="_blank">image-net.org</a></td></tr>
+        <tr><td>CASP (Critical Assessment of protein Structure Prediction)</td><td>Analogy: competition format that propelled AlphaFold</td><td>Biennial competition since 1994</td><td><a href="https://predictioncenter.org" target="_blank">predictioncenter.org</a></td></tr>
+        <tr><td>McGreivy &amp; Hakim 2024 review</td><td>Primary literature source; basis for critique of weak baselines</td><td>Systematic review of ML-PDE solver papers (fluid)</td><td><a href="https://doi.org/10.1038/s42256-024-00897-5" target="_blank">10.1038/s42256-024-00897-5</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this is a perspectives/News &amp; Views article; it does not introduce or analyze new empirical datasets. Volume figures above are taken verbatim from the cited literature.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Systematic critique of evaluation practice:</b> draws on McGreivy &amp; Hakim's (2024) meta-analysis to characterize two structural problems — weak numerical baselines and positive reporting bias — in the ML-PDE solver literature.</li>
+      <li><b>Benchmark analogy reasoning:</b> maps the history of benchmark-driven progress in computer vision (ImageNet), protein folding (CASP), and weather forecasting (ERA5) onto the PDE-solver domain to argue for a competition format.</li>
+      <li><b>Requirements taxonomy:</b> catalogues PDE solver design criteria across three layers — user demands (speed, accuracy, uncertainty, generalization), structural problem properties (geometry, resolution, boundary conditions), and implementation constraints (stability, invariant preservation) — to explain why a single benchmark is hard.</li>
+      <li><b>No-free-lunch framing:</b> invokes NFL theorems to contextualize why PDE solvers are fragmented and domain-specific, setting the stage for niche-specific benchmark challenges.</li>
+      <li><b>Prescriptive roadmap:</b> synthesizes the above into a community call for open benchmark challenges targeting the criteria where ML is uniquely capable (speed, generalization, complex geometries).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <p class="no-table">No figures available. This is a brief News &amp; Views commentary (published as 2 pages in <i>Nat Mach Intell</i> vol. 7, pp. 2–3, 2025). The article contains one editorial cover illustration (fluid imagery, credit: Stocktrek Images / Alamy Stock Photo) that is not a data figure and is not reproduced here. Tables in main text: 0. No supplementary material.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, open science).</p>
+
+    <div class="idea">
+      <h3>① Build the "ImageNet for PDEs" as a living benchmark that rewards generalization, not just accuracy</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper argues convincingly that an ImageNet-style benchmark is missing for PDEs, but stops short of specifying what it should contain. A concrete extension: design a <strong>multi-PDE benchmark suite</strong> (Navier–Stokes, heat equation, wave equation, Darcy flow, across varied geometries and resolutions) with a <em>held-out test distribution</em> explicitly shifted from training — so that models must generalize rather than overfit to specific solver configurations. The benchmark would quantify not only error but also speed, stability under long rollouts, and uncertainty calibration, directly addressing the three layers of criteria the paper enumerates.</p>
+      <p><span class="lab mine">Added value to my research</span>Geospatial surrogate modelling faces the exact same benchmark vacuum: spatiotemporal prediction tasks (urban heat, pollution dispersion, flood inundation) lack standardized evaluation suites. Designing a <strong>GeoAI benchmark inspired by this paper's CASP analogy</strong> — with fixed held-out spatial contexts, explicit distribution shift, and multiple metrics — would elevate reproducibility in my explainable spatiotemporal ML work and make cross-method comparisons credible.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Promising directions of machine learning for partial differential equations — <a href="https://doi.org/10.1038/s43588-024-00643-2" target="_blank">10.1038/s43588-024-00643-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Operationalize the "weak baseline" critique with a formal baseline-strength metric</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper qualitatively identifies "weak baselines" as a structural problem but offers no operational criterion for detecting them automatically during peer review. An extension: define a <strong>baseline-strength score</strong> — e.g., fraction of hyperparameter grid explored for the numerical comparator, whether the classical solver is run at the same computational budget as the ML model — and train a lightweight <strong>meta-classifier</strong> on the McGreivy &amp; Hakim corpus to flag papers that likely overclaim. This would convert the paper's call for rigor into an actionable, automatable review tool.</p>
+      <p><span class="lab mine">Added value to my research</span>In GeoAI, the analogous problem is spatial autocorrelation leakage: models are evaluated on random splits that do not respect spatial structure, making results non-transferable. Applying the paper's logic, I can formalize a <strong>spatial-leakage severity score</strong> that flags evaluation protocols in spatial ML papers — directly strengthening the reproducibility and open-science agenda in my geospatial methods work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning solutions looking for PDE problems — <a href="https://doi.org/10.1038/s42256-025-00989-w" target="_blank">10.1038/s42256-025-00989-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply transfer-operator learning to bridge the benchmark fragmentation the paper diagnoses</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper attributes benchmark fragmentation to the enormous diversity of PDE families and solver requirements. A direct response: develop <strong>transfer operator learning</strong> frameworks that learn a single backbone operator across multiple PDE families (sharing representations across Navier–Stokes, heat, wave equations) and evaluate it on a diverse benchmark — directly testing whether the paper's hypothesis holds that "machine learning might not disrupt each subproblem at every scale." Transfer learning would reduce the number of specialist models while making benchmark comparisons across PDE types tractable.</p>
+      <p><span class="lab mine">Added value to my research</span>This is structurally identical to my <strong>physics-informed graph learning</strong> agenda: instead of training separate spatial prediction models for each city or health geography, learn a transferable spatiotemporal operator that encodes physical priors (diffusion, conservation) and transfers across contexts. The paper's benchmark-fragmentation critique sharpens the need for cross-context evaluation in my own methods.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep transfer operator learning for partial differential equations under conditional shift — <a href="https://doi.org/10.1038/s42256-022-00569-2" target="_blank">10.1038/s42256-022-00569-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Link ML-PDE advances to weather and climate as the canonical high-stakes test domain</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper cites GraphCast and Pangu-Weather as exemplars where ML did disrupt a PDE domain — precisely because ERA5 provides the kind of rigorous benchmark the paper calls for. An extension: use <strong>weather forecasting as a living laboratory</strong> for the proposed benchmark principles: define held-out evaluation sets across different climate regimes, atmospheric scales, and lead times, and measure ML vs. numerical methods on the paper's multi-dimensional criteria (speed, accuracy, stability, uncertainty). This would demonstrate the benchmark design approach on a domain with immediate societal impact.</p>
+      <p><span class="lab mine">Added value to my research</span>Atmospheric and climate processes directly drive the urban health outcomes I study (heat-related illness, pollution exposure). Connecting <strong>ML-weather surrogate models</strong> — validated on the kind of rigorous benchmarks this paper prescribes — to my spatiotemporal health-geography pipeline would let me simulate climate-driven health burden under counterfactual scenarios, extending my GeoAI work into climate-health modelling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Neural general circulation models for weather and climate — <a href="https://doi.org/10.1038/s41586-024-07744-y" target="_blank">10.1038/s41586-024-07744-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Extend the benchmark-design principles to computational fluid dynamics in engineering, then to urban physics</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's prescribed benchmark structure — rigorous evaluation metrics, explicit test distribution, multi-criteria scoring — applies beyond academic PDE test cases to <strong>real engineering CFD</strong> problems (turbulence modelling, aerodynamic drag prediction, urban wind fields). Extending this paper: partner with the CFD community to define a challenge with problems drawn from engineering practice (industrial geometries, Reynolds-number regimes beyond current ML training data), so that ML's no-free-lunch limitations become quantitatively visible and solvable.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban wind and heat-island physics are CFD problems at city scale. A ML-CFD benchmark at urban resolution would directly enable my <strong>urban analytics</strong> research: surrogate models for urban microclimate, validated against the paper's multi-criteria benchmark protocol, could replace computationally expensive simulations in healthy-city planning models — connecting PDE benchmark rigor to actionable urban health policy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing computational fluid dynamics with machine learning — <a href="https://doi.org/10.1038/s43588-022-00264-7" target="_blank">10.1038/s43588-022-00264-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature / Alamy; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

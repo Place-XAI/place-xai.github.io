@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automating turbulence modelling by multi-agent reinforcement learning — AI Digest</title>
+<meta name="description" content="AI Digest: Automating turbulence modelling by multi-agent reinforcement learning (Nature Machine Intelligence, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Reinforcement Learning</span>
+      <span class="tag">Turbulence Modelling</span>
+      <span class="tag">Large-Eddy Simulation</span>
+      <span class="tag">Fluid Dynamics</span>
+    </div>
+    <h1>Automating turbulence modelling by multi-agent reinforcement learning</h1>
+    <div class="meta">
+      <span class="authors">Guido Novati &middot; Hugues Lascombes de Laroussilhe &middot; Petros Koumoutsakos</span>
+      <span><b>Published</b> 2021-01-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-00272-0" target="_blank">10.1038/s42256-020-00272-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-00272-0" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Multi-agent reinforcement learning (MARL) can <strong>automate the discovery of subgrid-scale closure models</strong> for large-eddy simulations of turbulent flows without any supervised training on DNS data. The learned policy (&pi;<sup>LL</sup>) <strong>matches or surpasses classical Smagorinsky-based models</strong> in reproducing the energy spectrum of direct numerical simulations and, critically, <strong>generalizes across unseen Reynolds numbers and grid resolutions</strong> well beyond the training regime. This establishes MARL as a principled alternative to both hand-crafted physics models and supervised learning for computational fluid dynamics.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the supervised-learning bottleneck in CFD.</b> All prior data-driven turbulence models relied on supervised learning requiring expensive filtered DNS targets and suffering from compounding a priori/a posteriori errors. MARL bypasses this by optimizing directly against high-level flow statistics.</li>
+      <li><b>Generalization is the key advance.</b> Classical SGS models require manual tuning per flow regime. The MARL policy, trained on Reynolds numbers Re<sub>&lambda;</sub> &isin; {65&ndash;163}, remains stable and accurate up to Re<sub>&lambda;</sub> = 205 &mdash; a regime never seen during training.</li>
+      <li><b>Grid-resolution transfer at no extra training cost.</b> The policy trained on 32<sup>3</sup> grids transfers to 64<sup>3</sup> and 128<sup>3</sup> grids by simply scaling the number of agents &mdash; no retraining needed.</li>
+      <li><b>Physically meaningful beyond the reward objective.</b> Even though MARL only optimizes energy spectra, the learned model correctly recovers kinetic energy, integral length scales, and dissipation rates &mdash; quantities never included in training.</li>
+      <li><b>Entirely open-source and reproducible.</b> Flow solver (<code>CubismUP_3D</code>), RL library (<code>smarties</code>), and training code are all publicly available on GitHub at <a href="https://github.com/cselab/MARL_LES" target="_blank">github.com/cselab/MARL_LES</a>.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Principled first use of MARL in scientific simulation:</b> introduces a methodologically novel paradigm (multi-agent RL as automated model discovery) rather than applying an existing ML method to a data task.</li>
+      <li><b>High-impact application domain:</b> turbulence modelling underpins aircraft design, climate forecasting, and nuclear reactor engineering &mdash; the societal stakes justify top-tier placement.</li>
+      <li><b>Addresses an open fundamental problem:</b> the a priori / a posteriori gap in data-driven closure models is a recognized grand challenge; MARL provides a unified framework that dissolves the distinction between the two evaluation modes.</li>
+      <li><b>Generalizable beyond the case study:</b> the authors explicitly show the framework extends to any non-linear conservation law, not just Navier&ndash;Stokes &mdash; a hallmark of Nature-level universality.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Data type</dt><dd>All data are <strong>synthetically generated</strong> via numerical simulation &mdash; no observational or real-world datasets are used. The paper is entirely based on computational experiments.</dd>
+      <dt>DNS reference data</dt><dd>Direct numerical simulations on a uniform <strong>512<sup>3</sup></strong> grid (and 1,024<sup>3</sup> for visualization) for a periodic cubic domain (2&pi;)<sup>3</sup>, covering Taylor&ndash;Reynolds numbers Re<sub>&lambda;</sub> &isin; [60, 205] in log increments. Twenty independent DNS per Re<sub>&lambda;</sub>, each lasting 20 &tau;<sub>I</sub>, with measurements every &tau;<sub>&eta;</sub>.</dd>
+      <dt>LES training grids</dt><dd>Large-eddy simulations on <strong>32<sup>3</sup></strong> grids (approximately four orders of magnitude cheaper than DNS), Re<sub>&lambda;</sub> sampled from {65, 76, 88, 103, 120, 140, 163} during training. Evaluation also at 64<sup>3</sup> and 128<sup>3</sup>.</dd>
+      <dt>RL experience volume</dt><dd>~10<sup>5</sup> experiences per LES simulation; replay memory of 10<sup>6</sup> steps; 10<sup>7</sup> policy gradient steps per training run; mini-batch size B = 512.</dd>
+      <dt>Flow solver</dt><dd><strong>CubismUP 3D</strong> &mdash; open-source CFD code with second-order spatial discretization and pressure-projection scheme: <a href="https://github.com/cselab/CubismUP_3D" target="_blank">github.com/cselab/CubismUP_3D</a></dd>
+      <dt>RL library</dt><dd><strong>smarties</strong> &mdash; open-source RL library implementing V-RACER with ReF-ER (Remember and Forget Experience Replay): <a href="https://github.com/cselab/smarties" target="_blank">github.com/cselab/smarties</a></dd>
+      <dt>Data availability</dt><dd>Reference data, figure scripts, and training/evaluation instructions: <a href="https://github.com/cselab/MARL_LES" target="_blank">github.com/cselab/MARL_LES</a></dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Code</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>CubismUP 3D (DNS)</td><td>Reference flow data generator</td><td>512<sup>3</sup> grid; Re<sub>&lambda;</sub> &isin; [60&ndash;205]; 20 independent runs per Re</td><td><a href="https://github.com/cselab/CubismUP_3D" target="_blank">GitHub</a></td></tr>
+        <tr><td>CubismUP 3D (LES)</td><td>RL environment for agent interaction</td><td>32<sup>3</sup>, 64<sup>3</sup>, 128<sup>3</sup> grids; 7 training Re values</td><td><a href="https://github.com/cselab/CubismUP_3D" target="_blank">GitHub</a></td></tr>
+        <tr><td>smarties (V-RACER + ReF-ER)</td><td>Policy training and experience replay</td><td>10<sup>7</sup> gradient steps; replay memory N<sub>RM</sub> = 10<sup>6</sup></td><td><a href="https://github.com/cselab/smarties" target="_blank">GitHub</a></td></tr>
+        <tr><td>MARL_LES (scripts + reference data)</td><td>Reproducibility pipeline</td><td>Complete training, evaluation, and figure-generation scripts</td><td><a href="https://github.com/cselab/MARL_LES" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all data are computationally generated; no external observational datasets are used. Numbers above are taken verbatim from the article's Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Multi-agent RL (MARL) setup:</b> N<sub>agents</sub> = 4<sup>3</sup> = 64 agents dispersed uniformly in the LES domain, each observing a 28-dimensional state (5 invariants of the velocity gradient + 6 invariants of the Hessian, non-dimensionalized, plus global energy spectrum modes up to Nyquist frequency and dissipation rates). All agents share a single policy network with &sim;6,211 parameters.</li>
+      <li><b>Policy network:</b> feed-forward NN with 2 hidden layers of 64 units each, tanh activations, skip connections; outputs mean and standard deviation of a Gaussian policy over the local Smagorinsky dissipation coefficient C<sub>s</sub><sup>2</sup>.</li>
+      <li><b>ReF-ER (Remember and Forget Experience Replay):</b> off-policy algorithm combining experience replay (V-RACER) with a KL-divergence trust-region constraint that rejects samples with importance weights outside [1/C, C] and adds a penalty term to attract the policy back toward past behavior. Critical for stabilizing MARL training where correlated agent actions create confounding feedback.</li>
+      <li><b>Reward functions:</b> two variants &mdash; r<sup>G</sup> (local Germano-identity error) and r<sup>LL</sup> (global regularized log-likelihood of LES energy spectrum vs. DNS statistics). The r<sup>LL</sup> reward produces the best-performing model.</li>
+      <li><b>Baselines:</b> Standard Smagorinsky Model (SSM, fixed C<sub>s</sub>) and Dynamic Smagorinsky Model (DSM, spatiotemporally adaptive C<sub>s</sub> via Germano identity) &mdash; both widely used industrial-standard LES closure models.</li>
+      <li><b>Generalization evaluation:</b> models evaluated on held-out Re<sub>&lambda;</sub> &isin; {60, 82, 111, 151, 190, 205} (all unseen during training) and on grids 64<sup>3</sup>, 128<sup>3</sup> with proportionally scaled agent counts.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig1.png" target="_blank">
+        <img src="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig1.png" alt="Fig.1 Schematic of MARL integration with the flow solver" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> MARL&ndash;flow solver integration: agents at grid points sample a shared policy to compute local SGS dissipation coefficients C<sub>s</sub><sup>2</sup> from local (velocity gradient invariants) and global (energy spectrum) state.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig2.png" target="_blank">
+        <img src="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig2.png" alt="Fig.2 Training procedure with smarties library" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Distributed training architecture: parallel LES workers collect experiences and send episodes to a master process that stores them in a replay memory and updates policy parameters by gradient descent.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig3.png" target="_blank">
+        <img src="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig3.png" alt="Fig.3 Statistical properties of DNS isotropic turbulence" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> DNS reference statistics: time-averaged energy spectra (a), cumulative kinetic energy (b), and log-normal spectral mode distributions (c) for Re<sub>&lambda;</sub> &isin; [60, 205].</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig4.png" target="_blank">
+        <img src="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig4.png" alt="Fig.4 Visualizations of isotropic turbulence simulations" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Flow visualizations: momentum flux contours comparing DNS at 1,024<sup>3</sup> (a) vs. MARL-modelled LES at 32<sup>3</sup> (b), plus Smagorinsky coefficient distribution across the domain (c).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig5.png" target="_blank">
+        <img src="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig5.png" alt="Fig.5 Comparison of SGS models at unseen Reynolds numbers" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> SGS model comparison at held-out Re<sub>&lambda;</sub>: energy spectra (a), normalized log-spectra (b), C<sub>s</sub><sup>2</sup> distributions (c), and velocity structure functions (d, e) for DNS, SSM, DSM, and MARL policies.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig6.png" target="_blank">
+        <img src="assets/automating-turbulence-modelling-by-multi-agent-reinforcement-learning__s42256-020-00272-0/fig6.png" alt="Fig.6 Reliability of MARL model beyond training objective" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Generalization beyond the reward: integral properties (kinetic energy, length scale, dissipation) recovered without training (a&ndash;d); cross-resolution accuracy at 32<sup>3</sup>, 64<sup>3</sup>, 128<sup>3</sup> grids (e).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Supplementary Information contains the Reporting Summary only.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, 2SFCA/R2SFCA accessibility, agent-based modeling).</p>
+
+    <div class="idea">
+      <h3>&#9312; Replace the independent-agent architecture with a graph-communicating policy for spatially heterogeneous flows</h3>
+      <p><span class="lab paper">Extending this paper</span>The current MARL framework places agents on a uniform grid with no explicit inter-agent communication &mdash; each agent acts only from its local state and global spectral statistics, which works for statistically homogeneous isotropic turbulence. For wall-bounded or geometrically complex flows (one of the paper's own stated open challenges), the optimal closure at any grid point depends on neighboring conditions. A direct extension: model the agent network as a <strong>dynamic spatial graph</strong> where each agent aggregates messages from spatial neighbors before selecting its local C<sub>s</sub><sup>2</sup>. A GNN policy would let agents implicitly learn spatial correlations of subgrid-scale stresses &mdash; potentially critical for wall-layer modelling. The cross-resolution transferability result already hints that the learned policy encodes scale-invariant spatial patterns; explicit graph structure would make this inductive bias architectural and interpretable.</p>
+      <p><span class="lab mine">Added value to my research</span>My <strong>physics-informed graph learning</strong> agenda maps directly here: the same GNN-on-spatial-graph formulation I apply to urban accessibility networks (nodes as neighborhoods, edges as travel links) is applicable to the LES grid where nodes are computational cells. Encoding physics priors (energy conservation, Navier&ndash;Stokes constraints) as soft losses in the GNN training mirrors my approach of baking spatial autocorrelation and scaling laws into graph-based spatiotemporal prediction. The inter-agent coordination mechanism also directly informs my <strong>agent-based modeling</strong> of service access dynamics, providing a principled RL recipe for spatially distributed agents that must learn cooperative policies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control &mdash; <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Train turbulence closures from experimentally measurable statistics, bypassing the DNS reward entirely</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's reward is computed from DNS energy spectra &mdash; data four orders of magnitude more expensive than LES to generate. The authors explicitly flag as an open direction training from experimental measurements (wall shear stresses, velocity statistics from PIV/LDV). Extending this: define a reward using <strong>macroscopic statistics observable from real sensors</strong> (drag coefficients, integral dissipation, coarse velocity profiles) and learn a closure without ever running a DNS. The key algorithmic challenge is dealing with partial, noisy, and temporally sparse observations &mdash; a natural fit for combining MARL with <strong>Bayesian reward inference</strong> or inverse RL to estimate latent DNS-equivalent statistics from coarse measurements. This would make MARL-LES applicable to turbulent flows too complex or expensive for DNS (geophysical flows, combustion).</p>
+      <p><span class="lab mine">Added value to my research</span>This "reward from observations" paradigm directly parallels my <strong>multi-source data fusion</strong> work: just as I reconstruct fine-grained spatiotemporal patterns from GPS traces, mobile-phone records, and remote sensing, a MARL reward could be reconstructed from sparse sensor arrays using spatiotemporal kernel density estimation &mdash; a method I already apply in urban contexts. The inverse problem of inferring a reward from observable proxies is structurally identical to calibrating a 2SFCA accessibility model from revealed-preference data (actual healthcare utilization rates vs. predicted access scores), suggesting a unified methodological framework.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing computational fluid dynamics with machine learning &mdash; <a href="https://doi.org/10.1038/s43588-022-00264-7" target="_blank">10.1038/s43588-022-00264-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Transfer the MARL closure framework to spatial accessibility modelling &mdash; RL-discovered floating catchment policies</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core insight is that the hand-crafted Smagorinsky constant C<sub>s</sub> can be replaced by a locally adaptive policy that maximizes a high-level objective without supervision. This maps precisely onto the 2SFCA family of accessibility models: the fixed catchment radius and distance-decay function in 2SFCA play the same role as C<sub>s</sub> in SSM &mdash; they are manually chosen constants governing how service supply "diffuses" to demand. A direct extension: formulate a MARL problem where agents correspond to healthcare facilities, each observing local demand density and travel-time patterns, and output a catchment size and decay function maximizing an equity reward (e.g., minimizing the spatial Gini coefficient of access scores). The ReF-ER trust-region mechanism &mdash; crucial in MARL-LES to prevent correlated agent actions from destabilizing training &mdash; would be equally important here, as overlapping catchments create the same confounding-feedback structure between facilities.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a concrete research agenda for my <strong>R2SFCA / 2SFCA accessibility</strong> work: replace ad hoc radius and decay-function specification with a MARL-discovered adaptive policy. The equity reward mirrors my interest in measuring and improving healthcare access for underserved populations. The generalization-across-grids finding suggests such a policy could transfer across cities without city-specific retraining &mdash; a key desideratum for a globally applicable healthcare accessibility tool applicable to both telehealth and in-person care.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning &mdash; <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Benchmark ReF-ER stability guarantees across PDE closure problems to establish when trust-region ER is necessary</h3>
+      <p><span class="lab paper">Extending this paper</span>ReF-ER is the methodological engine that makes MARL stable in the LES setting: it constrains policy drift by rejecting experiences with importance weights outside a trust region and adding a KL-divergence penalty. This addresses the fundamental challenge of compounding errors in any autoregressive model trained off-policy. The paper demonstrates ReF-ER in one setting; an important extension would be a <strong>systematic meta-study across PDE closure problems</strong> (shallow-water equations, advection-diffusion, Boussinesq) comparing ReF-ER vs. simpler ER strategies (PPO, SAC, DDPG) to identify when the trust-region constraint is necessary vs. when standard ER suffices. This would produce actionable algorithmic guidelines for the scientific ML community adopting RL-based model discovery.</p>
+      <p><span class="lab mine">Added value to my research</span>Long-horizon stability under compounding errors is a shared challenge in my <strong>Monte Carlo SIR epidemic models</strong> where small parameter errors accumulate over multi-week forecasting horizons, and in my <strong>RL-based resource allocation</strong> formulations. The ReF-ER trust-region mechanism offers a principled recipe for stable off-policy training in these settings &mdash; particularly for RL-augmented SIR models where facility allocation agents must learn from delayed, aggregated health outcomes over weeks, structurally analogous to turbulence closure learning from temporally averaged energy spectra.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reinforcement learning in artificial and biological systems &mdash; <a href="https://doi.org/10.1038/s42256-019-0025-4" target="_blank">10.1038/s42256-019-0025-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Formalize the "side-channel diagnostic" of Fig. 6 as a physical coherence benchmark for scientific ML models</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most compelling results (Fig. 6) is that &pi;<sup>LL</sup>, trained only on energy spectra, also correctly recovers kinetic energy, integral length scales, and dissipation rates &mdash; physical quantities never included in the reward. The authors interpret this as evidence of physical soundness beyond the optimization target. This constitutes a general diagnostic: after training any ML closure on one physical objective, evaluate it on a suite of related but untrained physical quantities. Extending the paper: systematize this test as a <strong>"physical coherence score"</strong> analogous to probabilistic calibration, and use it to rank competing closure models across PDE families &mdash; giving the community a physics-grounded model selection criterion that complements standard held-out test loss.</p>
+      <p><span class="lab mine">Added value to my research</span>This "side-channel diagnostic" framework is directly applicable to my <strong>explainable ML for spatial prediction</strong> work: after training a gradient-boosting or XGBoost model to predict healthcare access scores, I can check whether learned feature importances conform to known spatial scaling relationships (e.g., higher population-density weight in dense areas). The same logic applies to my <strong>fine-tuned geospatial foundation models</strong>: a model fine-tuned on one spatial prediction task should be evaluated on related untrained spatial statistics to detect spurious over-fitting to the fine-tuning objective &mdash; the same a priori / a posteriori gap that MARL resolves for CFD, transplanted to GeoAI model validation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning to infer eddy heat fluxes from sea surface height patterns of mesoscale turbulence &mdash; <a href="https://doi.org/10.1038/s41467-020-20779-9" target="_blank">10.1038/s41467-020-20779-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

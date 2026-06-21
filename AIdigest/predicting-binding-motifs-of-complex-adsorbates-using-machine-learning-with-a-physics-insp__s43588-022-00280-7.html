@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting binding motifs of complex adsorbates using machine learning with a physics-inspired graph representation — AI Digest</title>
+<meta name="description" content="AI Digest: Predicting binding motifs of complex adsorbates using machine learning with a physics-inspired graph representation (Nature Computational Science, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Graph Kernel</span>
+      <span class="tag">Heterogeneous Catalysis</span>
+      <span class="tag">Gaussian Process Regression</span>
+      <span class="tag">Active Learning</span>
+    </div>
+    <h1>Predicting binding motifs of complex adsorbates using machine learning with a physics-inspired graph representation</h1>
+    <div class="meta">
+      <span class="authors">Wenbin Xu · Karsten Reuter · Mie Andersen</span>
+      <span><b>Published</b> 2022-07-25</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-022-00280-7" target="_blank">10.1038/s43588-022-00280-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-022-00280-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>data-efficient, physics-inspired machine learning model</strong> — the Wasserstein Weisfeiler–Lehman graph kernel combined with Gaussian process regression (WWL-GPR) — predicts adsorption enthalpies and <strong>binding motifs of complex adsorbates</strong> (including bi- and higher-dentate modes) at transition metal catalysts with an r.m.s.e. of ~0.18–0.2 eV, far outperforming vector-based models. Trained on only ~1,700 DFT data points, the model <strong>generalizes to bimetallic alloys and out-of-domain metals</strong>, and an ensemble uncertainty approach reliably flags high-error predictions, making it well-suited for active-learning catalyst screening.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Enables catalyst screening beyond simple adsorbates.</b> Most ML models for catalysis handle only monodentate species; this is one of the first data-efficient frameworks that simultaneously predicts <strong>which binding motif</strong> a complex molecule (up to 9 atoms, with mono/bi/higher-dentate modes) adopts and <strong>how strongly</strong> it binds.</li>
+      <li><b>300× smaller training set than the Open Catalyst Project.</b> By embedding physically motivated features (d-band moments, HOMO/LUMO levels, SOAP descriptors) as node attributes, the model achieves practical accuracy (~0.18 eV r.m.s.e.) with ~1,700 data points versus ~500,000 in purely geometry-driven neural approaches.</li>
+      <li><b>Extrapolates to alloys and new elements.</b> WWL-GPR achieves r.m.s.e. of 0.23 eV on an unseen CuCo alloy and an out-of-domain element (Ru) — a necessary capability for computational catalyst discovery at scale.</li>
+      <li><b>Provides principled uncertainty quantification.</b> An ensemble of 100 bootstrapped GPR models reliably assigns high uncertainty to high-error predictions, enabling reliable active-learning workflows where costly DFT calculations are directed where the model is least confident.</li>
+      <li><b>Fully open and reproducible.</b> All data, code, and DFT coordinates are released on GitHub and Zenodo, enabling the community to build on or benchmark against the model.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty with broad applicability:</b> the customized WWL graph kernel for surface–adsorbate systems is a genuinely new algorithmic contribution with relevance across heterogeneous catalysis, electrochemistry, and surface science.</li>
+      <li><b>Physics-inspired, not purely data-driven:</b> the integration of electronic and geometric first-principles features as node attributes exemplifies the "physics-informed ML" paradigm that Nature Computational Science actively publishes.</li>
+      <li><b>Addresses a known bottleneck in the field:</b> identifying stable adsorption motifs for complex adsorbates is a recognized barrier to catalyst screening; the paper directly attacks this with a concrete, benchmarked solution.</li>
+      <li><b>Active-learning readiness with uncertainty quantification:</b> provides a practical path to iterative DFT–ML co-optimization, a priority topic in computational materials science.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simple adsorbates DB</dt><dd>1,422 DFT adsorption enthalpies for <strong>8 simple adsorbates</strong> (C, H, O, CO, OH, CH, CH₂, CH₃) with monodentate coordination on fcc(100), fcc(110), fcc(111), fcc(211) facets of <strong>9 pure transition metals</strong> (Ni, Cu, Ru, Rh, Pd, Ag, Ir, Pt, Au), plus bcc(210) of Fe and hcp(0001) of Co. Includes 4 single-atom alloys and 4 AB bimetallic alloys. Sourced from prior publications (Andersen et al.).</dd>
+      <dt>Complex adsorbates DB</dt><dd>1,679 DFT adsorption enthalpies for <strong>41 different adsorbates</strong> (up to 9 atoms; includes C₁–C₂ and oxygenated fragments relevant to ethanol synthesis) in mono-, bi-, and higher-dentate motifs on fcc(111) and fcc(211) facets of <strong>Cu, Rh, Pd, Co</strong>. Additional test structures on CuCo(111), PdRh(111), Pt(111/211), and Ru(111/211).</dd>
+      <dt>DFT code &amp; functional</dt><dd><strong>Quantum ESPRESSO</strong> with the <strong>BEEF-vdW</strong> functional (Bayesian error estimation with van der Waals correlation) and ultrasoft pseudopotentials. Plane-wave cutoff 500 eV; vacuum region 20 Å; spin polarization for Co.</dd>
+      <dt>Workflow automation</dt><dd><strong>AiiDA</strong> with customized Python scripts interfacing <strong>CatKit</strong> (initial geometry enumeration via surface graph) and the <strong>Atomic Simulation Environment (ASE)</strong>.</dd>
+      <dt>Features</dt><dd>Projected DOS for d-band moments; HOMO/LUMO energy levels; SOAP descriptors for local geometry — all derived from clean surfaces or gas-phase adsorbates (no relaxed adsorbed-structure features used at prediction time).</dd>
+      <dt>Data &amp; code availability</dt><dd>All DFT databases, relaxed coordinates, and features: <a href="https://github.com/Wenbintum/WWL-GPR" target="_blank">github.com/Wenbintum/WWL-GPR</a> and <a href="https://doi.org/10.5281/zenodo.6640198" target="_blank">Zenodo 10.5281/zenodo.6640198</a>. RBF-GPR via <a href="https://scikit-learn.org" target="_blank">Scikit-learn</a>; SISSO at <a href="https://github.com/rouyang2017/SISSO" target="_blank">github.com/rouyang2017/SISSO</a>; XGBoost at <a href="https://github.com/dmlc/xgboost" target="_blank">github.com/dmlc/xgboost</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Simple adsorbates DB</td><td>Benchmark / training baseline</td><td>1,422 data points; 8 adsorbates; 11 metals + alloys</td><td><a href="https://github.com/Wenbintum/WWL-GPR" target="_blank">GitHub</a></td></tr>
+        <tr><td>Complex adsorbates DB</td><td>Primary training &amp; evaluation</td><td>1,679 data points; 41 adsorbates; 4 metals + alloy/OOD test sets</td><td><a href="https://github.com/Wenbintum/WWL-GPR" target="_blank">GitHub</a> / <a href="https://doi.org/10.5281/zenodo.6640198" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Quantum ESPRESSO + BEEF-vdW</td><td>DFT energy calculations</td><td>All slab geometries; 4-layer slabs; (3×1)/(3×3) supercells</td><td><a href="https://www.quantum-espresso.org" target="_blank">quantum-espresso.org</a></td></tr>
+        <tr><td>CatKit</td><td>Initial adsorption geometry enumeration</td><td>Graph-based mono- and bidentate site generation</td><td><a href="https://github.com/SUNCAT-Center/CatKit" target="_blank">GitHub/SUNCAT</a></td></tr>
+        <tr><td>AiiDA</td><td>Automated DFT workflow &amp; data provenance</td><td>Custom Python scripts; reproducible computational graph</td><td><a href="https://www.aiida.net" target="_blank">aiida.net</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all database sizes are reported verbatim from the article Methods section. The complex adsorbates database is approximately 300× smaller than the Open Catalyst Dataset (OC20) — this contrast is central to the paper's data-efficiency claim.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>WWL graph kernel:</b> the Wasserstein Weisfeiler–Lehman kernel computes similarity between surface–adsorbate graphs by iteratively updating node embeddings with neighbor information, then computing the <strong>Wasserstein (earth-mover) distance</strong> between node-attribute distributions — allowing continuous-valued, physically motivated attributes unlike classical WL kernels.</li>
+      <li><b>Physics-inspired node attributes:</b> surface atoms carry d-band moments (center, width, skewness), density of states at the Fermi level, and work function from clean-surface DFT; adsorbate atoms carry HOMO/LUMO energy levels and SOAP descriptors capturing local geometry — all precomputed without the adsorbate present.</li>
+      <li><b>Surface-adsorption hyperparameters:</b> three edge-weight classes (adsorbate–adsorbate, surface–surface, adsorbate–surface) plus inner/outer radial cutoffs control the emphasis placed on atomic shells around the active site — functioning as a physically motivated attention mechanism.</li>
+      <li><b>Gaussian process regression (GPR):</b> the WWL kernel feeds a GPR model with a probabilistic posterior, providing both a point prediction and a standard deviation. Hyperparameters tuned separately for interpolation (tight) vs. extrapolation (loose regularization) regimes.</li>
+      <li><b>Comparative baselines:</b> SISSO (symbolic regression, 8D rung-3 descriptor), RBF-GPR (vector input, averaged surface/adsorbate features), and XGBoost (gradient-boosted trees) evaluated with fivefold stratified cross-validation on both databases.</li>
+      <li><b>Ensemble uncertainty quantification:</b> 100 bootstrapped GPR models produce an ensemble standard deviation that better identifies high-error predictions than the single-model posterior — validated through calibration, sharpness, and dispersion metrics.</li>
+      <li><b>Kernel PCA:</b> non-linear dimensionality reduction of the learned kernel matrix reveals clustering by metal type and adsorbate identity, confirming the model captures chemically meaningful latent structure.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig1.png" target="_blank">
+        <img src="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig1.png" alt="Fig.1 Schematic of the WWL-GPR model" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic of WWL-GPR: (a) graph-to-enthalpy prediction pipeline, (b) Wasserstein distance between node-embedding distributions, (c) surface-adsorption hyperparameters (edge weights, inner/outer cutoffs).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig2.png" target="_blank">
+        <img src="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig2.png" alt="Fig.2 Parity plot simple adsorbates" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Parity plot (DFT vs. ML) for the simple adsorbates database using SISSO, RBF-GPR, and WWL-GPR in fivefold cross-validation; violin plots show absolute error distributions (eV).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig3.png" target="_blank">
+        <img src="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig3.png" alt="Fig.3 Parity plot complex adsorbates" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Parity plot for the complex adsorbates database: WWL-GPR (r.m.s.e. 0.18 eV) vs. RBF-GPR (0.47 eV) vs. XGBoost (0.23 eV) — demonstrates the decisive advantage of graph representation for multi-dentate species.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig4.png" target="_blank">
+        <img src="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig4.png" alt="Fig.4 Kernel PCA for WWL-GPR" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Kernel principal component analysis of the WWL-GPR kernel matrix — metals form parallel clusters (a) and adsorbates form sub-clusters within each metal (b), confirming chemically interpretable latent structure.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig5.png" target="_blank">
+        <img src="assets/predicting-binding-motifs-of-complex-adsorbates-using-machine-learning-with-a-physics-insp__s43588-022-00280-7/fig5.png" alt="Fig.5 Uncertainty vs. error single and ensemble GPR" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Estimated uncertainty vs. absolute prediction error for single GPR (a, c, e) and ensemble GPR (b, d, f); calibration, sharpness, and dispersion metrics confirm the ensemble better identifies high-error points for active learning.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (tables_in_main_text = 0); Supplementary Information contains 9 figures and 12 tables covering feature lists, hyperparameter values, and extrapolation r.m.s.e. results for alloys and out-of-domain metals.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal methods, open science).</p>
+
+    <div class="idea">
+      <h3>① Replace the WWL graph kernel with a learnable heterogeneous GNN that inherits its physics priors</h3>
+      <p><span class="lab paper">Extending this paper</span>WWL-GPR achieves data efficiency through hand-crafted physics features (d-band moments, HOMO/LUMO, SOAP) embedded as fixed node attributes and manually tuned edge-weight hyperparameters that distinguish three bond classes. The natural extension is to replace the fixed WWL kernel with a <strong>physics-infused heterogeneous graph neural network</strong> that treats adsorbate–adsorbate, surface–surface, and adsorbate–surface edges as distinct typed channels — the same structural hierarchy the WWL edge-weight hyperparameters currently encode manually — while retaining the physics node features. This would let the model learn which node-pair interactions matter from data rather than hand-tuning cutoff radii. The paper's KPCA (Fig. 4) shows the kernel already captures chemically structured latent space, suggesting a GNN with the same inductive biases could generalize better to broader material classes (e.g., metal oxides) without feature re-engineering.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct analog of my <strong>physics-informed graph learning</strong> agenda in GeoAI: just as the paper bakes d-band physics into node attributes for catalysis, I embed spatial physics priors (gravity decay, boundary constraints) into GNN node/edge features for geospatial prediction. The heterogeneous-edge formulation — where edge type encodes the physical relationship between nodes — maps onto multi-modal urban graphs where road-type, transit-mode, or social-tie edges each carry distinct physics. Learning to weight edge classes rather than fixing them could improve my spatiotemporal kernel density and R2SFCA distance-decay models in a principled, data-adaptive way.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Build a closed active-learning loop coupling ensemble uncertainty with on-demand DFT for alloy catalyst discovery</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper proposes ensemble uncertainty quantification (Fig. 5) and explicitly envisions it for active learning, but demonstrates only a single-shot evaluation without a closed feedback loop. The direct extension is to connect WWL-GPR's ensemble standard deviation to an <strong>acquisition function</strong> (expected improvement or uncertainty sampling) that iteratively selects the next DFT calculation from the combinatorially large alloy space. Crucially, the paper already shows that interpolation and extrapolation hyperparameters differ: a closed loop could <strong>dynamically switch hyperparameter regimes</strong> depending on whether the next candidate falls inside or outside the sampled chemical space, combining the paper's exploit (tight interpolation) and explore (loose regularization) settings into a unified adaptive protocol.</p>
+      <p><span class="lab mine">Added value to my research</span>This active-learning-with-uncertainty template transfers directly to my <strong>data-efficient GeoAI</strong> agenda: treating expensive field surveys, POI audits, or healthcare-access ground-truth labels as the "DFT calculations" and spatiotemporal ML models as the surrogate, an ensemble uncertainty signal can direct sparse data collection to urban areas where model predictions are least reliable — exactly the active spatial sampling problem underlying my 2SFCA accessibility work in data-scarce regions and the FAIR data collection challenge in mobile phone and social media research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend multi-dentate binding-motif prediction to transition-state and reaction-path energetics</h3>
+      <p><span class="lab paper">Extending this paper</span>WWL-GPR predicts the energetics of discrete adsorbed-state minima, but the Discussion explicitly acknowledges it "does not predict the entire potential energy surface." The most impactful extension of the paper is to lift it from stable minima to <strong>transition-state saddle points</strong>: represent the transition state as a graph where breaking/forming bonds appear as fractional edge-weight attributes encoding bond order, feed it through the WWL kernel, and train on a database of DFT-NEB (nudged elastic band) barriers. The paper's extrapolation protocol — retraining with minimal atomic-species energies for a new metal — could serve as a transfer-learning seed for barrier prediction on unseen alloys, making the framework useful for full microkinetic modeling of complex ethanol synthesis pathways.</p>
+      <p><span class="lab mine">Added value to my research</span>From a methodological perspective, predicting transition states via graph representations is conceptually parallel to predicting <strong>state transitions in spatial processes</strong>: for instance, the "activation barrier" for a household to switch from car to public transit, or for a neighborhood to tip from accessible to inaccessible primary care. My agent-based modeling and Monte Carlo frameworks capture such transitions empirically; a graph-kernel surrogate trained on scenario outputs could replace expensive simulation runs, analogous to how WWL-GPR replaces DFT in iterative catalyst screening — a general principle for physics-informed surrogate modeling in urban systems.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning interatomic potentials at the centennial crossroads of quantum mechanics — <a href="https://doi.org/10.1038/s43588-025-00930-6" target="_blank">10.1038/s43588-025-00930-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Replace hand-crafted features with multimodal language + graph representations for zero-shot catalyst generalization</h3>
+      <p><span class="lab paper">Extending this paper</span>WWL-GPR's node attributes require expert-designed DFT-derived features (d-band moments, HOMO/LUMO, SOAP) that must be recomputed for every new material class, limiting generalization beyond transition metals to oxides, nitrides, or carbides. A direct extension is to augment or replace these hand-crafted attributes with <strong>pretrained chemical language model embeddings</strong> (e.g., from a materials-domain LLM) combined with learned graph embeddings. This multimodal representation — text describes what the atom is chemically, graph describes how it connects structurally — could allow the model to generalize to material families described in the literature but absent from the DFT training set, without recomputing PDOS or SOAP. The paper's own comparison (SISSO vs. GPR) shows interpretable features have value; language embeddings could provide interpretable generalizations without manual feature engineering.</p>
+      <p><span class="lab mine">Added value to my research</span>This multimodal fusion idea resonates with my work on <strong>multi-source data fusion</strong> (mobile phone, social media, remote sensing, POIs): just as combining text-based semantic signals with graph-topological signals improves catalyst property prediction, combining semantic descriptions of urban amenities (text reviews, service categories) with their spatial-graph embedding could improve healthcare-accessibility models where POI completeness is uneven across regions. The key methodological insight — language embeddings regularize graph learning in data-sparse regimes — applies across both domains and could inform my fine-tuning of geospatial foundation models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multimodal language and graph learning of adsorption configuration in catalysis — <a href="https://doi.org/10.1038/s42256-024-00930-7" target="_blank">10.1038/s42256-024-00930-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the Wasserstein graph-similarity metric to principled cross-city transferability assessment in GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>The WWL kernel's central innovation is computing graph similarity via the <strong>Wasserstein distance between node-attribute distributions</strong> — a metric that respects the geometry of the attribute space rather than just counting common subgraphs. The paper uses this to smoothly interpolate between similar surface–adsorbate configurations. An underexplored extension: use the same Wasserstein graph distance to build a <strong>metric space of catalysts</strong> in which the model's extrapolation performance can be predicted a priori — that is, before running any DFT — based on how far a new catalyst lies from the training set in Wasserstein distance. This would turn the paper's empirical extrapolation tests (Table in Supplementary) into a theoretically grounded transferability criterion, allowing practitioners to decide before committing DFT resources whether a given alloy is close enough to the training distribution for reliable prediction.</p>
+      <p><span class="lab mine">Added value to my research</span>The Wasserstein graph distance as a transferability criterion maps directly onto my <strong>cross-city GeoAI</strong> challenge: instead of asking "how far is a new alloy from the training metals?", ask "how far is a new city's spatial graph (road network topology + POI density field) from the training cities?" This gives a principled, geometry-aware answer to whether a healthcare-accessibility model or 15-minute-city scoring trained on large US cities will transfer reliably to a mid-size city in Southeast Asia — a question currently answered only by trial-and-error fine-tuning or domain expert judgment. Coupling this distance metric with my physics-informed graph learning work would yield a theoretically grounded geospatial transfer-learning criterion for urban AI models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

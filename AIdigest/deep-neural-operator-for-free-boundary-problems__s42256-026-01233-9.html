@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep neural operator for free boundary problems — AI Digest</title>
+<meta name="description" content="AI Digest: Deep neural operator for free boundary problems (Nature Machine Intelligence, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Neural Operators</span>
+      <span class="tag">Free Boundary PDE</span>
+      <span class="tag">Scientific ML</span>
+      <span class="tag">Physics-informed Learning</span>
+    </div>
+    <h1>Deep neural operator for free boundary problems</h1>
+    <div class="meta">
+      <span class="authors">Zongjia Long · Qi Zhou · Aiqing Zhu · Dong Dai · Yiqun Liu</span>
+      <span><b>Published</b> 2026-05-21</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-026-01233-9" target="_blank">10.1038/s42256-026-01233-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-026-01233-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The <strong>Free Boundary Neural Operator (FBNO)</strong> is a universal neural operator framework that — for the first time — solves partial differential equations on <strong>a priori unknown, evolving spatial domains</strong>. By exploiting <strong>topological conjugacy</strong> between a free boundary dynamical system and a conjugate system on a fixed reference domain, FBNO learns both the domain diffeomorphism and the solution field simultaneously, achieving relative L<sub>2</sub> errors below 1% while running <strong>up to 10<sup>4</sup> times faster</strong> than traditional numerical solvers. A formal approximation theorem proves the method is theoretically sound.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks a fundamental barrier in neural operator theory.</b> Existing frameworks (DeepONet, FNO, transformers) all require a <em>predefined</em> domain; FBNO is the first to handle domains that evolve in time and are unknown before solving — a limitation that previously excluded an entire class of physically important problems.</li>
+      <li><b>Provides theoretical guarantees.</b> A formal Universal Approximation Theorem tailored to free boundary problems underpins FBNO, ensuring the mathematical construction converges with arbitrary accuracy — not just empirical evidence.</li>
+      <li><b>Delivers massive speed-ups for multi-query settings.</b> Once trained, FBNO processes tumour growth trajectories at 85 cases/second vs. 1.6×10<sup>-4</sup> cases/second for conventional finite-element solvers — a 10<sup>4</sup>-fold speed-up, making real-time clinical applications feasible.</li>
+      <li><b>Covers heterogeneous physics.</b> Validated across three structurally different problems — the classical Stefan (phase transition), a thermal–structural coupling (multi-physics), and non-convex tumour growth — demonstrating broad applicability across the sciences.</li>
+      <li><b>Architecture-agnostic and training-paradigm-agnostic.</b> FBNO integrates seamlessly with both physics-informed and purely data-driven training, and works with diverse neural operator architectures, lowering the bar for adoption in existing workflows.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Solves a long-standing, recognized open problem in scientific ML:</b> the inapplicability of neural operators to free boundary problems is well known; FBNO's resolution of this gap is a clear and high-impact methodological advance fitting the journal's mission.</li>
+      <li><b>Pairs mathematical rigor with engineering impact:</b> the combination of a novel approximation theorem and demonstrated 10<sup>4</sup>× speed-up meets the journal's standard for contributions that are simultaneously theoretically grounded and practically transformative.</li>
+      <li><b>Broad disciplinary reach:</b> free boundary problems appear in plasma physics, materials science, environmental science, biomedical engineering, and quantum physics — the readership of Nature Machine Intelligence spans precisely this landscape.</li>
+      <li><b>Clinical translation story:</b> the tumour growth application frames the work in terms of personalised treatment planning, connecting algorithmic novelty to societal impact and meeting the journal's demand for narratively compelling findings.</li>
+      <li><b>Open science posture:</b> data, code, and a reproducible capsule are all publicly available (Zenodo + GitHub + Code Ocean), fully consistent with Nature journal reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Data availability</dt><dd>All datasets and code for FBNO are deposited at <strong>Zenodo</strong> (<a href="https://doi.org/10.5281/zenodo.19163868" target="_blank">zenodo.19163868</a>). A reproducible capsule is at Code Ocean (<a href="https://doi.org/10.24433/CO.5115967.v1" target="_blank">CO.5115967.v1</a>). Source code on <a href="https://github.com/ZongjiaLong/FBNO-Deep-neural-Operator-for-Free-Boundary-Problems.git" target="_blank">GitHub</a>.</dd>
+      <dt>Stefan problem</dt><dd>Synthetic dataset: <strong>300 test samples</strong> generated by a finite element solver. Heat source <em>Q(x)</em> and absorption <em>C(t)</em> are random fields parameterized by uniform distributions over [0.09, 0.36] (amplitude) and [1.8, 6] (period). Reference domain: <code>[0,1]×[0,1]</code>.</dd>
+      <dt>Thermal–structural coupling</dt><dd>Synthetic dataset: <strong>410 finite-element simulations</strong> in total — 10 low-resolution training samples, 200 high-resolution validation, 200 high-resolution test. Heat source <em>Q(x,t)</em> sampled from uniform distributions over three parameters (A, B, C). Downsampled versions used for training.</dd>
+      <dt>Tumour growth</dt><dd>Synthetic dataset: <strong>3,660 numerical simulations</strong> across three initial domain geometries (circle, keyhole, non-convex double-bulb). Split: 3,000 training, 600 test, 60 validation. Each simulation runs 150 s for 9,000 steps; snapshots extracted at 10 s intervals. Data augmented via validated linear interpolation (Hölder exponent β = 0.85, constant H = 0.5; interpolation errors below 2.5%).</dd>
+      <dt>Problem types</dt><dd>Phase transitions (Stefan problem), multi-physics thermal–structural coupling, non-convex tumour growth — all governed by time-evolving unknown-domain PDEs.</dd>
+      <dt>Ground truth</dt><dd>All reference solutions produced by traditional finite element solvers; no observational or real-world sensor datasets used — the paper operates entirely in the synthetic/computational data regime.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Stefan problem (FEM-generated)</td><td>Phase-transition benchmark for FBNO</td><td>300 test samples, random heat sources</td><td><a href="https://doi.org/10.5281/zenodo.19163868" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Thermal–structural coupling (FEM-generated)</td><td>Multi-physics benchmark; test of physics-informed constraints</td><td>410 simulations (10 train / 200 val / 200 test)</td><td><a href="https://doi.org/10.5281/zenodo.19163868" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Tumour growth (numerical framework from ref. 40)</td><td>Non-convex geometry benchmark; clinical application demonstration</td><td>3,660 simulations across 3 domain geometries (3,000 train / 600 test / 60 val)</td><td><a href="https://doi.org/10.5281/zenodo.19163868" target="_blank">Zenodo</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all data are synthetically generated via numerical simulation — no real-world sensor, remote sensing, or observational datasets are involved. Numbers are taken verbatim from the Methods section of the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Topological conjugacy framework:</b> the free boundary problem is recast as a dynamical system with flow map F<sup>t</sup>. A conjugate system over a fixed reference domain Ω<sub>ref</sub> is constructed, and a homeomorphism H linking the two systems is learned, enabling predictions on evolving domains without needing prior geometric knowledge.</li>
+      <li><b>FBNO architecture (MIONet-based):</b> two neural networks — G&#770; (conjugate phase field) and H&#770; (diffeomorphism mapping) — share a trunk network. The output χ of H&#770; is embedded in the branch of G&#770; via Hadamard product (element-wise multiplication), providing geometry-aware conditioning.</li>
+      <li><b>Diffeomorphic constraint:</b> to guarantee invertibility, the spatial Jacobian determinant |J<sub>S</sub>| is constrained to remain strictly positive throughout training. This allows flexible solution spaces while preventing unphysical domain folding or tearing.</li>
+      <li><b>Physics-informed training:</b> a composite loss combines initial-condition loss, fixed-boundary loss, free-boundary residual loss, PDE interior loss, and diffeomorphism regularization. Automatic differentiation through the architecture enables enforcing PDE constraints on the original domain via the chain rule.</li>
+      <li><b>Data-driven training:</b> purely supervised learning on pairs of input functions and FEM ground-truth solutions. An autoencoder-based bijectivity regularization ‖H&#770;(·) ∘ H&#770;(·)<sup>-1</sup> - I‖ ensures the learned diffeomorphism is invertible in the data-driven setting.</li>
+      <li><b>Adaptive initial domain handling:</b> FBNO parametrizes variable initial domain geometries Ω<sub>0</sub> via sensors distributed over a bounding superset, allowing the framework to handle problems where initial domain shapes themselves vary across examples.</li>
+      <li><b>Universal Approximation Theorem for FBPs:</b> the paper proves that under mild assumptions (Banach function spaces with Schauder bases, compact sets, existence of a diffeomorphism to a reference domain), the composed operator F&#770; approximates the true FBP solution operator to arbitrary accuracy.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig1.png" target="_blank">
+        <img src="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig1.png" alt="Fig.1 Conceptual framework and methodology of FBNO" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Conceptual framework of FBNO — shows the FBP formulation, the topological conjugacy construction, and the MIONet-based neural architecture with shared trunk and embedded diffeomorphism.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig2.png" target="_blank">
+        <img src="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig2.png" alt="Fig.2 Numerical validation of FBNO on the Stefan problem" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Stefan problem validation — predicted vs. reference temperature fields, relative L<sub>2</sub> error distributions across 300 samples (errors within 1.5% for u, below 1% for free boundary Γ<sub>f</sub>), and Jacobian determinant constraint effect.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig3.png" target="_blank">
+        <img src="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig3.png" alt="Fig.3 FBNO performance on thermal-structural coupling problem" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Thermal–structural coupling — prediction quality across multi-physics fields, error reduction from adding physics-informed constraints (over 95% reduction vs. data-only baseline), and temporal stability analysis over 200 validation samples.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig4.png" target="_blank">
+        <img src="assets/deep-neural-operator-for-free-boundary-problems__s42256-026-01233-9/fig4.png" alt="Fig.4 Performance of FBNO on tumour growth modelling" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Tumour growth modelling — non-convex boundary predictions (n = 600), temporal error evolution, computational efficiency comparison (10<sup>4</sup>× speed-up, 7× memory savings, 5×10<sup>3</sup>× energy savings vs. 16-CPU-node FEM solver).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary Information contains Tables 1–3 and Figs. 1–17, Sections A–H, plus a Supplementary Video 1 showing a 2D thermal–structural coupling animation.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>① Extend FBNO to learn transferable operators across families of PDE types</h3>
+      <p><span class="lab paper">Extending this paper</span>FBNO is validated on three problems but must be retrained from scratch for each new PDE family. The paper's framework — built on MIONet — is architecture-agnostic, yet it does not exploit transfer across problem types. A direct extension: use <strong>deep transfer operator learning</strong> (conditional shift adaptation) so that a model pre-trained on Stefan problem variants can be fine-tuned with only a handful of samples for a new free boundary problem (e.g., plasma or mushy-zone solidification), drastically reducing the data generation cost that the paper itself identifies as a limitation.</p>
+      <p><span class="lab mine">Added value to my research</span>Transfer learning in PDE operators is analogous to transfer learning for geospatial prediction tasks — a core challenge in my spatiotemporal modeling work. The conditional-shift framework directly informs how I could adapt a physics-informed spatial model trained on one city's service accessibility dynamics to another city with very limited local data, addressing the scarce-label regime that limits geospatial foundation models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep transfer operator learning for partial differential equations under conditional shift — <a href="https://doi.org/10.1038/s42256-022-00569-2" target="_blank">10.1038/s42256-022-00569-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Benchmark FBNO rigorously against the emerging ML-PDE solver evaluation standard</h3>
+      <p><span class="lab paper">Extending this paper</span>FBNO's error metrics (relative L<sub>2</sub>, domain distance) are solid but self-defined; no comparison against community-agreed benchmarks exists. The paper would be substantially strengthened by integrating its free-boundary test cases into emerging ML-PDE benchmark suites — comparing against FEM solvers, physics-informed neural networks, and other neural operators under a unified accuracy-vs.-compute trade-off rubric. This would also expose whether FBNO's claimed speed-up holds across different hardware configurations and PDE stiffnesses.</p>
+      <p><span class="lab mine">Added value to my research</span>The benchmark design principles — separating in-distribution from out-of-distribution generalization, reporting wall-clock efficiency, and assessing numerical stability — are directly applicable to my own explainable-ML pipelines for spatial prediction: I should apply similar multi-metric, hardware-normalized evaluation when comparing GWR/MGWR to ML ensembles for spatial health outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Envisioning better benchmarks for machine learning PDE solvers — <a href="https://doi.org/10.1038/s42256-024-00962-z" target="_blank">10.1038/s42256-024-00962-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Couple FBNO's evolving-domain operator with generative downscaling for Earth system fields</h3>
+      <p><span class="lab paper">Extending this paper</span>FBNO solves PDEs on evolving physical domains — a capability absent from current Earth system model (ESM) downscaling methods. Geophysical phenomena such as ice-shelf calving, river delta migration, and urban heat island boundaries are precisely free boundary problems. Extending FBNO by coupling its diffeomorphism operator with a <strong>generative uncertainty-aware downscaling</strong> model would allow high-resolution, real-time prediction of these evolving features directly from coarse-resolution ESM outputs, sidestepping expensive numerical weather simulations.</p>
+      <p><span class="lab mine">Added value to my research</span>My remote sensing and multi-source data fusion work involves producing fine-resolution spatiotemporal fields (e.g., fine-scale urban heat, air quality, green space) from coarse inputs. FBNO's domain-evolving capability would let me model phenomena where the relevant spatial boundary (e.g., urban extent, flood zone, park boundary) is itself a time-varying unknown — treating urban boundary evolution as a free boundary problem amenable to learned operators rather than static polygon masks.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast, scale-adaptive and uncertainty-aware downscaling of Earth system model fields with generative machine learning — <a href="https://doi.org/10.1038/s42256-025-00980-5" target="_blank">10.1038/s42256-025-00980-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Position FBNO within the broader landscape of ML approaches for PDEs and identify open gaps</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper situates FBNO relative to neural operators and physics-informed neural networks but does not engage with the broader taxonomy of ML-for-PDEs (learning to optimize, learning to discretize, hybrid symbolic-neural, etc.). Mapping FBNO into this landscape — and identifying which classes of free boundary problems remain out of reach (e.g., multi-phase, shock-forming, topological changes) — would sharpen the paper's contribution narrative and guide the community toward the most productive next research directions.</p>
+      <p><span class="lab mine">Added value to my research</span>The taxonomy of ML-PDE solving maps cleanly onto the taxonomy of ML-based spatial modeling: surrogate operators correspond to emulators in agent-based urban models; physics-informed constraints correspond to spatial autocorrelation priors in GeoAI. Internalizing where operator learning sits relative to data-driven spatial regression clarifies when to use which tool in my urban analytics pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Promising directions of machine learning for partial differential equations — <a href="https://doi.org/10.1038/s43588-024-00643-2" target="_blank">10.1038/s43588-024-00643-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply FBNO's conjugacy idea to learn PDE-constrained spatial accessibility dynamics</h3>
+      <p><span class="lab paper">Extending this paper</span>FBNO's core insight — that an intractable evolving-domain problem can be solved by learning a diffeomorphism to a fixed reference domain plus a conjugate operator — generalizes beyond classical PDEs. Urban service catchment areas in 2SFCA/R2SFCA are <em>also</em> evolving domains: they change as transport infrastructure expands, as facilities open or close, and as population density shifts. Extending FBNO's framework to learn this catchment-boundary evolution operator would convert static accessibility analysis into a <strong>dynamic PDE-constrained accessibility model</strong> that predicts how health and service access landscapes evolve under policy interventions.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the most direct bridge between FBNO and my core research program. Rather than computing 2SFCA catchment areas with fixed travel-time thresholds, I could learn a FBNO-style homeomorphism that maps current catchment geometries to evolved geometries under simulated scenarios (new clinic locations, road network changes, telehealth adoption). This turns static accessibility mapping into a learned PDE solver for public health geography — enabling counterfactual scenario planning at the speed of inference rather than re-running costly network routing at each step.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning solutions looking for PDE problems — <a href="https://doi.org/10.1038/s42256-025-00989-w" target="_blank">10.1038/s42256-025-00989-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

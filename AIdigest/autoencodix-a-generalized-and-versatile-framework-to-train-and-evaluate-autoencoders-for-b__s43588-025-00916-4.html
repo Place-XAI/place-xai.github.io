@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning — AI Digest</title>
+<meta name="description" content="AI Digest: AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning and beyond (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Representation Learning</span>
+      <span class="tag">Autoencoders</span>
+      <span class="tag">Multi-omics Integration</span>
+      <span class="tag">Explainable AI</span>
+    </div>
+    <h1>AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning and beyond</h1>
+    <div class="meta">
+      <span class="authors">Maximilian Josef Joas · Neringa Jurenaite · Dusan Prascevic · Nico Scherf · Jan Ewald</span>
+      <span><b>Published</b> 2025-12-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00916-4" target="_blank">10.1038/s43588-025-00916-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00916-4" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>AUTOENCODIX is an <strong>open-source, PyTorch-based pipeline</strong> that unifies preprocessing, training, hyperparameter tuning, and evaluation of five autoencoder architectures for biological representation learning. Benchmarking on TCGA pan-cancer multi-omics (9,267 patients, 32 cancer types) and single-cell cortex data (45,549 nuclei) reveals that <strong>no single architecture universally dominates</strong>: reconstruction capability and embedding quality for downstream tasks are largely independent, hyperparameter tuning rarely helps uniformly, and <strong>explainability by design</strong> via ontology-constrained decoders can improve downstream prediction — directly challenging the assumed interpretability-accuracy trade-off. Cross-modal autoencoders can reliably translate between omics modalities and from molecular data to microscopy images with as few as 182 training samples.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First standardized multi-architecture AE benchmark for biology.</b> Current implementations are scattered, incomparable, and lack a full pipeline; AUTOENCODIX addresses all gaps simultaneously — standardization, multimodal support, hyperparameter tuning, visualization, and embedding evaluation — in a single YAML-configured tool.</li>
+      <li><b>Actionable, user-centric decision guide.</b> By running 86 downstream ML tasks across two datasets, three data modalities, and four architectures, the paper delivers concrete advice about <em>when</em> to use which autoencoder, at what hyperparameter setting, and whether tuning is worth the compute cost.</li>
+      <li><b>Explainability by design can beat post-hoc interpretability.</b> The ontology-based decoder (Ontix) shows that incorporating Reactome pathways into model structure does not trade off accuracy; in several settings it surpasses vanilla autoencoders and even PCA in downstream tasks, overturning a standard assumption.</li>
+      <li><b>Cross-modal translation bridges genetics and phenotype.</b> X-modalix reliably converts transcription-factor proteome profiles to <em>C. elegans</em> embryo microscopy images using only 182 time points, pointing toward imputation of costly imaging readouts from cheap molecular measurements.</li>
+      <li><b>Open science with long-term commitment.</b> All code, preprocessed data (Zenodo), and a full reproducibility repository are released; the authors commit explicitly to community-driven maintenance and scVerse compatibility.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Platform-type contribution:</b> AUTOENCODIX is a community infrastructure for benchmarking AE architectures across biology, a fitting format for Nature Computational Science's software and resource articles.</li>
+      <li><b>Cross-disciplinary scope:</b> grounded in bioinformatics (cancer genomics, single-cell, developmental biology) yet explicitly targeting "beyond" biomedicine, broadening relevance across computational sciences.</li>
+      <li><b>Overturns a textbook assumption:</b> demonstrating that explainability by design can improve — not reduce — predictive accuracy is a conceptually significant result for the interpretable machine learning community at large.</li>
+      <li><b>Reproducibility by design:</b> YAML-configured pipelines, public datasets, and Zenodo archives satisfy Nature's open-science and reproducibility standards; the paper itself advances computational reproducibility as a practice and value.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9793;</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>TCGA pan-cancer</dt><dd><strong>The Cancer Genome Atlas</strong> pan-cancer multi-omics dataset, retrieved as preprocessed files via <a href="https://www.cbioportal.org" target="_blank">cBioPortal</a>. Contains <strong>9,267 patient samples</strong> across <strong>32 cancer types</strong>. Three modalities: gene expression (mRNA-seq V2 RSEM), epigenetic methylation (HM27 and HM450 arrays), and a composite mutational score (SNVs + copy-number alterations) per gene.</dd>
+      <dt>sc-Cortex</dt><dd>Single-cell multi-omic dataset (paired RNA-seq + ATAC-seq) of the <strong>developing human cerebral cortex</strong>, retrieved as preprocessed h5ad files from <a href="https://cellxgene.cziscience.com/" target="_blank">CZ CELLxGENE Discover</a>. Contains <strong>45,549 cells (nuclei)</strong>.</dd>
+      <dt>C. elegans imaging</dt><dd>Microscopy images and proteome from a transcription-factor reporter atlas of <em>C. elegans</em> embryogenesis: <strong>260 time points</strong> spanning ~7 h of development (one image every 75 s); images are 512 x 512 px; <strong>290 TF features</strong> after filtering missing values. Used for omics-to-image translation with X-modalix.</dd>
+      <dt>MNIST (synthetic test)</dt><dd>Handwritten digit images (digits 0-4) via the Keras package; synthetically mapped to 5 TCGA cancer types to test cross-modal alignment without biological ground truth. <strong>3,529 images</strong> total across 5 classes.</dd>
+      <dt>Ontology sources</dt><dd><strong>Reactome pathway database</strong> — 29 top-level pathways define Ontix latent dimensions (hierarchical, two-level decoder). <strong>Ensembl BioMart</strong> (GRCh38.p14) — cytobands provide chromosomal ontology for robustness benchmarking.</dd>
+      <dt>Preprocessed archive</dt><dd>All datasets formatted for AUTOENCODIX are available via <a href="https://doi.org/10.5281/zenodo.15518831" target="_blank">Zenodo 10.5281/zenodo.15518831</a>. Reproducibility code at <a href="https://github.com/jan-forest/autoencodix-reproducibility" target="_blank">GitHub</a> and <a href="https://doi.org/10.5281/zenodo.17190167" target="_blank">Zenodo</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TCGA (cBioPortal)</td><td>Pan-cancer multi-omics benchmark</td><td>9,267 patients, 32 cancer types, 3 modalities</td><td><a href="https://www.cbioportal.org" target="_blank">cbioportal.org</a></td></tr>
+        <tr><td>sc-Cortex (CELLxGENE)</td><td>Single-cell multi-omics benchmark</td><td>45,549 nuclei, RNA-seq + ATAC-seq</td><td><a href="https://cellxgene.cziscience.com/" target="_blank">cellxgene.cziscience.com</a></td></tr>
+        <tr><td>C. elegans TF atlas</td><td>Cross-modal omics-to-image translation</td><td>260 time points, 290 TF features, 512x512 images</td><td><a href="https://dulab.genetics.ac.cn/TF-atlas/Gene.html" target="_blank">dulab.genetics.ac.cn</a></td></tr>
+        <tr><td>MNIST digits (Keras)</td><td>Synthetic cross-modal alignment test</td><td>3,529 images, 5 digit/cancer-type classes</td><td><a href="https://keras.io/api/datasets/mnist/" target="_blank">keras.io</a></td></tr>
+        <tr><td>Reactome pathway DB</td><td>Ontix decoder structure (sparse mask)</td><td>29 top-level pathways, hierarchical</td><td><a href="https://reactome.org" target="_blank">reactome.org</a></td></tr>
+        <tr><td>Zenodo archive</td><td>Preprocessed data + reproducibility scripts</td><td>All three datasets, formatted for AUTOENCODIX</td><td><a href="https://doi.org/10.5281/zenodo.15518831" target="_blank">zenodo.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: no new primary data were generated for this study. All sample counts above are taken verbatim from the Methods section of the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Five AE architectures:</b> Vanillix (vanilla AE), Varix (VAE), Stackix (stacked/hierarchical VAE for independent per-modality bottlenecks then joint fusion), Ontix (ontology-constrained sparse decoder VAE for explainability), and X-modalix (cross-modal VAE with convolutional image branch for modality translation).</li>
+      <li><b>End-to-end YAML-configured pipeline:</b> preprocessing (standard scaling, MAD/variance filtering, one-hot encoding, 60:20:20 train/val/test splits), model training, hyperparameter optimization via <strong>Optuna</strong> (50 trials per configuration), t-SNE/UMAP visualization, and embedding evaluation on user-defined ML tasks.</li>
+      <li><b>Beta (beta) annealing:</b> logistic annealing of KL divergence weight over 1,000 epochs; five beta values (0, 0.01, 0.1, 1, 10) tested to characterize reconstruction–disentanglement–coverage tradeoffs in latent space.</li>
+      <li><b>Benchmark protocol:</b> 86 downstream ML tasks (subtype classification + survival regression) using linear regression, SVM-RBF, and random forest; performance Z-score normalized over five repetitions of randomly selected features to ensure cross-task comparability.</li>
+      <li><b>Ontology robustness testing:</b> five independent training repetitions per hyperparameter combination (randomized data splits + weight initialization); robustness measured as mean absolute Pearson correlation across repetitions per latent dimension.</li>
+      <li><b>Cross-modal alignment loss:</b> adversarial latent-space classifier loss (gamma), paired-sample loss (delta-paired), and class-based semisupervised loss (delta-class) combined with reconstruction and KL losses; convolutional image VAE pretrained for 100 epochs before joint training.</li>
+      <li><b>Baselines:</b> PCA and UMAP used as standard non-deep baselines; all methods compared against randomly selected features to quantify embedding utility across architectures and dimensionalities (L-dim = 2, 8, 29).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig1.png" target="_blank">
+        <img src="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig1.png" alt="Fig.1 Schematic overview of the AUTOENCODIX framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic overview of AUTOENCODIX showing the end-to-end pipeline: preprocessing, five AE architecture sketches, downstream evaluation, and t-SNE visualization.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig2.png" target="_blank">
+        <img src="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig2.png" alt="Fig.2 Dataset overview and beta tradeoffs in Varix VAE" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Dataset and modality overview (panel a) and the reconstruction-coverage tradeoff across five beta values in the two-dimensional Varix VAE on TCGA (panel b).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig3.png" target="_blank">
+        <img src="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig3.png" alt="Fig.3 Architecture benchmark reconstruction and embedding performance" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Architecture benchmark: aggregated R² reconstruction (panel a,c) and embedding performance on 86 downstream ML tasks (panel b,d) — tuned vs. non-tuned comparison across architectures.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig4.png" target="_blank">
+        <img src="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig4.png" alt="Fig.4 Explainability and robustness of the Ontix architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Ontix explainability: chromosomal and Reactome-pathway latent distributions on TCGA (panels a,b,d); robustness vs. learning rate, beta, and dropout across five repetitions (panels c,e).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig5.png" target="_blank">
+        <img src="assets/autoencodix-a-generalized-and-versatile-framework-to-train-and-evaluate-autoencoders-for-b__s43588-025-00916-4/fig5.png" alt="Fig.5 X-modalix cross-modal translation scenarios" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> X-modalix: DNA methylation to RNA-seq translation (panel a,b,c,d) and C. elegans proteome to embryo microscopy image reconstruction across 260 time points (panels e,f,g,h).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables in main text: 0. Supplementary material contains Supplementary Tables 1 (dataset summary), 2 (hyperparameter configurations) and 3 (annotation tasks), plus Supplementary Figs. 1-6.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable ML, physics-informed graph learning, fine-tuning geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>&#9312; Extend AUTOENCODIX's ontology-constrained decoder from biological pathways to geospatial knowledge graphs</h3>
+      <p><span class="lab paper">Extending this paper</span>AUTOENCODIX's Ontix architecture demonstrates that encoding domain knowledge directly into decoder structure — via Reactome pathway membership masks — improves both explainability and downstream predictive power, overturning the assumed trade-off between interpretability and accuracy. The paper identifies a clear limitation: robustness of ontology-based latent dimensions varies markedly with the size and specificity of each ontology term, and tuning can counterproductively reduce robustness. A direct extension would replace biological pathway hierarchies with <strong>geospatial ontologies</strong> — land-use categories, administrative hierarchies, point-of-interest taxonomies, or transport network functional classes — to learn interpretable low-dimensional embeddings of urban environments while maintaining the same sparse-decoder discipline that makes Ontix tractable, and applying the paper's five-repetition robustness test to geospatial terms.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly serves my GeoAI agenda: training an Ontix-style AE on multi-source urban data (POI counts by category, street-network centrality, mobile-phone activity density, remote-sensing spectral bands) where the decoder is masked by an OpenStreetMap or land-use ontology would yield <strong>geospatially interpretable latent dimensions</strong> — each latent node linked to a semantic urban function. Such embeddings would enable explainability by design in spatial prediction tasks including healthcare accessibility mapping, EV charging siting, and urban health risk scoring, going beyond post-hoc SHAP attribution I currently rely on.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrative deep learning of spatial multi-omics with SWITCH — <a href="https://doi.org/10.1038/s43588-025-00891-w" target="_blank">10.1038/s43588-025-00891-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Apply X-modalix's cross-modal framework to bridge remote sensing imagery and socioeconomic tabular indicators</h3>
+      <p><span class="lab paper">Extending this paper</span>X-modalix shows that two VAEs trained with adversarial and paired-loss alignment can translate reliably between omics modalities and from molecular signatures to microscopy images using only 182 training samples — substantially fewer than classical image-to-image models require. The paper identifies that loss-weight configuration (beta, gamma, delta-paired, delta-class) is the critical bottleneck that cannot be optimized by standard loss minimization and must be navigated manually, with a recommended hierarchy (reconstruction dominant, KL below 10% of reconstruction, remainder split among alignment terms). An extension would apply X-modalix to <strong>urban remote sensing</strong>, training paired VAEs to translate between satellite image patches and tabular neighborhood indicators (income quintile, health outcomes, POI distribution vectors), discovering the shared latent structure linking the visible built environment to its socioeconomic substrate.</p>
+      <p><span class="lab mine">Added value to my research</span>This matches my agenda of multi-source data fusion (remote sensing + mobile-phone + social media). An X-modalix model bridging satellite imagery and health-or-accessibility tabular data would enable <strong>imputation of health indicators in data-sparse regions</strong> — a direct upgrade to my spatiotemporal kernel density and R2SFCA pipelines where ground-truth facility-demand data are often missing or inconsistent across administrative boundaries. The class-based alignment term (using known city-type or health-district labels) parallels my use of spatial stratification in MGWR models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Towards multimodal foundation models in molecular cell biology — <a href="https://doi.org/10.1038/s41586-025-08710-y" target="_blank">10.1038/s41586-025-08710-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Adopt AUTOENCODIX's beta-tuning and robustness protocol for spatiotemporal trajectory embedding</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most reproducible finding is that VAE reconstruction capability and downstream embedding quality are largely <em>independent</em>: optimizing reconstruction loss is not a reliable proxy for whether the latent space predicts biological outcomes. This is particularly pronounced for beta-VAEs — higher beta improves latent space coverage and disentanglement but degrades reconstruction, and the optimal beta depends on the downstream task rather than training loss. AUTOENCODIX's benchmark protocol — Z-score-normalized performance over random baselines across multiple tasks and ML algorithms — is a rigorous, task-agnostic evaluation template. A concrete extension would apply this protocol to <strong>GPS trajectory and mobile-phone flow VAEs</strong>, systematically testing whether latent dimensions that reconstruct mobility patterns well also predict health outcomes or land-use category, navigating the same reconstruction-versus-embedding trade-off the paper identifies in omics.</p>
+      <p><span class="lab mine">Added value to my research</span>GPS trajectory and mobile-phone flow data are central to my spatiotemporal analysis methods. Adopting AUTOENCODIX's five-repetition robustness test on trajectory embeddings would identify which latent dimensions are <strong>stable predictors of health-geography outcomes</strong> (telehealth adoption, mental health facility utilization, job-housing network structure) versus training-run artifacts — directly addressing the same instability the paper finds in ontology-constrained networks, which applies to any structured spatial prior I encode in physics-informed graph learning models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning training dynamics analysis for single-cell data — <a href="https://doi.org/10.1038/s43588-024-00728-y" target="_blank">10.1038/s43588-024-00728-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Use Stackix's modality-independent bottleneck architecture as a template for heterogeneous geospatial data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>Stackix trains independent VAEs on each data modality first, then concatenates the resulting embeddings for a shared stacked VAE — an architecture designed to handle scale and distribution differences across modalities without forcing a premature common representation. The paper finds Stackix is particularly sensitive to low beta (requiring tight reconstruction before stacking) and that its two-phase training produces embeddings competitive with unified architectures, while being more interpretable per-modality. This modular, bottom-up fusion strategy is underexplored outside genomics, yet the regime where Stackix is theoretically strongest — vastly different feature scales and statistical distributions across modalities — characterizes urban data science exactly, where street imagery, POI tables, mobility flows, and remote sensing bands have little distributional compatibility.</p>
+      <p><span class="lab mine">Added value to my research</span>A Stackix-style architecture where each geospatial data source (remote sensing spectral bands, POI count vectors, mobile-phone activity matrices, social media text embeddings) receives its own VAE bottleneck before joint fusion would produce modality-specific latent representations that can be inspected and ablated independently — a natural extension of my fine-tuning agenda for geospatial foundation models, where modality-specific encoders are already standard but the latent fusion step is rarely benchmarked with the systematic rigor AUTOENCODIX provides.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast and precise single-cell data analysis using a hierarchical autoencoder — <a href="https://doi.org/10.1038/s41467-021-21312-2" target="_blank">10.1038/s41467-021-21312-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Adapt AUTOENCODIX as a standardized pre-training and fine-tuning benchmark harness for geospatial foundation models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Discussion explicitly identifies large-scale pre-trained AE models as the next frontier: "AUTOENCODIX as a foundation for large-scale and pretrained AE models … enabling fine-tuning with small datasets or even zero-shot applications." This roadmap mirrors exactly the trajectory of geospatial foundation models. The paper's current contribution — a standardized, YAML-configured pipeline that systematically benchmarks hyperparameters and evaluates embedding transferability across 86 downstream tasks — is precisely what the geospatial foundation model community lacks: a principled protocol to measure whether a pre-trained spatial embedding transfers to new tasks and when fine-tuning is needed versus zero-shot application. Extending AUTOENCODIX with geospatial data connectors and spatial downstream tasks would directly fill this gap.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models is one of my declared research directions. AUTOENCODIX's modular, Optuna-integrated pipeline could be adapted as a <strong>geospatial pre-training benchmark harness</strong> by defining spatial downstream tasks (healthcare accessibility prediction, EV charging siting optimization, housing price modeling, neighborhood health scoring) analogous to the cancer-subtype classification and survival regression tasks used here, and applying the same Z-score normalization over random feature baselines to quantify how much a foundation model's embeddings contribute — making transferability rigorous and reproducible rather than anecdotal.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Decoding omics via representation learning — <a href="https://doi.org/10.1038/s43588-025-00909-3" target="_blank">10.1038/s43588-025-00909-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

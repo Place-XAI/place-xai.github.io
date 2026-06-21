@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A framework to evaluate machine learning crystal stability predictions — AI Digest</title>
+<meta name="description" content="AI Digest: A framework to evaluate machine learning crystal stability predictions (Nature Machine Intelligence, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">ML Benchmarking</span>
+      <span class="tag">Crystal Stability</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Materials Discovery</span>
+    </div>
+    <h1>A framework to evaluate machine learning crystal stability predictions</h1>
+    <div class="meta">
+      <span class="authors">Janosh Riebesell &middot; Rhys E. A. Goodall &middot; Philipp Benner &middot; Yuan Chiang &middot; Bowen Deng &middot; Gerbrand Ceder &middot; Mark Asta &middot; Alpha A. Lee &middot; Anubhav Jain &middot; Kristin A. Persson</span>
+      <span><b>Published</b> 2025-06-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-025-01055-1" target="_blank">10.1038/s42256-025-01055-1</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-025-01055-1" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Matbench Discovery establishes the first <strong>prospective, task-relevant benchmark</strong> for ML-guided crystal stability prediction, using 215,488 hypothetical inorganic structures as a test set larger than the training set. Universal interatomic potentials (UIPs) &mdash; which learn from forces and stresses in addition to energies &mdash; <strong>decisively outperform</strong> energy-only predictors, achieving F1 scores of 0.57&ndash;0.82 and discovery acceleration factors (DAF) up to 6&times; on the 10,000 most stable candidates. Critically, the paper reveals that <strong>strong regression metrics (MAE, R&sup2;) do not guarantee good classification performance</strong>: even accurate models generate unexpectedly high false-positive rates when predictions land near the 0 eV/atom stability threshold &mdash; the &ldquo;triangle of peril.&rdquo;</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves a critical disconnect in materials ML evaluation.</b> The community has long optimized for MAE/RMSE on formation energies, but this paper quantitatively shows these metrics can be misleading: models with strong regression performance can still yield high false-positive rates when predictions lie near the thermodynamic stability boundary.</li>
+      <li><b>Establishes a prospective benchmark at unprecedented scale.</b> By using a test set (~215,488 structures) larger than the training set (~154,000 MP crystals), Matbench Discovery uniquely tests out-of-distribution generalization in the regime that matters for real discovery campaigns.</li>
+      <li><b>Introduces the Discovery Acceleration Factor (DAF) as a task-aligned metric.</b> The DAF directly quantifies how many times more efficient ML-guided screening is compared to random selection &mdash; a practically meaningful metric missing from prior benchmarks.</li>
+      <li><b>Ships as open infrastructure.</b> The Python package, online leaderboard with adaptive user-defined metric weighting, and Figshare-hosted datasets constitute a living community benchmark, not a one-time study.</li>
+      <li><b>Clears the path for autonomous materials discovery.</b> Demonstrating that the top UIPs approach the theoretical maximum DAF of ~6.5&times; establishes that ML pre-screening now provides clear positive ROI before expensive DFT validation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Framework contribution, not just a model:</b> the paper proposes generalizable benchmarking design principles (prospective data, task-relevant metrics, scalability) applicable across scientific ML domains &mdash; the type of methodological infrastructure Nature MI prioritizes.</li>
+      <li><b>Systematic cross-paradigm comparison:</b> random forests, GNNs, one-shot predictors, Bayesian optimizers, and universal interatomic potentials are evaluated under a single coherent framework &mdash; a rare head-to-head evaluation at full scale.</li>
+      <li><b>Community-building component:</b> the living leaderboard with open submissions and adaptive metric weighting transforms a paper into a field-organizing resource with ongoing value.</li>
+      <li><b>Transferable principles:</b> the benchmarking design challenges identified (prospective testing, classification-first metrics, scalability, covariate shift) are directly applicable to drug discovery, protein design, and other scientific ML domains.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training set</dt><dd><strong>Materials Project (MP) v.2022.10.28</strong> &mdash; ~154,719 inorganic crystal structures with DFT-computed energies, forces, stresses, and magnetic moments from high-throughput relaxation trajectories. Snapshot of all ionic steps captured 15 March 2023. Available via Figshare at <a href="https://figshare.com/articles/dataset/23713842" target="_blank">figshare.com/23713842</a>.</dd>
+      <dt>Test set</dt><dd><strong>WBM dataset</strong> &mdash; 257,487 hypothetical structures generated by prototype-based elemental substitution of MP source structures, DFT-relaxed; cleaned to 215,488 unique protostructures after removing pathological entries (|E| &gt; 5 eV/atom, n=524) and MP-overlapping protostructures (n=11,175). Of these, 32,942 (~15.3%) are thermodynamically stable (E<sub>hull</sub> &le; 0 eV). Available via Figshare at <a href="https://figshare.com/articles/dataset/22715158" target="_blank">figshare.com/22715158</a>.</dd>
+      <dt>Models evaluated</dt><dd>13 models across 5 methodological families: random forests (Voronoi RF), GNNs (MEGNet, CGCNN, CGCNN+P, ALIGNN), one-shot coordinate-free predictors (Wrenformer), iterative Bayesian optimizers (BOWSR), and universal interatomic potentials (M3GNet, CHGNet, MACE, SevenNet, Orb, EquiformerV2+DeNS).</dd>
+      <dt>Benchmark code</dt><dd>Open-source Python package at <a href="https://github.com/janosh/matbench-discovery" target="_blank">github.com/janosh/matbench-discovery</a>; permanent version via Zenodo <a href="https://doi.org/10.5281/zenodo.13750664" target="_blank">zenodo.13750664</a>.</dd>
+      <dt>Chemistry coverage</dt><dd>Diverse inorganic crystals spanning the periodic table; WBM test set generated through 5 iterative rounds of elemental substitution from MP source structures, progressively exploring regions of materials space beyond MP coverage.</dd>
+      <dt>Time period</dt><dd>MP training data: database release v.2022.10.28; WBM structures generated prior to MP snapshot to avoid leakage.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Materials Project v.2022.10.28</td><td>Training set (max allowed per benchmark rules)</td><td>~154,719 crystals; energies, forces, stresses, magnetic moments</td><td><a href="https://next-gen.materialsproject.org/" target="_blank">materialsproject.org</a></td></tr>
+        <tr><td>WBM dataset</td><td>Prospective test set</td><td>215,488 unique protostructures; 32,942 stable (15.3%)</td><td><a href="https://figshare.com/articles/dataset/22715158" target="_blank">figshare/22715158</a></td></tr>
+        <tr><td>MPtrj dataset</td><td>Training subset used by top UIPs</td><td>~1.58M ionic frames from MP relaxation trajectories</td><td><a href="https://github.com/chgnet/chgnet" target="_blank">CHGNet repo</a></td></tr>
+        <tr><td>MP-crystals-2022.10.28</td><td>Training subset for energy-only models</td><td>154,719 structures + formation energies</td><td><a href="https://github.com/janosh/matbench-discovery" target="_blank">matbench-discovery</a></td></tr>
+        <tr><td>Matbench Discovery leaderboard</td><td>Living benchmark platform</td><td>13 models at initial release; open to community submissions</td><td><a href="https://matbench-discovery.materialsproject.org/" target="_blank">matbench-discovery.materialsproject.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the exact number of MP ionic steps used as training frames varies by model (MPtrj contains ~1.58M frames; energy-only models use only final relaxed structures). All figures are taken verbatim from the article's Methods and Data availability sections.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Prospective benchmarking design:</b> test data generated <em>after</em> training data using the same computational discovery workflow (prototype substitution + DFT relaxation), producing a realistic covariate shift rather than retrospective cross-validation splits.</li>
+      <li><b>IS2RE task (initial structure to relaxed energy):</b> all models must predict the convex hull distance of the <em>relaxed</em> structure given only the <em>unrelaxed</em> input structure &mdash; avoiding the circular dependency that would arise from requiring already-relaxed inputs.</li>
+      <li><b>Classification-first evaluation:</b> primary metric is F1 score for stable/unstable classification at the 0 eV/atom hull distance threshold, complemented by precision&ndash;recall curves as a function of campaign length and the Discovery Acceleration Factor (DAF = precision / prevalence).</li>
+      <li><b>Triangle of peril analysis:</b> rolling MAE plotted as a function of DFT hull distance to visualize the zone where a model's average error exceeds the distance to the classification boundary &mdash; revealing systematic false-positive bias near the stability threshold.</li>
+      <li><b>Universal interatomic potentials (UIPs) as surrogate relaxers:</b> UIPs emulate DFT relaxation using learned force fields, enabling energy prediction from unrelaxed structures; trained simultaneously on energies, forces, and stresses.</li>
+      <li><b>Protostructure deduplication:</b> WBM test set cleaned by Wyckoff-position protostructure matching against MP training set; 11,175 overlapping and 524 pathological structures removed before evaluation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-framework-to-evaluate-machine-learning-crystal-stability-predictions__s42256-025-01055-1/fig1.png" target="_blank">
+        <img src="assets/a-framework-to-evaluate-machine-learning-crystal-stability-predictions__s42256-025-01055-1/fig1.png" alt="Fig.1 Overview of data usage in Matbench Discovery" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of Matbench Discovery: (a) prototype-based elemental substitution workflow generating WBM candidates, (b) MP as training source across model modalities, (c) the IS2RE evaluation protocol &mdash; models predict relaxed energy from unrelaxed input for stability classification against the MP convex hull.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-framework-to-evaluate-machine-learning-crystal-stability-predictions__s42256-025-01055-1/fig2.png" target="_blank">
+        <img src="assets/a-framework-to-evaluate-machine-learning-crystal-stability-predictions__s42256-025-01055-1/fig2.png" alt="Fig.2 Precision and recall as a function of validated predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Precision and recall curves as a function of the number of model predictions validated in a simulated discovery campaign. UIPs (EquiformerV2+DeNS, Orb, SevenNet, MACE) maintain higher precision than energy-only models, especially in the first ~20,000 screened materials.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-framework-to-evaluate-machine-learning-crystal-stability-predictions__s42256-025-01055-1/fig3.png" target="_blank">
+        <img src="assets/a-framework-to-evaluate-machine-learning-crystal-stability-predictions__s42256-025-01055-1/fig3.png" alt="Fig.3 Triangle of peril: rolling MAE vs hull distance" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Rolling MAE vs. DFT hull distance for all models. The red &ldquo;triangle of peril&rdquo; marks the zone where average prediction error exceeds the distance to the 0 eV/atom stability threshold. UIPs exit the triangle earliest, explaining their superior classification performance.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 &mdash; classification and regression metrics for all 13 models ranked by F1 score). Supplementary contains 2 additional tables and 13 supplementary figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal prediction, open science).</p>
+
+    <div class="idea">
+      <h3>&#9312; Apply the paper's classification-first metric philosophy to GeoAI spatial prediction pipelines</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central insight &mdash; that regression metrics (MAE, R&sup2;) can be misleading when predictions near a decision boundary drive costly downstream errors &mdash; is entirely general. A direct extension of the framework: port the &ldquo;triangle of peril&rdquo; visualization and DAF-style metric to any ML pipeline where continuous predictions are ultimately thresholded for binary decisions. The leaderboard's adaptive user-defined metric weighting could also be generalized to support asymmetric cost matrices reflecting domain-specific false-positive vs. false-negative penalties beyond materials science.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML models for spatial prediction (healthcare access, EV charging siting) similarly threshold continuous outputs for policy decisions. Adopting a DAF-style &ldquo;spatial discovery acceleration factor&rdquo; &mdash; how many fold more likely is ML-guided siting to identify underserved areas vs. random selection? &mdash; would make my facility-location optimization results directly comparable across cities and methods, importing the benchmarking rigor this paper introduces into GeoAI evaluation practice.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating the prediction of stable materials with machine learning &mdash; <a href="https://doi.org/10.1038/s43588-023-00536-w" target="_blank">10.1038/s43588-023-00536-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Replace retrospective cross-validation in GeoAI benchmarks with prospective spatial holdouts</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper addresses the failure of retrospective benchmarking by using prospectively generated WBM structures as the test set &mdash; genuinely out-of-distribution from the MP training set. A natural extension for Matbench Discovery: incorporate newly synthesized and characterized materials from updated ICSD releases as a truly experimental validation set, testing whether benchmark rankings survive contact with laboratory ground truth rather than a DFT-computed proxy.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial cross-validation in GeoAI (random k-fold) suffers from the same retrospective bias the paper criticizes: spatially autocorrelated splits overestimate out-of-sample performance. The paper's framework motivates prospective spatial holdouts where entire metropolitan areas are withheld from training and used as deployment-context test sets &mdash; a design I can apply when benchmarking R2SFCA delineation across cities, ensuring reported accessibility metrics reflect genuine transfer capability rather than overfitting to the spatial autocorrelation of the training region.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials &mdash; <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Translate UIP multi-signal supervision (energy + force + stress) to physics-constrained GeoAI graph models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most consequential finding is that UIPs outperform energy-only models because they learn from forces and stresses in addition to total energies &mdash; a richer physical supervision signal that captures the potential energy surface more faithfully. A direct extension within materials benchmarking: train next-generation UIPs that simultaneously predict phonon spectra (dynamic stability) alongside thermodynamic hull distance (static stability), closing the paper's acknowledged gap of not screening for dynamically unstable candidates, which the authors identify as the next benchmarking priority.</p>
+      <p><span class="lab mine">Added value to my research</span>The UIP lesson translates to physics-informed graph learning for urban systems: instead of supervising only on an output variable (e.g., healthcare utilization or facility demand), I can add auxiliary physical constraints &mdash; conservation of total demand, service-area contiguity, capacity ceilings &mdash; analogous to force/stress supervision in UIPs. Encoding these priors into a GNN rather than applying them post-hoc would produce more robust out-of-city generalization in my R2SFCA and EV-charging models, in the same way that physical signal diversity drives UIP transferability across chemical space.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning interatomic potentials at the centennial crossroads of quantum mechanics &mdash; <a href="https://doi.org/10.1038/s43588-025-00930-6" target="_blank">10.1038/s43588-025-00930-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Leverage the adaptive leaderboard design for reproducible open-science GeoAI benchmarking</h3>
+      <p><span class="lab paper">Extending this paper</span>The leaderboard's adaptive user-defined metric weighting is an underappreciated infrastructure contribution: it lets researchers compare models under their own priority function (emphasizing recall over precision, or DAF on the top 5,000 candidates rather than all 215,488) without rerunning models. Extending this to Matbench Discovery: incorporate uncertainty quantification metrics (calibration curves, expected calibration error) as first-class leaderboard dimensions, since models deployed in prospective screening must be well-calibrated in addition to accurate &mdash; especially when budgets are fixed and the cost of validating a false positive is high.</p>
+      <p><span class="lab mine">Added value to my research</span>My multi-source data fusion pipelines (mobile phone records, social media, remote sensing) produce heterogeneous prediction uncertainty across spatial units. Adopting an adaptive-leaderboard design for GeoAI benchmarks would let urban health policy researchers with different equity priorities &mdash; maximize coverage of underserved areas vs. maximize overall accessibility score &mdash; query the same benchmarked models under their own objective function. This directly advances open science and FAIR principles: one benchmark, many perspectives, zero model retraining.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A predictive machine learning force-field framework for liquid electrolyte development &mdash; <a href="https://doi.org/10.1038/s42256-025-01009-7" target="_blank">10.1038/s42256-025-01009-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Use the paper's false-positive cost asymmetry framework to design equity-aware spatial accessibility metrics</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper finds that all models are asymmetrically biased toward false positives &mdash; predicting unstable materials as stable more often than the reverse &mdash; and attributes this to the MP training set's disproportionate fraction of stable structures. A testable extension: train UIPs on datasets augmented with high-energy disordered structures (Alexandria, OMat24) and measure whether the error asymmetry in the triangle of peril decreases, directly linking training distribution shape to false-positive bias. This would close the paper's own theoretical gap between its empirical observation and its mechanistic explanation.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatial health equity, false-positive facility siting (labeling an area as well-served when it is not) harms underserved populations more than false negatives harm already-served ones &mdash; an asymmetric cost structure that mirrors the paper's materials discovery setting. The paper's framework &mdash; modeling prediction error as a function of distance to a decision boundary, then mapping the asymmetry of false-positive vs. false-negative costs &mdash; gives me a principled design for <strong>equity-weighted accessibility metrics</strong> that penalize systematic over-prediction of access in low-income or minority neighborhoods, connecting my 2SFCA/R2SFCA work to the paper's cost-asymmetric evaluation philosophy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing synthesis prediction via machine learning &mdash; <a href="https://doi.org/10.1038/s43588-025-00771-3" target="_blank">10.1038/s43588-025-00771-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

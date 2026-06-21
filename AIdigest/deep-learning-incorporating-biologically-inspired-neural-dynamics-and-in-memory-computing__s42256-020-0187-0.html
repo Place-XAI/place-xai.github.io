@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep learning incorporating biologically inspired neural dynamics and in-memory computing — AI Digest</title>
+<meta name="description" content="AI Digest: Deep learning incorporating biologically inspired neural dynamics and in-memory computing (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Spiking Neural Networks</span>
+      <span class="tag">Neuromorphic Computing</span>
+      <span class="tag">In-Memory Acceleration</span>
+      <span class="tag">Biologically Inspired AI</span>
+    </div>
+    <h1>Deep learning incorporating biologically inspired neural dynamics and in-memory computing</h1>
+    <div class="meta">
+      <span class="authors">Stanisław Woźniak · Angeliki Pantazi · Thomas Bohnstingl · Evangelos Eleftheriou</span>
+      <span><b>Published</b> 2020-06-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-0187-0" target="_blank">10.1038/s42256-020-0187-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-0187-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The authors introduce the <strong>Spiking Neural Unit (SNU)</strong> — a recurrent ANN building block that faithfully re-expresses the leaky integrate-and-fire neuron's biologically plausible dynamics inside standard deep-learning frameworks. SNUs match or surpass LSTM and GRU performance on three benchmark tasks (handwritten digit recognition, language modelling, polyphonic music prediction) while requiring <strong>fewer parameters per neuron</strong> and remaining accurate down to <strong>4-bit weight precision</strong>. Crucially, the SNU concept is experimentally validated on a <strong>phase-change memory (PCM) prototype chip</strong> using 52,800 devices, demonstrating that hardware-in-the-loop training compensates for PCM non-idealities and yields an energy-efficient in-memory inference engine — bridging the long-standing divide between deep learning and neuromorphic hardware.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges the ANN–SNN divide with a unified formalism.</b> SNNs and ANNs have evolved in separate communities; SNUs let every deep-learning advance (architectures, optimizers, regularization) be reused by spiking-network researchers without re-implementation.</li>
+      <li><b>Sets SNN state-of-the-art on three diverse tasks.</b> MNIST, Penn Treebank, and J. S. Bach chorales span static vision, language, and temporal audio — validating generality, not a cherry-picked benchmark.</li>
+      <li><b>Bridges algorithm and hardware.</b> The same SNU abstraction that enables software training also maps cleanly onto crossbar PCM arrays, demonstrating actual silicon operation and not just simulation of hardware effects.</li>
+      <li><b>Low-precision robustness for edge AI.</b> SNU-based networks remain robust to 4-bit quantization (vs. 16-bit for LSTMs), enabling deployment on constrained embedded and neuromorphic chips.</li>
+      <li><b>Open implementation.</b> Sample TensorFlow source code is provided in Supplementary Information, lowering the barrier for reproducibility and adoption.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Conceptual unification at the frontier:</b> fusing two previously separate neural-network paradigms (ANN + SNN) into one framework is the kind of foundational, paradigm-shifting contribution Nature MI prioritizes.</li>
+      <li><b>Experimental hardware demonstration:</b> actual PCM chip results elevate the work beyond a simulation study, satisfying Nature MI's preference for validated, real-world impact.</li>
+      <li><b>Broad scope and generalizability:</b> covering vision, language, and music with a single unit type positions this as a general-purpose architectural advance.</li>
+      <li><b>Societal relevance — energy efficiency:</b> neuromorphic in-memory computing addresses the critical power consumption of AI hardware, connecting to sustainability concerns central to Nature's mission.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>MNIST</dt><dd><strong>Handwritten digit recognition dataset</strong> (LeCun et al., 1998). Standard split: <strong>60,000 training</strong> and <strong>10,000 test</strong> images, each 28×28 pixels greyscale. Rate-coded as binary input spikes via Poisson process. Optionally augmented with elastic distortions as a regularizer.</dd>
+      <dt>Penn Treebank</dt><dd><strong>Word-level language corpus</strong> preprocessed by Mikolov, comprising Wall Street Journal sentences restricted to the most frequent 10,000 tokens. Split into <strong>~930,000 training</strong>, ~74,000 validation, and ~82,000 test tokens. Tokens fed sequentially, one per time step.</dd>
+      <dt>J. S. Bach Chorales</dt><dd><strong>Polyphonic music dataset</strong> (Boulanger-Lewandowski et al., 2012). Over <strong>seven hours of music</strong> across <strong>382 pieces</strong> split into 229 training / 76 validation / 77 test pieces. Each time step is an 88-dimensional binary piano-note vector (A0–C8).</dd>
+      <dt>PCM hardware</dt><dd>Prototype PCM chip in <strong>90-nm CMOS</strong> technology (Ge₂Sb₂Te₅ alloy). Arrays totalling ~3 million devices; experiment used <strong>52,800 PCM devices</strong> from the 1 M cell sub-array to represent 26,400 synaptic weights in 2-PCM differential configuration. Characterized on 10,000 devices.</dd>
+      <dt>Software</dt><dd><strong>TensorFlow</strong> framework (Abadi et al., 2015); <strong>Brian2</strong> SNN simulator used for reference LIF validation; Python–MATLAB interface for FPGA-board communication.</dd>
+      <dt>Availability</dt><dd>All benchmark datasets are publicly available. Sample TensorFlow source code provided in Supplementary Information. PCM chip is an IBM Research prototype and not publicly available, but the training methodology is described in full detail.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MNIST</td><td>Handwritten digit classification benchmark</td><td>70,000 images, 28×28 px greyscale</td><td><a href="http://yann.lecun.com/exdb/mnist/" target="_blank">yann.lecun.com</a></td></tr>
+        <tr><td>Penn Treebank (word-level)</td><td>Language modelling benchmark</td><td>~1.09 M tokens, 10 k vocabulary</td><td><a href="https://catalog.ldc.upenn.edu/LDC99T42" target="_blank">LDC catalog</a></td></tr>
+        <tr><td>J. S. Bach Chorales</td><td>Polyphonic music prediction benchmark</td><td>382 pieces, &gt;7 h, 88-dim binary</td><td>Boulanger-Lewandowski et al. (2012)</td></tr>
+        <tr><td>PCM chip (IBM prototype)</td><td>In-memory hardware accelerator experiment</td><td>52,800 devices (90-nm CMOS, GST)</td><td>IBM Research prototype (not public)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all numerical figures above are taken verbatim from the article. The paper states datasets are publicly available; exact download URLs are cited in the references therein.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Spiking Neural Unit (SNU) formulation:</b> a biologically motivated LIF neuron is recast as a 2-neuron ANN subunit — N₁ accumulates membrane potential via a self-looping connection; N₂ emits spikes via a step function (SNN mode) or analog values via sigmoid (soft sSNU mode). The structure reduces to a simple recurrent ANN trainable with standard deep-learning tools.</li>
+      <li><b>Backpropagation through time (BPTT) with pseudo-derivative:</b> the non-differentiable step function at N₂ is handled by substituting the derivative of tanh during the backward pass, enabling gradient-based end-to-end training of deep SNU stacks.</li>
+      <li><b>Deep architectures:</b> fully connected SNUs stacked to 7 layers (MNIST), convolutional SNU-CNN replicating an existing ANN architecture, two-layer recurrent sSNU networks (Penn Treebank, music). Directly reuses ANN architecture insights without SNN-specific re-derivation.</li>
+      <li><b>Rate-coding for static inputs:</b> greyscale pixel values encoded as binary spike trains via Poisson process — a standard SNN convention bridged here into the ANN training loop.</li>
+      <li><b>Low-precision simulation:</b> fixed-point precision swept from 32-bit down to 2-bit to characterize hardware requirements; reveals SNU robustness to 4-bit weights (vs. 16-bit for LSTM).</li>
+      <li><b>Hardware-in-the-loop training:</b> the PCM chip is embedded in the BPTT training loop — forward pass reads conductances from hardware, backward pass computes gradients in TensorFlow, programming pulses update device conductances. 2-PCM differential configuration provides ~4-bit precision per synapse.</li>
+      <li><b>Drift compensation:</b> constant drift calibration factor applied during reads; 2-PCM rebalancing with reset pulses avoids conductance saturation, compensating for PCM's inherent physical non-idealities.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig1.png" target="_blank">
+        <img src="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig1.png" alt="Fig.1 Spiking neural dynamics" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Spiking neural dynamics — biological neuron model vs. the two-subunit SNU abstraction, and how SNUs compose into deep architectures.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig2.png" target="_blank">
+        <img src="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig2.png" alt="Fig.2 Comparison with state-of-the-art ANNs" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Comparison with LSTM and GRU — structural taxonomy of temporal ANN architectures and parameter count comparison, positioning SNU as the most parsimonious.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig3.png" target="_blank">
+        <img src="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig3.png" alt="Fig.3 Full-precision simulation results" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Full-precision simulation results across all three tasks — MNIST rate-coded classification (depth scaling, ANN comparison, continuous-stream robustness), language perplexity, and music prediction loss.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig4.png" target="_blank">
+        <img src="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig4.png" alt="Fig.4 Performance under limited weight precision" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Performance under limited weight precision — SNU remains robust at 4-bit while LSTM degrades below 16-bit; combined weight + activation quantization sweeps.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig5.png" target="_blank">
+        <img src="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig5.png" alt="Fig.5 Neuromorphic architecture with in-memory acceleration" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> PCM crossbar neuromorphic architecture — 2-PCM differential synapse concept, measured conductance response, and precision characterization showing ~4-bit equivalence.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig6.png" target="_blank">
+        <img src="assets/deep-learning-incorporating-biologically-inspired-neural-dynamics-and-in-memory-computing__s42256-020-0187-0/fig6.png" alt="Fig.6 Music-prediction hardware experiment" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Music-prediction hardware experiment — learning curve of in-the-loop training vs. weight cloning, inference drift over 4 days, and weight distributions during and after training.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Extended Data contains 7 supplementary figures and one accuracy comparison table (Extended Data Fig. 3d).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable machine learning, physics-informed graph learning, accessibility modelling).</p>
+
+    <div class="idea">
+      <h3>① Apply SNU's temporal dynamics to spatiotemporal urban-sensor sequences</h3>
+      <p><span class="lab paper">Extending this paper</span>The SNU paper evaluates temporal sequence modelling on music and language but does not explore <strong>spatiotemporal irregularly-sampled sensor streams</strong> — precisely the domain of urban sensing (GPS traces, mobile-phone activity counts, hourly air-quality readings). A natural extension: replace the fixed-timestep BPTT used here with an event-driven SNU that ingests asynchronous sensor events, exploiting the LIF membrane's native charge-accumulation to integrate irregular inter-event intervals without zero-padding, and validate on a city-scale anomaly-detection or traffic-flow prediction task.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal kernel density estimation and mobile-phone trajectory analyses require models that handle irregular temporal sampling without losing the ordering signal. An event-driven SNU layer would provide a <strong>biologically plausible, hardware-deployable alternative to LSTM/GRU</strong> as the temporal backbone in my GeoAI pipelines — and would run on low-power edge chips co-located with sensors, enabling privacy-preserving on-device spatiotemporal prediction for public-health surveillance.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Energy-efficient multimodal zero-shot learning using in-memory reservoir computing — <a href="https://doi.org/10.1038/s43588-024-00762-w" target="_blank">10.1038/s43588-024-00762-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace fixed-precision quantization with learned mixed-precision SNU graphs</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper sweeps weight precision uniformly from 32-bit down to 2-bit to establish hardware requirements, finding that SNU tolerates 4-bit while LSTM does not. A direct extension: instead of uniform quantization, learn a <strong>layer-wise or neuron-wise precision assignment policy</strong> jointly with the network weights, treating bit-width as a discrete parameter optimized under an energy/area budget constraint. The SNU's simple parameterization (only W, b, and l(τ) per layer) makes it far cheaper to explore mixed-precision schedules than LSTM.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable ML for spatial prediction routinely involves ensembles (Random Forest, XGBoost, GNN) whose inference cost is dominated by memory bandwidth — not arithmetic. A precision-aware SNU-style gating where neurons selectively activate (spike) only for high-information inputs offers a <strong>sparse, energy-efficient inference primitive</strong> for my geospatial models running on mobile or embedded edge nodes in field health surveys.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Linear symmetric self-selecting 14-bit kinetic molecular memristors — <a href="https://doi.org/10.1038/s41586-024-07902-2" target="_blank">10.1038/s41586-024-07902-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Embed SNU dynamics as a physics-informed temporal prior in graph neural networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper positions SNUs as ANN units with built-in physical dynamics (membrane potential decay, threshold, reset), but confines them to fully connected or convolutional architectures. Extending it: encode SNU dynamics as a <strong>message-passing rule on a spatial graph</strong> — each node is an SNU whose state corresponds to local signal intensity, edges carry synaptic weights between spatially adjacent nodes, and the LIF time-constant l(τ) is learned per edge type. This creates a physics-informed spatiotemporal GNN grounded in the paper's validated dynamics.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning agenda — encoding epidemic diffusion (SIR) or accessibility flow priors into GNNs — aligns directly with this extension. SNU nodes would <strong>encode propagation timescales as biologically interpretable constants</strong> rather than black-box weights, making the learned dynamics both physically constrained and explainable — crucial for convincing urban-health policy stakeholders.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Collective dynamics and long-range order in thermal neuristor networks — <a href="https://doi.org/10.1038/s41467-024-51254-4" target="_blank">10.1038/s41467-024-51254-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Leverage SNU's analog-reset gate as a continual-learning mechanism for drifting distributions</h3>
+      <p><span class="lab paper">Extending this paper</span>The soft SNU's sigmoid output controls a <strong>proportional reset</strong> of the membrane state — a biologically motivated analog of selective forgetting. The paper demonstrates this in a fixed training regime but does not explore it for <strong>non-stationary or continually arriving data</strong>. Extending it: use the sSNU's proportional-reset gate as an explicit gating mechanism for continual learning, where the magnitude of the reset can be conditioned on a detected distribution shift, providing catastrophic-forgetting resistance without replay buffers.</p>
+      <p><span class="lab mine">Added value to my research</span>Health geography and urban-analytics datasets exhibit distributional drift (COVID period shifts in mobility, seasonal flu patterns, evolving telehealth adoption). A continual SNU layer that <strong>selectively resets stale spatial representations</strong> while retaining stable long-term structure would let my GeoAI models update from streaming data without full retraining — directly supporting real-time spatial accessibility monitoring for primary care and mental health service areas.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fully analogue reinforcement learning with memristors — <a href="https://doi.org/10.1038/s42256-025-01157-w" target="_blank">10.1038/s42256-025-01157-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the hardware-in-the-loop training methodology to training physical photonic GeoAI networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most experimentally distinctive contribution is embedding a <strong>PCM chip as a differentiable node</strong> inside TensorFlow's BPTT loop, compensating for device non-idealities through gradient updates rather than post-hoc calibration. This hardware-in-the-loop training methodology is general: it applies to any analog hardware whose forward computation is readable and whose weights are adjustable. A high-impact extension would be applying the same loop to <strong>emerging photonic AI accelerators</strong>, where computation occurs at the speed of light but device non-linearity is even more severe than in PCM.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models (my research direction) requires enormous compute at inference time for large-area spatial queries. If the hardware-in-the-loop paradigm can be extended to photonic inference engines, it opens a path to <strong>ultrafast, low-power GeoAI foundation-model inference</strong> for real-time urban analytics — relevant to my interest in deploying accessible, energy-efficient spatial AI at city scale.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Universal photonic artificial intelligence acceleration — <a href="https://doi.org/10.1038/s41586-025-08854-x" target="_blank">10.1038/s41586-025-08854-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

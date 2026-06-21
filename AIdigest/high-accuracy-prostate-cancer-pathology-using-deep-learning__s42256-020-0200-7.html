@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High-accuracy prostate cancer pathology using deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: High-accuracy prostate cancer pathology using deep learning (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Digital Pathology</span>
+      <span class="tag">Gleason Grading</span>
+      <span class="tag">Cancer Detection</span>
+      <span class="tag">Deep Learning</span>
+    </div>
+    <h1>High-accuracy prostate cancer pathology using deep learning</h1>
+    <div class="meta">
+      <span class="authors">Yuri Tolkach · Tilmann Dohmgörgen · Marieta Toma · Glen Kristiansen</span>
+      <span><b>Published</b> 2020-07-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-0200-7" target="_blank">10.1038/s42256-020-0200-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-0200-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A deep learning pipeline using the <strong>NASNetLarge convolutional architecture</strong>, trained on 389 extensively annotated whole-slide images from the TCGA cohort, achieves <strong>tumour detection accuracy of up to 98%+</strong> in two independent validation cohorts — matching or exceeding human pathologists. A novel, biologically motivated <strong>Gleason grading algorithm</strong> that treats tumour architecture as a quantitative continuum (not discrete classes) delivers <strong>human-level prognostic stratification</strong>, and identifies a minimum tumour focus size of ~560 × 560 µm for reliable grading.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Human-level accuracy from a single model.</b> The NASNetLarge-based pipeline achieves patch-level tumour detection above 98% using only 14 training epochs — superior to contemporaneous weakly-supervised and multiple-instance-learning alternatives while requiring less labelled data in the post-training phase.</li>
+      <li><b>New biological insight encoded in the grading algorithm.</b> Rather than treating Gleason patterns as discrete categories, the algorithm models them as a quantitative architectural continuum derived from 3D tumour reconstruction studies — the first grading system grounded in prostate cancer 3D biology.</li>
+      <li><b>Eliminates a key human error mode.</b> Human pathologists produce discrepant global Gleason scores in more than 20% of multi-slide prostatectomy cases due to memory and reconstruction limits; the DL model has zero such errors by design.</li>
+      <li><b>End-to-end clinical pipeline.</b> The system produces a complete set of tumour metrics (area, volume, grade distribution) required for a pathology report — not just a binary classification, but actionable report-ready outputs.</li>
+      <li><b>Open data and code.</b> Training data via GDC/TCGA (<a href="http://portal.gdc.cancer.gov" target="_blank">portal.gdc.cancer.gov</a>), validation patches via Zenodo, and source code via GitHub — enabling full reproducibility and community extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE MACHINE INTELLIGENCE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological advance, not just an application:</b> the biologically-grounded Gleason grading algorithm is a conceptual departure from the prevailing argmax/discrete-class paradigm, representing a new framework for tissue-grade AI.</li>
+      <li><b>State-of-the-art architecture applied to a new domain:</b> NASNetLarge is used for the first time in histopathology, and the paper systematically compares multiple convnet architectures — giving a clear methodological contribution, not just a benchmark.</li>
+      <li><b>Clinically significant outcome metrics:</b> the paper directly benchmarks against trained genitourinary pathologists and demonstrates prognostic validity via Kaplan–Meier survival analysis — bridging AI performance to clinical relevance.</li>
+      <li><b>Multi-cohort cross-device validation:</b> independent validation in two institutional cohorts scanned with a different scanner manufacturer establishes domain generalization, meeting the journal's rigor bar for translational AI.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training dataset</dt><dd><strong>The Cancer Genome Atlas (TCGA)</strong> prostate cancer cohort — 362 patients, 389 whole-slide images (WSIs) scanned at ×40 (~0.25 µm/px) on Leica Aperio scanners. Annotated at pixel level over more than one year by a uropathologist (4.5 yr reference-centre experience), covering tumour Gleason patterns (GP3/GP4/GP5), intraductal carcinoma, and multiple benign classes. Approximately 1.5 million unique, non-intersecting patches extracted; more than 10 million generated patches with intersection strategies. Publicly available via GDC Data Portal (<a href="http://portal.gdc.cancer.gov" target="_blank">portal.gdc.cancer.gov</a>).</dd>
+      <dt>Validation cohort 1</dt><dd>592 prostate cancer patients from the Institute of Pathology, Charité University Hospital, Berlin, Germany. Tissue microarrays (TMAs) stained with haematoxylin and eosin, scanned on 3DHISTECH Pannoramic SCAN II at ×40 (~0.25 µm/px).</dd>
+      <dt>Validation cohort 2</dt><dd>279 prostate cancer patients from the Institute of Pathology, University Hospital Bonn, Germany. Same TMA-based scanning platform as cohort 1. Both validation cohorts were scanned on a different scanner brand than the training cohort, providing genuine cross-device generalization testing.</dd>
+      <dt>Patch release (Zenodo)</dt><dd>Image patches of tumour and benign classes from validation cohorts available for academic use at <a href="https://zenodo.org/deposit/3825933" target="_blank">zenodo.org/deposit/3825933</a>.</dd>
+      <dt>Code</dt><dd>Source code available at <a href="https://github.com/gagarin37/deep_learning_pca" target="_blank">github.com/gagarin37/deep_learning_pca</a>.</dd>
+      <dt>Pre-trained weights</dt><dd>NASNetLarge initialized with <strong>ImageNet</strong> weights via transfer learning; all weights subsequently fully retrained on the prostate dataset in a stepwise upstream manner.</dd>
+      <dt>Compute environment</dt><dd>TensorFlow and Keras (Python 3.6.5); single workstation with NVIDIA Quadro P6000 GPU (24 GB VRAM). Statistical analyses in R v3.6.0 (pROC, irr packages).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TCGA Prostate Cancer (GDC)</td><td>Training WSIs with pixel-level annotation</td><td>362 patients, 389 WSIs, ~1.5M unique patches</td><td><a href="http://portal.gdc.cancer.gov" target="_blank">portal.gdc.cancer.gov</a></td></tr>
+        <tr><td>Charité TMA (VAL1)</td><td>Primary validation cohort</td><td>592 prostate cancer patients, TMA spots</td><td>Available on request</td></tr>
+        <tr><td>University Hospital Bonn TMA (VAL2)</td><td>Secondary validation cohort</td><td>279 prostate cancer patients, TMA spots</td><td>Available on request</td></tr>
+        <tr><td>Zenodo patch repository</td><td>Public validation image patches (academic use)</td><td>Tumour + benign classes from VAL1 &amp; VAL2</td><td><a href="https://zenodo.org/deposit/3825933" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>ImageNet</td><td>Transfer learning base initialization</td><td>NASNetLarge pre-trained weights</td><td>Standard public release</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: patient-level counts are taken verbatim from the article. The paper does not report a total WSI count for validation cohorts beyond the TMA format; exact TMA spot counts per cohort are in Supplementary Table 1.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Architecture selection:</b> systematic comparison of VGG, ResNet, InceptionV3, Xception, MobileNet, and NASNetLarge; NASNetLarge selected as best-performing at ~×23 effective magnification (patch size 350×350 px, rescaled from 600×600 px).</li>
+      <li><b>Transfer learning with stepwise fine-tuning:</b> ImageNet weights used for initialization; training in two phases — top classification layers only (epochs 1–7), then stepwise release of convolutional layers from top to bottom (epochs 8–14).</li>
+      <li><b>Stain normalization:</b> Macenko algorithm applied at training and validation stages to harmonize haematoxylin-and-eosin stain variability across institutions and scanners.</li>
+      <li><b>Three DL-based augmentation strategies for inference:</b> (1) P8 — pooling of eight rotated/flipped derivatives of ambiguous patches; (2) ENS — ensemble of two models trained at different magnifications (~×23 and ~×35); (3) patch environment analysis — contextual re-evaluation of borderline patches using spatial neighborhood context.</li>
+      <li><b>Post-training for domain adaptation:</b> one epoch of training on VAL1-labelled data produces a significant accuracy improvement on VAL2 (DeLong's P &lt; 0.0001), demonstrating effective lightweight continual learning.</li>
+      <li><b>Biologically meaningful Gleason grading algorithm:</b> trained on pure GP patches from unequivocal 3+3, 4+4, 5+5 cases; patch-level GP probability vectors summed across the tumour area (not argmaxed to a discrete class) to preserve the quantitative continuum of prostate cancer architecture — informed by 3D tumour reconstruction studies.</li>
+      <li><b>Minimum tumour focus size analysis:</b> bootstrapping (20 runs per image) on 200 large TCGA tumour images with graduated area from 1 to 16 patches; plateau at ~560×560 µm establishes the minimum size for representative Gleason grading.</li>
+      <li><b>Statistical analysis:</b> ROC/AUC with DeLong's test for model comparisons; Cohen's kappa (WHO/ISUP grade groups) for interobserver agreement; Kaplan–Meier and Cox regression for prognostic stratification validation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig1.png" target="_blank">
+        <img src="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig1.png" alt="Fig.1 Composition of training and validation cohorts" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Composition of training and validation cohorts — WSI annotation strategy, patch examples for three classes, and dataset size breakdown.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig2.png" target="_blank">
+        <img src="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig2.png" alt="Fig.2 Analysis of model accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Analysis of model accuracy — training curves, ROC/AUC for both validation cohorts, and comparison of native vs. augmented strategies (P8, ENS).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig3.png" target="_blank">
+        <img src="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig3.png" alt="Fig.3 Pipeline for analysis of prostatectomy WSIs" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Full WSI analysis pipeline — native output, P8 augmentation, patch environment analysis, and final binary tumour map overlaid on slide.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig4.png" target="_blank">
+        <img src="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig4.png" alt="Fig.4 Tests of grading accuracy for three pathologists and DL model" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Gleason grading accuracy tests — global scoring discrepancy for pathologists vs. AI, agreement statistics, and Kaplan–Meier prognostic stratification.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig5.png" target="_blank">
+        <img src="assets/high-accuracy-prostate-cancer-pathology-using-deep-learning__s42256-020-0200-7/fig5.png" alt="Fig.5 Grading pipeline and minimal tumour focus size analysis" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Grading pipeline on WSI and bootstrapping analysis establishing ~560 × 560 µm as the minimum tumour focus size for reliable Gleason scoring.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary contains Tables 1–11 (clinicopathological characteristics, confusion matrices, grading comparisons) and Figs. 1–2 (extended Kaplan–Meier curves).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal health analysis, explainable ML, 2SFCA/R2SFCA accessibility, physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Scale the paper's annotated TCGA corpus into a foundation model for digital pathology</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's strength — high-quality pixel-level annotations on 389 TCGA WSIs and a carefully calibrated NASNetLarge pipeline — produces an excellent task-specific model but remains locked to prostate cancer and a fixed patch size. A direct extension is to use this annotated corpus as supervised pre-training signal within a <strong>large self-supervised vision foundation model</strong>, learning generalizable patch embeddings across cancer types and magnifications. Such a foundation model would inherit the paper's biological insight (continuum grading, environment-aware patch analysis) while becoming transferable across tissue types and institutions — overcoming the dataset bottleneck the Discussion identifies as the main barrier in the field.</p>
+      <p><span class="lab mine">Added value to my research</span>Foundation model pre-training on domain-specific annotated corpora mirrors the paradigm I pursue for geospatial foundation models. This paper's annotation strategy — non-contaminated class boundaries, pure-pattern patches — is structurally identical to the data-quality principles I apply when fine-tuning spatial models on urban health indicators. The pipeline for aggregating patch-level spatial features to a whole-image-level score parallels aggregating tile-level remote-sensing features to a neighborhood-level health index.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A pathology foundation model for cancer diagnosis and prognosis prediction — <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Add explainability to the Gleason grading continuum via spatial saliency attribution</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's grading algorithm outputs per-patch GP probability vectors and aggregates them quantitatively, but provides no spatial attribution showing <em>which gland structures within a patch</em> drive each pattern probability. Extending it with gradient-weighted class activation mapping (Grad-CAM) or integrated gradients on the GP probability outputs would overlay interpretable heat maps on the WSI alongside the pipeline's tumour map. This would make the continuum-grading logic transparent to pathologists — a prerequisite for regulatory approval — and could reveal novel structural correlates of borderline GP 3/4 transitions that the model has implicitly learned.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work for spatial health prediction uses SHAP attributions to decompose geographic predictors at the feature level. The Grad-CAM extension of this paper is the image-domain analog: spatial attribution at the pixel level that explains which tissue regions drive the model's grade output. The parallel is direct — spatially-referenced explainability where the "why" of a prediction is tied to a geographic or morphological location. This motivates a unified explainability framework across both image and spatial-tabular inputs in health AI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Morphological and molecular breast cancer profiling through explainable machine learning — <a href="https://doi.org/10.1038/s42256-021-00303-4" target="_blank">10.1038/s42256-021-00303-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Unify the paper's two separate models into a multi-task learning framework</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper trains separate NASNetLarge models for tumour-vs-benign classification and for Gleason grading — each optimized independently from the same WSI material. A direct extension unifies these into a <strong>multi-task learning framework</strong> where a shared backbone learns representations simultaneously useful for tissue-type classification, Gleason pattern scoring, intraductal carcinoma identification, and tumour volume estimation. Shared representations would reduce annotation burden per task and improve accuracy on the harder borderline cases (GP 3/4 patches) by regularizing across tasks — exactly the population where the paper reports the most disagreement with pathologists.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-task learning is central to my spatiotemporal health work: predicting telehealth access, mental health facility coverage, and socioeconomic vulnerability from shared spatial covariates simultaneously regularizes all tasks and forces the model to learn more general geographic representations. The paper's architecture — shared backbone, task-specific heads, rigorous annotation strategy — is a direct template for building multi-task GeoAI models over neighborhood-level health outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multi-task learning strategy to pretrain models for medical image analysis — <a href="https://doi.org/10.1038/s43588-024-00666-9" target="_blank">10.1038/s43588-024-00666-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Operationalize the minimum-focus-size finding as a confidence gate in clinical triage</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper establishes ~560×560 µm as the minimum tumour focus size for reliable Gleason grading through a bootstrapping analysis — but this result is derived on prostatectomy WSIs where tumour foci are large. Extending it to the clinically more challenging <strong>prostate biopsy setting</strong> requires repeating the analysis on needle core biopsy images where foci routinely fall below this threshold. Integrating the size-threshold rule as a <strong>calibrated uncertainty gate</strong> in the clinical pipeline (flagging tiny foci as "grade uncertain") would reduce clinical overgrading/undergrading and provide a decision-support boundary the paper currently lacks.</p>
+      <p><span class="lab mine">Added value to my research</span>The paper's minimum-support analysis is spatially analogous to my R2SFCA catchment-size sensitivity analyses, where the delineated service area must be large enough to capture a stable demand signal before accessibility metrics become meaningful. In both cases there is a minimum spatial support below which aggregate outputs are unreliable. Operationalizing this as a confidence gate — output a prediction only when the spatial extent of input data exceeds a threshold — is a principle directly transferable to accessibility modeling in data-sparse rural geographies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning to guide the use of adjuvant therapies for breast cancer — <a href="https://doi.org/10.1038/s42256-021-00353-8" target="_blank">10.1038/s42256-021-00353-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Formalize the paper's cross-institution transfer as federated or domain-adversarial learning</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's key design choices is validation on two cohorts from different institutions scanned on a different scanner brand — a deliberate effort to measure domain shift. The "post-training" step (one epoch on VAL1 labels, improved accuracy on VAL2) is an effective but informal continual-learning strategy. A principled extension formalizes this via <strong>domain-adversarial training</strong> or <strong>federated learning</strong> across pathology labs, enabling each institution's data to contribute without sharing raw WSIs — addressing the privacy bottleneck the Discussion identifies as the main obstacle to dataset scale in the field.</p>
+      <p><span class="lab mine">Added value to my research</span>The paper's cross-institution generalization problem maps directly onto my cross-city GeoAI generalization problem: models trained on urban health data from large metro areas must transfer to mid-size cities with different data distributions. The "one-epoch post-training" strategy is structurally identical to fine-tuning a pre-trained spatial model on a target city with a small labelled sample — a lightweight domain-adaptation recipe I can adopt for R2SFCA and spatial accessibility models in under-resourced geographies where labeled health facility data is scarce.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Improving the quality of machine learning in health applications and clinical research — <a href="https://doi.org/10.1038/s42256-020-00239-1" target="_blank">10.1038/s42256-020-00239-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

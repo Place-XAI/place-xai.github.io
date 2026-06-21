@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrating statistical physics and machine learning for combinatorial optimization — AI Digest</title>
+<meta name="description" content="AI Digest: Integrating statistical physics and machine learning for combinatorial optimization (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Combinatorial optimization</span>
+      <span class="tag">Statistical physics</span>
+      <span class="tag">Mean-field theory</span>
+      <span class="tag">GPU-accelerated ML</span>
+    </div>
+    <h1>Integrating statistical physics and machine learning for combinatorial optimization</h1>
+    <div class="meta">
+      <span class="authors">Zi-Song Shen · Pan Zhang (Institute of Theoretical Physics, Chinese Academy of Sciences, Beijing, China)</span>
+      <span><b>Published</b> 2025-03-26</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00794-w" target="_blank">10.1038/s43588-025-00794-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00794-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The <strong>free-energy machine (FEM)</strong> unifies statistical-physics free-energy minimization with machine-learning gradient descent into a single GPU-parallelizable solver for combinatorial optimization problems (COPs). Unlike Ising machines — which are limited to quadratic binary (QUBO) problems — FEM handles <strong>multi-valued variables and higher-order interactions natively</strong>, outperforming specialized state-of-the-art algorithms on Max-Cut, balanced minimum cut, and MAX-k-SAT benchmarks, and demonstrating the power of merging physics and ML paradigms.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the QUBO bottleneck.</b> Ising machines require costly reformulation of every COP into quadratic binary form; FEM eliminates that overhead by directly optimizing any cost function with multi-valued or higher-order variables.</li>
+      <li><b>Massive GPU parallelism.</b> By casting variational mean-field annealing as standard ML training (automatic differentiation + gradient-based optimizers), FEM inherits decades of GPU acceleration infrastructure, enabling large-scale COP instances.</li>
+      <li><b>General-purpose yet competitive.</b> A single framework outperforms algorithms tailor-made for specific COPs (Max-Cut, multi-way partition, SAT), showing that physics-grounded generality need not sacrifice performance.</li>
+      <li><b>Opens a new design space.</b> The convergence of Ising-machine dynamics with naive mean-field dynamics from 1980s physics, and of quantum Hamiltonian dynamics with ML momentum optimizers, reveals deep structural correspondences that can guide next-generation solvers.</li>
+      <li><b>Practical industrial reach.</b> Chip verification (the paper's editor highlight) and scheduling/routing in logistics are direct application targets where QUBO reformulation was previously a hard barrier.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Interdisciplinary synthesis:</b> merging statistical mechanics with ML optimization is the kind of cross-domain conceptual contribution that Nature Computational Science prioritizes over incremental algorithmic tuning.</li>
+      <li><b>Generality and transferability:</b> a single method beating specialized solvers across multiple COP classes is a computational science result of broad audience appeal.</li>
+      <li><b>Infrastructure leverage:</b> using off-the-shelf ML training stacks (autodiff, GPU) as the computational backbone aligns with the journal's interest in methods that lower the barrier to high-performance computing.</li>
+      <li><b>Forward-looking framing:</b> the companion full article (doi:10.1038/s43588-025-00782-0) provides the technical depth; this Research Briefing efficiently communicates the conceptual breakthrough and societal implications to a wider audience.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Benchmark type</dt><dd>Algorithmic benchmark problems on synthetic and structured graph instances. No real-world geospatial or observational dataset is used; all inputs are computationally generated graph instances standard in the COP literature.</dd>
+      <dt>Max-Cut (QUBO-type)</dt><dd>Standard Gset benchmark graphs (Ye, 2003) and random Erdos-Renyi graphs, commonly ranging up to thousands of nodes in the Ising-machine literature; specific sizes for this paper not explicitly stated in the briefing text.</dd>
+      <dt>Balanced min-cut (multi-valued)</dt><dd><em>q</em>-way balanced graph partitioning instances; exact graph sizes not stated in the briefing — see companion paper (doi:10.1038/s43588-025-00782-0) for tabulated benchmarks.</dd>
+      <dt>MAX-k-SAT (higher-order)</dt><dd>Maximum k-satisfiability random formula instances; variable counts not stated in the briefing text.</dd>
+      <dt>Chip verification</dt><dd>Practical chip design verification tasks (mentioned by the editor as a highlight application); sizes/sources not disclosed in this briefing.</dd>
+      <dt>Data availability</dt><dd>No data availability statement is provided in this Research Briefing; full experimental details are in the companion research article (doi:10.1038/s43588-025-00782-0).</dd>
+      <dt>Code availability</dt><dd>Not stated in this briefing. GPU implementation uses standard ML libraries (automatic differentiation + gradient-based optimizers).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Benchmark</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Max-Cut graph instances (Gset et al.)</td><td>QUBO-type COP benchmark</td><td>Standard community benchmarks; exact sizes in companion paper</td><td><a href="https://doi.org/10.1038/s43588-025-00782-0" target="_blank">Companion article</a></td></tr>
+        <tr><td>Balanced minimum cut graphs</td><td><em>q</em>-valued multi-state COP benchmark</td><td>Synthetic graph instances; sizes not stated in briefing</td><td><a href="https://doi.org/10.1038/s43588-025-00782-0" target="_blank">Companion article</a></td></tr>
+        <tr><td>MAX-k-SAT random formulas</td><td>Higher-order interaction COP benchmark</td><td>Random formula instances; sizes not stated in briefing</td><td><a href="https://doi.org/10.1038/s43588-025-00782-0" target="_blank">Companion article</a></td></tr>
+        <tr><td>Chip verification tasks</td><td>Practical industrial application</td><td>Not disclosed in this briefing</td><td>N/A</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: This is a Research Briefing (a short-format article); quantitative benchmark details, graph sizes, and exact comparison tables are in the companion full research article (doi:10.1038/s43588-025-00782-0). Numbers here are taken verbatim from or directly inferred from the briefing text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Free-energy machine (FEM):</b> treats each variable as a probability distribution over <em>q</em> states; the objective is to find the zero-temperature Boltzmann distribution (ZTBD) where the probability of the optimal solution is maximized.</li>
+      <li><b>Variational mean-field (MF) approximation:</b> factorizes the ZTBD as a product of per-variable marginal probabilities (naive mean-field ansatz), making the optimization tractable via variational free-energy minimization.</li>
+      <li><b>Annealing schedule:</b> gradually increases inverse temperature <em>β</em> from 0 to ∞, guiding the system from a uniform distribution toward a concentrated peak at the optimal solution (ground state).</li>
+      <li><b>ML training machinery:</b> the variational free-energy objective is minimized using automatic differentiation and gradient-based optimizers (e.g., Adam, SGD with momentum) — directly repurposing standard deep-learning training infrastructure.</li>
+      <li><b>GPU parallelization:</b> all operations are batched and executed on GPU, enabling large-scale COP instances and dramatically reducing wall-clock time versus sequential heuristics.</li>
+      <li><b>Solution decoding:</b> the optimal solution (ground state) is inferred from the converged marginal probabilities via argmax over each variable's distribution.</li>
+      <li><b>Generality design:</b> cost function can be non-binary (<em>q</em> ≥ 2 states), non-quadratic (higher-order terms), and not QUBO-type — no Ising reformulation step required.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/integrating-statistical-physics-and-machine-learning-for-combinatorial-optimization__s43588-025-00794-w/fig1.png" target="_blank">
+        <img src="assets/integrating-statistical-physics-and-machine-learning-for-combinatorial-optimization__s43588-025-00794-w/fig1.png" alt="Fig.1 FEM principles and methodology" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The principles and methodology behind how FEM solves COPs. (a) Each variable can adopt one of <em>q</em> distinct states, linked to a marginal probability distribution. (b) FEM approximates the zero-temperature Boltzmann distribution via variational mean-field free-energy minimization with annealing, and decodes the ground state via argmax over marginal probabilities.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table in this Research Briefing (Tables = 0). Detailed comparison tables and experimental results are in the companion research article (doi:10.1038/s43588-025-00782-0).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal optimization, facility-location).</p>
+
+    <div class="idea">
+      <h3>① Apply FEM's variational mean-field annealing to spatial facility-location optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>FEM is benchmarked on abstract COPs (Max-Cut, balanced partition, MAX-SAT) but its formalism generalizes to any cost function with discrete variable states. A direct extension: reformulate the <strong>p-median or capacitated facility-location problem</strong> — assigning service sites to demand points under capacity and coverage constraints — as an FEM cost function with multi-valued site-assignment variables. This would replace costly integer-programming solvers with FEM's annealing-based GPU approach, testing whether FEM's performance advantage on combinatorial benchmarks translates to spatially structured instances where graph topology encodes geographic proximity.</p>
+      <p><span class="lab mine">Added value to my research</span>My <strong>EV charging-station placement and healthcare facility-location</strong> work faces NP-hard assignment problems. FEM's annealing + autodiff approach could replace my current heuristic solvers, and the variational probability over site assignments is interpretable as a probabilistic allocation — enabling uncertainty quantification over optimal placements, which is missing from standard optimization approaches.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning — <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace Ising-machine hardware with FEM as a software co-processor for photonic/quantum backends</h3>
+      <p><span class="lab paper">Extending this paper</span>Physical Ising machines (photonic, superconducting, quantum-inspired) face the same QUBO-only limitation FEM addresses in software. A logical extension: benchmark FEM against photonic Ising hardware on the same non-QUBO problem instances, and explore a <strong>hybrid architecture</strong> where FEM's mean-field warm-start initializes the photonic machine's state, and the hardware's fast analog dynamics refine FEM's solution — combining FEM's generality with hardware speedups that software alone cannot match.</p>
+      <p><span class="lab mine">Added value to my research</span>For my <strong>spatiotemporal network optimization</strong> (e.g., optimal community detection over large mobility networks), hybrid FEM-hardware solvers could make currently intractable instances feasible. The mean-field distribution FEM produces also provides a probabilistic prior over community assignments — interpretable as soft spatial clustering that can be fed directly into spatial entropy analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Programmable 200 GOPS Hopfield-inspired photonic Ising machine — <a href="https://doi.org/10.1038/s41586-025-09838-7" target="_blank">10.1038/s41586-025-09838-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace FEM's fixed MF ansatz with a learned graph neural network distribution</h3>
+      <p><span class="lab paper">Extending this paper</span>FEM itself acknowledges that the naive mean-field ansatz fails for large random graphs near a phase transition (replica symmetry breaking), requiring more expressive approximations. The paper suggests belief propagation and survey propagation as improvements. A further extension: learn the MF distribution itself with a <strong>graph neural network (GNN) variational ansatz</strong> that conditions on graph structure, so the approximate posterior adapts to problem topology rather than using a mean-field product form. The GNN could be pre-trained across a distribution of graph instances, enabling fast amortized inference at test time.</p>
+      <p><span class="lab mine">Added value to my research</span>This aligns directly with my <strong>physics-informed graph learning</strong> agenda: encoding the free-energy minimization objective as a physics-based loss into a GNN produces a solver that is both theoretically grounded and transferable across spatial networks. Applied to <strong>road or accessibility networks</strong>, such a model could learn optimality conditions for facility siting without re-solving from scratch for each city.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Free-energy machine for combinatorial optimization (full research article) — <a href="https://doi.org/10.1038/s43588-025-00782-0" target="_blank">10.1038/s43588-025-00782-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use FEM's probabilistic marginals for explainable spatial decision-making</h3>
+      <p><span class="lab paper">Extending this paper</span>FEM outputs not just a single solution but a full <strong>marginal probability distribution</strong> P<sub>i</sub>(σ<sub>i</sub>) over each variable's states. For near-degenerate problems (many near-optimal solutions), this distribution is broad — encoding inherent uncertainty about the optimal assignment. A direct extension of the paper: analyze how the FEM marginals evolve during annealing and correlate their entropy with problem hardness, providing a principled <strong>uncertainty-quantification signal</strong> for COP solvers rather than returning a single point estimate.</p>
+      <p><span class="lab mine">Added value to my research</span>In my <strong>explainable ML for spatial prediction</strong> work, I routinely face the challenge of communicating prediction confidence to planners. FEM's marginals offer an analogy: treating spatial assignment or zoning decisions as COPs and reporting the marginal entropy as a <em>spatial uncertainty map</em> would give planners a principled, interpretable measure of where optimal decisions are robust versus where small perturbations flip the solution — directly supporting policy communication.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating network layouts using graph neural networks — <a href="https://doi.org/10.1038/s41467-023-37189-2" target="_blank">10.1038/s41467-023-37189-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Extend FEM's annealing schedule with a learned adaptive cooling curve for spatiotemporal COPs</h3>
+      <p><span class="lab paper">Extending this paper</span>FEM's current annealing schedule monotonically increases inverse temperature β from 0 to ∞, using a manually tuned rate. The paper flags this as a key limitation: "FEM relies heavily on manual parameter tuning." An extension: learn the cooling schedule itself via <strong>meta-learning or reinforcement learning</strong>, training a schedule-controller on a distribution of COP instances. For spatially structured instances, the landscape geometry (encoded in the graph adjacency) could inform an adaptive β-trajectory that avoids local minima associated with spatial clusters — automatically adapting to problem structure.</p>
+      <p><span class="lab mine">Added value to my research</span>My <strong>Monte Carlo and agent-based modeling</strong> for spatial epidemiology (SIR models) and urban mobility involve temperature-like parameters (transmission rates, exploration radii) that are equally sensitive to scheduling. A learned adaptive annealing principle transfers directly: schedule the spatial exploration-exploitation trade-off in agent-based simulation using a meta-learned controller, reducing hand-tuning and improving convergence on city-specific mobility networks.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Many-body control with reinforcement learning and tensor networks — <a href="https://doi.org/10.1038/s42256-023-00732-3" target="_blank">10.1038/s42256-023-00732-3</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

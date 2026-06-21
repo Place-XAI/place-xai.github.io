@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning characteristics of graph neural networks predicting protein–ligand affinities — AI Digest</title>
+<meta name="description" content="AI Digest: Learning characteristics of graph neural networks predicting protein–ligand affinities (Nature Machine Intelligence, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Drug Discovery</span>
+      <span class="tag">Explainable AI</span>
+      <span class="tag">Protein–Ligand Binding</span>
+    </div>
+    <h1>Learning characteristics of graph neural networks predicting protein–ligand affinities</h1>
+    <div class="meta">
+      <span class="authors">Andrea Mastropietro · Giuseppe Pasculli · Jürgen Bajorath</span>
+      <span><b>Published</b> 2023-11-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-023-00756-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>GNNs predicting protein–ligand binding affinity from interaction graphs do <strong>not primarily learn protein–ligand interactions</strong> but instead rely heavily on <strong>ligand memorization</strong> — recalling affinity values for structurally similar training compounds. However, the picture is nuanced: <strong>some architectures</strong> (especially GC-GNN) increasingly prioritize interaction-edge information when predicting <strong>high-affinity</strong> compounds, revealing an architecture-dependent balance between memorization and genuine interaction learning revealed through EdgeSHAPer and GNNExplainer explainability analysis.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Settles a contested question in computational drug design.</b> The community has debated whether GNNs truly "learn" binding physics or merely memorize training data. This study provides the first systematic, multi-architecture XAI-based answer: ligand memorization dominates, but it is not the whole story.</li>
+      <li><b>Reframes apparent predictive accuracy.</b> High benchmark correlations do <em>not</em> indicate that GNNs capture thermodynamic reality; they partly reflect the chemical similarity structure of training sets — an artificial feature that limits prospective applicability.</li>
+      <li><b>Reveals architecture-dependent learning differentiation.</b> For GC-GNN, interaction edges account for more than half of the most important edges in high-affinity predictions, suggesting that not all GNNs are equivalent and that architectural choices meaningfully steer what is learned.</li>
+      <li><b>Opens a design path forward.</b> The finding motivates tailored interaction graphs that amplify interaction edges and suppress ligand-memorization signals — a concrete engineering direction for future graph-based drug-design models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Resolves a live scientific controversy:</b> the paper takes a decisive position in an actively debated question, providing systematic evidence rather than just another benchmark result — exactly the kind of contribution Nature Machine Intelligence prioritizes.</li>
+      <li><b>Methodological novelty in model explanation:</b> EdgeSHAPer is a novel, publicly released XAI tool for GNNs, and its application to protein–ligand graphs is a first-of-its-kind contribution that advances both explainability and molecular ML.</li>
+      <li><b>Cross-disciplinary impact:</b> findings directly inform both the ML community (on GNN learning behavior) and the drug-design community (on the trustworthiness of GNN-based potency predictions).</li>
+      <li><b>Reproducible and open:</b> full code on GitHub and Zenodo, reproducible capsule on CodeOcean — matching Nature MI's open-science expectations and enabling re-use by the drug discovery community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>PDBbind v.2019</strong> (<a href="http://www.pdbbind.org.cn/" target="_blank">pdbbind.org.cn</a>) — curated X-ray structures of protein–ligand complexes with associated experimental binding affinities (pKi). Starting pool: 9,962 training + 903 validation + 257 core (2016) + 3,393 hold-out (2019) complexes.</dd>
+      <dt>Interaction graphs</dt><dd>Pre-generated protein–ligand interaction graphs from <strong>Volkov et al. (2022)</strong> — publicly available, constructed with <strong>IChem v.5.2.9</strong> using a 6 Å distance threshold for intermolecular edges and 4 Å for intramolecular edges; annotated with scaled edge distances and one-hot node features for 8 interaction types.</dd>
+      <dt>Curated sets (final)</dt><dd>After removing complexes with error-prone affinity annotations (pKi &lt; 5 or &gt; 11) and failed graph generation: <strong>7,301 training / 658 validation / 186 core / 2,542 hold-out</strong> complexes.</dd>
+      <dt>Affinity subranges</dt><dd>XAI analysis split into low (pKi &lt; 6; <strong>533 instances</strong>), medium (pKi 6.5–7.5; <strong>698 instances</strong>) and high (pKi &gt; 8; <strong>615 instances</strong>) from the hold-out set.</dd>
+      <dt>Code &amp; data</dt><dd>GitHub <a href="https://github.com/AndMastro/protein-ligand-GNN" target="_blank">AndMastro/protein-ligand-GNN</a> · Zenodo <a href="https://doi.org/10.5281/zenodo.8358539" target="_blank">10.5281/zenodo.8358539</a> · CodeOcean <a href="https://codeocean.com/capsule/9675097" target="_blank">capsule/9675097</a> · EdgeSHAPer Zenodo <a href="https://doi.org/10.5281/zenodo.8358595" target="_blank">10.5281/zenodo.8358595</a></dd>
+      <dt>Software stack</dt><dd>Python, <strong>PyTorch</strong>, <strong>PyTorch Geometric</strong>, <strong>Scikit-learn</strong> (RobustScaler), <strong>NetworkX</strong>, <strong>IChem v.5.2.9</strong>; EdgeSHAPer (Monte Carlo SHAP) and GNNExplainer for model explanation.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>PDBbind v.2019</td><td>Protein–ligand complex structures + affinity labels</td><td>~9,962 train + 3,393 hold-out complexes (curated)</td><td><a href="http://www.pdbbind.org.cn/" target="_blank">pdbbind.org.cn</a></td></tr>
+        <tr><td>Volkov et al. interaction graphs</td><td>Pre-computed graph representations of complexes</td><td>Same as PDBbind; 6 Å intermolecular / 4 Å intramolecular thresholds</td><td><a href="https://github.com/AndMastro/protein-ligand-GNN" target="_blank">GitHub</a></td></tr>
+        <tr><td>PDBbind 2016 core set</td><td>Community-standard benchmark test set</td><td>186 curated complexes (high-quality, wide affinity range)</td><td><a href="http://www.pdbbind.org.cn/" target="_blank">pdbbind.org.cn</a></td></tr>
+        <tr><td>PDBbind 2019 hold-out set</td><td>Independent test set for XAI analysis</td><td>2,542 curated complexes</td><td><a href="http://www.pdbbind.org.cn/" target="_blank">pdbbind.org.cn</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all reported complex counts are post-curation (error-prone annotations and failed graph-generation cases removed). Numbers are taken verbatim from the Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Six GNN architectures evaluated:</b> GCN, GAT, GIN, GINE (edge-weight variant of GIN), GraphSAGE, and GC-GNN (GraphConv operator with max aggregator) — all implemented in PyTorch Geometric with 256 hidden units, trained for 100 epochs with Adam optimizer (lr = 1e-3), evaluated by root mean square error (r.m.s.e.) against experimental pKi.</li>
+      <li><b>Protein–ligand interaction graphs:</b> nodes represent ligand pseudo-atoms (intramolecular interactions) and protein pseudo-atoms (amino acid residues); edges encode three types: ligand–ligand (intramolecular), protein–protein (intramolecular), and protein–ligand (intermolecular interaction) — weighted by scaled distance.</li>
+      <li><b>EdgeSHAPer (primary XAI):</b> a model-agnostic, Shapley-value-based method that quantifies the contribution of individual edges in a GNN's prediction via Monte Carlo sampling (100 steps); ranks edges by absolute SHAP value; top-<em>k</em> edges (k = 5, 10, 15, 20, 25) tracked as ligand, protein, or interaction edges.</li>
+      <li><b>GNNExplainer (secondary XAI):</b> learns a mask on the graph maximizing mutual information between prediction and subgraph distribution — used as a methodologically independent cross-check of EdgeSHAPer findings.</li>
+      <li><b>Affinity-stratified analysis:</b> edge importance profiles compared separately across low-, medium-, and high-affinity prediction subranges to detect whether GNN learning mode changes with potency level.</li>
+      <li><b>Structural mapping:</b> top-25 edges from interaction graphs mapped back to 3D protein–ligand structures to visually verify memorization vs. genuine interaction-learning for exemplary complexes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig1.png" target="_blank">
+        <img src="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig1.png" alt="Fig.1 Workflow for rationalizing affinity predictions" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overall analysis workflow — from X-ray structures to interaction graphs, GNN training, affinity prediction, and EdgeSHAPer-based edge importance delineation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig2.png" target="_blank">
+        <img src="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig2.png" alt="Fig.2 Edge proportions across affinity subranges for six GNNs" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Proportions of protein, ligand, and interaction edges among top-25 edges across low/medium/high-affinity subranges for all six GNN architectures — reveals dominant ligand memorization with architecture-dependent variation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig3.png" target="_blank">
+        <img src="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig3.png" alt="Fig.3 GC-GNN edge contributions vs. k" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> GC-GNN edge contribution profiles for varying k (top-5 to top-25) across three affinity levels — high-affinity predictions shift markedly toward interaction edges (&gt;50% at top 25).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig4.png" target="_blank">
+        <img src="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig4.png" alt="Fig.4 GraphSAGE edge contributions vs. k" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> GraphSAGE edge contribution profiles — ligand edges dominate across all affinity levels and k values, exemplifying the memorization-dominated regime.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig5.png" target="_blank">
+        <img src="assets/learning-characteristics-of-graph-neural-networks-predicting-protein-ligand-affinities__s42256-023-00756-9/fig5.png" alt="Fig.5 Structural mapping of important edges" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Top-25 edges mapped back to 3D protein–ligand structures for a low-affinity (pKi = 5.06) and a high-affinity (pKi = 9.96) complex — GC-GNN vs. GraphSAGE side-by-side, showing interaction- vs. ligand-driven predictions.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1: r.m.s.e. comparison of six GNNs vs. reference MPNN on core and hold-out sets); Supplementary Table 1 reports full edge proportions for all architectures and both XAI methods.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① From edge-SHAP attribution to physics-constrained graph re-design</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper diagnoses <em>what</em> GNNs currently learn — predominantly ligand memorization — and explicitly calls for "new types of interaction graph that specifically emphasize interaction patterns while including only fuzzy ligand components." The logical next step is to close this loop: use the EdgeSHAPer attributions as a supervision signal to automatically <strong>re-weight or prune edges</strong> in the interaction graph so that the graph topology encodes more physics (interaction edges) and less memorization (intramolecular ligand edges). This transforms the paper's diagnostic XAI into a generative, physics-guided graph construction step — extending the study from analysis to active improvement.</p>
+      <p><span class="lab mine">Added value to my research</span>This translates directly into my <strong>physics-informed graph learning</strong> agenda: encoding domain constraints (e.g., spatial decay, network topology) as <em>hard graph priors</em> rather than soft regularization. Just as interaction edges encode binding physics, my spatiotemporal graphs can encode geographic contiguity or accessibility decay as structural graph properties — and XAI attribution can verify whether the model actually uses those priors.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Memorization vs. generalization as a universal GNN audit framework</h3>
+      <p><span class="lab paper">Extending this paper</span>The ligand-memorization finding rests on a conceptually general test: partition edges by whether they carry <em>specific interaction information</em> vs. <em>recurrent structural identity</em>, then measure which class drives predictions. This audit framework is not specific to protein–ligand graphs. Extending the paper: apply it to <strong>out-of-distribution (OOD) molecular benchmarks</strong> — if ligand memorization is the dominant learning mode, GNNs trained on one chemical scaffold should fail badly when tested on a structurally distinct one. The paper's EdgeSHAPer framework, combined with recent OOD benchmark work, could establish a universal "memorization index" that predicts generalization failure before deployment.</p>
+      <p><span class="lab mine">Added value to my research</span>The memorization audit maps onto a critical problem in <strong>GeoAI model evaluation</strong>: spatial autocorrelation means that geospatial models often "memorize" local neighborhood patterns rather than learning generalizable laws. The edge-attribution logic — distinguishing structural-identity edges from interaction edges — is analogous to distinguishing spatial proximity edges from causal mechanism edges in my spatiotemporal graphs. I can adapt EdgeSHAPer's SHAP-on-edges approach to audit whether my physics-informed spatial GNNs genuinely use physical constraints or just exploit spatial clustering.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Navigating molecular OOD-ness — <a href="https://doi.org/10.1038/s42256-026-01251-7" target="_blank">10.1038/s42256-026-01251-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Affinity-stratified XAI as a template for task-difficulty-stratified model explanation</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most illuminating insights is that GNNs <em>change their learning strategy depending on the difficulty of the prediction target</em>: low-affinity compounds are predicted via memorization, high-affinity compounds increasingly via interaction learning. Extending this: test whether the same affinity-stratified XAI strategy reveals a <strong>phase transition in GNN behavior</strong> as a function of training data size — i.e., does more data shift the balance from memorization to interaction learning? If so, the paper's finding implies that current benchmark sizes are insufficient to train genuine interaction-learning and that there is a data-volume threshold at which GNNs could in principle transcend memorization.</p>
+      <p><span class="lab mine">Added value to my research</span>Task-difficulty stratification is a neglected axis in my <strong>explainable ML for spatial prediction</strong> work. In accessibility modeling, hard-to-predict locations (e.g., peri-urban fringe areas with sparse data) may rely on entirely different features than easy-to-predict urban cores. Applying SHAP-on-edges stratified by prediction difficulty to my spatial GNNs could identify where the model relies on meaningful spatial signals vs. local memorization of dense training clusters — a direct quality-control tool for my GeoAI pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein–ligand complexes for structure-based drug discovery — <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Contrastive pre-training to de-bias ligand memorization in GNN affinity models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that ligand memorization dominates because similar ligands share training-set affinity values. A natural remedy: <strong>contrastive pre-training</strong> that explicitly teaches the GNN to distinguish structurally similar ligands that have <em>different</em> affinities (active cliffs) — directly targeting the memorization regime. The paper's EdgeSHAPer framework provides an objective criterion to evaluate whether contrastive pre-training actually shifts the edge-attribution profile from ligand-dominated to interaction-dominated, turning XAI attribution into a training objective validator.</p>
+      <p><span class="lab mine">Added value to my research</span>Contrastive learning for de-biasing memorization connects to my interest in <strong>multi-source data fusion and fine-tuning geospatial foundation models</strong>. Spatial foundation models pre-trained on dense urban areas may similarly "memorize" dense-area patterns and fail in sparse rural areas. Contrastive fine-tuning that explicitly pairs dense-area and sparse-area instances with contrasting outcome labels — analogous to activity cliffs — could de-bias the foundation model toward learning generalizable spatial laws.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ From protein–ligand graph explainability to spatial-interaction graph explainability for health geography</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central methodological move — represent a complex interaction system as a <strong>typed, edge-weighted bipartite graph</strong> (ligand nodes + protein nodes + interaction edges) and then use SHAP-on-edges to determine which edge type drives predictions — is a transferable graph XAI template. Extending it: apply the same typed-edge-SHAP design to <strong>supply–demand accessibility graphs</strong> in which nodes represent facilities and population units, edges encode supply flow (interaction edges), and intramolecular edges encode facility capacity or population vulnerability. EdgeSHAPer-style analysis would reveal whether an accessibility GNN learns genuine supply–demand matching or memorizes the spatial distribution of training facilities.</p>
+      <p><span class="lab mine">Added value to my research</span>This idea is directly actionable for my <strong>2SFCA/R2SFCA spatial accessibility</strong> work. I can model the facility–demand system as a typed bipartite graph identical in structure to a protein–ligand graph, then apply EdgeSHAPer to audit whether my GNN captures meaningful catchment-area interactions or merely memorizes the high-accessibility training neighborhoods. The audited edge profiles would also feed into my <strong>explainable ML for health geography</strong> papers, providing a new type of interpretability evidence — edge-attribution maps rather than feature-importance bar charts — that reviewers and planners can directly link to spatial accessibility mechanisms.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

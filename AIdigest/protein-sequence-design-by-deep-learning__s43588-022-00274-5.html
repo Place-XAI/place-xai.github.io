@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protein sequence design by deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Protein sequence design by deep learning (Nature Computational Science, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Protein design</span>
+      <span class="tag">Deep learning</span>
+      <span class="tag">Structural biology</span>
+    </div>
+    <h1>Protein sequence design by deep learning</h1>
+    <div class="meta">
+      <span class="authors">Wang, Jue</span>
+      <span><b>Published</b> 2022-07-21</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-022-00274-5" target="_blank">10.1038/s43588-022-00274-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-022-00274-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The deep-learning sequence designer <strong>ABACUS-R</strong> achieves <strong>44.6% native sequence recovery</strong> on benchmark protein sets — surpassing the ~30% ceiling of traditional physics-based Monte Carlo methods — while running <strong>100–1,000× faster</strong>. Critically, X-ray crystal structures of ABACUS-R-designed proteins confirm sub-ångström (≤1 Å RMSD) agreement with design models, providing the first rigorous wet-lab validation that a Transformer-based denoising architecture can reliably solve the inverse-folding problem.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the 30% native-sequence-recovery barrier.</b> Conventional Rosetta-style energy-function methods plateau around 30% recovery; ABACUS-R lifts this to 44.6% by learning nonlinear, higher-order residue interactions that analytical energy functions cannot tractably model.</li>
+      <li><b>Closes the lab-validation gap.</b> 49 of 57 designed sequences expressed as soluble monomers in <em>E. coli</em>, and crystal-structure validation confirms ≤1 Å RMSD — a bar rarely met and almost never reported for deep-learning designers before this work.</li>
+      <li><b>Speed unlocks combinatorial exploration.</b> The iterative denoising strategy is 100–1,000× faster than Monte Carlo, making it practical to screen entire design spaces rather than optimize individual sequences.</li>
+      <li><b>Auxiliary tasks transfer structural knowledge.</b> Training on secondary structure, solvent exposure, and side-chain torsion angles as auxiliary outputs improves core sequence recovery by ~6 percentage points, demonstrating a multi-task learning principle broadly applicable in structural biology.</li>
+      <li><b>Pinpoints unsolved challenges.</b> The analysis clearly delineates what remains hard — non-protein ligands, flexible-backbone design, polar-network control — mapping a research roadmap for the field.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological breakthrough with domain-wide impact:</b> ABACUS-R combines Transformer architecture with a novel denoising protocol and auxiliary multi-task supervision — a principled technical advance that sets a new state of the art, squarely within the journal's remit.</li>
+      <li><b>Wet-lab validation elevates credibility:</b> rather than a purely computational benchmark, the paper delivers crystal-structure proof-of-concept — a Nature-level standard of evidence for a computational contribution.</li>
+      <li><b>News-and-Views format is timely:</b> this article is a Brief Communication / News &amp; Views commentary on Liu et al. (10.1038/s43588-022-00273-6), contextualizing a landmark paper for the broader computational-science audience — exactly what the journal commissions to build field-level understanding.</li>
+      <li><b>Cross-disciplinary bridge:</b> connects structural biology, machine learning, and wet-lab biochemistry — the kind of synthesis Nature Computational Science prioritizes over single-discipline studies.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training corpus</dt><dd><strong>Protein Data Bank (PDB)</strong> — crystal structures of natural proteins used to train ABACUS-R on the backbone→sequence mapping. The exact number of PDB entries used is not reported in this commentary; the original ABACUS-R paper (Liu et al., doi:10.1038/s43588-022-00273-6) specifies the curation details.</dd>
+      <dt>Benchmark sets</dt><dd>Two established protein-design benchmark sets (details in the primary ABACUS-R paper): ABACUS-R achieves 37.7% native sequence recovery on one and 44.6% on the other. Exact sizes not stated in this commentary.</dd>
+      <dt>Wet-lab validation</dt><dd><strong>57 sequences</strong> experimentally tested in <em>E. coli</em>; <strong>49 of 57</strong> expressed as soluble, non-aggregated monomers. Multiple X-ray crystal structures solved — exact count not stated in this commentary; all show ≤1 Å RMSD to design models.</dd>
+      <dt>Baseline comparisons</dt><dd><strong>Rosetta energy function</strong> (Leman et al., Nat. Methods 2020) as the primary physics-based baseline; previous deep-learning methods (Ingraham et al. NeurIPS 2019; Anand et al. Nat. Commun. 2022; Strokach et al. Cell Syst. 2020) as neural-network baselines, all achieving 35–40% recovery.</dd>
+      <dt>Data availability</dt><dd>No dedicated data-availability statement in this commentary. Source data and designed sequences are described in the primary ABACUS-R paper (Liu et al., 10.1038/s43588-022-00273-6).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Protein Data Bank (PDB)</td><td>Training structures for inverse-folding models</td><td>Thousands of crystal structures (exact training split in primary paper)</td><td><a href="https://www.rcsb.org" target="_blank">rcsb.org</a></td></tr>
+        <tr><td>Protein design benchmark sets</td><td>Evaluation of native sequence recovery</td><td>Two sets; 37.7% / 44.6% recovery achieved (ABACUS-R)</td><td>See primary paper 10.1038/s43588-022-00273-6</td></tr>
+        <tr><td>Wet-lab expression panel</td><td>Experimental validation of designed sequences</td><td>57 sequences tested; 49/57 soluble in <em>E. coli</em></td><td>Primary paper supplementary data</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this article is a Brief Communication commentary on Liu et al. (2022). Detailed dataset statistics, training/test splits, and PDB accession codes are in the primary research article. Numbers given here are taken verbatim from this commentary's text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Inverse folding framing:</b> given a protein backbone (3D coordinates), predict the amino-acid sequence most likely to fold into that backbone — the classic "sequence design" or inverse-folding task.</li>
+      <li><b>Transformer architecture:</b> ABACUS-R uses the Transformer (Vaswani et al. 2017) to integrate backbone geometry and neighboring residue identities with flexible, nonlinear attention over all residue pairs — capturing higher-order interactions beyond pair-wise energy approximations.</li>
+      <li><b>Iterative denoising / autoregressive decoding:</b> residue positions are designed sequentially; at each step the probability distribution over 20 amino acids is predicted and a residue is sampled and fixed; the next position is decoded conditioned on all previously fixed residues. Multiple positions are decoded in parallel to reduce iteration count to a few hundred.</li>
+      <li><b>Multi-task auxiliary supervision:</b> auxiliary output heads predict secondary structure, solvent exposure, and side-chain torsion angles. These auxiliary tasks are not used at inference time but regularize the encoder to learn richer structural representations, boosting sequence recovery by ~6 pp.</li>
+      <li><b>Physics-based baseline (Rosetta + Monte Carlo):</b> traditional baseline applies a Rosetta energy function with Monte Carlo sampling over millions of steps and explicit side-chain atom representations — expensive and capped at ~30% recovery.</li>
+      <li><b>Wet-lab validation pipeline:</b> expression of designed sequences in <em>E. coli</em>, monomer/aggregation assessment, and X-ray crystallography to obtain experimental structures verified against design models by RMSD.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/protein-sequence-design-by-deep-learning__s43588-022-00274-5/fig1.png" target="_blank">
+        <img src="assets/protein-sequence-design-by-deep-learning__s43588-022-00274-5/fig1.png" alt="Fig.1 Protein sequence design" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Protein sequence design: (a) the inverse-folding problem; (b) Rosetta energy terms; (c) Monte Carlo design procedure; (d) ABACUS-R neural-network denoising design — predicting amino-acid distributions per residue and iteratively sampling sequences 100–1,000× faster than physics-based methods.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Quantitative results (recovery rates, expression yields) are reported in the text of this Brief Communication; detailed tables appear in the primary ABACUS-R paper.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, explainable &amp; physics-informed graph learning, spatiotemporal prediction, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Transfer the denoising-Transformer paradigm to spatiotemporal sequence prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>ABACUS-R's core innovation — an <strong>iterative denoising procedure on a Transformer</strong> conditioned on structural context — is entirely domain-agnostic. The paper validates it only for amino-acid sequences against protein backbones, but the same architecture (backbone = spatial graph; tokens = categorical labels per node) could be extended to <strong>co-design sequences of decisions in any spatial graph</strong>: facility placement sequences on road networks, sensor deployment orders, or land-use transition pathways. Extending the benchmarking to non-biological structured prediction tasks would reveal how much of ABACUS-R's gain is protein-specific versus architecture-intrinsic.</p>
+      <p><span class="lab mine">Added value to my research</span>The iterative denoising protocol directly maps onto my <strong>spatiotemporal kernel density estimation</strong> and <strong>agent-based modeling</strong> work: treat a city grid as the "backbone" and land-use types or health-facility placements as "amino acids." An ABACUS-R-style Transformer trained on historical facility-placement patterns could generate optimal placement sequences conditioned on population-density fields — a generative GeoAI allocator for healthcare-accessibility planning that complements my R2SFCA catchment-delineation work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Rapid protein model refinement by deep learning — <a href="https://doi.org/10.1038/s43588-021-00104-0" target="_blank">10.1038/s43588-021-00104-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Add multi-task auxiliary supervision to geospatial prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most reproducible technical finding is that auxiliary training tasks (secondary structure, solvent exposure, torsion angles) boost native sequence recovery by ~6 percentage points at <em>zero inference cost</em>. Extending this: explicitly ablate the contribution of each auxiliary task using SHAP-style attribution on the encoder activations, and test whether auxiliary tasks help more for <strong>under-represented backbone topologies</strong> (analogous to rare structural motifs). This would clarify when multi-task regularization is most valuable and generalize the design principle.</p>
+      <p><span class="lab mine">Added value to my research</span>I use <strong>explainable machine learning</strong> (SHAP, MGWR) for spatial prediction. The same auxiliary-task framework can be applied to my geospatial health-outcome models: train the main head to predict health-service utilization but add auxiliary heads for socioeconomic deprivation, transport-network type, and digital access — all learnable from open data. The multi-task regularization should improve generalization to data-sparse regions (rural areas, low-income neighborhoods) exactly where my 2SFCA accessibility analyses show the largest gaps.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein–ligand complexes for structure-based drug discovery — <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Ground-truth wet-lab validation as a model for geospatial field studies</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most important methodological contribution is arguably <strong>closing the validation loop</strong>: rather than accepting in silico benchmark metrics, the authors synthesize, express, and crystallize the designed sequences. This raises the question of what "wet-lab equivalent" validation would look like for other deep-learning methods. Extending the paper: develop a <strong>standardized validation protocol</strong> (analogous to the 57-sequence expression panel) for protein designers — reporting expression rate, thermostability (Tm), and crystal success rate per design run — enabling fair comparisons across methods.</p>
+      <p><span class="lab mine">Added value to my research</span>The "close the validation loop" ethos directly applies to my <strong>open science / FAIR data</strong> agenda. My geospatial AI models are typically validated on held-out spatial folds, but this is analogous to ABACUS-R's in silico benchmark — convincing but insufficient. Designing <strong>field-survey validation campaigns</strong> targeting model-predicted accessibility gaps (analogous to choosing which sequences to crystallize) would create a reproducible, high-credibility evidence chain for health-geography policy recommendations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning on topological surface and geometric structure for 3D molecular generation — <a href="https://doi.org/10.1038/s43588-023-00530-2" target="_blank">10.1038/s43588-023-00530-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Physics-informed constraints to handle the flexible-backbone limitation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies <strong>fixed-backbone assumption</strong> as the primary remaining limitation: ABACUS-R degrades when input backbones are low-quality or de novo. The proposed path — joint sequence-and-backbone co-design — is exactly a <strong>physics-informed neural network</strong> problem: encode geometric energy constraints (bond lengths, steric clashes, hydrogen-bond geometry) as soft-constraint loss terms so the network can simultaneously refine the backbone while designing the sequence. This would extend the paper's framework to the harder class of de novo design problems.</p>
+      <p><span class="lab mine">Added value to my research</span>This is precisely my <strong>physics-informed graph learning</strong> agenda. I work on encoding spatial interaction laws (gravity models, distance decay) as soft constraints in GNNs for mobility and accessibility prediction. The protein co-design problem is structurally identical: a graph of residues with geometric constraints that the network must respect during generation. Cross-pollinating the two domains — using my physics-informed GNN architecture for flexible-backbone protein design — could constitute a novel contribution and help establish the generality of physics-informed graph learning across domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Rapid protein model refinement by deep learning — <a href="https://doi.org/10.1038/s43588-021-00104-0" target="_blank">10.1038/s43588-021-00104-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Generative genomic language models as a scaling-up trajectory</h3>
+      <p><span class="lab paper">Extending this paper</span>ABACUS-R is trained on protein structural context alone. The paper's analysis of non-native polar networks — which Rosetta cannot design but ABACUS-R discovers emergently — hints that <strong>evolutionary and genomic co-variation signals</strong> (multiple-sequence alignments, genomic language models) could further lift sequence recovery. Extending the paper: augment ABACUS-R's structural encoder with a <strong>genomic language model embedding</strong> (analogous to ESM or a genomic semantic model) as an additional conditioning signal, testing whether evolutionary context plus structural context outperforms either alone.</p>
+      <p><span class="lab mine">Added value to my research</span>The principle of <strong>augmenting a task-specific model with a large pre-trained foundation model</strong> maps directly to my work on <strong>fine-tuning geospatial foundation models</strong>. Just as ABACUS-R's encoder could be augmented with ESM embeddings, my spatial prediction pipelines can be augmented with geospatial foundation model (e.g., GeoCLIP, SatCLIP) embeddings as structural priors — improving performance on sparsely labeled regions by leveraging planet-scale pre-training, exactly as the protein genomic language model leverages evolutionary diversity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Semantic design of functional de novo genes from a genomic language model — <a href="https://doi.org/10.1038/s41586-025-09749-7" target="_blank">10.1038/s41586-025-09749-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

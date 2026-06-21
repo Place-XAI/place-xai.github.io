@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efficient and scalable reinforcement learning for large-scale network control — AI Digest</title>
+<meta name="description" content="AI Digest: Efficient and scalable reinforcement learning for large-scale network control (Nature Machine Intelligence, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Multi-agent RL</span>
+      <span class="tag">Network control</span>
+      <span class="tag">Decentralized AI</span>
+      <span class="tag">Sample efficiency</span>
+    </div>
+    <h1>Efficient and scalable reinforcement learning for large-scale network control</h1>
+    <div class="meta">
+      <span class="authors">Chengdong Ma · Aming Li · Yali Du · Hao Dong · Yaodong Yang</span>
+      <span><b>Published</b> 2024-09-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-024-00879-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>This paper proposes <strong>model-based decentralized policy optimization (MBDPO)</strong>, a multi-agent reinforcement learning framework where each agent maintains a <strong>local world model</strong> and communicates only with topological neighbours. By proving that κ-hop neighbour information is sufficient to accurately estimate global value functions and policy gradients, the framework achieves <strong>monotonic policy improvement</strong> with dramatically less data. Evaluated on real-world traffic (New York: 436 intersections), power-grid (up to 421 buses), and pandemic-control tasks, it <strong>outperforms all centralized and independent baselines</strong> while using only 5–35% of their communication cost — demonstrating that topology-aware decentralization is the key to scaling cooperative AI to hundreds of agents.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the centralization–scalability deadlock.</b> Most MARL either requires full global state (centralized, unscalable) or ignores inter-agent dependencies (independent, unstable). MBDPO threads the needle by using topology to bound the cost of both communication and model error — rigorously.</li>
+      <li><b>First model-based MARL with end-to-end theoretical guarantees for general networked systems.</b> Previous work assumed fully independent dynamics or required global critics; this paper proves monotonic improvement for ξ-dependent (partially coupled) systems, covering any realistic infrastructure network.</li>
+      <li><b>Sample efficiency at scale.</b> Localized world models augment the experience buffer without any centralized data aggregation, enabling convergence within 10<sup>−5</sup> training steps — critical when real-system interactions are costly or hazardous.</li>
+      <li><b>Multi-domain validation with heterogeneous agents.</b> The same algorithm controls traffic lights in Monaco (28 agents) and New York (436 agents), power buses (199 agents), autonomous vehicles, and pandemic-response institutions — demonstrating domain-agnostic applicability.</li>
+      <li><b>Privacy-friendly by design.</b> Agents never share raw data globally; only neighbour-state summaries are exchanged, reducing privacy risk in urban and healthcare deployments.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Principled theory + real-world scale:</b> four formal theorems (monotonic improvement, value-function approximation, gradient approximation) are each directly validated on real infrastructure — the rare combination NMI prizes.</li>
+      <li><b>Genuine novelty at the intersection of model-based RL and networked MARL:</b> introduces the ξ-dependent networked MDP as a new theoretical construct bridging graph-based control and general multi-agent systems.</li>
+      <li><b>Society-level applications:</b> traffic, energy, and pandemic control are high-stakes problems where a scalable AI decision-maker carries immediate policy value.</li>
+      <li><b>Open science:</b> full implementation, datasets, and training demos are released at <a href="https://github.com/CDM1619/Networked-MB-MARL" target="_blank">github.com/CDM1619/Networked-MB-MARL</a>, enabling immediate community uptake.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Traffic simulation</dt><dd><strong>SUMO</strong> (Simulation of Urban MObility) — used to generate realistic traffic scenarios. The SUMO data are included in the code repository (<a href="https://github.com/CDM1619/Networked-MB-MARL" target="_blank">github.com/CDM1619/Networked-MB-MARL</a>). Traffic networks: a synthetic ATSC-Grid, a partial Monaco road network (28 heterogeneous intersections, adapted from NeurComm ref. 21), and a partial New York City road network with <strong>432 controllable intersections</strong> (maps sourced from GADM.org).</dd>
+      <dt>Connected vehicle</dt><dd><strong>CACC (Catch-up &amp; Slow-down)</strong> and <strong>Flow (Ring Attenuation &amp; Figure Eight)</strong> — standard cooperative autonomous-driving benchmarks. Target headway 20 m, target velocity 15 m s<sup>−1</sup>. Data generated in simulation; included in repository.</dd>
+      <dt>Power-grid</dt><dd><strong>IEEE Power Grid</strong> (20- and 40-agent secondary voltage control benchmark) and <strong>Real Power-Net</strong> — real-time electricity consumption data from Portugal, constructing 141-bus (12 agents), 322-bus (22 agents) and 421-bus (199 agents) networks over a <strong>12-hour control horizon</strong>. Real Power-Net data publicly available at <a href="https://drive.google.com/file/d/1-GGPBSolVjX1HseJVblNY3KoTqfblmLh/view" target="_blank">Google Drive</a>.</dd>
+      <dt>Pandemic network</dt><dd>Synthetic pandemic network constructed by epidemiologists using real <strong>Swedish COVID-19 epidemiological data</strong> (infection status, government policies). Societal units (education, medical, social services) act as agents; population sizes varied across runs. Included in code repository.</dd>
+      <dt>Agent counts</dt><dd>Up to <strong>436 agents</strong> (New York ATSC) and <strong>199 agents</strong> (Real Power-Net 421-bus) — largest scales tested in decentralized MARL literature at time of publication.</dd>
+      <dt>Availability</dt><dd>All simulation data bundled in <a href="https://github.com/CDM1619/Networked-MB-MARL" target="_blank">github.com/CDM1619/Networked-MB-MARL</a>; Real Power-Net data separately available via Google Drive link above. Source data provided with paper (Figs. 2–6).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>SUMO traffic simulation</td><td>Traffic-signal control (ATSC-Grid, Monaco, New York)</td><td>28–436 intersections; synthetic + real road maps (GADM.org)</td><td><a href="https://github.com/CDM1619/Networked-MB-MARL" target="_blank">GitHub repo</a></td></tr>
+        <tr><td>CACC / Flow benchmarks</td><td>Cooperative vehicle control (Catch-up, Slow-down, Ring, Figure Eight)</td><td>Standard RL benchmark environments; vehicle counts not stated</td><td><a href="https://github.com/CDM1619/Networked-MB-MARL" target="_blank">GitHub repo</a></td></tr>
+        <tr><td>IEEE Power Grid</td><td>Secondary voltage control (synthetic)</td><td>20–40 distributed-generator agents</td><td><a href="https://github.com/CDM1619/Networked-MB-MARL" target="_blank">GitHub repo</a></td></tr>
+        <tr><td>Real Power-Net (Portugal)</td><td>Real power-system voltage &amp; reactive-power control</td><td>141-bus / 322-bus / 421-bus; 12-hour horizon; public dataset (ref. 73)</td><td><a href="https://drive.google.com/file/d/1-GGPBSolVjX1HseJVblNY3KoTqfblmLh/view" target="_blank">Google Drive</a></td></tr>
+        <tr><td>Pandemic network (Swedish data)</td><td>Epidemic control policy optimization</td><td>Multi-population; based on Swedish COVID-19 dynamics</td><td><a href="https://github.com/CDM1619/Networked-MB-MARL" target="_blank">GitHub repo</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact sample counts within each environment (number of episodes, time steps) are not stated in the main text; the paper reports n = 5 random seeds for all boxplot/error-bar statistics. Numbers above are taken directly from figures and text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>ξ-dependent networked MDP:</b> a new theoretical construct that characterizes how tightly coupled multi-agent system dynamics are; ξ = 0 means fully independent, ξ &gt; 0 encodes residual coupling. This unifies independent and fully coupled systems under one framework with a tractable approximation error.</li>
+      <li><b>Decentralized policy optimization (PPO):</b> each agent i runs its own proximal policy optimization using an <em>extended value function</em> V<sub>i</sub>(s<sub>N<sup>κ</sup><sub>i</sub></sub>) over κ-hop neighbourhood states. Theorem 3 proves this approximates the true global value with error decaying exponentially in κ.</li>
+      <li><b>Localized world models:</b> each agent maintains a neural network model p<sub>ψ<sub>i</sub></sub> that predicts next local state from neighbour states and own action. Model error is bounded via Theorems 1 &amp; 2 (vanilla and branched rollout).</li>
+      <li><b>Branched rollout scheme:</b> short T-step model rollouts branching from real-environment states suppress compounding model error, tightening the monotonic-improvement bound relative to vanilla infinite-horizon rollout.</li>
+      <li><b>Dual experience buffers:</b> separate environment buffer D<sup>E</sup> (real trajectories) and model buffer D<sup>M</sup> (simulated trajectories) allow model-augmented policy learning without overwriting real data.</li>
+      <li><b>Graph-network model architecture:</b> embedding layers extract state and action features; a graph-network topology merging step aggregates neighbour information before predicting transitions — enabling heterogeneous agent types within one architecture.</li>
+      <li><b>Monotonic improvement guarantee (Corollary 1):</b> in ξ-dependent systems, the policy return bound is decomposed into dependency bias (ξ) and independence-approximation error, providing the first end-to-end convergence guarantee for general networked MARL with local models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig1.png" target="_blank">
+        <img src="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig1.png" alt="Fig.1 Research motivation and relationship of networked agents" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Research motivation and networked-agent topology — contrasts centralized, independent, and the proposed local-communication paradigm; illustrates κ-hop neighbour ordering.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig2.png" target="_blank">
+        <img src="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig2.png" alt="Fig.2 Architecture and model learning process" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Algorithm architecture (dual buffers, graph-network model), MDP triangle inequality, and model-learning convergence process.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig3.png" target="_blank">
+        <img src="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig3.png" alt="Fig.3 Main training results and ablation studies" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Main training results and ablations — performance bounds vs. baselines, rollout-length sensitivity, κ-hop sensitivity, exploration coverage, and learning curves.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig4.png" target="_blank">
+        <img src="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig4.png" alt="Fig.4 Vehicle control and pandemic network evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Execution results on CACC (velocity/headway), Flow (Figure Eight), and pandemic network control (critical cases vs. hospital capacity).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig5.png" target="_blank">
+        <img src="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig5.png" alt="Fig.5 Large-scale traffic signal control (ATSC)" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Large-scale ATSC results — Monaco (28 agents) and New York (432 intersections); queue length, delay, throughput, and velocity metrics.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig6.png" target="_blank">
+        <img src="assets/efficient-and-scalable-reinforcement-learning-for-large-scale-network-control__s42256-024-00879-7/fig6.png" alt="Fig.6 Power-grid voltage and reactive-power control" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Power control results — secondary voltage control architecture, 141/322/421-bus safety-control rates, disturbance robustness, and reactive-power / line-loss metrics.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary contains Tables 1–3 (baselines, scenario details, communication costs) and Figs. 1–7.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, spatiotemporal analysis, urban health policy, explainable &amp; physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Apply MBDPO directly to adaptive traffic signal control for urban health outcomes</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper evaluates ATSC on throughput, delay, and queue length — engineering metrics. A direct extension of this paper would incorporate <strong>health externality signals</strong> (road-segment PM<sub>2.5</sub>, noise, pedestrian exposure) as additional reward channels for each traffic-light agent, while preserving the decentralized topology. The κ-hop value function can aggregate local pollution estimates the same way it aggregates traffic states, so the theoretical monotonic-improvement guarantee extends unchanged. Benchmarking against the paper's New York 432-intersection scenario with multi-objective rewards would yield the first MARL-derived "healthy traffic signal" policy grounded in real network topology. The big-data traffic signal work (ref. below) provides emission reduction baselines to compare against.</p>
+      <p><span class="lab mine">Added value to my research</span>My urban health research links transportation exposure to public-health outcomes. MBDPO's sample-efficient decentralization lets me deploy multi-objective RL across a real city's signal network without the global-data aggregation that makes centralized MARL infeasible in privacy-sensitive municipal contexts. The per-agent topology naturally maps to my spatiotemporal kernel density estimation of pollution hotspots — each agent's local model can be seeded with historical KDE rasters, turning physics-informed spatial priors into RL warm-starts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Big-data empowered traffic signal control could reduce urban carbon emission — <a href="https://doi.org/10.1038/s41467-025-56701-4" target="_blank">10.1038/s41467-025-56701-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use the ξ-dependent networked MDP as a foundation for spatially non-stationary accessibility optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core theoretical innovation — the ξ-dependent networked MDP — characterizes how much influence distant agents have on local dynamics. This is exactly the problem of spatial autocorrelation in accessibility: nearby facilities compete and substitute, distant ones do not. Extending the paper: reformulate healthcare facility allocation as a ξ-dependent networked MDP where each candidate location is an agent, service demand flows are the state, and the topology encodes spatial adjacency (e.g. census-tract contiguity graph). The dependency parameter ξ becomes an empirically estimated spatial autocorrelation coefficient, linking the paper's theory directly to geospatial statistics. Model-based learning would then search the allocation policy space with far fewer real-world evaluations than combinatorial optimization.</p>
+      <p><span class="lab mine">Added value to my research</span>This gives my 2SFCA/R2SFCA accessibility work a principled reinforcement-learning backbone: instead of fixing supply locations and computing access scores, I can <em>learn</em> optimal supply distributions under a decentralized policy whose topology is the spatial adjacency graph of census tracts. The monotonic-improvement guarantee means the allocation provably improves with each policy update — a stronger claim than heuristic facility-location solvers.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A scalable and generic framework for city-wide traffic prediction with large language model — <a href="https://doi.org/10.1038/s41467-026-73610-2" target="_blank">10.1038/s41467-026-73610-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace global pandemic-model assumptions with local graph-network dynamics learned from mobile-phone mobility data</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's pandemic network uses epidemiologist-constructed dynamics from Swedish COVID data, meaning the underlying SIR transitions are implicitly assumed. A direct extension: learn the transition model p<sub>ψ<sub>i</sub></sub> (Definition 1's local dynamics) from <strong>empirical mobility flows</strong> observed in mobile-phone CDR data, so the RL policy adapts to heterogeneous, data-driven contact rates rather than a uniform epidemiological parameterization. The branched-rollout model-learning procedure (Algorithm 2) can absorb mobility flow tensors as edge features in the graph-network architecture, tightening the ξ estimate empirically across geographies and population groups.</p>
+      <p><span class="lab mine">Added value to my research</span>My multi-source data-fusion agenda (mobile phone, social media, GPS) intersects cleanly here: CDR-derived contact matrices become the graph topology for pandemic MARL. This bridges my SIR-based spatial modelling with model-based RL — the localized world model is exactly a learned SIR variant conditioned on mobility graphs, opening a path to <em>deployable</em> intervention-policy AI for public-health authorities that respects the privacy constraint the paper already embeds by design.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Interconnectedness enhances network resilience of multimodal public transportation systems for Safe-to-Fail urban mobility — <a href="https://doi.org/10.1038/s41467-023-39999-w" target="_blank">10.1038/s41467-023-39999-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend the dual-buffer architecture to equity-aware multi-objective power-grid control in developing contexts</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Real Power-Net evaluation optimizes reactive-power loss and voltage safety but treats all buses uniformly. An extension: introduce <strong>equity weights</strong> into the per-agent reward r<sub>i</sub> that penalize variance in voltage quality across census-tract-mapped load zones (e.g. residential vs. industrial, wealthy vs. low-income neighborhoods). The dual-buffer architecture (D<sup>E</sup> + D<sup>M</sup>) is unchanged; only the reward and value-function target shift. Corollary 1's bound still applies, so the equity-augmented policy still has a monotonic-improvement guarantee — a significant upgrade over heuristic fair-power-dispatch algorithms.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban infrastructure equity (EV charging, healthcare facility location) is a central theme of my work. This idea reframes my "efficiency-vs-equity" EV-charging optimization as a decentralized MARL problem: each charging station is an agent, its topology is the city's electrical grid graph, and the equity reward penalizes spatial gaps in charging access across income-stratified census blocks. The paper's theoretical apparatus (Theorems 1–4) provides the formal backing that my previous combinatorial optimization approaches lacked.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Urban congestion relief experiments through routing-app interventions — <a href="https://doi.org/10.1038/s44284-026-00443-x" target="_blank">10.1038/s44284-026-00443-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the graph-network model architecture to fine-tune geospatial foundation models for city-scale spatiotemporal prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's graph-network model (embedding layers + topology-based merging, Fig. 2a) is a general architecture for predicting next-state distributions from neighbour states and local actions. It is currently trained from scratch for each domain. An extension: pre-train this architecture as a <strong>geospatial transition model</strong> across many city systems (traffic, power, mobility) and fine-tune per-city via the paper's branched-rollout procedure. This transforms MBDPO from a per-task algorithm into a transferable geospatial model-based foundation — leveraging scale the same way language model fine-tuning does, but for physical network dynamics.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models is one of my explicit research directions. The paper's localized graph-network architecture is architecturally aligned with physics-informed GNNs I work with: each agent's model can be pre-trained on multi-city graph snapshots and adapted with minimal new data — exactly the few-shot geospatial transfer task I care about. This positions MBDPO's model-learning component as a <em>spatiotemporal pre-training objective</em> for GeoAI, connecting MARL methodology to the geospatial FM fine-tuning agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A digital twin framework for urban parking management and mobility forecasting — <a href="https://doi.org/10.1038/s41467-025-65306-w" target="_blank">10.1038/s41467-025-65306-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error-controlled non-additive interaction discovery in machine learning models — AI Digest</title>
+<meta name="description" content="AI Digest: Error-controlled non-additive interaction discovery in machine learning models (Nature Machine Intelligence, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&larr; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Explainable ML</span>
+      <span class="tag">Feature Interactions</span>
+      <span class="tag">False Discovery Rate</span>
+      <span class="tag">Biomedical AI</span>
+    </div>
+    <h1>Error-controlled non-additive interaction discovery in machine learning models</h1>
+    <div class="meta">
+      <span class="authors">Winston Chen &middot; Yifan Jiang &middot; William Stafford Noble &middot; Yang Young Lu</span>
+      <span><b>Published</b> 2025-09-22</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-025-01086-8" target="_blank">10.1038/s42256-025-01086-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-025-01086-8" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Diamond is a method for <strong>trustworthy feature interaction discovery</strong> in machine learning models that uniquely integrates the model-X knockoffs framework to control the <strong>false discovery rate (FDR)</strong>. By introducing a <strong>non-additivity distillation procedure</strong> that strips out marginal and bias effects from off-the-shelf importance measures, Diamond isolates genuine synergistic interactions and maintains rigorous error control &mdash; a capability no prior approach had demonstrated. Validated across simulated datasets, a diabetes cohort (n=442), Drosophila enhancer genomics (n=7,809), and NHANES mortality data (n=14,407), Diamond enables reliable, data-driven scientific hypothesis generation across DNNs, transformers, tree-based models, and factorization machines.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes a fundamental gap in XAI.</b> Existing methods rank feature pairs by joint importance, not by true <em>non-additive</em> synergy &mdash; and none control the proportion of spurious discoveries. Diamond is the first to deliver error-controlled interaction discovery in generic ML models.</li>
+      <li><b>Enables trustworthy scientific hypothesis generation.</b> Without FDR control, a ranked list of feature interactions cannot be systematically cut off at a confidence threshold. Diamond replaces arbitrary thresholding with a principled statistical guarantee.</li>
+      <li><b>Robustness across model families.</b> Diamond works on MLPs, transformers (FT-Transformer), KANs, XGBoost, LightGBM, and factorization machines &mdash; making it plug-and-play for any ML pipeline without architectural changes.</li>
+      <li><b>Demonstrated biomedical utility.</b> Diamond recovers known BMI&ndash;triglyceride interactions in diabetes, known transcription-factor physical interactions in Drosophila embryogenesis, and clinically plausible mortality risk-factor interactions from NHANES data.</li>
+      <li><b>Fully open and reproducible.</b> Code and all evaluation datasets are available on GitHub and archived via Zenodo, lowering the barrier to adoption across scientific domains.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Addresses a principled limitation of the field:</b> FDR-controlled interaction discovery in black-box ML is unsolved; Diamond's contribution is methodologically novel and universally applicable &mdash; matching NMI's appetite for broad-impact algorithmic advances.</li>
+      <li><b>Theory-meets-application balance:</b> the paper unifies the knockoffs framework (statistics) with model-agnostic importance measures (ML interpretability) and validates on real biomedical tasks &mdash; a hallmark of high-impact NMI work.</li>
+      <li><b>Scientific discovery framing:</b> positioning ML models as hypothesis-generation engines for biology and medicine speaks directly to NMI's mission of advancing AI for science.</li>
+      <li><b>Broad model coverage:</b> applicability across DNNs, transformers, KANs, tree-based and factorization models maximizes translational breadth for the NMI readership.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9859;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulated datasets</dt><dd>Ten synthetic data-generating functions from Tsang et al. (ref. 10), each with <strong>n = 20,000 samples, p = 30 features</strong> (10 signal, 20 noise); experiments repeated 20 times per function with different random seeds.</dd>
+      <dt>Diabetes dataset</dt><dd>UCI / sklearn diabetes dataset (ref. 37, Efron et al.): <strong>n = 442 patients</strong>, 10 standardized baseline features (age, sex, BMI, blood pressure, six serum measurements); quantitative disease-progression response at 1 year. Publicly available via scikit-learn.</dd>
+      <dt>Drosophila enhancer dataset</dt><dd>ChIP-seq and ChIP-chip occupancy data (ref. 43): <strong>n = 7,809 genomic sequence samples</strong> from blastoderm Drosophila embryos; 23 transcription factors + 13 histone modification features; binary enhancer-status response.</dd>
+      <dt>NHANES mortality dataset</dt><dd>NHANES I and NHANES I Epidemiologic Follow-up Study (NHEFS, ref. 49): <strong>n = 14,407 US participants</strong> surveyed 1971&ndash;1974; 35 clinical and laboratory features (some categorical, one-hot encoded); binary mortality status as of 1992 (4,785 deaths recorded).</dd>
+      <dt>Code &amp; data archive</dt><dd>GitHub: <a href="https://github.com/batmen-lab/diamond" target="_blank">github.com/batmen-lab/diamond</a> &middot; Zenodo: <a href="https://doi.org/10.5281/zenodo.15733825" target="_blank">10.5281/zenodo.15733825</a>. All evaluation datasets bundled as <code>data.zip</code>.</dd>
+      <dt>Availability</dt><dd>All public datasets freely available; no proprietary data used. Software is open-source under CC-BY-NC-ND 4.0.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Simulated functions (ref. 10)</td><td>FDR control benchmarking</td><td>10 functions &times; 20,000 samples &times; 30 features</td><td>Generated via code</td></tr>
+        <tr><td>UCI Diabetes (ref. 37)</td><td>Real-data interaction discovery (disease progression)</td><td>442 patients, 10 features, 1-year outcome</td><td><a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#diabetes-dataset" target="_blank">sklearn / UCI</a></td></tr>
+        <tr><td>Drosophila enhancer (ref. 43)</td><td>Transcription factor interaction discovery</td><td>7,809 genomic sequences, 36 chromatin features</td><td>Published supplementary</td></tr>
+        <tr><td>NHANES I / NHEFS (ref. 49)</td><td>Mortality risk-factor interaction discovery</td><td>14,407 US adults, 35 clinical features, 1971&ndash;1992</td><td><a href="https://www.cdc.gov/nchs/nhanes/index.htm" target="_blank">CDC / NCHS</a></td></tr>
+        <tr><td>Diamond GitHub + Zenodo</td><td>All datasets + code distribution</td><td>Bundled data.zip; DOI-archived</td><td><a href="https://doi.org/10.5281/zenodo.15733825" target="_blank">zenodo.15733825</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: sample sizes and feature counts are taken verbatim from the article text. The paper uses no proprietary or geospatial datasets; all data are tabular clinical or biological measurements.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Model-X knockoffs framework:</b> generate dummy features that mimic the empirical dependence structure of the original features while being conditionally independent of the response, enabling FDR estimation without requiring p-values from the ML model.</li>
+      <li><b>Non-additivity distillation:</b> decompose reported pairwise interaction importance <em>e<sub>ij</sub></em> into label-dependent marginal effects, label-independent feature biases, and residual non-additive interaction effects <em>s<sub>ij</sub></em> via a generalized additive model regression (pyGAM). Only <em>s<sub>ij</sub></em> enters FDR estimation.</li>
+      <li><b>Knockoff statistics and FDR threshold:</b> a coin-flip antisymmetric statistic <em>W<sub>j</sub></em> compares original-feature vs. knockoff-feature interaction importance; a heterogeneous threshold <em>T</em> bounds the FDR across original-only, original&ndash;knockoff, and knockoff&ndash;knockoff interaction pairs at user-specified level <em>q</em>.</li>
+      <li><b>Pairwise-coupling plug-in layer:</b> a knockoff-tailored architectural addition for DNN models (MLP, FT-Transformer) that pairs each original feature with its knockoff counterpart to maximize statistical power while preserving FDR control.</li>
+      <li><b>Interaction importance measures:</b> Expected Hessian and Integrated Hessian (model-agnostic, via Path-Explain library), TreeSHAP for tree-based models, and learned FM coefficients for factorization machines.</li>
+      <li><b>Knockoff generation strategies:</b> KnockoffsDiagnostics (primary, non-Gaussian), KnockoffGAN, Deep knockoffs, and VAE knockoffs tested for robustness; independently permuted features used as invalid-knockoff worst-case stress test.</li>
+      <li><b>Evaluation:</b> empirical FDR (false-discovery proportion), statistical power, and AUROC over 20 independent repetitions per setting with 95% confidence intervals; fivefold cross-validation for real-data model selection.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig1.png" target="_blank">
+        <img src="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig1.png" alt="Fig.1 Overview of Diamond" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of Diamond &mdash; four-panel schematic of knockoff generation, FDR-controlled ranking, non-additivity geometry, and distillation procedure.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig2.png" target="_blank">
+        <img src="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig2.png" alt="Fig.2 FDR control on simulated datasets" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> FDR control on simulated datasets &mdash; Diamond vs. baseline methods; non-additivity distillation shown to be critical for valid FDR control.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig3.png" target="_blank">
+        <img src="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig3.png" alt="Fig.3 Robustness on simulated datasets" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Robustness evaluation &mdash; Diamond maintains FDR control across different knockoff generators and interaction importance measures.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig4.png" target="_blank">
+        <img src="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig4.png" alt="Fig.4 Diabetes dataset evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Diabetes dataset &mdash; Diamond identifies the BMI&ndash;serum-triglyceride interaction as the top synergistic driver of disease progression.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig5.png" target="_blank">
+        <img src="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig5.png" alt="Fig.5 Drosophila enhancer dataset" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Drosophila enhancer dataset &mdash; transcription-factor interactions recovered by Diamond match experimentally validated physical interactions (FT-Transformer: 5/5 correct).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig6.png" target="_blank">
+        <img src="assets/error-controlled-non-additive-interaction-discovery-in-machine-learning-models__s42256-025-01086-8/fig6.png" alt="Fig.6 NHANES mortality risk dataset" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> NHANES mortality dataset &mdash; Diamond finds sex&ndash;sedimentation-rate and creatinine&ndash;BUN interactions, both supported by existing clinical literature.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary contains Sections 1&ndash;6, Figs. 1&ndash;6, and additional simulation details including FDR derivations and interaction measure specifications.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>&#9312; Apply Diamond's FDR-controlled interaction discovery to spatial health prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>Diamond is validated on tabular biomedical data but its interaction-discovery pipeline is model-agnostic and compatible with any ML architecture. A direct extension: apply Diamond to gradient-boosted or transformer-based spatial prediction models in public health &mdash; for example, models predicting mental health outcomes or primary care utilization from neighborhood features &mdash; to discover which <em>pairs</em> of urban exposures (e.g., green space &times; income deprivation, telehealth access &times; travel time) exert genuine non-additive effects. Diamond's FDR control would replace the currently arbitrary variable-selection thresholds used in health-geography ML, delivering statistically validated exposure-interaction hypotheses at the neighborhood level.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work for spatial health prediction currently surfaces univariate SHAP importances. Integrating Diamond would upgrade these analyses to identify FDR-controlled <em>synergistic</em> exposure pairs &mdash; for instance, whether proximity to primary care and digital literacy interact non-additively to influence telehealth uptake, or whether walkability and income jointly drive mental health service access. This turns descriptive spatial models into hypothesis generators for targeted public-health interventions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiple stakeholders drive diverse interpretability requirements for machine learning in healthcare &mdash; <a href="https://doi.org/10.1038/s42256-023-00698-2" target="_blank">10.1038/s42256-023-00698-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Replace heuristic predictor-pair selection in GWR/MGWR with Diamond's non-additivity distillation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that naive pairwise feature importance scores (SHAP interactions, Hessian-based measures) fail to control the FDR because marginal effects and feature biases contaminate the interaction signal. An identical problem arises in geographically weighted regression (GWR and MGWR) where practitioners manually select predictor-interaction terms based on unstandardized importance rankings or domain intuition. Extending Diamond to spatially indexed tabular data &mdash; where features include POI densities, demographic rates, or built-environment metrics &mdash; would introduce the first principled, error-controlled spatial predictor-interaction discovery workflow, decoupling the choice of interaction terms from arbitrary thresholding.</p>
+      <p><span class="lab mine">Added value to my research</span>In my MGWR workflow I select predictor interactions (e.g., land-use mix &times; transit density for job-housing accessibility) based on domain knowledge or univariate importance, not on FDR-controlled evidence. Diamond's non-additivity distillation, applied as a post-hoc layer on top of any spatial prediction model, would let me systematically and defensibly identify which spatial feature-pairs require interaction terms &mdash; replacing intuition with statistical discipline across heterogeneous city-scale regression surfaces.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Interpretability and implicit model semantics in biomedicine and deep learning &mdash; <a href="https://doi.org/10.1038/s42256-026-01177-0" target="_blank">10.1038/s42256-026-01177-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Extend Diamond for cross-modal discovery of gene&ndash;urban-environment interaction effects</h3>
+      <p><span class="lab paper">Extending this paper</span>Diamond currently targets pairwise feature interactions within one modality (clinical measurements, chromatin accessibility). A natural extension is <em>cross-modal</em> interaction discovery: given a dataset combining individual genomic profiles with spatially resolved urban environmental exposures (pollution levels, greenspace area, population density, walkability scores), Diamond could identify which gene&ndash;environment pairs synergistically modulate health risk in a statistically controlled way. This extends the paper's Drosophila TF-interaction analysis to human epidemiology, with the non-additivity distillation handling the inevitable confounding between correlated genetic variants and spatially autocorrelated urban covariates.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal data-fusion work integrates remote sensing, mobile phone, and social media streams. Adding genomic or clinical layers would open a gene-environment interaction track. Diamond's FDR-controlled pipeline would let me identify which combinations of neighborhood-level urban exposures (from my GeoAI data stacks) and individual-level biological features non-additively drive disease risk &mdash; linking spatial data fusion to precision public health in a methodologically rigorous way.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Gene-by-environment interactions in urban populations modulate risk phenotypes &mdash; <a href="https://doi.org/10.1038/s41467-018-03202-2" target="_blank">10.1038/s41467-018-03202-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Use Diamond's FDR-controlled interaction list as a constraint graph for spatial causal structure learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper acknowledges that Diamond cannot distinguish direct interactions from transitive ones and identifies causal inference as a promising future direction. A practical extension: use Diamond's FDR-controlled non-additive interaction list as a <em>constraint graph</em> to initialize a causal structure learning algorithm &mdash; only feature pairs that pass Diamond's FDR threshold are candidates for directed edges. This hybrid pipeline (FDR-controlled interaction discovery then causal graph pruning) would dramatically reduce the exponential search space of causal learning while maintaining statistical rigor on the initial candidate edge set, addressing a core scalability bottleneck of high-dimensional causal learning.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning work encodes spatial relationships as graph edges. Diamond-as-pre-screener would let me build a statistically validated initial edge set from multi-source spatial data (e.g., which pairs of urban facilities non-additively co-determine health outcomes) before fitting the physics-constrained GNN &mdash; reducing overfitting and improving transferability of the learned spatial causal graph to unseen cities and data vintages.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning of causal structures in high dimensions under data limitations &mdash; <a href="https://doi.org/10.1038/s42256-023-00744-z" target="_blank">10.1038/s42256-023-00744-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Pair Diamond's error control with cross-cohort generalization tests for robust spatial biomarker discovery</h3>
+      <p><span class="lab paper">Extending this paper</span>Diamond ensures low false-discovery rates within a single training dataset, but the paper does not evaluate whether discovered interactions replicate across cohorts or geographic strata. The next extension: pair Diamond's FDR-controlled interaction list with a causal-modelling generalization test &mdash; for each discovered pair, assess whether its non-additive effect is stable across sub-populations, geographic regions, or temporal windows. This would extend the paper's statistical guarantees from within-sample FDR to cross-cohort reproducibility, addressing a core translational gap in biomarker research and making Diamond's output actionable for clinical or public-health policy.</p>
+      <p><span class="lab mine">Added value to my research</span>My reproducibility and FAIR data science work focuses on ensuring that spatial ML findings replicate across cities and data vintages. Diamond's non-additivity score could serve as a quantitative filter: only feature interactions with low FDR <em>and</em> stable cross-stratum effect sizes are promoted to hypothesis status &mdash; creating a two-stage pipeline (statistical control then generalization test) for trustworthy spatial epidemiology discoveries that hold across heterogeneous urban contexts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Improving generalization of machine learning-identified biomarkers using causal modelling with examples from immune receptor diagnostics &mdash; <a href="https://doi.org/10.1038/s42256-023-00781-8" target="_blank">10.1038/s42256-023-00781-8</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

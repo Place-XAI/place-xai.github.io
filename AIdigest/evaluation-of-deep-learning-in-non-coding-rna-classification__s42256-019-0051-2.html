@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluation of deep learning in non-coding RNA classification — AI Digest</title>
+<meta name="description" content="AI Digest: Evaluation of deep learning in non-coding RNA classification (Nature Machine Intelligence, 2019)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Non-coding RNA</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Bioinformatics</span>
+      <span class="tag">Sequence Classification</span>
+    </div>
+    <h1>Evaluation of deep learning in non-coding RNA classification</h1>
+    <div class="meta">
+      <span class="authors">Noorul Amin · Annette McGrath · Yi-Ping Phoebe Chen</span>
+      <span><b>Published</b> 2019-05-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-019-0051-2" target="_blank">10.1038/s42256-019-0051-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-019-0051-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>This systematic evaluation of six deep learning methods for non-coding RNA (ncRNA) classification reveals that <strong>no single algorithm dominates across all ncRNA types and species</strong>: CNN-LSTM (lncRNAnet) excels on human lncRNA but collapses on mouse transcripts, while SVM-ensemble (lncFinder) is superior on mouse data; circDeep for circular RNA performs below random chance on cross-dataset evaluation. All existing approaches share a <strong>critically high false-positive rate</strong>, and key challenges — cross-species generalization, variable transcript length, and lncRNA subclass discrimination — remain <strong>largely unsolved</strong>, pointing to sequence-intrinsic features and encoder–decoder architectures as the most promising next directions.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First head-to-head benchmark of deep learning ncRNA classifiers.</b> The paper provides a unified experimental comparison of six published tools (lncRNAnet, lncADeep, lncFinder, circDeep, nRC, and lincRNA autoencoder) on standardized datasets — a service the original individual papers could not offer.</li>
+      <li><b>Exposes a reproducibility and evaluation gap.</b> Many original studies report on private or incompatible datasets; this work documents inconsistent code availability, unresolvable data formats, and inflated accuracy claims (e.g., lincRNA autoencoder's claimed 100% accuracy on a private, unreleased dataset).</li>
+      <li><b>Quantifies the false-positive problem.</b> Precision is the worst metric across all evaluated tools, directly cautioning biologists against over-trusting ncRNA predictions without experimental validation.</li>
+      <li><b>Maps an under-explored taxonomy.</b> The paper is the first to synthesize ncRNA classification coverage by type: only 4 of 10+ lncRNA subclasses and only 3 of 13 small-ncRNA subclasses are addressed by any existing deep learning study.</li>
+      <li><b>Provides actionable future directions:</b> encoder–decoder architectures for variable-length transcripts, species-independent intrinsic features (Fickett score, k-mer, pI), and subclass-level lncRNA classifiers are identified as the clearest research gaps.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Critical evaluation rather than incremental improvement:</b> Nature Machine Intelligence's Analysis format rewards rigorous benchmark studies that scrutinize the state of a field — this paper delivers exactly that for bioinformatics AI without proposing a new model.</li>
+      <li><b>Cross-disciplinary impact:</b> the findings are simultaneously methodological (deep learning architecture selection) and biomedical (ncRNA roles in cancer, Alzheimer's, cardiovascular disease), matching the journal's emphasis on AI with real-world consequence.</li>
+      <li><b>Reproducibility and open science:</b> the paper releases a unified dataset and code repository, directly advancing reproducible ML in biology — a stated priority for the journal.</li>
+      <li><b>Field-shaping taxonomy:</b> the ncRNA taxonomy figure (Fig. 1) and gap analysis give researchers and editors a shared map of what deep learning has and has not solved, stimulating future work.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>lncRNA — human</dt><dd><strong>GENCODE release 29</strong> (human, lncGH): 97,713 protein-coding + 28,467 non-coding transcripts = <strong>126,180 total</strong>. Sequence lengths: 8 bp to 205,012 bp. Contains lincRNA, antisense, sense intronic, bidirectional promotor and other subclasses per GENCODE (ENSEMBL automated + HAVANA manual annotation). Class ratio ~1:3 (ncRNA:coding).</dd>
+      <dt>lncRNA — mouse</dt><dd><strong>GENCODE release 19</strong> (mouse, lncGM): 64,731 protein-coding + 17,855 non-coding transcripts = <strong>82,586 total</strong>. Sequence lengths: 9 bp to 123,179 bp. Mouse transcripts are on average longer than human, amplifying the variable-length problem.</dd>
+      <dt>Circular RNA</dt><dd><strong>circBase</strong> + GENCODE release 19 (circDataset): 14,084 circRNA + 19,978 long ncRNA = <strong>34,062 transcripts total</strong>. Split: 24,201 training / 10,217 test. circDeep feature extraction also requires human genome hg38 (UCSC, FASTA), GTF annotation (Ensembl), and UCSC conservation scores (bigWig format).</dd>
+      <dt>Small ncRNA</dt><dd><strong>Rfam</strong> database (sncDataset, via nRC): 13 classes (miRNA, 5S rRNA, 5.8S rRNA, ribozymes, CD-box, HACA-box, scaRNA, tRNA, Group I introns, Group II introns, IRES, leader, riboswitch). 500 sequences per class except IRES (320 sequences). Total: <strong>8,920 transcripts</strong> (6,320 train / 2,600 test).</dd>
+      <dt>lincRNA</dt><dd>UCSC genome browser (human). Exact sequence count not stated in the paper; dataset was not publicly released by the original autoencoder authors — only the code on GitHub.</dd>
+      <dt>Code &amp; data</dt><dd>Unified repository: <a href="http://homepage.cs.latrobe.edu.au/ypchen/ncRNAanalysis/" target="_blank">homepage.cs.latrobe.edu.au/ypchen/ncRNAanalysis/</a>. Individual tool repos: lncRNAnet (<a href="https://github.com/nofundamental/lncRNAnet" target="_blank">GitHub</a>), lincRNA predict (<a href="https://github.com/ningyu12/lincRNA_predict" target="_blank">GitHub</a>), nRC (<a href="https://github.com/IcarPA-TBlab/nrc" target="_blank">GitHub</a>; Docker at <a href="https://hub.docker.com/r/tblab/nrc/" target="_blank">DockerHub</a>), lncFinder (<a href="https://cran.r-project.org/web/packages/LncFinder/index.html" target="_blank">CRAN R package</a>).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>GENCODE release 29 (human)</td><td>lncRNA + protein-coding benchmark</td><td>126,180 transcripts; 8 bp – 205,012 bp</td><td><a href="https://www.gencodegenes.org/" target="_blank">gencodegenes.org</a></td></tr>
+        <tr><td>GENCODE release 19 (mouse)</td><td>lncRNA + protein-coding benchmark; circRNA negative set</td><td>82,586 transcripts; 9 bp – 123,179 bp</td><td><a href="https://www.gencodegenes.org/" target="_blank">gencodegenes.org</a></td></tr>
+        <tr><td>circBase</td><td>Circular RNA positive set</td><td>14,084 circRNA sequences (human)</td><td><a href="http://www.circbase.org/" target="_blank">circbase.org</a></td></tr>
+        <tr><td>Rfam</td><td>Small ncRNA 13-class benchmark</td><td>8,920 sequences; 13 RNA families</td><td><a href="https://rfam.org/" target="_blank">rfam.org</a></td></tr>
+        <tr><td>UCSC Genome Browser</td><td>Human genome hg38 + conservation scores for circDeep</td><td>Full human genome FASTA + bigWig tracks</td><td><a href="https://genome.ucsc.edu/" target="_blank">genome.ucsc.edu</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: dataset sizes and sequence counts are taken verbatim from the article's experimental setup section. The lincRNA dataset size is not explicitly stated in the paper.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Benchmark protocol:</b> pre-trained models provided by original authors were applied to standardized datasets (not retrained); this avoids hyperparameter tuning confounds and tests out-of-distribution generalization. Tools without public trained models or datasets were excluded from quantitative comparison.</li>
+      <li><b>Deep learning architectures reviewed and compared:</b> 1D-CNN (ORF feature extraction in lncRNAnet), RNN/LSTM (sequential transcript modelling with length bucketing and zero-padding), Deep Belief Network / Restricted Boltzmann Machine (DBN/RBM in lncADeep, for feature learning from handcrafted vectors), Autoencoder (unsupervised representation learning for lincRNA), and multimodal CNN + BLSTM fusion (circDeep, combining RCM hairpin strength, UCSC conservation, and learned local patterns).</li>
+      <li><b>Feature categories evaluated:</b> sequence-intrinsic (ORF length/coverage, HEXAMER, k-mer, Euclidean/logarithmic distances, Fickett score, GC content, pI, EIIP), secondary structure (minimum free energy via ViennaRNA; graph-based substructure mining via MoSS/IPknot for small ncRNA), and species-conservation (UCSC cross-species bigWig tracks for circDeep).</li>
+      <li><b>Evaluation metrics:</b> accuracy, precision, recall (sensitivity), specificity, F1, error rate, ROC curve (AUC), and precision-recall (PR) curve. PR curves are foregrounded over ROC for class-imbalanced biological datasets (the paper demonstrates AUC differences as small as 0.01 mask large real-world performance gaps).</li>
+      <li><b>Comparative stratification:</b> tools divided into two groups — (1) lncRNA classifiers (lncRNAnet, lncADeep, lncFinder) on lncGH and lncGM; (2) small-ncRNA and circRNA classifiers (nRC on 13 Rfam classes, circDeep on circBase/GENCODE hybrid dataset).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig1.png" target="_blank">
+        <img src="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig1.png" alt="Fig.1 Overall taxonomy of ncRNA" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overall taxonomy of ncRNA — maps 10+ lncRNA subclasses, 3 circRNA types, and 13 small-ncRNA families; highlights which subclasses deep learning has addressed (pink/yellow) and which remain unstudied (blue).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig2.png" target="_blank">
+        <img src="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig2.png" alt="Fig.2 Deep learning model architectures" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Architectures of the four deep learning model types used across the six compared tools: RNN, DBN/RBM, CNN, and Autoencoder.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig3.png" target="_blank">
+        <img src="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig3.png" alt="Fig.3 Transcript length distributions" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Length distribution of lncRNA and protein-coding transcripts in lncGH (human) and lncGM (mouse) — reveals extreme length variance that defeats fixed-bucket RNN models.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig4.png" target="_blank">
+        <img src="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig4.png" alt="Fig.4 ROC curves for lncRNA classifiers" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> ROC curves for lncRNAnet, lncADeep, lncFinder on lncGH and lncGM — lncRNAnet AUC 0.98 on human; AUC differences are compressed by class imbalance, motivating PR curves.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig5.png" target="_blank">
+        <img src="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig5.png" alt="Fig.5 Precision-recall curves for lncRNA classifiers" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Precision-recall (PR) curves — show a 0.38 separation between best and worst tools on lncGH; more informative than ROC under class imbalance.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig6.png" target="_blank">
+        <img src="assets/evaluation-of-deep-learning-in-non-coding-rna-classification__s42256-019-0051-2/fig6.png" alt="Fig.6 nRC per-class performance on 13 small ncRNA families" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Per-class precision/recall/F1 of nRC on 13 small ncRNA families — 5S rRNA highest, Group I introns and HACA-box lowest due to structural overlap with other subclasses.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables in main text: 4 — Table 1 (overview of deep learning approaches per ncRNA type), Table 2 (deep learning model architectures), Table 3 (lncRNA classifier performance on human and mouse datasets), Table 4 (circDeep and nRC performance on circBase/Rfam).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable ML, spatiotemporal prediction, foundation model fine-tuning).</p>
+
+    <div class="idea">
+      <h3>① Replace fixed-length sequence bucketing with a hierarchical autoencoder for variable-length transcripts</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central methodological bottleneck is that lncRNAnet's LSTM requires fixed-length input buckets with zero-padding, causing performance collapse on mouse transcripts that span extreme length buckets with sparse real data. The paper explicitly flags encoder–decoder architectures as the recommended fix (Discussion, final paragraph) but does not implement one. A direct extension: replace the bucketing step with a hierarchical autoencoder that first learns a compact, length-agnostic latent representation of any RNA transcript regardless of length, then feeds this fixed-size code to an LSTM or Transformer classifier. This would unify the paper's separate full-length and partial-length lncADeep models into a single model and address cross-species degradation structurally. The single-cell RNA-seq community has solved an analogous problem — compressing high-dimensional, cell-count-variable data into fixed embeddings — using exactly this hierarchical autoencoder approach.</p>
+      <p><span class="lab mine">Added value to my research</span>Hierarchical autoencoders that compress variable-resolution inputs into fixed-size latent vectors are directly relevant to spatiotemporal GeoAI: compressing irregular spatial trajectories (GPS traces, mobile-phone records of variable duration) into fixed-size embeddings for health-geography classification or regression faces the exact same variable-length problem. The paper's lesson — that forcing variable-length sequences into fixed bins creates silent distribution shift — maps precisely to the issue of gridding irregular GPS point clouds into fixed rasters, motivating sequence-model-inspired spatial encoders as a methodological direction for my work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast and precise single-cell data analysis using a hierarchical autoencoder — <a href="https://doi.org/10.1038/s41467-021-21312-2" target="_blank">10.1038/s41467-021-21312-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Build a persistent, updatable benchmark framework with a common API for genomic-sequence classifiers</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper is constrained by the incompatible input formats, private datasets, and partial code releases of each tool: the lincRNA autoencoder was entirely excluded from quantitative comparison, and lncRNAnet provides only testing code. A natural extension is a software framework that wraps each ncRNA classifier behind a common API, auto-downloads standardized reference datasets from GENCODE, circBase, and Rfam, runs each model, and generates comparable metric dashboards — analogous to what the deep-learning NMR spectroscopy community built for chemical-shift predictors. Such a framework would make the paper's benchmark continuously updatable as new tools appear and would automate the precision-recall curve visualization that the paper recommends but currently requires manual plotting for each tool.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable-ML work for spatial prediction faces exactly the same reproducibility fragmentation: different spatial-ML tools (MGWR, RF, XGBoost, GNN, 2SFCA variants) use different input conventions, spatial cross-validation schemes, and performance metrics. Building a unified evaluation wrapper modeled on this paper's approach — standardized datasets, common metrics, automatic PR curves — would accelerate rigorous benchmarking of geospatial prediction methods, especially for health-geography applications where precision (not just accuracy) directly translates to policy consequences.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Toward a unified benchmark and framework for deep learning-based prediction of nuclear magnetic resonance chemical shifts — <a href="https://doi.org/10.1038/s43588-025-00783-z" target="_blank">10.1038/s43588-025-00783-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the evaluation framework to epigenomic context for cell-type-conditioned ncRNA classification</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper restricts itself to sequence-based classification: conservation scores enter only as one feature for circDeep, and secondary structure only as a manually extracted feature. The next logical extension is to add epigenomic context — ATAC-seq chromatin accessibility, histone modification tracks (H3K4me3, H3K27ac), and base-level methylation — as additional input channels fed into the CNN branch alongside the sequence. This turns the paper's binary (ncRNA vs. coding) and 13-class (small ncRNA) tasks into cell-type-conditioned problems where the same sequence can be classified differently in different tissues. The same architectural pattern — multi-modal input fusion via late combining of confidence scores — is already present in circDeep; extending it to epigenomic tracks is a straightforward upgrade that addresses the paper's documented false-positive rate by adding tissue-specific context.</p>
+      <p><span class="lab mine">Added value to my research</span>The principle of multi-modal feature fusion — combining intrinsic features (analogous to POI attributes: name, category, floor area) with contextual features (analogous to chromatin accessibility: neighborhood density, transit access) — maps directly to my multi-source data fusion work. The late-fusion strategy used by circDeep (merging confidence scores from separately trained branches) is a pattern I can directly adopt for integrating mobile-phone mobility signals and static population attributes with different temporal resolutions — a key challenge in spatiotemporal health-geography modeling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles — <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Tackle lncRNA subclass discrimination using a two-level hierarchical CNN combining local and global structure</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies that GENCODE annotates 10 lncRNA subclasses (lincRNA, antisense, sense intronic, sense overlapping, macro lncRNA, bidirectional promotor, TEC, and others) but not a single deep learning study has attempted subclass-level discrimination — a gap the paper explicitly flags. The paper recommends following nRC's local-subgraph feature mining approach for small ncRNA families and combining it with global secondary-structure features. A concrete extension: train a two-level hierarchical CNN where the first level distinguishes lncRNA from protein-coding (existing tools), and the second level assigns one of 10 GENCODE subclass labels using a dual-branch CNN — one branch on local k-mer and ORF features, one on global minimum-free-energy (MFE) secondary-structure features computed by ViennaRNA. The paper's experimental setup provides the GENCODE dataset needed for this immediately.</p>
+      <p><span class="lab mine">Added value to my research</span>Hierarchical multi-level classification — coarse label first, fine label conditioned on coarse — is a pattern I encounter in urban health geography: classifying a location as a "health facility" (level 1) before sub-classifying it as "primary care vs. mental health vs. specialist clinic" (level 2) to compute type-specific 2SFCA accessibility scores. The paper's lesson that local features drive fine subclass performance while global features improve coarse-level discrimination could guide feature engineering for spatial POI-type classifiers based on embedding geometry and building footprint data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A software framework for end-to-end genomic sequence analysis with deep learning — <a href="https://doi.org/10.1038/s43588-023-00557-5" target="_blank">10.1038/s43588-023-00557-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Automate the paper's feature-category importance analysis with a learnable feature-group attention layer</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most transferable finding is that the relative importance of feature categories (sequence-intrinsic vs. secondary-structure vs. conservation) varies strongly by ncRNA type and species: intrinsic features dominate for human lncRNA, structure features matter for small ncRNA families, and conservation aids circRNA classification. Currently, this insight is derived post-hoc by inspecting per-tool performance. A direct extension: add a self-attention mechanism over feature groups to any of the architectures, so the model learns end-to-end which feature category matters most for a given input — making "which feature wins where" a per-sample model output rather than a population-level post-hoc analysis. This would also help explain the high false-positive rate: attention maps could reveal which feature group is misleading the classifier on protein-coding sequences.</p>
+      <p><span class="lab mine">Added value to my research</span>This feature-group attention idea maps directly to my explainable GeoAI agenda. In health-geography prediction models, I combine heterogeneous feature categories: built-environment features (density, land use), socioeconomic indicators (income, age, deprivation index), and spatial accessibility features (2SFCA scores, travel time). A group-attention layer that learns which feature category drives prediction in which spatial zone — and surfaces this as interpretable spatial maps — would constitute a GeoAI analogue of the paper's per-species feature analysis, complementing MGWR's spatial non-stationarity framework and providing SHAP-like explanations at the category level rather than the individual feature level.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Representation of features as images with neighborhood dependencies for compatibility with convolutional neural networks — <a href="https://doi.org/10.1038/s41467-020-18197-y" target="_blank">10.1038/s41467-020-18197-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

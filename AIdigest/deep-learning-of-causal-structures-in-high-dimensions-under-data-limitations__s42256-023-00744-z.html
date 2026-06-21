@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep learning of causal structures in high dimensions under data limitations — AI Digest</title>
+<meta name="description" content="AI Digest: Deep learning of causal structures in high dimensions under data limitations (Nature Machine Intelligence, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Causal learning</span>
+      <span class="tag">Graph neural networks</span>
+      <span class="tag">High-dimensional biology</span>
+      <span class="tag">Causal discovery</span>
+    </div>
+    <h1>Deep learning of causal structures in high dimensions under data limitations</h1>
+    <div class="meta">
+      <span class="authors">Kai Lagemann · Christian Lagemann · Bernd Taschler · Sach Mukherjee</span>
+      <span><b>Published</b> 2023-10-26</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-023-00744-z" target="_blank">10.1038/s42256-023-00744-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-023-00744-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>D<sup>2</sup>CL (deep discriminative causal learning) combines a <strong>CNN tower and a GNN tower</strong> within a causal risk framework to learn directed causal graphs between thousands of variables from <strong>limited, noisy, high-dimensional data</strong>. Validated on yeast gene deletion experiments (up to p&nbsp;=&nbsp;5,535 genes) and single-cell CRISPR data from human cells (up to p&nbsp;=&nbsp;8,833 genes), D<sup>2</sup>CL consistently outperforms existing methods under challenging data regimes and scales to p&nbsp;=&nbsp;50,000 nodes — demonstrating that <strong>deep learning can recover causal networks at genome scale</strong> where classical causal methods fail entirely.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Goes beyond correlation to causation at genome scale.</b> Most genomic ML predicts associations; D<sup>2</sup>CL recovers <em>directed causal edges</em> at scales (thousands to tens of thousands of variables) where competing methods are either computationally infeasible or ineffective.</li>
+      <li><b>Succeeds under data poverty.</b> Real biomedical experiments rarely have large sample sizes. The paper rigorously demonstrates robustness across varying sample sizes (n&nbsp;=&nbsp;100 to 706), noise levels, and input knowledge quality — including tolerance to 10% corrupted prior knowledge.</li>
+      <li><b>Integrates prior knowledge with unsupervised discovery.</b> The framework's design allows partial causal knowledge (from prior experiments or known biology) to act as a training signal, enabling generalization to entirely <em>unseen</em> interventional regimes — a key requirement for real-world science.</li>
+      <li><b>Validated against entirely unseen experiments.</b> Unlike methods tested on held-out simulations, D<sup>2</sup>CL outputs are tested against real laboratory interventions that were never shown to the model, providing uniquely rigorous biological validation.</li>
+      <li><b>Unlocks disease-context-specific network inference.</b> Context-specific causal networks spanning disease states or cell types can explain therapeutic heterogeneity and point to drug targets — a direct translational payoff.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Frontier problem, scalable solution:</b> causal discovery at genome/proteome scale is an open grand challenge; the paper delivers a demonstrably scalable deep learning solution — the kind of step-change Nature Machine Intelligence targets.</li>
+      <li><b>Methodological novelty with rigorous theory:</b> D<sup>2</sup>CL introduces a causal risk framework (not DAG-based), accompanied by formal assumptions (MGA, DCSI) and an ablation study confirming both towers contribute — methodological depth expected by the journal.</li>
+      <li><b>Biological impact framing:</b> the paper closes with concrete pathways to personalized medicine and drug target identification, situating a methods paper within a clear societal and clinical context.</li>
+      <li><b>Reproducibility via Code Ocean:</b> a pre-built compute capsule (<a href="https://codeocean.com/capsule/4465854/tree/v1" target="_blank">codeocean.com</a>) ships with the paper, meeting the journal's reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Yeast gene data</dt><dd><strong>Kemmeren et al. (Cell, 2014)</strong> — large-scale yeast gene deletion experiments measuring gene expression under each of 753 interventions (gene deletions). Experiments cover p&nbsp;=&nbsp;1,000 and p&nbsp;=&nbsp;5,535 genes (roughly the full yeast genome); sample size n&nbsp;=&nbsp;706 observations. Publicly available (DOI: <a href="https://doi.org/10.1016/j.cell.2014.02.054" target="_blank">10.1016/j.cell.2014.02.054</a>).</dd>
+      <dt>Human CRISPR data</dt><dd><strong>Replogle et al. (Cell, 2022)</strong> — genome-scale Perturb-seq experiments in a leukaemia cell line (K562, p&nbsp;=&nbsp;8,552 genes) and retinal pigment epithelial cells (RPE, p&nbsp;=&nbsp;8,833 genes). Single-cell readout with high noise levels characteristic of single-cell protocols. Publicly available (DOI: <a href="https://doi.org/10.1016/j.cell.2022.05.013" target="_blank">10.1016/j.cell.2022.05.013</a>).</dd>
+      <dt>Simulation data</dt><dd>Synthetic data generated via linear and nonlinear <strong>structural equation models (SEMs)</strong> with noise, at problem sizes from p&nbsp;=&nbsp;1,500 up to p&nbsp;=&nbsp;50,000 nodes and sample sizes n&nbsp;=&nbsp;100 to 1,024. Pseudocode provided in Supplementary Section 5.</dd>
+      <dt>Time window</dt><dd>Yeast data: 2014 (Kemmeren et al.); CRISPR data: 2022 (Replogle et al.). Simulations are synthetic with no temporal constraint.</dd>
+      <dt>Availability</dt><dd>All real datasets are publicly accessible from the original publications. Code is available as a Code Ocean compute capsule (<a href="https://codeocean.com/capsule/4465854/tree/v1" target="_blank">codeocean.com/capsule/4465854</a>).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Kemmeren et al. yeast gene deletion</td><td>Biological ground-truth causal graph (yeast)</td><td>p = 1,000–5,535 genes; n = 706; m = 100–753 interventions</td><td><a href="https://doi.org/10.1016/j.cell.2014.02.054" target="_blank">Cell 2014</a></td></tr>
+        <tr><td>Replogle et al. Perturb-seq (CRISPR)</td><td>High-dim human causal validation (K562, RPE)</td><td>p = 8,552 (K562) and 8,833 (RPE) genes; single-cell</td><td><a href="https://doi.org/10.1016/j.cell.2022.05.013" target="_blank">Cell 2022</a></td></tr>
+        <tr><td>Synthetic SEM simulations</td><td>Controlled benchmark (known ground truth)</td><td>p = 1,500–50,000 nodes; n = 100–1,024; linear &amp; nonlinear</td><td>Pseudocode in Supplementary Sec. 5</td></tr>
+        <tr><td>D<sup>2</sup>CL source code</td><td>Reproducible compute capsule</td><td>Full pre-built environment; PyTorch + DGL</td><td><a href="https://codeocean.com/capsule/4465854/tree/v1" target="_blank">Code Ocean</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: sample sizes and problem dimensions are taken verbatim from the paper's experimental descriptions. The CRISPR dataset scope (number of interventions per cell line) is not fully enumerated in the text; only the gene counts are specified.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Causal risk framework:</b> rather than learning a full generative (DAG-based) causal model, D<sup>2</sup>CL treats causal structure learning as a <strong>binary edge-classification</strong> problem — predicting for each ordered variable pair whether X<sub>i</sub> causally influences X<sub>j</sub>. This shifts the problem into the supervised discriminative learning paradigm and enables deep network training.</li>
+      <li><b>CNN tower (distributional features):</b> for each variable pair (X<sub>i</sub>, X<sub>j</sub>), a bivariate kernel density estimate (KDE) forms an asymmetric "image" input to a <strong>ResNet-54-inspired CNN</strong>, extracting distributional features that encode causal direction (f<sub>ij</sub> ≠ f<sub>ji</sub>).</li>
+      <li><b>GNN tower (structural features):</b> builds on the <strong>SEAL link-prediction architecture</strong>, extracting 1-hop enclosing subgraphs from an initial graph estimate (Pearson correlation or Lasso regression), and applying four graph convolutional layers to learn neighborhood structural embeddings per node pair.</li>
+      <li><b>Fusion and training:</b> CNN and GNN embeddings are concatenated and processed by fully connected layers, outputting the log-likelihood of a directed edge. Binary cross-entropy loss is supervised by <em>known</em> causal edges (prior knowledge Π), and training generalizes to <em>unknown</em> edges entirely withheld from the learner.</li>
+      <li><b>Meta-generator assumption (MGA) and DCSI:</b> formal theoretical grounding assuming system-level regularity across cause-effect functions within one biological system — this justifies transfer of the learned classifier to unseen variable pairs within the same system.</li>
+      <li><b>Evaluation:</b> causal AUC (area under ROC computed against causal ground truth) and AUPRC, tested on out-of-distribution interventional distributions never seen during training; robustness ablations over noise, corrupted priors, and dimensionality.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig1.png" target="_blank">
+        <img src="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig1.png" alt="Fig.1 Conceptual overview of D2CL learning scheme" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Conceptual overview of the D<sup>2</sup>CL learning scheme — abstract workflow (left) and biological application workflow (right), showing how prior knowledge and data combine to yield a global causal graph.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig2.png" target="_blank">
+        <img src="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig2.png" alt="Fig.2 D2CL architecture CNN and GNN towers" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> D<sup>2</sup>CL architecture — CNN tower (distributional KDE inputs) and GNN tower (graph subgraph embeddings) fused to output edge probabilities.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig3.png" target="_blank">
+        <img src="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig3.png" alt="Fig.3 Results for large-scale simulated data" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Simulation benchmark results — ROC curves and AUC across noise levels (SNR), linear/nonlinear SEMs, and p&nbsp;=&nbsp;1,500 nodes; D<sup>2</sup>CL outperforms IDA, ENCO, DCD-FG, SCL across conditions.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig4.png" target="_blank">
+        <img src="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig4.png" alt="Fig.4 Results for yeast gene deletion experiments" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Yeast gene deletion results — performance as a function of interventions (m), sample size (n), and full-genome dimension (p&nbsp;=&nbsp;5,535); CNN tower vs. GNN tower vs. full D<sup>2</sup>CL ablation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig5.png" target="_blank">
+        <img src="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig5.png" alt="Fig.5 Sensitivity to incorrect causal inputs and causal direction analysis" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Robustness to corrupted prior knowledge (10% label errors) and causal direction analysis — low-dimensional CNN feature maps differentiate A→B from B→A.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig6.png" target="_blank">
+        <img src="assets/deep-learning-of-causal-structures-in-high-dimensions-under-data-limitations__s42256-023-00744-z/fig6.png" alt="Fig.6 Results for high-dimensional human CRISPR data" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Human CRISPR results — D<sup>2</sup>CL applied to K562 and RPE cells (p &gt; 8,000 genes); competing methods cannot scale to this regime; runtime comparison against baseline algorithms.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 table in main text (Supplementary references Tables 1–12); the paper reports performance across many conditions in figure panels rather than a single main-text table.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analytics for urban and public health).</p>
+
+    <div class="idea">
+      <h3>① Transfer the causal risk framework from gene networks to spatiotemporal urban health networks</h3>
+      <p><span class="lab paper">Extending this paper</span>D<sup>2</sup>CL's core insight is that causal structure between thousands of variables can be learned discriminatively when a system exhibits higher-level regularity (MGA). Urban systems exhibit analogous regularity: mobility flows, facility access, and health outcomes share system-specific structural patterns across neighborhoods. A direct extension of the paper: adapt D<sup>2</sup>CL's CNN+GNN pipeline to <strong>spatiotemporal multi-variate urban data</strong> (POI density, mobility, income, health outcomes) and learn directed causal graphs between urban features — moving spatial health analysis from associative regression to causal discovery. Prior causal knowledge from urban theory (e.g., "income → access → health") would serve as the supervision signal Π.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct upgrade path for my health geography work: instead of running MGWR/GWR regressions that only estimate associations, I could deploy D<sup>2</sup>CL to learn which features (telehealth access, primary care proximity, neighborhood income) <em>causally drive</em> health disparities — producing defensible causal claims for public health policy rather than correlational maps.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Causal inference and counterfactual prediction in machine learning for actionable healthcare — <a href="https://doi.org/10.1038/s42256-020-0197-y" target="_blank">10.1038/s42256-020-0197-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace Pearson/Lasso initial graph with a spatially-aware graph prior for geospatial applications</h3>
+      <p><span class="lab paper">Extending this paper</span>D<sup>2</sup>CL initializes its GNN tower with a lightweight graph estimate (Pearson correlations or Lasso regression) as a structural prior G&#770;<sub>0</sub>. The paper acknowledges this initial estimate affects performance (Fig. 4, Lasso vs. Pearson comparison). A natural extension: for applications where spatial or contextual structure is available, replace this flat initialization with a <strong>physics-informed or domain-knowledge-based graph prior</strong> — for example, a knowledge graph of known biological pathways, or in spatial applications, a geographic proximity / flow-network prior. This would provide the GNN tower a richer initial topology and improve causal structure recovery in low-data regimes.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatiotemporal kernel density and network community detection work, I already build meaningful graph structures from mobility and POI data. Using these as the initial G&#770;<sub>0</sub> in a D<sup>2</sup>CL-style framework would let me learn causal influence directions (e.g., does housing price causally determine facility access, or vice versa?) — turning descriptive spatial graphs into causal discovery instruments.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stable learning establishes some common ground between causal inference and machine learning — <a href="https://doi.org/10.1038/s42256-022-00445-z" target="_blank">10.1038/s42256-022-00445-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Combine D<sup>2</sup>CL with active intervention design for efficient spatial data collection</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper notes that performance improves with more interventions m (Fig. 4a–c), and that prior causal knowledge Π directly drives learning quality. However, D<sup>2</sup>CL takes Π as given — it does not choose which interventions to run next. An important extension: couple D<sup>2</sup>CL's causal risk outputs with an <strong>active learning strategy</strong> that selects the most informative next experiment (gene deletion, survey question, or spatial observation), closing the loop between causal discovery and experimental design. This would reduce the number of interventions needed to reach a given causal AUC — critical in data-scarce biomedical and social settings.</p>
+      <p><span class="lab mine">Added value to my research</span>In my multi-source data fusion work (mobile phone, social media, remote sensing), data collection is expensive. An active causal learning loop would tell me which new spatial observations or surveys to collect to best resolve causal ambiguities in a health accessibility model — a principled replacement for ad hoc sampling strategies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Active learning for optimal intervention design in causal models — <a href="https://doi.org/10.1038/s42256-023-00719-0" target="_blank">10.1038/s42256-023-00719-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use D<sup>2</sup>CL's out-of-distribution generalization signal to audit spurious spatial correlations in GeoAI models</h3>
+      <p><span class="lab paper">Extending this paper</span>A key finding of the paper is that pairwise Pearson correlations are <em>ineffective</em> as causal indicators even when strongly predictive — because hidden/latent variables drive confounded associations. The paper's causal AUC metric directly measures this gap between predictive and causal performance. Extending the paper: apply its diagnostic framework to audit whether features selected by ML models (e.g., gradient boosting for spatial prediction) reflect <em>causal</em> or merely <em>correlational</em> relationships — using D<sup>2</sup>CL outputs to flag spurious features and improve model robustness to distribution shift across cities or time periods.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML work (SHAP-based spatial prediction) surfaces feature attributions but cannot distinguish causal from confounded importance. Integrating D<sup>2</sup>CL's causal edge estimates as a post-hoc filter on SHAP attributions would yield genuinely <strong>causal explainability</strong> — telling planners not just what correlates with poor health access but what drives it, strengthening the policy case for interventions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Improving generalization of machine learning-identified biomarkers using causal modelling with examples from immune receptor diagnostics — <a href="https://doi.org/10.1038/s42256-023-00781-8" target="_blank">10.1038/s42256-023-00781-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Extend D<sup>2</sup>CL's GNN tower to learn context-specific causal networks across disease subgroups or urban subpopulations</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates D<sup>2</sup>CL on in-system learning (training and testing within the same biological system) and briefly explores out-of-system generalization (cross-system transfer, Supplementary Tables 10–11). A powerful extension: learn <strong>context-conditioned causal graphs</strong> — where context is a disease state, cell type, or demographic subgroup — by conditioning the GNN tower on a context embedding. This would allow the model to learn how causal network structure changes across contexts (e.g., how gene regulatory edges differ between cancer cell lines), directly addressing the therapeutic heterogeneity motivation stated in the paper's introduction.</p>
+      <p><span class="lab mine">Added value to my research</span>In my urban health research, the same spatial features have heterogeneous causal relationships across population subgroups (elderly vs. young, rural vs. urban). A context-conditioned D<sup>2</sup>CL would let me learn subgroup-specific causal access-health graphs — grounding 2SFCA catchment delineations in causal rather than assumed relationships, and enabling targeted policy for the most underserved groups.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> When causal inference meets deep learning — <a href="https://doi.org/10.1038/s42256-020-0218-x" target="_blank">10.1038/s42256-020-0218-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

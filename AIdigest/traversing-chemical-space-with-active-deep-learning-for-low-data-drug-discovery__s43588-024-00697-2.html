@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traversing chemical space with active deep learning for low-data drug discovery — AI Digest</title>
+<meta name="description" content="AI Digest: Traversing chemical space with active deep learning for low-data drug discovery (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Active Learning</span>
+      <span class="tag">Drug Discovery</span>
+      <span class="tag">Chemical Space</span>
+      <span class="tag">Graph Neural Networks</span>
+    </div>
+    <h1>Traversing chemical space with active deep learning for low-data drug discovery</h1>
+    <div class="meta">
+      <span class="authors">Derek van Tilborg · Francesca Grisoni</span>
+      <span><b>Published</b> 2024-09-27</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00697-2" target="_blank">10.1038/s43588-024-00697-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00697-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Active deep learning is a powerful strategy for low-data drug discovery: iteratively updating models during screening can achieve <strong>up to a sixfold improvement in hit discovery</strong> over traditional one-shot virtual screening. The <strong>choice of acquisition function</strong> — not the deep learning architecture — is the dominant driver of hit enrichment. Exploitative and mutual-information-based acquisition outperform exploration and random baselines, while <strong>starting molecular diversity has little lasting effect</strong> because active learning rapidly corrects any structural bias within the first few cycles.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves 'known unknowns' holding back adoption.</b> The field knew active learning was promising but lacked guidelines on which strategy to use. This study systematically benchmarks six acquisition functions across two architectures and three drug targets, directly answering what has been opaque.</li>
+      <li><b>Makes deep learning practical under realistic data scarcity.</b> Drug discovery routinely starts with only tens of molecules. Demonstrating that active learning achieves notable hit enrichment even from 2–4 starting molecules is a direct unlock for early-stage campaigns.</li>
+      <li><b>Acquisition function, not architecture, is the decisive lever.</b> This shifts design attention from expensive architecture choices (fingerprint vs. graph networks) to the comparatively cheap algorithmic choice of how molecules are selected next.</li>
+      <li><b>Adaptive chemistry navigation.</b> Active learning adaptively prioritizes substructures enriched in hits, not just structurally similar molecules — demonstrating an autonomous, data-driven traversal of chemical space that one-shot methods cannot replicate.</li>
+      <li><b>Ships as open, reproducible science.</b> Processed datasets on <a href="https://doi.org/10.5281/zenodo.13337372" target="_blank">Zenodo</a> and full Python/R code on <a href="https://doi.org/10.5281/zenodo.13337647" target="_blank">Zenodo</a> make every result independently replicable.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Systematic, benchmark-grade contribution:</b> the study is not a single-application paper but a controlled experimental matrix spanning six acquisition functions, two architectures and three targets — the kind of foundational-guideline paper Nature Computational Science targets.</li>
+      <li><b>Resolves an actively debated question:</b> whether active learning is net positive over traditional virtual screening in realistic (small-data, class-imbalanced) settings was genuinely contested; this provides the most comprehensive evidence to date.</li>
+      <li><b>Broad methodological reach:</b> active deep learning principles extend beyond drug discovery to any iterative experimental-design problem, giving the work impact across computational chemistry, materials science, and beyond.</li>
+      <li><b>Rigorous statistical framework:</b> all conclusions backed by replicated experiments (ten random seeds), Wilcoxon rank-sum tests, and perturbation controls to rule out spurious enrichment.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>LIT-PCBA</strong> (University of Strasbourg Drug Design group) — a curated benchmark of high-confidence PubChem bioassay data designed to mimic realistic hit/potency distributions in experimental drug screens. Accessed August 2023 at <a href="https://drugdesign.unistra.fr/LIT-PCBA" target="_blank">drugdesign.unistra.fr/LIT-PCBA</a>.</dd>
+      <dt>Selected targets</dt><dd>Three macromolecular targets from LIT-PCBA with the largest experimentally validated molecule sets: <strong>PKM2</strong> (pyruvate kinase M2, agonism), <strong>ALDH1</strong> (aldehyde dehydrogenase 1, inhibition), <strong>VDR</strong> (vitamin D receptor, antagonism). Six additional low-yield LIT-PCBA datasets used for stress testing (FEN1, GBA, KAT2A, IDH1, OPRK1, ADRB2).</dd>
+      <dt>Library size</dt><dd>100,000 molecules per target formed the screening library (training pool); 20,000 additional molecules per target served as a held-out external test set. Screening budget: 1,000 molecules per active learning run.</dd>
+      <dt>Starting set</dt><dd>64 molecules (step 0); three diversity levels — innate (full library), moderate (Tanimoto distance cut at 0.8) and low (cut at 0.61–0.70 per target) — constructed by hierarchical average-distance agglomerative clustering.</dd>
+      <dt>Molecular representations</dt><dd>Extended Connectivity Fingerprints (ECFPs, 1,024 bits, radius 2) and RDKit molecular graphs (atom features + adjacency). 50 curated SMARTS substructure patterns tracked for chemical space monitoring.</dd>
+      <dt>Replication</dt><dd>All active learning experiments repeated 10 times with different random seeds. Total compute: ~10,000 GPU-hours on NVIDIA A100 (40 GB) GPUs.</dd>
+      <dt>Open access</dt><dd>Processed datasets: <a href="https://doi.org/10.5281/zenodo.13337372" target="_blank">zenodo.13337372</a>; code: <a href="https://doi.org/10.5281/zenodo.13337647" target="_blank">zenodo.13337647</a>; original LIT-PCBA: <a href="https://drugdesign.unistra.fr/LIT-PCBA" target="_blank">drugdesign.unistra.fr/LIT-PCBA</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>LIT-PCBA (PKM2, ALDH1, VDR)</td><td>Screening library + labels</td><td>3 × 120,000 molecules (100K screen + 20K test)</td><td><a href="https://drugdesign.unistra.fr/LIT-PCBA" target="_blank">drugdesign.unistra.fr</a></td></tr>
+        <tr><td>LIT-PCBA (6 supplementary targets)</td><td>Stress-test low-yield scenarios</td><td>5–100 hits per 100K molecules</td><td><a href="https://drugdesign.unistra.fr/LIT-PCBA" target="_blank">drugdesign.unistra.fr</a></td></tr>
+        <tr><td>Processed Zenodo datasets</td><td>Replication of all reported results</td><td>Full pre-processed splits + source data for Figs. 2–4</td><td><a href="https://doi.org/10.5281/zenodo.13337372" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>Code repository (Zenodo)</td><td>Python + R scripts for all analyses</td><td>PyTorch, PyTorch Geometric, scikit-learn, RDKit, ggplot2</td><td><a href="https://doi.org/10.5281/zenodo.13337647" target="_blank">zenodo.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: class imbalance (few bioactive hits among 100,000 molecules per target) is explicitly preserved in all splits to mimic real-world screening. Exact hit rates per dataset are reported in Table 1 of the paper.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Active learning loop:</b> four-step iterative cycle — (1) train model on labeled set, (2) predict bioactivity on full unlabeled library, (3) acquire 64 molecules via an acquisition function, (4) experimentally label (simulated) and add to training set. Repeat until 1,000-molecule budget exhausted.</li>
+      <li><b>Deep learning architectures:</b> (i) ECFP-based multilayer perceptron (MLP) using 1,024-bit, radius-2 fingerprints; (ii) Graph neural network (GCN) reading atom/bond features directly from molecular topology. Both share the same MLP head and uncertainty-estimation regime.</li>
+      <li><b>Bayesian uncertainty estimation:</b> anchored ensembling (M = 10 models), providing predictive posteriors that closely approximate full Bayesian inference. Uncertainty (mean entropy) feeds entropy-based acquisition functions.</li>
+      <li><b>Six acquisition functions benchmarked:</b> molecular similarity (Tanimoto to known hits), exploitation (best predicted activity), exploration (most uncertain), mutual information (BALD — low MI favors high-certainty, high-disagreement molecules), exploitation without retraining (one-shot baseline), and random (control).</li>
+      <li><b>Structural diversity control:</b> hierarchical average-distance agglomerative clustering on Tanimoto distance matrix; three diversity levels (innate / moderate / low) generated for starting-set ablation.</li>
+      <li><b>Evaluation metric:</b> enrichment factor — ratio of hits found among acquired molecules to the expected count under random selection. Values &gt; 1 indicate above-random hit discovery.</li>
+      <li><b>Statistics:</b> two-sided paired Wilcoxon rank-sum tests (no multiple-testing correction); Kendall's τ for rank association; perturbation controls (shuffled features) to rule out spurious enrichment.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig1.png" target="_blank">
+        <img src="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig1.png" alt="Fig.1 Overview of the active learning experimental set-up" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the active learning set-up — the four-step iterative screening cycle and three diversity levels for the starting set.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig2.png" target="_blank">
+        <img src="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig2.png" alt="Fig.2 Effect of structural diversity in starting data" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Effect of starting-set structural diversity — active learning rapidly corrects initial diversity bias within one to five cycles regardless of acquisition function.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig3.png" target="_blank">
+        <img src="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig3.png" alt="Fig.3 Effect of acquisition functions on hit discovery" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Acquisition function benchmark across all targets — exploitation and mutual information dominate; acquisition function outweighs architecture choice.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig4.png" target="_blank">
+        <img src="assets/traversing-chemical-space-with-active-deep-learning-for-low-data-drug-discovery__s43588-024-00697-2/fig4.png" alt="Fig.4 Chemical space exploration by acquisition method" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Chemical space voyage — UMAP projections and substructure enrichment dynamics show adaptive, target-guided navigation of molecular diversity.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables (Table 1: dataset summary with hit rates; Table 2: molecular diversity hierarchy in starting sets). Extended Data Fig. 1 shows effect of starting-set size on hit discovery vs. similarity search.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, geospatial foundation models, 2SFCA/R2SFCA accessibility, public-health data fusion).</p>
+
+    <div class="idea">
+      <h3>① Replace anchored ensembling with a geospatially-structured uncertainty model</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's uncertainty estimates come from anchored ensembling, an approximate Bayesian method that treats all 100,000 molecules as exchangeable. Yet molecules in a screening library are not i.i.d. — they cluster in chemical space the same way locations cluster in geographic space. A direct extension: embed <strong>chemical-space topology as a graph prior</strong> (analogous to a spatial covariance) so that uncertainty propagates to neighboring molecules, making the mutual-information acquisition more sample-efficient. The paper's own UMAP projections (Fig. 4) already visualize this latent topology but never exploit it for acquisition. This extension also generalizes the active learning loop to <strong>hardware-accelerated in-memory Bayesian inference</strong>, as demonstrated in the parallel corpus paper on deep Bayesian active learning with analog hardware.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatially-structured uncertainty is exactly the problem I face in GeoAI: predictions at unobserved locations depend on measured neighbors. Treating chemical-space clustering as a spatial covariance gives me a blueprint for <strong>spatially-aware uncertainty propagation in geospatial foundation models</strong>, directly informing which unmeasured census tracts or health-facility catchments to label next in an active-geospatial-learning loop.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep Bayesian active learning using in-memory computing hardware — <a href="https://doi.org/10.1038/s43588-024-00744-y" target="_blank">10.1038/s43588-024-00744-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend acquisition functions with a contrastive representation to improve generalization beyond training chemical space</h3>
+      <p><span class="lab paper">Extending this paper</span>A persistent limitation the paper identifies is that ECFP-based fingerprints outperform graph networks in the low-data regime despite GNNs achieving higher accuracy on held-out test sets — possibly because GNNs need more data to form useful representations. A natural extension: pre-train a <strong>molecular contrastive encoder</strong> on large unlabeled molecular libraries (using graph augmentations) and use the resulting embeddings as a fixed representation layer for both architectures. This would give GNNs a strong prior even at 2–64 labeled molecules and could close the gap the paper observes. Mutual-information acquisition could then be recomputed in the lower-dimensional contrastive space, reducing acquisition cost significantly.</p>
+      <p><span class="lab mine">Added value to my research</span>Contrastive pre-training followed by fine-tuning is the paradigm I apply when <strong>fine-tuning geospatial foundation models</strong> on city-specific data. This paper's finding — that a good inductive bias outweighs architectural expressiveness at small N — validates my own strategy of using pre-trained representations (remote sensing, urban embeddings) rather than training GeoAI models from scratch on sparse public-health survey data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Transfer the active learning loop to out-of-distribution chemical space via edge-of-space generalization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper deliberately uses three well-curated LIT-PCBA datasets and acknowledges its retrospective setting. A critical open question it raises is how findings translate to <strong>structurally novel targets</strong>. An extension would couple this paper's iterative acquisition loop with a model that explicitly tracks its own out-of-distribution confidence — so that when the model is queried near the edge of chemical space, it signals low reliability and switches acquisition strategy. The corpus paper on molecular deep learning at the edge of chemical space directly addresses this failure mode and could be combined with the active learning framework to produce a self-aware screening engine.</p>
+      <p><span class="lab mine">Added value to my research</span>The "edge of distribution" problem is central to <strong>explainable ML for spatial prediction</strong>: my MGWR/GWR models also degrade when predicting health outcomes in rural or low-density areas not well represented in training data. A strategy that monitors distributional shift and adjusts model trust accordingly would directly improve spatial extrapolation in accessibility models applied to underserved regions — a core equity concern in my healthcare-access work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular deep learning at the edge of chemical space — <a href="https://doi.org/10.1038/s42256-026-01216-w" target="_blank">10.1038/s42256-026-01216-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Combine active learning with local chemical-space exhaustion to escape acquisition myopia</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper notes that exploitative acquisition repeatedly discovers the same chemistry (staying near known hits) while explorative acquisition sacrifices hit enrichment for novelty. A direct extension: incorporate a <strong>local exhaustion strategy</strong> that systematically enumerates near-neighbors of known hits in chemical space — as the corpus paper on exhaustive local chemical-space exploration via transformer models does — and then switches to global exploitative acquisition once the local neighborhood is saturated. This could provide the "early-cycle similarity boost" the paper observes (similarity search excels in the first 5 cycles) while preserving the later-cycle dominance of mutual-information-based deep learning.</p>
+      <p><span class="lab mine">Added value to my research</span>The idea of <em>local exhaustion followed by global exploration</em> maps directly onto my <strong>spatiotemporal kernel density estimation</strong> work, where local density estimation and global interpolation are decoupled. More concretely, in Monte Carlo simulation of service-area accessibility (R2SFCA), I could apply a similar two-phase strategy: exhaust the local neighborhood of known supply points first, then explore regions of high uncertainty in the demand surface — reducing the number of simulation runs needed for stable estimates.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Exhaustive local chemical space exploration using a transformer model — <a href="https://doi.org/10.1038/s41467-024-51672-4" target="_blank">10.1038/s41467-024-51672-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Recast the iterative screening loop as an active geospatial-data collection protocol for public-health surveillance</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core contribution is a <strong>budget-constrained iterative labeling framework</strong>: given a large unlabeled pool, decide which items to experimentally test next in order to maximize discovery within a fixed budget. This framework is entirely domain-agnostic. Extending the paper: replace the molecular library with a geospatial grid of census tracts or health-facility locations, replace bioactivity labels with field-survey measurements (e.g., telehealth uptake, mental-health access score), and use the mutual-information acquisition function to guide where field teams should collect data next. The paper's guidelines (five or more cycles, exploitation/mutual-information over exploration) translate directly to survey design under budget constraints. Drug-response transfer learning (predicting responses for unseen cell types) is an analogous cross-context generalization that further validates the framework's breadth.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the most direct bridge to my work on <strong>health geography and accessibility</strong>: field measurement of primary-care or mental-health service quality is expensive, and most surveys use uniform random sampling. Adopting an active-learning acquisition loop — prioritizing unsampled locations that are most uncertain or most likely to yield high-impact findings — would let me close data gaps in underserved areas with fewer field trips, directly improving equity-focused accessibility models (2SFCA/R2SFCA) and digital-health divide analyses. The paper's demonstration that starting diversity barely matters (it is corrected within 5 cycles) suggests that biased convenience samples common in health surveys can be rapidly corrected by subsequent active queries.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

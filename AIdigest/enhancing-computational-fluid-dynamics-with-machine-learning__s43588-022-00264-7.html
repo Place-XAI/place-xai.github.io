@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhancing computational fluid dynamics with machine learning — AI Digest</title>
+<meta name="description" content="AI Digest: Enhancing computational fluid dynamics with machine learning (Nature Computational Science, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Fluid dynamics</span>
+      <span class="tag">Scientific ML</span>
+      <span class="tag">Turbulence modeling</span>
+      <span class="tag">Reduced-order models</span>
+    </div>
+    <h1>Enhancing computational fluid dynamics with machine learning</h1>
+    <div class="meta">
+      <span class="authors">Ricardo Vinuesa · Steven L. Brunton</span>
+      <span><b>Published</b> 2022-06-27</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-022-00264-7" target="_blank">10.1038/s43588-022-00264-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-022-00264-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Machine learning is becoming a <strong>core technology for computational fluid dynamics (CFD)</strong>, with high-impact opportunities in three areas: <strong>accelerating direct numerical simulations</strong> (DNS) via learned discretization corrections, <strong>improving turbulence closure models</strong> (RANS and LES) with physics-aware neural networks and reinforcement learning, and <strong>developing enhanced reduced-order models</strong> through deep autoencoders and sparse dynamical-systems identification. Embedding physical constraints, enabling interpretability, and adopting open benchmarks are identified as critical steps to realize this potential at scale.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Frames the CFD × ML landscape at the right level of abstraction.</b> The paper organizes a sprawling literature — from finite-difference correction to RL-based subgrid models — into three well-bounded problem types, giving practitioners a clear action map rather than a list of papers.</li>
+      <li><b>Quantifies the computational-cost opportunity.</b> ML corrections on coarse grids (e.g., Kochkov et al.) achieve equivalent accuracy at 8–10× coarser resolution in each dimension — directly translating to orders-of-magnitude savings for DNS of weather, climate, and engineering flows.</li>
+      <li><b>Connects data-driven and physics-first worlds.</b> The perspective positions physics-informed neural networks (PINNs), SINDy, and invariance-embedding architectures as complementary rather than competing, highlighting how each handles the data-scarcity problem differently.</li>
+      <li><b>Identifies reproducibility and open benchmarks as bottlenecks.</b> The call for community benchmark systems and open-source data/software (citing standards for reproducible research) elevates a structural problem that limits progress across all three areas.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary scope at the right scale:</b> CFD underpins weather forecasting, aerospace engineering, biomedical simulation, and astrophysics — Nature Computational Science's core audience spans exactly these fields and appreciates Perspective-style synthesis at this breadth.</li>
+      <li><b>Timely at the ML inflection point:</b> published in 2022 when deep learning was demonstrating clear wins in scientific computing but CFD-specific guidance was scattered; the article fills a gap between domain journals and ML venues.</li>
+      <li><b>Authoritative but accessible:</b> co-authors lead turbulence-ML (Vinuesa) and data-driven dynamics (Brunton) labs — the credential pairing signals to editors that the coverage is credible and balanced.</li>
+      <li><b>Forward-looking "emerging areas" section:</b> non-intrusive sensing, quantum computing for CFD, and certifiable safety-critical models give the article staying power beyond a pure literature review.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd><strong>Perspective / Review</strong> — this paper does not generate new datasets. All empirical examples are drawn from cited primary studies; the authors do not report original simulations.</dd>
+      <dt>Simulation data cited</dt><dd>Referenced studies span DNS of turbulent channels and Kolmogorov flows (2D and 3D), LES of decaying isotropic turbulence and Taylor–Green vortex, and RANS benchmarks including duct flow and wavy-wall cases. Reynolds numbers range from Re<sub>τ</sub> = 180 (channel) to very-high-Re atmospheric boundary layers.</dd>
+      <dt>Software mentioned</dt><dd><strong>OpenFOAM</strong> (open-source CFD code, cited for RANS acceleration via CNN); no proprietary datasets are introduced.</dd>
+      <dt>Data availability</dt><dd>Not applicable — review article. The authors advocate for community benchmark systems and open-source data/software as a conclusion of the work.</dd>
+      <dt>Code availability</dt><dd>Not applicable — review article. Individual referenced studies are pointed to for implementation details.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Code</th><th>Role in paper</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Kochkov et al. DNS data</td><td>Primary example of ML-accelerated DNS (Fig. 2)</td><td>2D Kolmogorov flow; 8–10× coarser grid with ML correction</td><td><a href="https://doi.org/10.1073/pnas.2101784118" target="_blank">PNAS 2021</a></td></tr>
+        <tr><td>OpenFOAM + Spalart–Allmaras</td><td>RANS convergence acceleration via CNN (Obiols-Sales et al.)</td><td>Laminar &amp; turbulent flows; 1.9–7.4× speedup reported</td><td><a href="https://www.openfoam.com" target="_blank">openfoam.com</a></td></tr>
+        <tr><td>Multi-agent RL (Novati et al.)</td><td>SGS model for LES (Fig. 3)</td><td>Isotropic turbulence; generalizes across grid sizes</td><td>Cited as ref. 83 (Springer Nature Ltd.)</td></tr>
+        <tr><td>Flow-past-cylinder DNS</td><td>Autoencoder ROM example (Fig. 4)</td><td>Canonical benchmark; energetic coherent structures on parabolic submanifold</td><td>Standard CFD benchmark (multiple sources)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: As a Perspective article, all data cited belong to primary referenced studies. No original simulation dataset is provided by this paper. Numbers and ranges are taken verbatim from the article's descriptions of referenced works.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>ML for DNS acceleration:</b> learned spatial-derivative estimation, coarse-to-fine correction (super-resolution), CNN-based Poisson solvers, and ML-generated inflow boundary conditions — all aimed at cutting the quadratic-to-cubic cost scaling of DNS with Reynolds number.</li>
+      <li><b>RANS turbulence closure with ML:</b> tensor-basis neural networks (embedding Galilean invariance), physics-informed random forests, gene-expression programming (GEP), SINDy-based closed-form models, and interpretable residual networks (PiResNet) — all targeting the Reynolds-stress closure problem for complex geometries and separated flows.</li>
+      <li><b>LES subgrid-scale modeling:</b> supervised CNN/U-net approaches trained on filtered DNS, and unsupervised multi-agent reinforcement learning (RL) to tune the Smagorinski dissipation coefficient at each grid point — generalizing across grid sizes.</li>
+      <li><b>Reduced-order models (ROMs):</b> deep (nonlinear) autoencoders for manifold-coordinate learning, combined with LSTM networks, echo-state/reservoir networks, SINDy sparse regression, and operator inference for dynamics identification — extending classical POD/DMD into nonlinear regimes.</li>
+      <li><b>Physics-informed neural networks (PINNs):</b> automatic-differentiation-based PDE residual enforcement used for turbulence modeling, ROM generation, noisy-data denoising, and Poisson-equation acceleration.</li>
+      <li><b>Emerging methods discussed:</b> non-intrusive sensing (CNN wall-to-flow prediction), super-resolution via GANs, physical symmetry/invariance embedding, transfer learning, and quantum-computing prospects.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig1.png" target="_blank">
+        <img src="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig1.png" alt="Fig.1 Summary of ML areas enhancing CFD" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview schematic of ML applied to CFD — neural network, DNS mesh, LES/RANS decomposition, and dimensionality-reduction pipeline.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig2.png" target="_blank">
+        <img src="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig2.png" alt="Fig.2 ML-accelerated DNS vorticity comparison" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> ML-accelerated DNS: vorticity fields at four time steps comparing high-resolution, coarse-resolution, and coarse + ML correction (Kochkov et al.).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig3.png" target="_blank">
+        <img src="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig3.png" alt="Fig.3 Multi-agent RL LES subgrid-scale model" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Multi-agent RL for LES: agents at grid points compute the Smagorinski dissipation coefficient C<sub>s</sub> from local and global flow state variables.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig4.png" target="_blank">
+        <img src="assets/enhancing-computational-fluid-dynamics-with-machine-learning__s43588-022-00264-7/fig4.png" alt="Fig.4 Autoencoder ROM for flow past cylinder" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> NN autoencoder ROMs for flow past a cylinder — linear (POD/PCA, 3D coordinates) vs. nonlinear deep autoencoder (2D manifold), plus Galerkin vs. ML-based dynamics identification.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — Summary of applications of ML to enhance CFD, covering DNS acceleration, turbulence modeling, and ROM development examples).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, accessibility &amp; public health policy).</p>
+
+    <div class="idea">
+      <h3>① Transfer the paper's learned PDE-correction paradigm to spatiotemporal urban prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most concrete deliverable is the <strong>coarse-to-fine ML correction</strong> for DNS: a learned operator maps a low-resolution flow field to the missing fine-scale detail, eliminating the need to solve the full high-resolution system. The paper acknowledges this principle generalizes to "weather, climate, and engineering" flows but stops short of formalizing the operator. Extending it via the corpus's deep transfer operator framework — which learns conditional mappings between PDE solution families across distribution shifts — would allow the paper's correction to generalize across Reynolds numbers and geometry classes without retraining from scratch.</p>
+      <p><span class="lab mine">Added value to my research</span>The coarse-to-fine correction maps cleanly onto <strong>multi-resolution spatiotemporal urban modeling</strong>: a learned operator that maps coarse census-block disease/mobility indicators to fine-grained street-level accessibility could replace costly agent-based re-runs — the same architecture the paper uses to recover DNS vortex structures from coarse grids applied to recovering health-access gaps from aggregate data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep transfer operator learning for partial differential equations under conditional shift — <a href="https://doi.org/10.1038/s42256-022-00569-2" target="_blank">10.1038/s42256-022-00569-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Close the benchmark gap the paper identifies: open CFD data + standardized evaluation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's final paragraph calls for "proper benchmark systems and best practices for open-source data and software" — an explicit gap the authors do not fill. The corpus's dedicated Perspective on ML PDE solver benchmarks directly addresses this, proposing standardized problem classes, error metrics, and cost accounting that would make the paper's three areas (DNS, turbulence, ROM) mutually comparable. Extending the present paper with a companion benchmark suite — drawing on the corpus paper's evaluation framework — would convert its qualitative ranking of methods into a reproducible leaderboard.</p>
+      <p><span class="lab mine">Added value to my research</span>The same reproducibility challenge appears in <strong>GeoAI spatial-prediction benchmarks</strong>: different papers evaluate MGWR, ML ensembles, and graph learning on incompatible datasets. The CFD community's experience designing standardized PDE test cases is a model for constructing open, FAIR spatiotemporal health-prediction benchmarks — a direct input to my open-science/reproducibility theme.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Envisioning better benchmarks for machine learning PDE solvers — <a href="https://doi.org/10.1038/s42256-024-00962-z" target="_blank">10.1038/s42256-024-00962-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the paper's multi-agent RL turbulence framework to distributed urban-network control</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper highlights Novati et al.'s multi-agent RL as the most sophisticated LES subgrid-scale approach: each agent at a grid point observes local and global flow invariants and receives a reward based on simulation accuracy. The paper notes good generalization across grid sizes but limited testing beyond isotropic turbulence. The corpus paper on ML for PDEs identifies multi-scale operator learning as the logical complement — embedding the agents' reward structure directly into the operator's physics loss would unify the paper's RL approach with the broader PDE-solver literature and enable transfer to complex geometries.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-agent RL grid-point architecture is structurally analogous to a <strong>distributed facility-location optimizer</strong>: each healthcare or EV-charging facility "agent" observes local demand and global network state to adjust its effective service catchment — generalizing my 2SFCA/R2SFCA from static zones to adaptive, RL-tuned service areas that respond to changing urban conditions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Automating turbulence modelling by multi-agent reinforcement learning — <a href="https://doi.org/10.1038/s42256-020-00272-0" target="_blank">10.1038/s42256-020-00272-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Replace the paper's classical ROM coordinate systems with neural operators for free-boundary domains</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's ROM section ends with an open challenge: models trained on one geometry or boundary condition do not transfer. A direct extension: replace the paper's autoencoder-based latent coordinates with a <strong>deep neural operator</strong> that maps the PDE solution over an arbitrary (a priori unknown) domain — handling free boundaries (moving interfaces, shock fronts, separated-flow boundaries) that the paper's POD/autoencoder formulation cannot represent efficiently. The corpus paper on deep neural operators for free-boundary problems provides exactly this missing piece.</p>
+      <p><span class="lab mine">Added value to my research</span>Free-boundary operator learning maps onto <strong>irregular urban-region delineation</strong>: service catchment areas in my R2SFCA framework are defined by network reachability, not fixed circles — a neural operator conditioned on the street-graph geometry and demand field could learn to delineate catchment boundaries end-to-end, replacing the hand-engineered isochrone computation with a trainable spatial operator.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep neural operator for free boundary problems — <a href="https://doi.org/10.1038/s42256-026-01233-9" target="_blank">10.1038/s42256-026-01233-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply the paper's interpretable RANS modeling principles to explainable spatiotemporal prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper devotes substantial space to <strong>interpretability</strong> of turbulence models — gene-expression programming, SINDy, tensor-basis invariant networks — framing interpretability not as a post-hoc add-on but as a design principle embedded in the loss function and architecture. The paper identifies this as a hard open problem for deep learning but cites promising directions (Cranmer's symbolic regression, constrained model forms). Extending the paper: systematically compare the interpretability-accuracy frontier across RANS modeling approaches using unified diagnostic metrics — a natural next paper given the corpus paper on promising ML directions for PDEs, which calls for exactly such structured comparisons.</p>
+      <p><span class="lab mine">Added value to my research</span>Interpretable model design is the core of my <strong>explainable GeoAI</strong> line: the paper's SINDy and invariant-tensor approaches — identifying the fewest nonlinear terms that fit the data — are directly analogous to my MGWR/GWR work seeking the minimal spatially-varying functional form that explains health-outcome variance. Importing sparse regression and physics-constrained model selection from CFD into spatial regression could produce GWR variants with built-in sparsity and physical plausibility constraints, improving both interpretability and generalization across cities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Promising directions of machine learning for partial differential equations — <a href="https://doi.org/10.1038/s43588-024-00643-2" target="_blank">10.1038/s43588-024-00643-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitting elephants in modern machine learning by statistically consistent interpolation — AI Digest</title>
+<meta name="description" content="AI Digest: Fitting elephants in modern machine learning by statistically consistent interpolation (Nature Machine Intelligence, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">ML Theory</span>
+      <span class="tag">Statistical Learning</span>
+      <span class="tag">Generalization</span>
+      <span class="tag">Non-parametric Methods</span>
+    </div>
+    <h1>Fitting elephants in modern machine learning by statistically consistent interpolation</h1>
+    <div class="meta">
+      <span class="authors">Partha P. Mitra</span>
+      <span><b>Published</b> 2021-05-19</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-021-00345-8" target="_blank">10.1038/s42256-021-00345-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-021-00345-8" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Interpolating noisy training data &#8212; once dismissed as textbook overfitting &#8212; can be <strong>statistically consistent</strong>: provably optimal in the large-data limit. The <strong>wiNN algorithm</strong> (weighted interpolating nearest neighbours) demonstrates this rigorously, explaining why overparameterized deep networks generalize well despite fitting every training point exactly. This reframes modern ML as a <strong>third epistemology</strong> distinct from physics (sparse priors, few parameters) and biological brains (rich innate mesoscale circuitry), one that succeeds purely through empirical data accumulation but structurally lacks explanatory power and extrapolation ability.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves a long-standing paradox.</b> Classical statistics warned that interpolating noisy data causes overfitting and poor generalization; this Perspective proves that statistically consistent interpolation (SCI) is achievable and explains the <em>mechanism</em> rigorously via the wiNN estimator.</li>
+      <li><b>Provides a principled framework for overparameterization.</b> The bias-variance analysis of wiNN shows zero training error can coexist with Bayes-optimal generalization error &#8212; offering the first clean non-parametric proof of why modern "more parameters than data" regimes can work.</li>
+      <li><b>Contextualizes deep networks within statistical theory.</b> By linking wiNN, kernel machines, and infinitely-wide nets via the neural tangent kernel, the paper places deep net success within a coherent statistical framework and identifies open questions about deep net SCI.</li>
+      <li><b>Explains adversarial examples as a structural necessity.</b> The paper proves that interpolating learners <em>must</em> create adversarial islands around mislabelled training points &#8212; adversarial vulnerability is not a fixable bug but a mathematical consequence of interpolation.</li>
+      <li><b>Opens a research agenda toward brain-inspired priors.</b> Comparing data-hungry interpolation with sample-efficient biological brains motivates incorporating mesoscale neural circuit architecture into ML to reduce training data requirements.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Perspective-scale synthesis across disciplines:</b> unifies theoretical physics, classical statistics, computer science, and neurobiology under a single organizing concept &#8212; SCI &#8212; ideally suited to NMI's interdisciplinary Perspective format.</li>
+      <li><b>Timely theoretical grounding for a hot empirical phenomenon:</b> the double-descent and benign-overfitting literature was expanding rapidly in 2021; this paper provides a clean conceptual anchor the field needed at that moment.</li>
+      <li><b>Broad scientific and societal implications:</b> argues against replacing scientific theorizing with data interpolation, and identifies a concrete path (mesoscale brain circuit mimicry) for more sample-efficient AI &#8212; themes with sustained relevance beyond ML.</li>
+      <li><b>Novel algorithm with formal guarantees:</b> introduces the wiNN estimator with proven statistical consistency bounds, supplying a concrete methodological contribution that grounds the conceptual argument.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9411;</span><h2>Core Data &#8212; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Data nature</dt><dd>This is a <strong>theoretical Perspective paper</strong>. It does not analyze an empirical external dataset; instead, it uses <strong>small synthetic simulation examples</strong> to illustrate the wiNN algorithm. No data repository or benchmark dataset is cited in the data-availability statement.</dd>
+      <dt>Synthetic examples</dt><dd><strong>Fig. 1 (regression):</strong> n = 50 synthetic 1D samples, y<sub>i</sub> = x<sub>i</sub> + &#957;<sub>i</sub>, x<sub>i</sub> ~ Uniform[0,1], &#957;<sub>i</sub> ~ N(0,1); wiNN with logarithmic weights and k = 20. <strong>Fig. 2 (classification):</strong> n = 50 points from two isotropic 2D Gaussian classes centered at (2,0) and (0,0), each with unit variance, k = 20.</dd>
+      <dt>Theoretical results</dt><dd>Consistency bounds are derived analytically for Holder-&#945; function classes in dimension d: excess regression risk O(n<sup>&#8722;2&#945;/(2&#945;+d)</sup>), classification risk within O(n<sup>&#8722;&#945;/(2&#945;+d)</sup>) of Bayes risk &#8212; no numerical data fitting required.</dd>
+      <dt>Data availability</dt><dd>No external dataset. The paper carries no data-availability statement; all illustrative data are generated synthetically from specified distributions described in the figure captions.</dd>
+      <dt>Code availability</dt><dd>No code repository is cited. The wiNN algorithm is fully specified analytically in equation (1); the original wiNN reference is Bhattacharya &amp; Das (2019), cited as ref. 7.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Synthetic regression data (Fig. 1)</td><td>Illustrate wiNN interpolation in 1D regression</td><td>n = 50 samples, Gaussian noise N(0,1)</td><td>Analytically specified; no external link</td></tr>
+        <tr><td>Synthetic classification data (Fig. 2)</td><td>Illustrate wiNN classification boundary and adversarial islands</td><td>n = 50 samples, 2D Gaussian classes, k = 20</td><td>Analytically specified; no external link</td></tr>
+        <tr><td>Theoretical convergence bounds (Eqs. 2&#8211;3)</td><td>Prove statistical consistency of wiNN for Holder function classes</td><td>General: dimension d, smoothness &#945;, n &#8594; &#8734;</td><td>Formal proof; see paper Methods and ref. 7</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this is a theory Perspective paper with no empirical benchmark evaluation. All numerical illustrations use small synthetic examples explicitly constructed in the text. No standard benchmarks (MNIST, CIFAR, UCI) are used.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>wiNN estimator (weighted interpolating nearest neighbours):</b> a Nadaraya-Watson kernel estimator with singular weights w(x, x<sub>(i)</sub>) = (r<sub>(k+1)</sub>/r<sub>(i)</sub>)<sup>&#948;</sup> &#8722; 1, 0 &#8804; &#948; &lt; d/2; the singularity at the origin enforces exact interpolation of training labels.</li>
+      <li><b>Statistical consistency proofs:</b> bias-variance decomposition of excess risk yields optimal sample-size-dependent k ~ n<sup>2&#945;/(2&#945;+d)</sup>; regression risk O(n<sup>&#8722;2&#945;/(2&#945;+d)</sup>) matches minimax lower bounds for Holder-&#945; functions in dimension d.</li>
+      <li><b>Double-descent analysis:</b> multivariate linear regression with random design matrix Y = X&#946; (m observations, p parameters) explains why generalization error diverges at m = p (square, singular matrix) then improves in the overparameterized regime p &gt; m.</li>
+      <li><b>Estimator landscape taxonomy (Fig. 3):</b> conceptual mapping of known estimators &#8212; wiNN, Hilbert kernel interpolator, simplex interpolation, kernel machines, infinitely wide nets &#8212; onto the (consistent × interpolating × parametric/non-parametric) axes.</li>
+      <li><b>Epistemological comparison (Fig. 4):</b> formal characterization of three modelling philosophies &#8212; physical law (strong priors, few parameters), biological brains (innate mesoscale circuitry, modest data), and modern ML (weak priors, interpolation of massive datasets) &#8212; and their statistical and energetic properties.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig1.png" target="_blank">
+        <img src="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig1.png" alt="Fig.1 wiNN algorithm applied to 1D linear regression" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> wiNN applied to 1D regression (n=50, k=20): the red interpolating curve spikes to fit every noisy point yet tracks the true y=x line accurately in between, demonstrating that interpolation and good estimation coexist.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig2.png" target="_blank">
+        <img src="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig2.png" alt="Fig.2 Classification using wiNN, illustrated in 2D" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> 2D wiNN classification (n=50, k=20): plug-in class-probability surfaces recover the Bayes boundary while creating tiny misclassification islands around mislabelled points &#8212; a structural mechanism for adversarial examples.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig3.png" target="_blank">
+        <img src="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig3.png" alt="Fig.3 SCI placed in context" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Taxonomy of regression estimators along the axes of statistical consistency, data interpolation, and parametric/non-parametric character &#8212; situates wiNN, Hilbert interpolator, simplex interpolation, kernel machines, and deep nets.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig4.png" target="_blank">
+        <img src="assets/fitting-elephants-in-modern-machine-learning-by-statistically-consistent-interpolation__s42256-021-00345-8/fig4.png" alt="Fig.4 Data-driven ML as a third epistemology" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Summary schematic of the three epistemologies: physical law (a), biological brains (b), and deep nets (c) &#8212; contrasting their parameter counts, data requirements, prior structure, and energetic efficiency.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 tables in main text. The paper is a theory Perspective; all quantitative results are analytical bounds, not tabulated experimental results.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&#8212; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &#8212; GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, urban health).</p>
+
+    <div class="idea">
+      <h3>&#9312; Apply SCI theory to explain and predict when geospatial ML generalizes across cities</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper proves wiNN achieves statistical consistency when effective dimensionality d<sub>eff</sub> is small enough that training data can overcome the curse of dimensionality, with sample requirements n ~ (1/&#949;)<sup>1+d/(2&#945;)</sup>. A direct extension: test this conjecture empirically on geospatial prediction tasks &#8212; do deep learning models for urban mobility or land use generalize across unseen cities <em>because</em> geospatial feature spaces have low intrinsic dimensionality (data lie on manifolds defined by shared urban structure)? The paper predicts minimum sample sizes as a function of d<sub>eff</sub>, which could be calibrated against city-to-city transfer performance to validate SCI's explanatory scope.</p>
+      <p><span class="lab mine">Added value to my research</span> My GeoAI work regularly faces the question of how many cities or training samples are needed before a spatial prediction model generalizes to unseen urban environments. The SCI convergence rate formula provides a <em>principled</em> relationship between dataset size, feature dimensionality, and expected prediction error &#8212; a quantitative guide for designing multi-city training corpora rather than relying on empirical trial and error. This directly informs corpus design for fine-tuning geospatial foundation models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting human mobility flows in cities using deep learning on satellite imagery &#8212; <a href="https://doi.org/10.1038/s41467-025-65373-z" target="_blank">10.1038/s41467-025-65373-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Use SCI's adversarial-island mechanism to spatially map label-noise fragility in healthcare accessibility models</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper proves that any interpolating learner creates misclassification islands in the immediate neighbourhood of mislabelled training points &#8212; and in regions with finite density of mislabelled points, adversarial examples are dense in the large-sample limit. An extension: map these adversarial regions <em>geographically</em> for spatial ML models by identifying zones where label noise in training data (e.g. incorrect POI categories, mismatched census boundaries, geocoding errors) creates brittle local predictions. This operationalizes the paper's theoretical insight as a spatial uncertainty diagnostic.</p>
+      <p><span class="lab mine">Added value to my research</span> In my 2SFCA / R2SFCA healthcare-accessibility models, training-set label noise &#8212; incorrectly geocoded clinic addresses, mis-attributed service capacities, boundary mismatches between catchment areas and census units &#8212; could generate exactly these adversarial islands: zones where the model confidently misestimates access. Mapping such zones would create a spatially explicit uncertainty layer, directly indicating where field validation effort should be concentrated before policy decisions such as facility siting or telehealth deployment are made.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead &#8212; <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Exploit wiNN's non-extrapolation property as an out-of-distribution alarm for spatiotemporal forecasting</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper shows that interpolating learners revert to an edge-constant value outside training support &#8212; they cannot extrapolate. This is presented as a weakness, but a direct extension: formalize this collapse as a <em>parameter-free out-of-distribution detector</em>. When a model's output flattens to its training-domain boundary value for new inputs, this signals distributional shift without requiring a held-out OOD dataset or a separate detector network. The extension would formalize the detection threshold using the paper's own bias-variance framework.</p>
+      <p><span class="lab mine">Added value to my research</span> My spatiotemporal work with mobile-phone records and COVID-era mobility data regularly encounters distribution shift &#8212; pre-pandemic training distributions become invalid post-shock. A wiNN-inspired OOD sentinel that flags prediction collapse at the edge of training support would give my forecasting pipeline an automatic distributional alarm, preventing silent model failures in policy-critical scenarios such as epidemic transmission forecasting or telehealth demand prediction on post-shock mobility baselines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Forecasting SARS-CoV-2 transmission and clinical risk at small spatial scales by the application of machine learning architectures to syndromic surveillance data &#8212; <a href="https://doi.org/10.1038/s42256-022-00538-9" target="_blank">10.1038/s42256-022-00538-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Use the SCI sample-size formula as a principled active-sampling guide for multi-source GeoAI data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper's convergence rate n ~ (1/&#949;)<sup>1+d/(2&#945;)</sup> gives a quantitative relationship between error target &#949;, effective input dimension d, function smoothness &#945;, and required sample size n. A practical extension: treat this as an <em>active sampling criterion</em>. Estimate d<sub>eff</sub> and &#945; from an initial pilot dataset, then compute the minimum n needed to reach a target &#949;. Compared against an existing corpus, this immediately tells researchers whether adding more data will substantially improve performance, or whether the bottleneck is feature dimensionality calling for better variable selection.</p>
+      <p><span class="lab mine">Added value to my research</span> My projects fuse multi-source geospatial data &#8212; remote sensing, GPS trajectories, social media, POIs, mobile-phone records &#8212; into high-dimensional feature vectors. The SCI framework provides a theoretically motivated argument for why physics-informed feature selection should outperform purely data-driven dimensionality reduction: lower d<sub>eff</sub> exponentially reduces required sample sizes. This directly motivates my physics-informed graph learning approach as a principled way to bake structural priors into the model and reduce the effective feature space.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training data composition determines machine learning generalization and biological rule discovery &#8212; <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Bridge the paper's "third epistemology" to explainable GeoAI by encoding causal spatial priors</h3>
+      <p><span class="lab paper">Extending this paper</span> The paper argues that pure data-interpolating learners cannot replace scientific theories because they do not select important explanatory details &#8212; they are predictive but not explanatory, and they require prohibitively large training sets as dimensionality grows. A concrete extension: design hybrid models that embed causal or physical constraints (population-density monotonicity, gravity-decay functional forms, flow conservation on road networks) as hard constraints on an otherwise interpolating learner. Such hybrid models would sit between the paper's rationalist (physics) and empiricist (ML) poles &#8212; like biological brains with innate mesoscale circuitry &#8212; with provably lower sample-size requirements than pure interpolation while retaining mechanistic interpretability.</p>
+      <p><span class="lab mine">Added value to my research</span> This is the core rationale of my physics-informed graph learning agenda. The paper formalizes why pure GeoAI models trained on big data without spatial priors need prohibitively large corpora yet generalize at all &#8212; and why adding causal or physical priors reduces d<sub>eff</sub>, cuts data requirements, and provides the mechanistic interpretability that interpolating learners structurally lack. The epistemological framing gives my hybrid spatial model approach a formal statistical justification, and motivates incorporating known spatial interaction laws (e.g. 2SFCA catchment decay, Tobler's first law) as soft constraints in GNN architectures.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Causal inference and counterfactual prediction in machine learning for actionable healthcare &#8212; <a href="https://doi.org/10.1038/s42256-020-0197-y" target="_blank">10.1038/s42256-020-0197-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

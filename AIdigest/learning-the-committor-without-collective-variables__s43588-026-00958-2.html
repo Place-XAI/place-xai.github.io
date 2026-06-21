@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning the committor without collective variables — AI Digest</title>
+<meta name="description" content="AI Digest: Learning the committor without collective variables (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Molecular Dynamics</span>
+      <span class="tag">Committor Function</span>
+      <span class="tag">Explainable AI</span>
+    </div>
+    <h1>Learning the committor without collective variables</h1>
+    <div class="meta">
+      <span class="authors">Sergio Contreras Arredondo · Chenyu Tang · Radu A. Talmazan · Alberto Megías · Cheng Giuseppe Chen · Christophe Chipot</span>
+      <span><b>Published</b> 2026-02-17</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-00958-2" target="_blank">10.1038/s43588-026-00958-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-00958-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>graph neural network architecture based on geometric vector perceptrons (GVP-GNNs)</strong> — called qGNN — learns the molecular committor function <strong>directly from raw atomic coordinates</strong>, bypassing the need for hand-crafted collective variables (CVs). Applied to four molecular systems of increasing complexity (NANMA dipeptide, trialanine, a Diels–Alder reaction, and Trp-cage protein folding), the method recovers accurate committor maps, infers precise rate constants consistent with known benchmarks, and <strong>identifies key atoms driving transitions via native node-sensitivity analysis</strong> — all without prior chemical intuition about relevant degrees of freedom.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Eliminates the collective-variable bottleneck.</b> CV selection is the hardest and most assumption-laden step in rare-event simulation; qGNN removes it entirely, enabling unbiased discovery of reaction coordinates from atomic coordinates alone.</li>
+      <li><b>Delivers atom-level interpretability.</b> The node-sensitivity analysis ranks every heavy atom by its contribution to the transition — providing human-readable mechanistic insight that is architecture-native, not a post-hoc approximation.</li>
+      <li><b>Generalizes across chemistry scales.</b> From a 10-atom dipeptide in vacuum to a 20-residue protein in explicit solvent and a quantum-chemical reaction, the <em>same</em> GVP-GNN architecture is reused unchanged, demonstrating genuine architectural universality.</li>
+      <li><b>Accurate kinetics without manual tuning.</b> Rate constants computed from the learned committor agree with experimental and theoretical benchmarks across all four systems, providing a path toward automated, quantitative kinetic characterization.</li>
+      <li><b>Opens Markov-state and enhanced-sampling integration.</b> The trained committor can serve directly as a CV for enhanced sampling or as input to multistate Markov-state models, bridging data-driven learning with established simulation infrastructure.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Architectural novelty with broad impact:</b> GVP-GNNs were previously applied to protein design tasks; repurposing them as variational committor solvers is a genuinely new methodological contribution spanning statistical mechanics and deep learning.</li>
+      <li><b>Scalable and transferable:</b> the same architecture, same hyperparameters, and same loss function work across four qualitatively different molecular systems — signaling a general principle, not a system-specific trick.</li>
+      <li><b>Theory meets AI rigorously:</b> the variational committor principle is embedded directly into the loss, giving the learning problem a physical foundation rather than treating it as black-box regression.</li>
+      <li><b>Built-in interpretability:</b> atom-level sensitivity follows directly from the architecture, satisfying the growing expectation that computational-science ML models explain themselves, not merely predict.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Molecular systems</dt><dd>Four systems of increasing complexity: <strong>NANMA</strong> (alanine dipeptide, 10 heavy atoms, vacuum, 300 K); <strong>trialanine</strong> (capped tripeptide, 19 heavy atoms, vacuum); <strong>Diels–Alder reaction</strong> (ethylene + vinylacetylene → cyclohexa-1,2-diene, quantum-chemical simulation); <strong>Trp-cage protein</strong> (20-residue, explicit solvent, 208 µs trajectory). Supplementary: <strong>villin</strong> (35-residue, 470 heavy atoms).</dd>
+      <dt>MD trajectories</dt><dd>NANMA: 100 ns biased (WTM-eABF); Trialanine: 100 ns biased; Diels–Alder: 32 walkers × 2 ns = 64 ns total (4 walkers used for training due to memory); Trp-cage: 208 µs unbiased MD provided by D.E. Shaw Research.</dd>
+      <dt>Simulation software</dt><dd><strong>NAMD</strong> with <strong>Colvars</strong> library (WTM-eABF enhanced sampling). Force fields: CHARMM22 (NANMA), AMBER ff14SB (trialanine). Quantum chemistry: <strong>GFN2-xTB</strong> semi-empirical (Diels–Alder).</dd>
+      <dt>Reference benchmarks</dt><dd>Shooting committor estimates from <strong>OpenPathSampling</strong> package (NANMA); variational committor network (ref. 16, cross-validation); Eyring equation from coupled-cluster calculations (Diels–Alder rate constant).</dd>
+      <dt>Code &amp; data</dt><dd>All code and configuration files deposited on <strong>Zenodo</strong> at <a href="https://doi.org/10.5281/zenodo.18259668" target="_blank">10.5281/zenodo.18259668</a>. Raw trajectory data available upon request (file size too large for direct deposit).</dd>
+      <dt>ML software stack</dt><dd><strong>PyTorch Geometric</strong> + <strong>GVP library</strong> (Jing et al., 2021) for model implementation; Adam optimizer; Xavier weight initialization; K-means clustering for transition-ensemble analysis; <strong>Python</strong>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>NAMD + Colvars (WTM-eABF)</td><td>Biased MD trajectory generation</td><td>100 ns per peptide; 64 ns (32 walkers) for Diels–Alder</td><td><a href="https://www.ks.uiuc.edu/Research/namd/" target="_blank">NAMD site</a></td></tr>
+        <tr><td>D.E. Shaw Research Trp-cage trajectory</td><td>Long-timescale unbiased folding MD</td><td>208 µs, 20-residue Trp-cage, explicit solvent</td><td>Provided by D.E. Shaw Research (ref. 28 in article)</td></tr>
+        <tr><td>OpenPathSampling</td><td>Reference shooting committor (NANMA validation)</td><td>NANMA dipeptide, unbiased shooting trajectories</td><td><a href="http://openpathsampling.org" target="_blank">openpathsampling.org</a></td></tr>
+        <tr><td>Zenodo repository</td><td>Code + configuration files for reproducibility</td><td>qGNN model + all simulation configs</td><td><a href="https://doi.org/10.5281/zenodo.18259668" target="_blank">zenodo.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: raw trajectory data are available upon request due to file size; only configuration files are deposited on Zenodo. Exact atom counts per system are stated in the article (10 heavy atoms NANMA, 19 trialanine, 470 villin). The Trp-cage 208 µs trajectory is from a third-party source (D.E. Shaw Research).</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>GVP-GNN architecture (qGNN):</b> each molecular conformation is encoded as a graph where atoms are nodes and edges encode interactions. Geometric vector perceptron layers process joint scalar and 3D-vector features while preserving rotation and reflection <strong>equivariance</strong>. A permutation-invariant sum pooling produces a scalar committor value per configuration.</li>
+      <li><b>Variational committor loss:</b> training minimizes the <strong>net forward scalar flux</strong> J<sub>AB</sub>[q; τ] from transition path theory, augmented by boundary-condition penalties enforcing q = 0 at state A and q = 1 at state B (equation 2 in Methods).</li>
+      <li><b>Reweighting for biased simulations:</b> WTM-eABF biasing forces corrupt the dynamics; an importance-reweighting scheme using the perturbed potential of mean force recovers unbiased time-correlation functions, validated by convergence of the free energy profile.</li>
+      <li><b>Node-sensitivity analysis:</b> for each atom i, the absolute sensitivity s<sub>i</sub> is the trajectory-averaged Euclidean norm of the gradient of q with respect to the atom's vector feature — a per-atom importance score arising natively from the model (equation 5 in Methods).</li>
+      <li><b>Rate-constant estimation:</b> transition rates k<sub>AB</sub> are derived from the learned committor and the MD statistics; benchmarked against experimental values, shooting-based estimates, and Eyring/coupled-cluster theory (Table 1).</li>
+      <li><b>K-means clustering of transition ensemble:</b> configurations with q ∈ (0.45, 0.55) are clustered to visualize structurally distinct transition-state ensembles (applied to Trp-cage folding).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/learning-the-committor-without-collective-variables__s43588-026-00958-2/fig1.png" target="_blank">
+        <img src="assets/learning-the-committor-without-collective-variables__s43588-026-00958-2/fig1.png" alt="Fig. 1: qGNN learning sketch" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Sketch of the qGNN learning process — an MD trajectory is fed into the GVP-GNN, which outputs a scalar committor q<sub>ω</sub> optimized via the variational committor principle.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-the-committor-without-collective-variables__s43588-026-00958-2/fig2.png" target="_blank">
+        <img src="assets/learning-the-committor-without-collective-variables__s43588-026-00958-2/fig2.png" alt="Fig. 2: NANMA isomerization — learned committor and node sensitivity" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> NANMA isomerization: (a) learned committor projected onto (ϕ, ψ)-space with free-energy contours; (b) relative node sensitivity per heavy atom; (c,d) reference committors from shooting strategies and variational committor network.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — transition rate constants k<sub>AB</sub> for all four systems vs. benchmarks). Extended Data Figs. 1–3 show committor projections and sensitivity analyses for trialanine, Diels–Alder, and Trp-cage; Supplementary contains 15+ figures and 5 mathematical sections.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>① Transfer qGNN's collective-variable-free paradigm to spatial accessibility modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>The qGNN's central innovation is eliminating hand-crafted CVs: instead of pre-specifying dihedral angles, the GVP-GNN learns relevant coordinates from raw atom positions via a variational loss. A direct extension of this paper: apply the same philosophy to systems where "collective variables" are spatial features rather than molecular ones — the variational principle could be reframed around a spatial flux objective (e.g., flow between population zones and facilities), enabling the network to discover which spatial embeddings best discriminate reachable vs. inaccessible areas without pre-engineering travel-time radii or decay functions. Extended molecular systems such as villin (470 heavy atoms) demonstrate that the architecture scales; analogously, city-scale graphs with millions of nodes are the natural stress-test.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA/R2SFCA framework pre-specifies catchment radii and distance-decay functions — precisely the "CV" problem the qGNN solves. Adapting the variational training strategy to a GNN on street-network graphs could yield a <strong>CV-free spatial accessibility allocator</strong>: the network learns which geographic features explain healthcare utilization patterns from GPS mobility data, directly analogous to qGNN learning which atoms drive molecular transitions — without imposing a Gaussian decay or fixed radius threshold.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Iterative variational learning of committor-consistent transition pathways using artificial neural networks — <a href="https://doi.org/10.1038/s43588-025-00828-3" target="_blank">10.1038/s43588-025-00828-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use node-sensitivity analysis as a blueprint for explainable spatial GNNs</h3>
+      <p><span class="lab paper">Extending this paper</span>The node-sensitivity score (equation 5) is a gradient-based, architecture-native interpretability measure that ranks atoms by causal importance to the transition — without SHAP, LIME, or other post-hoc approximation tools. A direct extension of the paper: generalize from per-atom sensitivity to <em>subgraph sensitivity</em> (residue-level, secondary-structure-level), enabling hierarchical explanation of folding transitions at multiple scales. The paper already steps in this direction with edge-sensitivity for Trp-cage top-four atoms; extending this to full residue subgraphs and secondary-structure motifs would provide a richer multi-resolution mechanistic narrative.</p>
+      <p><span class="lab mine">Added value to my research</span>The node-sensitivity formulation is a clean blueprint for <strong>native GNN explainability in GeoAI</strong>: replacing atoms with spatial units (census tracts, grid cells) and molecular trajectories with spatiotemporal mobility sequences, the same gradient-norm approach provides architecture-native spatial attribution for health access prediction — more rigorous than SHAP on tabular features and directly compatible with my physics-informed graph learning agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Embed hard physical constraints into the GVP-GNN loss for spatiotemporal processes</h3>
+      <p><span class="lab paper">Extending this paper</span>The qGNN loss is physically grounded in the variational flux principle, but additional physical constraints — detailed balance (microscopic reversibility), or conservation of total probability flux — are currently only soft penalties via the boundary-condition term. Extending the paper: enforce these as hard equality constraints (Lagrangian or projected-gradient approach) so the learned committor satisfies exact physical symmetries, improving data efficiency and extrapolation to configurations unseen during training. This would be especially valuable for large systems (villin-class or beyond) where trajectory coverage is necessarily sparse.</p>
+      <p><span class="lab mine">Added value to my research</span>This extends directly to my <strong>physics-informed graph learning</strong> agenda in spatial contexts: embedding continuity equations (flow conservation at network nodes) or epidemic flux balance (SIR compartments) as hard constraints in a GNN trained on mobility or health surveillance data achieves the same physically-anchored learning the qGNN demonstrates for molecular dynamics — producing spatiotemporal predictions that provably respect known physical or epidemiological conservation laws.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend qGNN to multistate systems for rare-event detection in health networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly acknowledges generalizing to more than two metastable states via state-resolved committor functions as a natural future direction. Implementing this: learn a full matrix of pairwise committors q<sub>AB</sub>, q<sub>AC</sub>, q<sub>BC</sub> … for k states simultaneously — sharing the GVP-GNN backbone across all pairs while differentiating by state-boundary penalties — and derive the MSM transition matrix directly from the multistate committor set. This would simultaneously provide the slow degrees of freedom (via shared sensitivity analysis) and the kinetic network, replacing multiple pipeline steps with a single end-to-end training.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatiotemporal health analytics, rare-event detection is directly analogous: identifying infrequent but high-consequence state transitions — sudden deterioration of primary-care access, emergence of telehealth deserts, outbreak ignition in a community network — requires exactly the multistate committor framework. Learning which spatial features drive these regime shifts without pre-specifying indicators maps to <strong>monitoring health-access networks for phase transitions</strong> using the same variational GNN principle, with sensitivity analysis revealing which community-level attributes act as the true reaction coordinates.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Combine equivariant GVP backbone with contrastive pre-training for data-efficient transfer</h3>
+      <p><span class="lab paper">Extending this paper</span>The qGNN is trained from scratch for each molecular system, requiring sufficient biased trajectory data per system. For expensive or data-scarce systems (e.g., large proteins, novel reactive materials), pre-training the GVP-GNN backbone via contrastive molecular representation learning across a large library of molecules — then fine-tuning only the committor prediction head — would drastically reduce the trajectory budget needed per new system. The paper's demonstration that the same architecture generalizes across NANMA, Diels–Alder, and Trp-cage provides strong evidence that a shared feature space already exists; pre-training would make it explicit and reusable.</p>
+      <p><span class="lab mine">Added value to my research</span>The pre-train–fine-tune paradigm mirrors exactly what I pursue for <strong>geospatial foundation models</strong>: a GVP-GNN backbone pre-trained on molecular graphs is directly analogous to a spatial GNN backbone pre-trained on city-scale networks, where the backbone captures generic graph geometry and the fine-tuned head solves a domain-specific task (health access, EV charging efficiency, telehealth penetration). The qGNN's demonstration that equivariant GNNs learn physically meaningful functions from limited system-specific data strengthens the theoretical basis for geospatial GNN pre-training with embedded physical priors.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Using machine learning to go beyond potential energy surface benchmarking for chemical reactivity — <a href="https://doi.org/10.1038/s43588-023-00549-5" target="_blank">10.1038/s43588-023-00549-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

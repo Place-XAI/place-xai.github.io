@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine learning for data-centric epidemic forecasting — AI Digest</title>
+<meta name="description" content="AI Digest: Machine learning for data-centric epidemic forecasting (Nature Machine Intelligence, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Epidemic Forecasting</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Digital Surveillance</span>
+      <span class="tag">Hybrid Models</span>
+    </div>
+    <h1>Machine learning for data-centric epidemic forecasting</h1>
+    <div class="meta">
+      <span class="authors">Alexander Rodríguez · Harshavardhan Kamarthi · Pulak Agarwal · Javen Ho · Mira Patel · Suchet Sapre · B. Aditya Prakash</span>
+      <span><b>Published</b> 2024-09-27</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-024-00895-7" target="_blank">10.1038/s42256-024-00895-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-024-00895-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The COVID-19 pandemic catalyzed a <strong>data-centric revolution in epidemic forecasting</strong>: new digital streams — mobility records, online symptom surveys, wastewater RNA, genomic data, retail signals — now complement traditional clinical surveillance, enabling more expressive and timely models. A taxonomy of methods spanning <strong>statistical, deep learning, and hybrid mechanistic–AI approaches</strong> reveals that no single model dominates across all settings; ensemble methods consistently outperform individual approaches. Persistent challenges — data quality, calibrated uncertainty, real-world deployment, and bridging forecasts to actionable decisions — define the open frontier for the field.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Timely, authoritative synthesis at a critical inflection point.</b> Written in the wake of COVID-19 yet drawing on H1N1, Ebola, and dengue experience, this review arrives precisely when public health agencies (CDC, ECDC, PAHO) are institutionalizing forecasting hubs — giving the community a shared conceptual map.</li>
+      <li><b>Introduces the "data-centric" framing.</b> By foregrounding data diversity as the primary driver of recent progress — rather than model architecture alone — the paper shifts the research agenda toward principled data curation, quality control, and multi-modal fusion.</li>
+      <li><b>Reveals the ensemble as the practical gold standard.</b> Cross-initiative evidence shows that no single model wins consistently; well-calibrated ensembles of heterogeneous models (the CDC COVID-19 Forecast Hub approach) are the most reliable real-world tool available today.</li>
+      <li><b>Identifies actionable open problems.</b> From federated learning for sensitive health records to causal representation learning for long-horizon projections, the paper provides a roadmap that can directly shape funding calls and research programs.</li>
+      <li><b>Stakes out the human-in-the-loop gap.</b> Ad hoc expert adjustments are acknowledged as crucial but unmeasured — pointing toward a richer model-evaluation science that accounts for institutional knowledge and technical debt.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Bridges machine learning and epidemiology:</b> squarely within NMI's remit of AI methods with high societal impact; epidemic forecasting is a canonical application domain for time-series and graph deep learning.</li>
+      <li><b>Cross-disciplinary synthesis:</b> NMI values reviews that open new methodological territory to the broader ML community — the data-centric framing does exactly that by drawing in researchers who would not typically engage with epidemiology literature.</li>
+      <li><b>Directly informs public health infrastructure:</b> the paper's findings are already operationalized through CDC, ECDC, and related hubs, demonstrating real-world deployment that NMI prizes.</li>
+      <li><b>Defines a new sub-field:</b> by coining and systematizing "data-centric epidemic forecasting," the paper provides a durable reference point, the type of contribution that generates sustained citation in an applied ML venue.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>Review paper — synthesizes the literature rather than generating a primary dataset. Data sources described are those reviewed from the literature, not a single collected dataset.</dd>
+      <dt>Clinical surveillance</dt><dd><strong>ILINet / CDC FluSight</strong> (US, 2013–present): influenza-like illness rates from sentinel providers; <strong>WHO FluNet</strong>: global influenza reporting; <strong>COVID-19 Forecast Hub dataset</strong> (Cramer et al., Sci. Data, 2022, DOI:10.1038/s41597-022-01517-w): multi-team US COVID-19 forecasts.</dd>
+      <dt>Digital / mobility</dt><dd><strong>Google COVID-19 Community Mobility Reports</strong> (Aktay et al., Google, accessed 2024): global mobility changes across retail, transit, workplaces. <strong>Multiscale mobility networks</strong> (Balcan et al., PNAS, 2009): commuting + air-travel networks used in spatial epidemic models.</dd>
+      <dt>Online surveys</dt><dd><strong>Facebook / CMU COVID-19 Symptom Survey</strong> (Astley et al., PNAS, 2021): global monitoring via Facebook user base; <strong>ILI symptom self-report surveys</strong> (Flu Near You / InfluenzaNet).</dd>
+      <dt>Wastewater</dt><dd><strong>SARS-CoV-2 RNA in wastewater</strong> (Peccia et al., Nat. Biotechnol., 2020, DOI:10.1038/s41587-020-0684-z): community-level infection dynamics tracked from sewage samples; a leading-indicator source for COVID-19.</dd>
+      <dt>Social media &amp; search</dt><dd><strong>Twitter/X</strong> flu-mention streams; <strong>Google Flu Trends</strong> (search query volumes) — foundational early digital surveillance sources discussed extensively in the review.</dd>
+      <dt>Genomics</dt><dd><strong>GISAID / SARS-CoV-2 lineage sequences</strong> (referenced via Kraemer et al., Science, 2021): spatiotemporal invasion dynamics of B.1.1.7 lineage — used to inform phylodynamic components of hybrid models.</dd>
+      <dt>Retail &amp; other</dt><dd><strong>Supermarket retail records</strong> (Miliou et al., PLoS Comput. Biol., 2021): pharmaceutical and consumer-product sales as proxy for symptom burden. Remote-sensing satellite imagery monitoring hospital car-park vacancies (Butler et al., 2014).</dd>
+      <dt>Open repository</dt><dd><strong>COVIDcast / Delphi open repository</strong> (Reinhart et al., PNAS, 2021): publicly accessible archive of real-time COVID-19 indicators (test positivity, claims, mobility, surveys) for the US — highlighted by the authors as a model for future data infrastructure.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>COVID-19 Forecast Hub (Cramer et al.)</td><td>Multi-model ensemble forecasts, ground-truth case/death counts</td><td>US national + state level, weekly, 2020–2022</td><td><a href="https://doi.org/10.1038/s41597-022-01517-w" target="_blank">Sci. Data</a></td></tr>
+        <tr><td>Google COVID-19 Community Mobility Reports</td><td>Population mobility as leading epidemic indicator</td><td>Global, daily, 2020–2022</td><td><a href="https://www.google.com/covid19/mobility/" target="_blank">google.com/covid19/mobility</a></td></tr>
+        <tr><td>Facebook / CMU Symptom Survey</td><td>Syndromic digital surveillance; global monitoring</td><td>Global Facebook user base, 2020–2022</td><td><a href="https://doi.org/10.1073/pnas.2111455118" target="_blank">PNAS 2021</a></td></tr>
+        <tr><td>Wastewater SARS-CoV-2 RNA (Peccia et al.)</td><td>Pre-clinical leading indicator of community spread</td><td>US communities, 2020</td><td><a href="https://doi.org/10.1038/s41587-020-0684-z" target="_blank">Nat. Biotechnol.</a></td></tr>
+        <tr><td>COVIDcast / Delphi open repository (Reinhart et al.)</td><td>Multi-source real-time COVID-19 indicator archive</td><td>US county + state, daily, 2020–2021</td><td><a href="https://doi.org/10.1073/pnas.2111452118" target="_blank">PNAS 2021</a></td></tr>
+        <tr><td>CDC ILINet / FluSight</td><td>Ground-truth influenza surveillance + forecasting benchmark</td><td>US, weekly by HHS region/state, 2013–present</td><td><a href="https://www.cdc.gov/flu/weekly/" target="_blank">cdc.gov/flu</a></td></tr>
+        <tr><td>GISAID genomic sequences</td><td>Phylodynamic / lineage spread modeling</td><td>Global, millions of SARS-CoV-2 genomes</td><td><a href="https://www.gisaid.org" target="_blank">gisaid.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: as a review paper, this article synthesizes datasets from the literature rather than collecting a primary dataset. Exact sample sizes, time windows, and spatial resolution vary by the individual studies reviewed; numbers above are drawn verbatim from cited sources within the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Conceptual pipeline taxonomy:</b> three-stage framework — (1) data processing and target definition, (2) model training and validation, (3) utilization and decision-making — providing a unifying scaffold for the literature.</li>
+      <li><b>Classical statistical and ML methods:</b> autoregressive models (ARIMA variants), nearest-neighbour regression, elastic nets, multi-task Gaussian processes, dynamic Poisson autoregression, minimum-description-length methods; text-based methods (word embeddings, topic models, Twitter-to-SIR stage mapping).</li>
+      <li><b>Deep learning methods:</b> recurrent neural networks (LSTM/GRU) and transformers for temporal modelling; graph neural networks (GNNs) for spatiotemporal propagation incorporating mobility-flow graphs; clustering-based architectures for temporal-similarity transfer; transfer learning and meta-learning for data-scarce emerging pathogens.</li>
+      <li><b>Probabilistic / uncertainty quantification:</b> kernel density estimation, delta density, Gaussian processes, non-parametric deep generative models learning forecast distributions as probabilistic combinations of historical segments; proper scoring rules (weighted interval score, log score).</li>
+      <li><b>Hybrid mechanistic–ML models:</b> data assimilation (ensemble Kalman filters integrating digital streams into SIR/SEIR compartmental models); differentiable simulators enabling gradient-based parameter calibration; discrepancy modelling (ML corrects mechanistic residuals); physics-informed neural networks (EINNs); tensor factorization with epidemiological regularization (STELAR).</li>
+      <li><b>Ensemble / wisdom-of-crowds methods:</b> equally weighted average ensembles, adaptive weighting, representative clustering, Bayesian model averaging, prediction markets, expert elicitation — consistently the best-performing operational approach across FluSight, COVID-19 Forecast Hub, and Ebola challenges.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/machine-learning-for-data-centric-epidemic-forecasting__s42256-024-00895-7/fig1.png" target="_blank">
+        <img src="assets/machine-learning-for-data-centric-epidemic-forecasting__s42256-024-00895-7/fig1.png" alt="Fig. 1 Overview of the data-centric epidemic forecasting pipeline" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the data-centric epidemic forecasting pipeline — three stages from heterogeneous data collection through model training to real-time utilization and decision-making (resource allocation, dashboards, risk assessment).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-for-data-centric-epidemic-forecasting__s42256-024-00895-7/fig2.png" target="_blank">
+        <img src="assets/machine-learning-for-data-centric-epidemic-forecasting__s42256-024-00895-7/fig2.png" alt="Fig. 2 Conceptualization of disease surveillance data sources" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Pyramid conceptualization of disease surveillance data sources — levels from pre-symptomatic exposure through clinical diagnosis; clinical sources on the left, digital proxy indicators (mobility, social media, search) on the right.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — most prominent capabilities and gaps of modelling paradigms: mechanistic, statistical/ML, and hybrid). Supplementary contains Figs. 1–9 and extended methods text.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable ML, physics-informed graph learning, public/urban health policy).</p>
+
+    <div class="idea">
+      <h3>① Spatially explicit epidemic forecasting with health-accessibility as a structural covariate</h3>
+      <p><span class="lab paper">Extending this paper</span>The review identifies spatial dynamics and hierarchical relationships as a key open challenge, and notes that demographic and healthcare-vulnerability features have been used as static covariates in some models. However, the paper does not leverage <strong>healthcare facility accessibility</strong> (how quickly people can reach a clinic) as a structured spatial prior that modulates both exposure and care-seeking behavior. Extending this paper: incorporate 2SFCA/R2SFCA accessibility scores for primary care and testing facilities as dynamic graph-node features in a GNN epidemic model — operationalizing the paper's call for "more principled methods using spatial dynamics and hierarchical relationships."</p>
+      <p><span class="lab mine">Added value to my research</span>My R2SFCA and 2SFCA pipelines produce spatial accessibility surfaces for healthcare facilities at fine resolution. Encoding these as node attributes in a graph-based epidemic forecasting model (the GNN architectures reviewed in this paper) would create a <strong>bidirectional linkage</strong>: accessibility shapes epidemic spread, and epidemic burden reveals accessibility shortfalls. This directly bridges my health-geography and GeoAI agendas, and could feed into telehealth/digital-divide analyses by distinguishing communities with vs. without physical fallback access during surges.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Mobility network models of COVID-19 explain inequities and inform reopening — <a href="https://doi.org/10.1038/s41586-020-2923-3" target="_blank">10.1038/s41586-020-2923-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Physics-informed graph learning for multi-pathogen spatiotemporal co-dynamics</h3>
+      <p><span class="lab paper">Extending this paper</span>The review covers hybrid physics-informed neural networks (EINNs) for single-pathogen dynamics but does not address the co-circulation of multiple respiratory pathogens — a setting explicitly emerging in post-COVID years where influenza, RSV, SARS-CoV-2, and other viruses compete for the same susceptible population. Extending this paper: build a <strong>multi-pathogen physics-informed GNN</strong> where each compartmental model (SIR/SEIR per pathogen) acts as a constraint on the latent dynamics, and shared mobility-graph structure captures cross-pathogen spatial coupling — as called for in the paper's "multi-scale behavioural models" and "phylodynamics" sections.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps directly onto my physics-informed graph-learning research agenda: the SIR/SEIR ordinary differential equations serve as the "physics prior," and the GNN learns residual cross-pathogen interactions that the mechanistic model cannot capture. The approach also provides a natural test bed for my spatiotemporal kernel density estimation methods to characterize uncertainty in multi-pathogen spread surfaces across urban agglomerations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Impacts of human mobility on the citywide transmission dynamics of 18 respiratory viruses in pre- and post-COVID-19 pandemic years — <a href="https://doi.org/10.1038/s41467-024-48528-2" target="_blank">10.1038/s41467-024-48528-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Machine-learned mobility maps as transferable epidemic features</h3>
+      <p><span class="lab paper">Extending this paper</span>The review discusses mobility data extensively as a covariate but treats mobility networks as given — they are sourced from GPS traces, cell towers, or Google Mobility Reports and inserted directly into models. However, the paper explicitly calls for transfer learning approaches that generalize across pathogens and geographies. Extending it: learn a <strong>canonical mobility representation</strong> — a latent graph embedding of human movement patterns — from historical inter-epidemic periods, then adapt it via meta-learning to new pathogen emergence settings where mobility data may be unavailable or biased, closing the paper's gap on "limited data" settings for emerging pandemics.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on multi-source data fusion (mobile phone, GPS trajectories, social media) and spatiotemporal analysis positions me to build these transferable mobility embeddings. A learned mobility graph that generalizes across cities would also enrich my job-housing network and urban agglomeration analyses by providing a principled, epidemic-aware mobility prior — connecting urban analytics and public health forecasting in a shared representational framework.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Forecasting influenza activity using machine-learned mobility map — <a href="https://doi.org/10.1038/s41467-021-21018-5" target="_blank">10.1038/s41467-021-21018-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Explainable ML for feature attribution in multi-source epidemic models</h3>
+      <p><span class="lab paper">Extending this paper</span>The review identifies explainability as a critical open challenge for public health decision-making: deep learning models incorporating mobility, surveys, wastewater, and genomics achieve better predictive accuracy but offer little intuition about which signals matter when and where. The paper calls for methods that "bridge forecasts and decision-making" and notes linear/mechanistic models as the current explainability baseline. Extending this paper: apply <strong>spatially-aware Shapley-value attribution</strong> (spatial SHAP) to multi-source GNN epidemic models to produce county-level feature-importance maps — which data stream (mobility vs. wastewater vs. social media) drove each forecast, varying across space and epidemic phase.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable ML for spatial prediction is a core method in my toolkit (MGWR, GWR, ML ensembles with SHAP). Applying spatial SHAP to epidemic forecasting models would generalize my explainability pipeline from static health-geography outcomes (e.g., mental-health accessibility determinants) to dynamic spatiotemporal processes — and would directly produce policy-ready attribution maps that public health agencies can use to decide which surveillance investments have the highest forecast return.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatiotemporal prediction of COVID-19 cases using inter- and intra-county proxies of human interactions — <a href="https://doi.org/10.1038/s41467-021-26742-6" target="_blank">10.1038/s41467-021-26742-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Linking spatial epidemic forecasts to equity-aware resource allocation</h3>
+      <p><span class="lab paper">Extending this paper</span>The review discusses decision-making at strategic and tactical scales — lockdown policies, ventilator allocation — but treats these as downstream consumers of forecasts rather than co-optimized objectives. The paper notes fairness in ML for health as an open challenge. Extending it: couple a GNN epidemic forecaster with an <strong>equity-aware facility-location optimization layer</strong> that dynamically reallocates testing sites, vaccine distribution centers, or ICU capacity in response to probabilistic forecasts — minimizing expected burden while explicitly penalizing spatial disparities in access (efficiency × equity Pareto optimization informed by real-time predictions).</p>
+      <p><span class="lab mine">Added value to my research</span>This is the intersection of my EV-charging efficiency-vs-equity optimization work and epidemic forecasting: the same multi-objective facility-location formulation generalizes from electric vehicle infrastructure to public-health resource siting. Forecast uncertainty becomes a risk parameter in the optimization (robust facility location under stochastic demand), directly leveraging the paper's uncertainty-quantification methods and my Monte Carlo simulation expertise. This could yield a generalizable GeoAI decision-support tool for health policy under pandemic conditions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Competition between transmission lineages mediated by human mobility shapes seasonal influenza epidemics in the US — <a href="https://doi.org/10.1038/s41467-025-59757-4" target="_blank">10.1038/s41467-025-59757-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accelerating the prediction of stable materials with machine learning — AI Digest</title>
+<meta name="description" content="AI Digest: Accelerating the prediction of stable materials with machine learning (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&larr; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Materials informatics</span>
+      <span class="tag">Crystal stability</span>
+      <span class="tag">Graph neural networks</span>
+      <span class="tag">Active learning</span>
+    </div>
+    <h1>Accelerating the prediction of stable materials with machine learning</h1>
+    <div class="meta">
+      <span class="authors">Sean D. Griesemer &middot; Yi Xia &middot; Chris Wolverton</span>
+      <span><b>Published</b> 2023-11-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00536-w" target="_blank">10.1038/s43588-023-00536-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00536-w" target="_blank">nature.com &#x2197;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Machine learning has become a <strong>rapid, powerful alternative to DFT and experiment</strong> for predicting thermodynamic stability of materials. Recent ML models — from composition-based regressors to crystal graph convolutional networks and ML interatomic potentials — can identify <strong>new stable compounds at T = 0 and at finite temperature</strong> (including disordered high-entropy alloys) at a fraction of first-principles cost. The field's frontier is extending ML to <strong>finite-temperature knobs</strong> (vibrational free energy, configurational disorder, pressure, surface energy) where training data are scarce and first-principles theory is computationally prohibitive.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x2605;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the combinatorial barrier.</b> Even restricting to 80 technologically relevant elements and ~10,000 known structural prototypes, there are <strong>billions of possible compounds</strong> that DFT cannot screen exhaustively. ML compresses this cost by orders of magnitude and makes planet-scale stability surveys feasible.</li>
+      <li><b>Bridges zero-temperature and finite-temperature stability.</b> Most DFT databases assume T = 0; this Review maps out ML methods (ML force fields, moment tensor potentials, SISSO descriptors) that extend stability prediction to <strong>vibrational entropy, configurational disorder, and applied pressure</strong> — conditions real materials must survive in batteries, turbines, and thin films.</li>
+      <li><b>Demonstrates closed-loop materials discovery.</b> Active-learning campaigns combining ML scoring, uncertainty quantification, and autonomous DFT validation have already confirmed <strong>hundreds to thousands of new stable compounds</strong> with convex-hull distances below 1 meV per atom.</li>
+      <li><b>Charts an honest roadmap.</b> The Review identifies concrete ML gaps — pressure, surface/interfacial energy, synthesizability vs. thermodynamic stability — giving the community specific targets beyond formation enthalpy prediction.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary methods synthesis:</b> unifies ML frameworks (SISSO, CGCNN, MODNet, ML potentials) with condensed-matter theory and high-throughput databases — the core scope of Nature Computational Science.</li>
+      <li><b>Forward-looking and prescriptive:</b> the Outlook section frames concrete open problems (finite-temperature stability, inverse design, synthesizability) making it a community reference rather than a single computational result.</li>
+      <li><b>Broad societal relevance:</b> stable-material prediction underpins batteries, thermoelectrics, catalysts, and structural alloys — connecting computational science to energy transition and advanced manufacturing at scale.</li>
+      <li><b>Methods-infrastructure perspective:</b> highlights open databases (Materials Project, OQMD, AFLOW, JARVIS, NOMAD, OPTIMADE) and reproducible ML frameworks as essential scientific infrastructure, reinforcing open-science principles.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x26C1;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Review scope</dt><dd>This is a <strong>Review article</strong>. It synthesizes results from across the ML-materials literature and does not produce a new dataset. Individual studies reviewed here use different subsets of DFT databases; numbers below reflect those studies' training corpora as cited in the text.</dd>
+      <dt>Materials Project</dt><dd>Large-scale DFT database of relaxed crystal structures and formation enthalpies (Jain et al., APL Materials, 2013). Primary training source for CGCNN, MEGNet, AtomSets, and many other reviewed models. Scale at publication: on the order of <strong>150,000+ computed entries</strong> across diverse chemistries.</dd>
+      <dt>OQMD</dt><dd><strong>Open Quantum Materials Database</strong> (Kirklin et al., npj Comput. Mater., 2015). Used in the quaternary Heusler discovery study (Kim et al.) with a training corpus of <strong>96,000 QH + 184,000 TH + 146,000 NH</strong> compounds for a model achieving 37 meV per atom MAE.</dd>
+      <dt>AFLOW</dt><dd><strong>Automatic Flow</strong> for high-throughput materials discovery (Curtarolo et al., Comput. Mater. Sci., 2012). One of four DFT databases explicitly named; millions of computed entries.</dd>
+      <dt>JARVIS</dt><dd><strong>Joint Automated Repository for Various Integrated Simulations</strong> (Choudhary et al., npj Comput. Mater., 2020). Over 70,000 3D and 2D materials with DFT and ML properties.</dd>
+      <dt>NOMAD / OPTIMADE</dt><dd><strong>Novel Materials Discovery</strong> repository (Draxl &amp; Scheffler, MRS Bull., 2018); <strong>OPTIMADE</strong> provides unified API access to all major DFT databases.</dd>
+      <dt>ICSD</dt><dd><strong>Inorganic Crystal Structure Database</strong> — source of experimentally known crystal structure prototypes; the Review cites <strong>~10,000 known structural prototypes</strong> across 80 technologically relevant elements.</dd>
+      <dt>Experimental HEA data</dt><dd><strong>401 experimental high-entropy alloy compositions</strong> (Huang et al.) used to train the ANN phase classifier for disordered compounds (SS / IM / SS+IM).</dd>
+      <dt>Molecular crystal data</dt><dd><strong>444 hydrocarbon molecular crystals</strong> (Krynski et al.) for SOAP + transfer-learning vibrational free-energy prediction; 60 training crystals achieved &lt;10 meV per atom MAD at 300 K.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Materials Project</td><td>DFT formation enthalpies + crystal structures (primary ML training)</td><td>~150 k+ computed entries; all chemistries</td><td><a href="https://materialsproject.org" target="_blank">materialsproject.org</a></td></tr>
+        <tr><td>OQMD</td><td>DFT formation enthalpies (Heusler and diverse compound training)</td><td>Cited subsets: 96 k QH + 184 k TH + 146 k NH</td><td><a href="http://oqmd.org" target="_blank">oqmd.org</a></td></tr>
+        <tr><td>AFLOW</td><td>High-throughput DFT structures and properties</td><td>Millions of computed entries</td><td><a href="http://aflowlib.org" target="_blank">aflowlib.org</a></td></tr>
+        <tr><td>JARVIS</td><td>DFT + ML properties for materials design</td><td>&gt;70 k 3D and 2D materials</td><td><a href="https://jarvis.nist.gov" target="_blank">jarvis.nist.gov</a></td></tr>
+        <tr><td>NOMAD / OPTIMADE</td><td>Federated access to all DFT databases via single API</td><td>All above + more via OPTIMADE API</td><td><a href="https://nomad-lab.eu" target="_blank">nomad-lab.eu</a> / <a href="https://www.optimade.org" target="_blank">optimade.org</a></td></tr>
+        <tr><td>ICSD</td><td>Experimental crystal structure prototypes</td><td>~10,000 known structural prototypes</td><td><a href="https://icsd.products.fiz-karlsruhe.de" target="_blank">FIZ Karlsruhe</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: This is a Review paper; no new dataset is released. All database sizes are drawn verbatim from citations in the text and reflect those studies' time of publication. Some figures (e.g., total Materials Project entries) have grown since publication.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x2699;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Composition-based feature engineering:</b> atomic number, stoichiometry, and elemental properties (Magpie, Matminer, AFLOW-ML) fed to random forest, gradient boosting, or shallow neural networks for rapid formation-enthalpy screening across large search spaces.</li>
+      <li><b>Symbolic / compressed-sensing regression (SISSO):</b> sure independence screening and sparsifying operator reduce high-dimensional feature spaces to interpretable algebraic descriptors; demonstrated on binary compound stability, Gibbs energies at 300&ndash;1,800 K, perovskite stability, and HEA phase selection.</li>
+      <li><b>Crystal graph neural networks (CGCNN, iCGCNN, MEGNet, AMDNet):</b> crystal structures encoded as graphs with atomic-property nodes and bond-information edges; convolutional layers learn structure&ndash;property relationships with no fixed-length feature constraint, enabling arbitrary-composition training.</li>
+      <li><b>Transfer learning and multi-task learning (ElemNet, AtomSets, MODNet):</b> model weights pre-trained on large DFT datasets are transferred to smaller experimental or vibrational-property datasets; MODNet jointly predicts multiple properties using feature selection and a genome encoder.</li>
+      <li><b>ML interatomic potentials (MTP, SNAP, GAP, Behler&ndash;Parrinello NNPs):</b> learn local atomic environments from DFT; used for molecular dynamics, lattice dynamics, and thermodynamic integration to access <strong>finite-temperature Helmholtz/Gibbs free energies</strong> at DFT accuracy and MD speed.</li>
+      <li><b>Active learning:</b> ML prediction uncertainty (Bayesian GP, ensemble variance, or hyperbolic tangent bounds) guides sequential DFT labeling of the most informative candidates, enabling high-hit-rate discovery campaigns over millions of candidate compounds.</li>
+      <li><b>Elemental substitution:</b> iterative substitution of chemically similar elements into known structure prototypes generates and DFT-confirms new stable compounds; Wang et al. discovered 18,479 stable compounds from 189,981 likely candidates this way.</li>
+      <li><b>Convex hull construction:</b> ML-predicted formation enthalpies used to compute convex hull distances (CHDs) at T = 0; ML Gibbs free energies (including vibrational entropy and disorder contributions) enable temperature-dependent convex hull stability maps.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x25A6;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig1.png" target="_blank">
+        <img src="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig1.png" alt="Fig.1 Convex hull varying with temperature" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> How the convex hull changes with temperature. At T = 0 phases 1, 2, 6 are stable; at finite T phases 1, 3, 4, 6 lie on the hull, motivating finite-temperature ML.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig2.png" target="_blank">
+        <img src="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig2.png" alt="Fig.2 ML frameworks SISSO, CGCNN, MODNet" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Three representative ML frameworks: SISSO (compressed-sensing descriptor selection), CGCNN (crystal graph CNN), and MODNet (multi-property joint learning with genome encoder).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig3.png" target="_blank">
+        <img src="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig3.png" alt="Fig.3 Elemental substitution workflow" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Iterative elemental substitution workflow. Each DFT-confirmed stable compound seeds the next generation of substituted candidates, enabling self-amplifying discovery.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig4.png" target="_blank">
+        <img src="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig4.png" alt="Fig.4 ML models for vibrational free energy" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> ML models for vibrational free energy at T &gt; 0: random-forest IFC prediction from tensor descriptors (left) and thermodynamic integration accelerated by moment tensor potentials (right).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig5.png" target="_blank">
+        <img src="assets/accelerating-the-prediction-of-stable-materials-with-machine-learning__s43588-023-00536-w/fig5.png" alt="Fig.5 ML for disordered compounds and HEAs" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> ML for disordered compounds: ANN phase classifier (SS / IM / SS+IM) for HEAs (left) and active-learning MTP scheme for structural relaxation in multi-principal-element alloys (right).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 per metadata). Quantitative ML model comparisons are presented in prose within each section rather than in a dedicated table.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#x2726;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal prediction, explainable ML, physics-informed graph learning, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>&#x2460; Evaluate ML stability predictions with a standardized community benchmark</h3>
+      <p><span class="lab paper">Extending this paper</span>The Review observes that MAE comparisons across studies are unreliable because each paper uses its own train/test split, chemical coverage, and evaluation metric. A direct extension: adopt the standardized evaluation protocol from the companion benchmark (Riebesell et al., 2025) that tests crystal stability predictions on a universal held-out set drawn from the WBM dataset, tracking recall of stable materials, precision of predicted convex-hull distances, and discovery rate. Applying this framework retrospectively to the model families reviewed here would transform qualitative narrative comparisons into a true community leaderboard.</p>
+      <p><span class="lab mine">Added value to my research</span>The same rigor is overdue in spatial prediction benchmarks. My explainable ML pipelines for spatial prediction (housing prices, hospital demand, EV charging utilization) typically use random train/test splits that inflate apparent accuracy in auto-correlated spatial data. Adapting the held-out-zone evaluation protocol from materials ML &mdash; reserving entire geographic regions as test sets &mdash; would sharpen generalizability claims across cities and regions, directly supporting my advocacy for reproducible GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A framework to evaluate machine learning crystal stability predictions &mdash; <a href="https://doi.org/10.1038/s42256-025-01055-1" target="_blank">10.1038/s42256-025-01055-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#x2461; Apply uncertainty-driven active learning to spatially sparse geospatial training sets</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's finite-temperature ML branch is bottlenecked by the cost of generating DFT displaced-atom supercell training sets. The uncertainty-driven active-learning protocol (Schran et al., Nature Computational Science, 2023) addresses this by querying MD trajectories for extrapolative configurations and adding them on the fly. Integrating this into the paper's vibrational-free-energy pipeline would allow ML potentials to scale to far more chemistries with fewer initial DFT calculations, making the paper's roadmap actionable for rare-element and complex alloy systems.</p>
+      <p><span class="lab mine">Added value to my research</span>The analogy in GeoAI is spatially sparse labeled outcome data &mdash; rare disease incidence, clinic waiting times in rural areas, or fine-grained mental health access scores. Applying GP-uncertainty acquisition to select the next geographic cell for field survey or administrative data linkage directly matches my 2SFCA service-area delineation work, where labeled demand data are costly and spatially uneven. An active-learning wrapper around my R2SFCA model would prioritize new data collection in the highest-uncertainty zones.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials &mdash; <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#x2462; Transfer contrastive pre-training from molecular graphs to crystal graph encoders for small-data regimes</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's graph-neural-network branch (CGCNN, MEGNet) trains end-to-end on formation enthalpy labels, which are abundant. But for vibrational and pressure-stability properties where labeled examples number in the hundreds, the supervised signal is too weak. A direct extension: adopt contrastive pre-training on the large unlabeled crystal-graph corpus &mdash; analogous to MolCLR (Wang et al., 2022) for molecules &mdash; where augmented views of the same crystal structure are pulled together in embedding space. The resulting self-supervised encoder, fine-tuned on small labeled phonon or vibrational datasets, should generalize better than training from scratch, directly addressing the "small dataset" challenge the Review identifies as the central barrier for T &gt; 0 ML.</p>
+      <p><span class="lab mine">Added value to my research</span>Contrastive pre-training on large unlabeled spatial data (satellite tiles, street-view imagery, POI co-occurrence graphs) is central to my work on fine-tuning geospatial foundation models. The materials pipeline confirms that contrastive objectives transfer well even when the domain has strong physical symmetry constraints &mdash; an encouraging prior for my remote-sensing contrastive pre-training targeting urban health indicators where labeled ground-truth is scarce.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks &mdash; <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#x2463; Predict water/chemical stability of functional materials (MOFs) using the same convex-hull ML framework</h3>
+      <p><span class="lab paper">Extending this paper</span>The Review focuses on inorganic crystals and alloys. The same ML stability framework &mdash; composition features, graph networks, transfer learning, active DFT validation &mdash; can be directly applied to metal-organic frameworks (MOFs), where water and chemical stability is the critical bottleneck for deployment in gas separation and catalysis. Bridging the paper's methodology to MOFs would extend the convex-hull ML paradigm to hybrid organic-inorganic materials, multiplying its practical impact across the porous-materials community and connecting to work already demonstrated by Sun et al. (Nature Machine Intelligence, 2020).</p>
+      <p><span class="lab mine">Added value to my research</span>The concept of predicting "stability under environmental stress" translates directly to predicting the stability of spatial systems under perturbation &mdash; e.g., healthcare facility network resilience under population shifts, or EV charging network stability under uneven demand. The same active-learning + graph-encoder + DFT-oracle pipeline I would borrow from this paper could identify which urban facility configurations are structurally fragile, informing my efficiency-vs-equity optimization work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Prediction of water stability of metal&ndash;organic frameworks using machine learning &mdash; <a href="https://doi.org/10.1038/s42256-020-00249-z" target="_blank">10.1038/s42256-020-00249-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#x2464; Build a physics-infused heterogeneous graph network for joint multi-property materials stability</h3>
+      <p><span class="lab paper">Extending this paper</span>The Review separately surveys composition-based models, crystal graph CNNs, and ML potentials as distinct families with no unified architecture. A synthesizing extension: build a single <strong>physics-infused heterogeneous graph network</strong> &mdash; with atom nodes, bond edges, and global thermodynamic state nodes (T, P, composition disorder) &mdash; analogous to the physics-infused heterogeneous GNN recently applied to complex nanomaterials (Choudhary et al., Nature Computational Science, 2025). Encoding physical constraints (convex-hull geometry, vibrational sum rules, Hume-Rothery rules) as soft losses would allow the architecture to jointly predict T = 0 CHD, Helmholtz free energy at T &gt; 0, and disordered-alloy phase classification in one forward pass.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the materials-science instantiation of my physics-informed graph learning agenda for GeoAI. In urban health the "global state nodes" become city-level covariates (GDP per capita, climate zone, health policy) and the physical constraints become spatial autocorrelation priors (Moran's I, gravity-flow balance, journey-to-work conservation). A heterogeneous GNN encoding these priors would transfer my spatiotemporal prediction models from data-rich cities to data-scarce ones &mdash; exactly the cross-city generalization challenge I face in public-health accessibility mapping and telehealth-divide analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials &mdash; <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

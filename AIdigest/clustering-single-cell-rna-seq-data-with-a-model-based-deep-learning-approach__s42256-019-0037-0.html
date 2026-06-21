@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clustering single-cell RNA-seq data with a model-based deep learning approach — AI Digest</title>
+<meta name="description" content="AI Digest: Clustering single-cell RNA-seq data with a model-based deep learning approach (Nature Machine Intelligence, 2019)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">scRNA-seq Clustering</span>
+      <span class="tag">Deep Embedded Clustering</span>
+      <span class="tag">ZINB Model</span>
+      <span class="tag">Dropout Imputation</span>
+    </div>
+    <h1>Clustering single-cell RNA-seq data with a model-based deep learning approach</h1>
+    <div class="meta">
+      <span class="authors">Tian Tian · Ji Wan · Qi Song · Zhi Wei</span>
+      <span><b>Published</b> 2019-04-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-019-0037-0" target="_blank">10.1038/s42256-019-0037-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-019-0037-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>scDeepCluster integrates a <strong>zero-inflated negative binomial (ZINB) model</strong> with <strong>deep embedded clustering</strong> into a unified end-to-end framework that simultaneously learns feature representations and cluster assignments from raw scRNA-seq count data. Tested on four real datasets spanning four sequencing platforms and extensive simulations with variable dropout rates, scDeepCluster <strong>outperforms all seven state-of-the-art competing methods</strong> on NMI, clustering accuracy, and ARI while scaling <strong>linearly</strong> with sample size — making it practical for datasets of 100,000+ cells where spectral clustering methods fail entirely.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves the sparse-count problem directly in the clustering objective.</b> Dropout events in scRNA-seq inflate zero counts and are the principal statistical obstacle for clustering; scDeepCluster embeds the ZINB likelihood as its reconstruction loss so that dropout is modeled explicitly rather than treated as noise.</li>
+      <li><b>Breaks the scalability wall of spectral clustering.</b> State-of-the-art spectral methods (MPSSC, SIMLR) require a full graph Laplacian — O(n²) space and O(n³) decomposition — making them infeasible beyond a few thousand cells. scDeepCluster's running time grows linearly with n, enabling analysis of 100,000-cell datasets on a single GPU.</li>
+      <li><b>Unifies imputation and clustering into one end-to-end model.</b> Prior pipelines imputed dropouts first and then clustered on the denoised data — a sub-optimal two-stage strategy. The joint objective of scDeepCluster forces feature learning and clustering to co-optimize, improving both stages simultaneously.</li>
+      <li><b>Platform-agnostic and fully reproducible.</b> Validated across four distinct sequencing platforms (10X Genomics, droplet barcoding, Microwell-seq, sci-RNA-seq), with fully open-source code, model weights, and data on GitHub.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel methodological contribution at the ML–biology interface:</b> the key advance is a principled probabilistic model (ZINB) embedded inside a deep learning clustering architecture — a design pattern that is transferable beyond single-cell genomics.</li>
+      <li><b>Rigorous, multi-platform benchmark:</b> comparisons against seven competing methods on four distinct real platforms plus extensive controlled simulations represent the kind of comprehensive empirical evaluation NMI expects for algorithmic papers.</li>
+      <li><b>Scalability as a first-class result:</b> demonstrating linear-time clustering up to 100,000 cells directly enables large-scale single-cell atlases (e.g., Human Cell Atlas) — a timely and societally impactful contribution in 2019.</li>
+      <li><b>Open science and reproducibility:</b> all code, trained model weights, and benchmark data publicly available, matching the journal's emphasis on reproducibility and transparency.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulated data</dt><dd>Generated with the R package <strong>Splatter</strong> — 1,500 cells × 2,500 genes, 3 balanced groups, 20 independent replicates per setting; varied dropout rates (12–30%) and cluster signal strengths (sigma 0.2–0.275). Scalability experiment: one simulated dataset of 100,000 cells × 3,000 genes, 10 groups, downsampled to 5,000–100,000 cells.</dd>
+      <dt>Real dataset 1</dt><dd><strong>10X PBMC 4k</strong> — 4,271 peripheral blood mononuclear cells from a healthy donor, 16,449 genes after preprocessing, 8 cell-type clusters. Downloaded from <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/2.1.0/pbmc4k" target="_blank">10X Genomics (pbmc4k)</a>.</dd>
+      <dt>Real dataset 2</dt><dd><strong>Mouse ES cells</strong> — 2,717 mouse embryonic stem cells from GEO accession GSE65525 (Klein et al., droplet barcoding), 24,046 genes, 4 LIF-withdrawal time-point groups (0, 2, 4, 7 days).</dd>
+      <dt>Real dataset 3</dt><dd><strong>Mouse bladder cells</strong> — 2,746 cells from the Mouse Cell Atlas (Microwell-seq), 19,079 genes, 16 cell types. Data from <a href="https://figshare.com/s/865e694ad06d5857db4b" target="_blank">figshare</a>.</dd>
+      <dt>Real dataset 4</dt><dd><strong>Worm neuron cells</strong> — 4,186 neural cells from <em>C. elegans</em> L2 larval stage (sci-RNA-seq, Cao et al.), 11,955 genes, 10 neuron subtypes. Data from <a href="http://atlas.gs.washington.edu/worm-rna/docs/" target="_blank">atlas.gs.washington.edu</a>.</dd>
+      <dt>Additional large sets</dt><dd>Two supplementary real datasets with 27,000 and 68,000 cells evaluated in Supplementary Table 1 (sequencing platform not named in main text).</dd>
+      <dt>Code &amp; data availability</dt><dd>All real datasets, model weights, and source code: <a href="https://github.com/ttgump/scDeepCluster" target="_blank">github.com/ttgump/scDeepCluster</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Splatter (R package)</td><td>Synthetic scRNA-seq data generation</td><td>1,500–100,000 cells; 2,500–3,000 genes; 20 replicates per setting</td><td><a href="https://github.com/Oshlack/splatter" target="_blank">GitHub</a></td></tr>
+        <tr><td>10X PBMC 4k</td><td>Real benchmark — immune cells (10X Genomics)</td><td>4,271 cells, 16,449 genes, 8 clusters</td><td><a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/2.1.0/pbmc4k" target="_blank">10X Genomics</a></td></tr>
+        <tr><td>Mouse ES cells (GSE65525)</td><td>Real benchmark — stem cell differentiation</td><td>2,717 cells, 24,046 genes, 4 groups</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE65525" target="_blank">NCBI GEO</a></td></tr>
+        <tr><td>Mouse bladder cells (MCA)</td><td>Real benchmark — tissue atlas (Microwell-seq)</td><td>2,746 cells, 19,079 genes, 16 cell types</td><td><a href="https://figshare.com/s/865e694ad06d5857db4b" target="_blank">Figshare</a></td></tr>
+        <tr><td>Worm neuron cells (sci-RNA-seq)</td><td>Real benchmark — neural atlas (C. elegans)</td><td>4,186 cells, 11,955 genes, 10 subtypes</td><td><a href="http://atlas.gs.washington.edu/worm-rna/docs/" target="_blank">UW Atlas</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: Cell and gene counts are post-preprocessing (genes with zero counts in all cells filtered; library-size normalized; log-transformed and scaled). Numbers are taken verbatim from the article's Methods and Table 1.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Zero-inflated negative binomial (ZINB) autoencoder:</b> replaces the standard mean-squared-error reconstruction loss with the negative log-likelihood of a ZINB distribution, parameterizing mean (μ), dispersion (θ), and dropout probability (π) via three separate output layers with exponential and sigmoid activations.</li>
+      <li><b>Denoising autoencoder:</b> Gaussian noise (stddev = 2.5) is injected into the encoder input during training to force a more robust latent embedding — a stacked denoising strategy applied within the ZINB framework.</li>
+      <li><b>Deep embedded clustering (DEC):</b> the clustering loss is the KL divergence between a soft student-t assignment distribution Q and a sharpened target distribution P; jointly optimized with the ZINB reconstruction loss (coefficient γ = 1).</li>
+      <li><b>Two-stage training:</b> (1) pre-train the ZINB autoencoder (400–600 epochs, AMSGrad, lr = 0.001); (2) initialize cluster centers with k-means on the latent space, then jointly fine-tune encoder, decoder, and cluster centers with Adadelta until fewer than 0.1% of cells change cluster assignment per batch.</li>
+      <li><b>Evaluation metrics:</b> normalized mutual information (NMI), clustering accuracy (CA, via Hungarian matching), and adjusted Rand index (ARI); averaged over 20 simulation replicates with paired one-sided t-tests (p &lt; 0.01) for statistical significance.</li>
+      <li><b>Scalability profiling:</b> running time measured on Nvidia Tesla P100 (16 GB) for sample sizes 5,000–100,000 cells, demonstrating linear O(n) complexity versus O(n²/n³) for spectral methods.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig1.png" target="_blank">
+        <img src="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig1.png" alt="Fig. 1 Network architecture of scDeepCluster" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Network architecture of scDeepCluster — fully connected encoder/decoder, ZINB three-branch output (mean, dispersion, dropout), Gaussian noise injection, and KL-divergence clustering loss on latent space z.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig2.png" target="_blank">
+        <img src="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig2.png" alt="Fig. 2 Simulation evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Simulation evaluation — NMI vs. dropout rate (a) and vs. clustering signal strength (b) for scDeepCluster and seven competing methods, averaged over 20 replicates with standard errors.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig3.png" target="_blank">
+        <img src="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig3.png" alt="Fig. 3 Benchmark on four real scRNA-seq datasets" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Benchmark on four real datasets — (a) NMI/CA/ARI across all competing methods; (b) 2D t-SNE visualizations of latent representations showing superior cell-type separation by scDeepCluster.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig4.png" target="_blank">
+        <img src="assets/clustering-single-cell-rna-seq-data-with-a-model-based-deep-learning-approach__s42256-019-0037-0/fig4.png" alt="Fig. 4 Scalability on down-sampled data" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Scalability analysis — (a) linear growth of running time with sample size (5k–100k cells); (b) stable NMI/CA/ARI across all sample sizes on Nvidia Tesla P100 (16 GB).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — summary of the four real scRNA-seq datasets: sequencing platform, cell count, gene count, cluster count). Supplementary material contains Figs. S1–S13 and Supplementary Table 1 (two large validation datasets with 27,000 and 68,000 cells).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, physics-informed graph learning, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Extend the ZINB loss to spatial transcriptomics and geospatial zero-inflated count data</h3>
+      <p><span class="lab paper">Extending this paper</span>scDeepCluster's ZINB reconstruction loss was designed for dropout events in scRNA-seq — but "false zeros" from sparse sampling are structurally identical to the excess-zero problem in other count data domains. A direct extension of the paper: apply the scDeepCluster architecture to <strong>spatial transcriptomics</strong> datasets (e.g., Visium 10X), where cells carry spatial coordinates, by adding a spatial graph convolution layer between the encoder and the clustering head. This would enforce spatial coherence in the ZINB latent space, producing anatomically consistent cell-type clusters that the original non-spatial design cannot guarantee.</p>
+      <p><span class="lab mine">Added value to my research</span>The ZINB autoencoder is a direct plug-in for my spatiotemporal kernel density estimation and POI-visit count modeling, where zero inflation from sparse mobile-phone records is the dominant noise source. Replacing MSE reconstruction with ZINB likelihood inside an autoencoder would let my spatiotemporal models separate structural zeros (no event possible at that location) from sampling zeros — sharpening both spatial pattern discovery and downstream R2SFCA accessibility metrics that rely on realistic demand estimates.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast and precise single-cell data analysis using a hierarchical autoencoder — <a href="https://doi.org/10.1038/s41467-021-21312-2" target="_blank">10.1038/s41467-021-21312-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace fixed-k clustering with a self-supervised cluster-count estimator</h3>
+      <p><span class="lab paper">Extending this paper</span>scDeepCluster assumes k (number of clusters) is given — the authors propose a "generalizability" metric G as a post-hoc heuristic requiring a sweep over multiple k values, but it is not integrated into the training loop. A principled extension: adopt a <strong>non-parametric deep clustering</strong> objective (e.g., information-maximization or prototype-network loss) so that the model learns k jointly with cluster assignments, eliminating the k-sweep entirely. This would make scDeepCluster fully unsupervised — critical for exploratory single-cell atlas construction where the true number of cell types is genuinely unknown.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatial regionalization — delineating health service areas or urban functional zones — the number of regions is equally unknown, and cross-validation-based bandwidth selection in MGWR is similarly fragile to the choice of k. Embedding an automatic cluster-count learner analogous to scDeepCluster's G-metric into spatial community detection on POI or mobility networks would sharpen service-area delineation for 2SFCA without requiring expert-specified zone counts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning training dynamics analysis for single-cell data — <a href="https://doi.org/10.1038/s43588-024-00728-y" target="_blank">10.1038/s43588-024-00728-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Multi-modal extension: joint embedding of gene expression with spatial or multi-omic modalities</h3>
+      <p><span class="lab paper">Extending this paper</span>scDeepCluster operates on a single modality — the gene-expression count matrix. A natural extension is to feed the encoder a <strong>partially shared multi-modal input</strong> (e.g., RNA + ATAC-seq chromatin accessibility, or RNA + spatial location) while maintaining per-modality ZINB losses. The paper already demonstrates that the ZINB autoencoder learns a biologically meaningful latent space; extending it with modality-specific output branches and a shared bottleneck would retain the clustering head's KL-divergence loss while exploiting cross-modal consistency signals that single-modality data lack.</p>
+      <p><span class="lab mine">Added value to my research</span>My multi-source data fusion agenda (mobile phone + social media + remote sensing) faces the same partially-shared embedding challenge: each source has its own noise model (Poisson, zero-inflated, Gaussian) yet they all describe the same underlying spatial process. scDeepCluster's architecture — modality-specific probabilistic output branches converging on a shared latent space — is a direct blueprint for fusing heterogeneous geospatial streams for urban health prediction or digital-divide mapping.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Partially shared multi-modal embedding learns holistic representation of cell state — <a href="https://doi.org/10.1038/s43588-025-00948-w" target="_blank">10.1038/s43588-025-00948-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Transfer learning across sequencing platforms as a blueprint for cross-city model transfer</h3>
+      <p><span class="lab paper">Extending this paper</span>scDeepCluster trains and tests on a single platform per dataset; its hyperparameters (noise level = 2.5, γ = 1, hidden sizes 256/64/32) are fixed globally across platforms. A rigorous extension: conduct a <strong>cross-platform transfer learning experiment</strong> — pre-train scDeepCluster on one platform (e.g., 10X Genomics) and fine-tune on another (e.g., sci-RNA-seq) — quantifying how much the ZINB encoder weights transfer versus how much platform-specific recalibration is needed. This turns scDeepCluster into a <strong>foundation model seed</strong> analogous to geospatial pre-trained models that adapt to new geographic contexts.</p>
+      <p><span class="lab mine">Added value to my research</span>This transfer framing is structurally identical to my work on fine-tuning geospatial foundation models: whether a model pre-trained on one city's mobility patterns transfers to another city is the same question as cross-platform scRNA-seq transfer. The scDeepCluster benchmark design — four distinct platforms as held-out test domains — provides a clean experimental template for my own cross-city generalization studies, where cities play the role of sequencing platforms.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> AUTOENCODIX: a generalized and versatile framework to train and evaluate autoencoders for biological representation learning and beyond — <a href="https://doi.org/10.1038/s43588-025-00916-4" target="_blank">10.1038/s43588-025-00916-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Add explainability: which genes drive cluster separation in the ZINB latent space?</h3>
+      <p><span class="lab paper">Extending this paper</span>scDeepCluster produces high-quality clusters but is a black box: practitioners cannot directly identify which genes distinguish cell types from the model itself. Extending the paper: apply <strong>integrated gradients or SHAP attribution</strong> to the trained encoder to score each gene's contribution to the KL-divergence clustering loss per cluster. This would yield a ranked "marker gene" list that is jointly calibrated by both the ZINB feature-learning and clustering stages — a more faithful and model-consistent attribution than post-hoc differential expression analysis applied to the raw counts after clustering.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable ML for spatial prediction — GWR/MGWR, SHAP for spatial feature importance — is a core theme of my research agenda. The gene-attribution problem in scDeepCluster is structurally analogous to spatial-feature importance in my geospatial ML pipelines: in both cases the goal is to identify which input variables drive a learned latent representation, whether those variables are gene expression values or spatial covariates such as POI density, transit access, or socioeconomic indicators. Attribution methodology developed here transfers directly to my explainable GeoAI models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

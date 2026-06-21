@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep learning training dynamics analysis for single-cell data — AI Digest</title>
+<meta name="description" content="AI Digest: Deep learning training dynamics analysis for single-cell data (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Single-cell omics</span>
+      <span class="tag">Training dynamics</span>
+      <span class="tag">Cell annotation</span>
+      <span class="tag">Deep learning</span>
+    </div>
+    <h1>Deep learning training dynamics analysis for single-cell data</h1>
+    <div class="meta">
+      <span class="authors">Jonathan Karin · Reshef Mintz · Mor Nitzan (The Hebrew University of Jerusalem)</span>
+      <span><b>Published</b> 2024-12-04</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00728-y" target="_blank">10.1038/s43588-024-00728-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00728-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The <strong>Annotatability</strong> framework repurposes deep neural network training dynamics — the temporal trajectory of per-cell prediction confidence and variability across epochs — to diagnose pre-annotated single-cell and spatial omics data. It reliably distinguishes <strong>correctly annotated</strong>, <strong>erroneously annotated</strong>, and <strong>ambiguous</strong> cells, corrects false labels, infers continuous cellular trajectories from binary annotations, and uncovers disease-associated subpopulations, all without requiring new experimental data.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Annotation quality is the silent bottleneck of single-cell biology.</b> Millions of cells in public atlases carry noisy, discrete labels assigned from sparse high-dimensional data; Annotatability provides a principled, model-agnostic audit of those labels without re-running experiments.</li>
+      <li><b>Repurposes an NLP/CV concept for biology.</b> Dataset cartography (Swayamdipta et al., EMNLP 2020) was designed to diagnose text datasets; this paper is the first to transfer the principle into the omics domain, demonstrating cross-domain portability of training-dynamics reasoning.</li>
+      <li><b>Continuous biology from discrete labels.</b> By observing how quickly a DNN learns a binary label, the method infers graded positions along biological processes (e.g., epithelial-to-mesenchymal transition) — recovering continuous structure that conventional discrete annotation discards.</li>
+      <li><b>Multi-setting utility demonstrated across 8 datasets.</b> Evaluation spans scRNA-seq cell-type annotation, spatial transcriptomics, disease subpopulation discovery (type II diabetes), and treatment efficacy assessment — suggesting broad applicability across study designs.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-domain conceptual transfer:</b> bridging NLP/CV training-dynamics research to single-cell biology is a high-level intellectual contribution that fits the journal's appetite for framework-level ideas across computational disciplines.</li>
+      <li><b>Methodological generality with immediate biological utility:</b> Annotatability is not tied to a single dataset or disease — it applies wherever pre-annotated omics data exist, which is virtually every published atlas.</li>
+      <li><b>Interpretable ML as a first-class goal:</b> the paper explicitly uses the DNN as an interpretive lens rather than a black-box predictor, aligning with the journal's emphasis on making computation informative, not just predictive.</li>
+      <li><b>Brevity with density:</b> as a Research Briefing, the work condenses a rich conceptual framework and eight validation datasets into a compact, high-signal form — a format Nature Computational Science actively publishes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>10x Genomics PBMC scRNA-seq dataset</strong> (peripheral blood mononuclear cells), integrated and pre-processed via <code>scvi-tools</code> (Gayoso et al., <em>Nat. Biotechnol.</em> 40, 163–166, 2022). Used to reveal erroneous and ambiguous CD14+ monocyte annotations and to identify intermediate monocyte populations.</dd>
+      <dt>Disease dataset</dt><dd>Pancreatic β-cell scRNA-seq data from <strong>diabetic mouse models</strong> (Fltp mouse study, ref. 5 in paper). Used to identify a hard-to-learn subpopulation of insulin-treated cells with healthy-like β-cell marker expression — demonstrating treatment efficacy assessment.</dd>
+      <dt>Total datasets</dt><dd>Eight distinct single-cell and spatial omics datasets evaluated across scRNA-seq, spatial transcriptomics, epithelial-to-mesenchymal transition (EMT), and type II diabetes settings. Exact accession numbers are not provided in the publicly accessible article text (article is Hybrid Access).</dd>
+      <dt>Software stack</dt><dd>Deep neural networks trained on pre-annotated single-cell data using standard DNN frameworks; downstream graph embedding for biological signal extraction. Code availability not stated in accessible metadata.</dd>
+      <dt>Biological scope</dt><dd>Covers multiple cell types (immune cells, pancreatic β-cells, epithelial/mesenchymal cells), multiple organisms (human, mouse), and multiple assay types (scRNA-seq, spatial transcriptomics).</dd>
+      <dt>Annotation</dt><dd>Method is agnostic to annotation source — works with any pre-annotated single-cell dataset; does not require ground-truth labels for training.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>10x Genomics PBMC (via scvi-tools)</td><td>Cell-type annotation validation; intermediate monocyte discovery</td><td>Human PBMCs, multiple cell types including CD14+ and FCGR3A+ monocytes</td><td><a href="https://doi.org/10.1038/s41587-021-01206-w" target="_blank">scvi-tools ref</a></td></tr>
+        <tr><td>Pancreatic β-cell scRNA-seq (Fltp mouse models)</td><td>Disease subpopulation discovery; treatment efficacy assessment</td><td>Mouse pancreatic cells from diabetic and insulin-treated conditions</td><td>Ref. 5 in paper (exact accession not publicly stated)</td></tr>
+        <tr><td>Spatial transcriptomics datasets</td><td>Spatial annotation error correction and reannotation</td><td>Spatial omics; number of datasets not specified in accessible text</td><td>Not publicly specified</td></tr>
+        <tr><td>EMT scRNA-seq data</td><td>Continuous trajectory inference from binary epithelial/mesenchymal labels</td><td>Epithelial and mesenchymal cell populations</td><td>Not publicly specified</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper evaluates eight datasets total across multiple biological contexts. Exact GEO/Zenodo accession numbers are not available in the publicly accessible article metadata. All data descriptions above are taken verbatim or directly inferred from the article text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Training dynamics analysis:</b> train a DNN classifier on pre-annotated single-cell data and track per-cell <strong>confidence</strong> (mean predicted probability for the input annotation across epochs) and <strong>variability</strong> (standard deviation of predicted probability across epochs).</li>
+      <li><b>Three-class cell categorization:</b> classify each cell as <em>easy-to-learn</em> (high confidence, low variability — correctly annotated), <em>hard-to-learn</em> (low confidence, low variability — erroneously annotated), or <em>ambiguous</em> (intermediate confidence and variability — biologically intermediate state).</li>
+      <li><b>DNN overfitting exploitation:</b> the method leverages the observation that DNNs learn clean decision boundaries in early epochs and only begin to overfit erroneous/ambiguous labels in later epochs — the temporal ordering itself encodes data quality information.</li>
+      <li><b>Reannotation modules:</b> dedicated post-hoc modules correct erroneous annotations using the training-dynamics signal, without requiring external reference datasets.</li>
+      <li><b>Graph embedding:</b> incorporates annotation congruence scores into a graph-based embedding for downstream biological signal extraction, trajectory inference, and disease-gene identification.</li>
+      <li><b>Binary-label trajectory inference:</b> by ordering cells along the confidence/variability gradient derived from binary (e.g., epithelial vs. mesenchymal) labels, the method recovers graded continuous positions along a biological process.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-learning-training-dynamics-analysis-for-single-cell-data__s43588-024-00728-y/fig1.png" target="_blank">
+        <img src="assets/deep-learning-training-dynamics-analysis-for-single-cell-data__s43588-024-00728-y/fig1.png" alt="Fig.1 Interpreting single-cell data using Annotatability" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Interpreting single-cell data using Annotatability. (a) Mean inferred annotation probability by training epoch for CD14+ monocytes in the PBMC scRNA-seq dataset — correctly annotated cells (blue) are learned rapidly; ambiguous cells (orange) are learned slowly and conflated with FCGR3A+ monocytes, revealing intermediate monocytes. Erroneously annotated cells (red) are not overfit until later epochs. (b) 2D confidence-variability map for pancreatic β-cells from diabetic mouse models — a hard-to-learn subpopulation (bottom left) corresponds to insulin-treated cells with healthy-like marker profiles.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). The paper is a Research Briefing; extended results appear in the supplementary materials of the companion full article.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, health geography, urban analytics).</p>
+
+    <div class="idea">
+      <h3>① Apply training-dynamics auditing to geospatial label quality in remote-sensing and POI datasets</h3>
+      <p><span class="lab paper">Extending this paper</span>Annotatability's core logic — that DNN training dynamics reveal which examples are correctly labeled, erroneously labeled, or ambiguous — is not intrinsically biological. The paper trains DNNs on cell-type annotations and reads quality from the confidence/variability trajectory. A direct extension would apply the same framework to <strong>spatial omics with irregular geometries</strong> (e.g., low-resolution spatial transcriptomics where each spot contains multiple cell types), which the authors themselves identify as a future direction. Connecting this to corpus work on multi-modal cell-state representation would allow the confidence/variability map to be computed over <em>multi-omic embeddings</em> rather than single-modality inputs, improving sensitivity for ambiguous spots. The framework could also be extended by pre-training a foundation model on large cell atlases and then running training-dynamics analysis on fine-tuned task-specific layers, linking the ambiguity signal to learned representations rather than raw features.</p>
+      <p><span class="lab mine">Added value to my research</span>My GeoAI work relies on crowdsourced labels (OpenStreetMap POIs, social-media tags, land-use classifications) that are known to be noisy and spatially heterogeneous in quality. Annotatability's training-dynamics principle translates directly: train a spatial classifier (e.g., a GNN predicting land use or facility type) on OSM-labeled data, then compute per-location confidence and variability scores across epochs to flag <strong>annotation-uncertain zones</strong>. This would give me a principled label-quality map for any spatially labeled dataset — equivalent to a geospatial "data cartography" — without requiring independent ground truth. It is directly applicable to pre-training or fine-tuning geospatial foundation models where label noise is the main quality bottleneck.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Partially shared multi-modal embedding learns holistic representation of cell state — <a href="https://doi.org/10.1038/s43588-025-00948-w" target="_blank">10.1038/s43588-025-00948-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Exploit the ambiguity signal for continuous boundary delineation in spatial and temporal data</h3>
+      <p><span class="lab paper">Extending this paper</span>One of Annotatability's most elegant findings is that <strong>ambiguous cells are not errors — they encode real biological transitions</strong>. By ordering cells along the confidence axis derived from binary labels (epithelial vs. mesenchymal), the method infers a graded trajectory. The paper focuses on simple binary labels; extending it to handle <strong>multi-class temporal or spatial annotations</strong> would allow simultaneous inference of multiple branching trajectories. Connecting this to multi-omic spatial data via a model such as SWITCH (integrative deep learning of spatial multi-omics) could reveal where spatial boundaries between tissue regions are sharp vs. gradual — directly from training dynamics rather than from explicit spatial segmentation algorithms. This extension would address the paper's stated future direction of handling fractional annotations in low-resolution spatial transcriptomics.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatial analysis, administrative boundaries (neighborhoods, census tracts) impose discrete labels on continuous spatial phenomena such as health outcomes, accessibility gradients, or socio-economic deprivation. The training-dynamics ambiguity signal offers a way to detect <strong>where those discrete spatial labels poorly capture underlying continuous gradients</strong> — a geospatial analogue of the EMT trajectory recovery. This is directly useful for my MGWR/GWR work: cells with high ambiguity in Annotatability correspond to spatial units near regime boundaries in MGWR, where bandwidth selection is most uncertain. Identifying these empirically from model training dynamics rather than from cross-validation could refine spatially varying coefficient estimation near transition zones.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrative deep learning of spatial multi-omics with SWITCH — <a href="https://doi.org/10.1038/s43588-025-00891-w" target="_blank">10.1038/s43588-025-00891-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use training-dynamics confidence as a pre-filtering layer for single-cell foundation model fine-tuning</h3>
+      <p><span class="lab paper">Extending this paper</span>Foundation models for single-cell data (e.g., cell atlas models trained on hundreds of millions of cells) are increasingly fine-tuned on smaller annotated datasets for specific tasks. Annotatability's hard-to-learn and ambiguous scores provide a <strong>principled curriculum signal</strong> that can guide fine-tuning: exclude hard-to-learn cells (likely mislabeled) from early fine-tuning epochs, up-weight easy-to-learn cells, and treat ambiguous cells as soft-label training examples. This extends Annotatability from a diagnostic tool into an <strong>active ingredient of the training pipeline</strong> for large-scale biological models, connecting to corpus work on Geneformer scaling and foundation models for cell biology. The paper's reannotation modules could feed directly into foundation model pre-training data curation, creating a quality-controlled training corpus at atlas scale.</p>
+      <p><span class="lab mine">Added value to my research</span>My research agenda includes fine-tuning geospatial foundation models (e.g., satellite imagery encoders, urban graph transformers) on domain-specific labeled data. The training-dynamics curriculum principle maps directly: compute confidence/variability scores on labeled urban datasets (e.g., building function labels, land-use maps, health outcome annotations), then use these scores to <strong>curate fine-tuning data and weight training examples</strong>. This would be particularly valuable for my telehealth/digital-divide accessibility work, where training labels derived from administrative records carry systematic reporting biases that training dynamics could expose.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Scaling and quantization of a foundational deep learning model for network biology — <a href="https://doi.org/10.1038/s43588-026-00990-2" target="_blank">10.1038/s43588-026-00990-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend Annotatability to multi-modal data to identify modality-specific vs. shared annotation errors</h3>
+      <p><span class="lab paper">Extending this paper</span>Annotatability currently trains a single DNN on one omics modality at a time. In multi-modal single-cell experiments (e.g., simultaneous gene expression + chromatin accessibility + protein), the same cell receives a single annotation, but different modalities may agree or disagree about which class the cell belongs to. An extension would train <strong>modality-specific DNNs</strong> and compare their confidence/variability trajectories for each cell, categorizing annotation errors as either <em>modality-universal</em> (all modalities agree the label is wrong) or <em>modality-specific</em> (only one modality flags the label as ambiguous). This multi-modal Annotatability would reveal whether annotation errors stem from one assay's noise or from genuine biological heterogeneity expressed through a single modality. The partially shared multi-modal embedding approach in the corpus is a natural integration point for the cross-modal confidence comparison.</p>
+      <p><span class="lab mine">Added value to my research</span>My multi-source data fusion work regularly integrates mobile phone records, social media data, remote sensing, and POI data to analyze urban phenomena. These sources often disagree about a location's classification (e.g., a venue classified differently in OSM vs. social-media activity patterns vs. census records). The modality-specific training-dynamics comparison would provide a <strong>structured conflict-detection framework</strong>: compute confidence/variability per data source (modality) for each spatial unit, then flag locations where sources disagree as high-priority targets for manual validation or ensemble fusion. This upgrades my data fusion pipeline from simple majority-vote or weighted averaging to a principled annotation-conflict diagnostics step.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Partially shared multi-modal embedding learns holistic representation of cell state — <a href="https://doi.org/10.1038/s43588-025-00948-w" target="_blank">10.1038/s43588-025-00948-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the hard-to-learn / ambiguous taxonomy to disease subtype discovery in epidemiological cohorts</h3>
+      <p><span class="lab paper">Extending this paper</span>Annotatability demonstrated that hard-to-learn cells in a "disease vs. healthy" classification correspond to clinically meaningful subpopulations (insulin-treated mice with healthy-like β-cell markers). The paper focuses on single-cell data, but the principle extends naturally to <strong>patient-level cohort data</strong>: train a DNN to predict disease status or treatment outcome from multi-variable clinical or omics profiles, then use training dynamics to identify patients who are hard to classify — likely representing disease subtypes, treatment non-responders, or transitional states. Connecting this to perturbation prediction models from the corpus would create a pipeline where hard-to-learn patients are prioritized for deeper perturbation analysis, identifying which molecular interventions might shift them toward the "easy" regime. This extends Annotatability from a retrospective audit tool to a prospective patient-stratification engine.</p>
+      <p><span class="lab mine">Added value to my research</span>My health geography work examines spatially heterogeneous disease outcomes and healthcare utilization. Training-dynamics-based patient stratification offers a bridge between my spatial analysis and clinical ML: identify health-outcome cohorts where a predictive model's confidence is spatially clustered (e.g., low-confidence predictions concentrated in certain neighborhoods), then map that <strong>spatial distribution of ambiguous predictions</strong> as a proxy for health-outcome complexity or data-quality gaps in those areas. This connects Annotatability's per-sample confidence signal to my spatiotemporal kernel density and 2SFCA accessibility frameworks — high-ambiguity zones in a disease-prediction model may flag areas where healthcare access deficits cause outcome distributions to straddle diagnostic thresholds.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A cell atlas foundation model for scalable search of similar human cells — <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature / Karin, J. et al. (CC BY-NC-ND 4.0); shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

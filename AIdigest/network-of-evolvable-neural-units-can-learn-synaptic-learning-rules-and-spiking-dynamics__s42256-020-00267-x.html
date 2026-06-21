@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network of evolvable neural units can learn synaptic learning rules and spiking dynamics — AI Digest</title>
+<meta name="description" content="AI Digest: Network of evolvable neural units can learn synaptic learning rules and spiking dynamics (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Neuroevolution</span>
+      <span class="tag">Spiking Neural Networks</span>
+      <span class="tag">Biologically Inspired AI</span>
+      <span class="tag">Meta-learning</span>
+    </div>
+    <h1>Network of evolvable neural units can learn synaptic learning rules and spiking dynamics</h1>
+    <div class="meta">
+      <span class="authors">Paul Bertens · Seong-Whan Lee</span>
+      <span><b>Published</b> 2020-12-10</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-00267-x" target="_blank">10.1038/s42256-020-00267-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-00267-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>An <strong>Evolvable Neural Unit (ENU)</strong> — a gated recurrent network placed at every synapse and neuron — can independently <strong>evolve spiking dynamics and reinforcement-type learning rules</strong> without any predefined mathematical model. A network of ENUs, optimized via evolution strategies, discovers integrate-and-fire behaviour, spike-timing-dependent plasticity, and one-shot avoidance learning in a T-maze task — opening a path toward <strong>biologically realistic AI</strong> that learns without backpropagation and generalizes from a single reward experience.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Frees neural computation from hardcoded rules.</b> Prior spiking network models evolve <em>hyper-parameters</em> of a fixed predefined model; ENUs evolve the <em>entire function</em> of each synapse and neuron — letting biology emerge rather than being assumed.</li>
+      <li><b>Parameter-efficient by design.</b> Because all ENU compartments share one weight matrix, total evolvable parameters (~12,000) remain fixed regardless of network size — a rare scalability property in neural architecture search.</li>
+      <li><b>One-shot learning without backpropagation.</b> The evolved ENU-NN learns from a single negative experience (eating poison once) and adapts immediately — a capability conventional deep networks still struggle with.</li>
+      <li><b>Bridges computational neuroscience and AI.</b> ENUs independently rediscover IAF spiking and neuromodulated STDP, validating that complex biological learning rules can emerge from generic optimization rather than domain expertise.</li>
+      <li><b>Open and reproducible.</b> All code is publicly available via a Code Ocean compute capsule (<a href="https://doi.org/10.24433/CO.1361267.v1" target="_blank">10.24433/CO.1361267.v1</a>); no external datasets are required — the entire paper is reproducible from source.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Conceptual novelty at the architecture level:</b> the paper does not tune an existing model — it proposes a new class of unit (ENU) replacing both neurons and synapses, a paradigm-level contribution fitting NMI's scope.</li>
+      <li><b>Links biology and machine learning bidirectionally:</b> demonstrates that ML optimization (evolution strategies) recovers neuroscience-level phenomena (IAF, STDP), a two-way translation NMI prizes.</li>
+      <li><b>Solves a known hard problem:</b> training spiking networks has resisted gradient methods; the evolution-strategy route is a clean, principled alternative with demonstrated results.</li>
+      <li><b>Forward-looking framing:</b> explicitly positions itself as a step toward flexible, domain-general AI — consistent with NMI's long-horizon editorial preference for foundational work.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Data origin</dt><dd>Entirely <strong>simulation-generated</strong>. No external datasets were used; all figures (Figs. 3–5) are produced directly from code. This is stated explicitly in the data availability statement.</dd>
+      <dt>Task environments</dt><dd>Three simulated environments: (1) <strong>IAF approximation</strong> — random uniform noise input (0.01–0.11), 100-step episodes, 32 mini-batch environments per offspring; (2) <strong>STDP approximation</strong> — random graded input (0.45–0.55) plus random pre/postsynaptic spikes, 100-step episodes, 32 environments; (3) <strong>T-maze reinforcement</strong> — 5×4 grid, 400-step episodes, 8 random environments per offspring.</dd>
+      <dt>Evolution scale</dt><dd>IAF: 3,000 generations; STDP: 10,000 generations; T-maze: 30,000 generations. Population: <strong>1,024 offspring</strong> per generation, evaluated in parallel on a single Titan V GPU.</dd>
+      <dt>Model parameters</dt><dd>~<strong>12,000 parameters</strong> total (6,656 per ENU × 2 shared weight sets). Memory state: 32 units; output channels: 16 per ENU; σ = 0.01, η = 1.0, momentum = 0.9.</dd>
+      <dt>Code availability</dt><dd>Code Ocean capsule: <a href="https://doi.org/10.24433/CO.1361267.v1" target="_blank">10.24433/CO.1361267.v1</a>. Implementation: PyTorch (GPU) + NumPy (environments).</dd>
+      <dt>Comparison baselines</dt><dd>GRU, LSTM, No-Feedback ENU (NFENU), Shared-Parameter ENU (SHAREDENU) — compared on IAF, STDP, complex STDP, T-maze, and double T-maze tasks; 30 trial runs, p &lt; 0.005.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Simulation (IAF task)</td><td>Evolve integrate-and-fire approximation</td><td>3,000 generations × 1,024 offspring × 32 environments</td><td><a href="https://doi.org/10.24433/CO.1361267.v1" target="_blank">Code Ocean</a></td></tr>
+        <tr><td>Simulation (STDP task)</td><td>Evolve spike-timing-dependent plasticity</td><td>10,000 generations × 1,024 offspring × 32 environments</td><td><a href="https://doi.org/10.24433/CO.1361267.v1" target="_blank">Code Ocean</a></td></tr>
+        <tr><td>Simulation (T-maze RL task)</td><td>Evolve reinforcement-type learning in ENU-NN</td><td>30,000 generations × 1,024 offspring × 8 environments</td><td><a href="https://doi.org/10.24433/CO.1361267.v1" target="_blank">Code Ocean</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all data are simulation outputs — no real-world or external dataset is used. Numbers above are taken verbatim from the Methods section of the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Evolvable Neural Unit (ENU):</b> a modified GRU with an extra <strong>feedback output gate</strong>. Each gate is a single-layer network with evolvable weight matrix <em>W</em>. The memory state stores dynamic parameters (analogous to membrane potential, synaptic weight); the output gate enables spike-threshold behaviour via clipping.</li>
+      <li><b>Weight sharing across all compartments:</b> all synapse ENUs share one weight matrix; all neuron ENUs share another. Only ~12,000 parameters are evolved regardless of network size — critical for scalability.</li>
+      <li><b>Evolution strategies (ES):</b> gradient approximated by Gaussian sampling over parameter space (Algorithm 1); fitness ranking (top ~20% of offspring account for 80% of gradient, α = 5); mini-batch environments for fitness smoothing; momentum SGD on the ES gradient.</li>
+      <li><b>Network construction:</b> synapse ENUs receive pre- and postsynaptic neuron inputs (the postsynaptic feedback channel enables STDP-like rules); synapse outputs are summed and processed by neuron ENUs; connection matrix is sparse for the T-maze task.</li>
+      <li><b>Task-specific fitness functions:</b> IAF — minimize interspike-interval error + spike-intensity error; STDP — minimize MSE against the STDP weight-update function; T-maze RL — maximize cumulative reward with energy-decay exploration term.</li>
+      <li><b>Ablation study:</b> compares ENU vs. GRU, LSTM, NFENU (no feedback), SHAREDENU (shared neuron/synapse weights) across all tasks; statistical significance validated over 30 trial runs (p &lt; 0.005).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig1.png" target="_blank">
+        <img src="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig1.png" alt="Fig.1 Biological neuron and ENU architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> A biological neuron and an ENU — gating mechanisms (reset, update, cell, output) protect internal memory analogous to membrane potential, synaptic weights, and protein states.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig2.png" target="_blank">
+        <img src="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig2.png" alt="Fig.2 Network of ENUs and T-maze environment" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Network of ENUs solving a T-maze task — shows parallel offspring evaluation, reward-neuron feedback loop, and sensory/motor neuron layout.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig3.png" target="_blank">
+        <img src="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig3.png" alt="Fig.3 Evolved IAF neurons and neuromodulated STDP" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Evolved IAF (top) and neuromodulated STDP (bottom) — the ENU closely matches both target functions for single and multiple inputs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig4.png" target="_blank">
+        <img src="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig4.png" alt="Fig.4 Reinforcement-type learning in ENU-NN" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> ENU-NN agent output (top) and input (bottom) in the T-maze — spontaneous spike-like patterns emerge and one-shot poison avoidance learning is clearly visible.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig5.png" target="_blank">
+        <img src="assets/network-of-evolvable-neural-units-can-learn-synaptic-learning-rules-and-spiking-dynamics__s42256-020-00267-x/fig5.png" alt="Fig.5 Agent's evolved T-maze behaviour" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Step-by-step agent behaviour in the T-maze — remembering poison location, routing around it, and adapting after food/poison are switched.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — ablation and comparison final performance across GRU, LSTM, ENU, NFENU, SHAREDENU); Extended Data also contains 1 additional table (Extended Data Table 1 — complex STDP and double T-maze results).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, spatial accessibility modelling).</p>
+
+    <div class="idea">
+      <h3>① Map the evolved ENU weights onto resistive-memory in-memory computing hardware</h3>
+      <p><span class="lab paper">Extending this paper</span>The ENU-NN discovers spiking dynamics in software running on GPU tensors, but remains far from neuromorphic hardware. A direct extension: map the evolved ENU weight matrices onto <strong>resistive memory crossbar arrays</strong> where analog conductance states store the ENU's dynamic parameters (membrane potential analogs, synaptic weights). The paper's weight-sharing property (~12,000 parameters total) makes this particularly feasible — each crossbar tile implements one shared ENU gate, while individual cells encode the unique internal state per compartment. This moves the paper's biologically inspired claim from software analogy to physical substrate, closing the loop from evolved software to neuromorphic silicon.</p>
+      <p><span class="lab mine">Added value to my research</span>For spatiotemporal GeoAI, neuromorphic in-memory architectures offer a low-power edge-inference path — for example, embedding graph convolution in IoT health-monitoring sensor nodes or GPS trajectory chips. The ENU's parameter-sharing structure directly maps to the weight-tied graph convolution kernels I use in physics-informed graph learning, pointing toward the same design principle for reducing memory footprint in deployment at the urban-sensor edge.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning incorporating biologically inspired neural dynamics and in-memory computing — <a href="https://doi.org/10.1038/s42256-020-0187-0" target="_blank">10.1038/s42256-020-0187-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend the T-maze to a road-network graph and evolve graph-aware spatial routing policies</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's T-maze is a minimal 5×4 grid with two choice points. Extending it to an arbitrary <strong>road-network graph</strong> (nodes = intersections, edges = street segments with travel-time weights) would force the ENU-NN to evolve not just memory for one food/poison location but a generalizable spatial navigation policy across varied topologies. The paper already shows that ENUs rediscover inhibitory synapse behaviour after one negative reward — that same one-shot inhibition mechanism, replicated across a richer graph topology, seeds a <strong>graph-embedded reinforcement agent</strong> that internalizes network structure through evolution rather than explicit GNN message passing.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly intersects my physics-informed graph learning agenda: an ENU-NN that evolves routing on a street graph is a testbed for whether biologically grounded local plasticity rules can replace global backpropagation in GNN training — especially relevant for sparse, irregular spatial graphs (transit networks, 2SFCA catchment graphs) where standard GNN training is numerically unstable.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Discovering cognitive strategies with tiny recurrent neural networks — <a href="https://doi.org/10.1038/s41586-025-09142-4" target="_blank">10.1038/s41586-025-09142-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Test whether the evolved ENU learning rule avoids catastrophic forgetting in a continual task stream</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper resets all ENU internal states every generation — each agent is a blank slate that must relearn within an episode. But this intra-episode plasticity is precisely what makes ENUs interesting for <strong>continual learning</strong>: the evolved gate weights are fixed post-evolution and only internal states adapt, so the rules could in principle generalize across tasks without forgetting. A direct extension: expose the ENU-NN to a sequential stream of diverse environments and measure whether the evolved rule shows zero-shot generalization. The current paper never tests inter-task transfer, leaving the strongest claim about generality unverified.</p>
+      <p><span class="lab mine">Added value to my research</span>Continual learning of spatial context is an open problem in GeoAI: a model trained on one city's health-facility access patterns should not forget when fine-tuned on another city. An evolved meta-learning rule (ENU-style) that updates local states without modifying shared weights is a principled alternative to rehearsal-based or regularization-based continual learning for my multi-city spatial accessibility models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Continual learning of context-dependent processing in neural networks — <a href="https://doi.org/10.1038/s42256-019-0080-x" target="_blank">10.1038/s42256-019-0080-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Enrich the reward channel with multi-timescale neuromodulatory signals</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's reward neuron uses one channel for positive and one channel for negative reward — a coarse two-bit neuromodulation signal. Neuroscience evidence shows that dopamine operates on <strong>multiple timescales</strong> simultaneously (tonic vs. phasic, fast vs. slow decay). Extending the ENU's reward input to a <em>vector</em> of neuromodulatory channels, each with a different temporal decay constant (themselves evolvable), would let the ENU-NN discover which timescale combinations yield the fastest one-shot learning — turning the paper's single reward channel into a structured neuromodulatory bus.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatiotemporal kernel density estimation in my work relies on fixed bandwidth parameters per temporal scale (daily, weekly, seasonal). Evolved multi-timescale neuromodulatory channels are architecturally analogous to learned bandwidth parameters per temporal resolution — the ENU framing suggests these bandwidths could be jointly learned rather than tuned by cross-validation, applicable to GPS trajectory and mobile-phone record analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-timescale reinforcement learning in the brain — <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply the weight-sharing principle to build a parameter-efficient spatiotemporal GNN for health geography</h3>
+      <p><span class="lab paper">Extending this paper</span>The ENU's central design insight — <strong>shared gate weights with unique per-compartment internal states</strong> — solves a parameter-explosion problem: a network of thousands of compartments needs only ~12,000 evolvable parameters because computation is local but rules are global. This principle could extend the ENU-NN beyond toy mazes: replace the sparse fixed topology with a <strong>dynamic population graph</strong> (nodes = residential zones, edges = spatial adjacency or travel-time links), where synapse ENUs serve as attention-based edge message functions and neuron ENUs serve as node aggregators. Evolving this on a population health outcome task would test whether local Hebbian-like rules can substitute for global gradient descent in large spatial graphs.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA/R2SFCA accessibility models compute supply-demand ratios at every node of a spatial network — structurally identical to the ENU's per-synapse local computation. A weight-shared, state-per-node ENU-GNN could learn an accessibility update rule from mobility data, auto-discovering the distance-decay function and competition radius — replacing both the Gaussian kernel assumption and the fixed catchment radius with evolved, data-driven local rules. This is a concrete step toward a GeoAI foundation model for accessibility that transfers across city types without retraining from scratch.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reinforcement learning in artificial and biological systems — <a href="https://doi.org/10.1038/s42256-019-0025-4" target="_blank">10.1038/s42256-019-0025-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

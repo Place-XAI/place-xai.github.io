@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uncertainty-driven dynamics for active learning of interatomic potentials — AI Digest</title>
+<meta name="description" content="AI Digest: Uncertainty-driven dynamics for active learning of interatomic potentials (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Active Learning</span>
+      <span class="tag">Interatomic Potentials</span>
+      <span class="tag">Uncertainty Quantification</span>
+      <span class="tag">Molecular Dynamics</span>
+    </div>
+    <h1>Uncertainty-driven dynamics for active learning of interatomic potentials</h1>
+    <div class="meta">
+      <span class="authors">Maksim Kulichenko &middot; Kipton Barros &middot; Nicholas Lubbers &middot; Ying Wai Li &middot; Richard Messerly &middot; Sergei Tretiak &middot; Justin S. Smith &middot; Benjamin Nebgen</span>
+      <span><b>Published</b> 2023-03-06</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00406-5" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>UDD-AL (<strong>uncertainty-driven dynamics for active learning</strong>) accelerates the construction of machine learning interatomic potentials by modifying the molecular dynamics potential energy surface to steer simulations toward <strong>high-uncertainty, under-represented configurations</strong>. Applied to glycine conformational sampling and acetylacetone proton-transfer reactions, UDD-AL achieves <strong>broad, balanced chemical-space coverage</strong> at low temperature — sampling both near-equilibrium and high-energy transition states — without the random distortions that afflict high-temperature MD, and without manually defined collective variables as required by metadynamics.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Resolves a core bottleneck in ML potential development.</b> High-quality interatomic potentials require diverse training data spanning transition states and rare conformers — configurations that standard low-temperature MD almost never visits. UDD-AL finds them efficiently without expensive, high-temperature runs.</li>
+      <li><b>Eliminates the need for manual collective variable selection.</b> Unlike metadynamics, UDD-AL uses the ensemble uncertainty itself as the guiding "collective variable," removing domain-expert bias and making the method broadly applicable without system-specific tuning.</li>
+      <li><b>Balanced low- and high-energy coverage.</b> High-temperature MD samples high-energy states but neglects low-energy regions; UDD-AL at 350 K achieves coverage comparable to 600–1,000 K MD while preserving near-equilibrium structural distributions — critical for temperature-sensitive and metastable systems.</li>
+      <li><b>Negligible computational overhead.</b> Because ensemble uncertainties and forces are already computed at every MD step in query-by-committee AL, adding the bias potential costs essentially nothing extra, making the method immediately deployable in existing AL pipelines.</li>
+      <li><b>Enables reactive pathway sampling without bond-breaking knowledge.</b> In the acetylacetone test, UDD drives 90 proton-transfer events at 350 K compared to zero in unbiased MD — demonstrating that uncertainty-driven exploration can reveal reactive chemistry that would otherwise require much higher temperatures or handcrafted reaction coordinates.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty with broad applicability:</b> UDD-AL is a general, model-agnostic sampling strategy applicable to any ensemble-based ML potential and any molecular system — matching the journal's preference for transferable computational advances.</li>
+      <li><b>Bridges machine learning and physical simulation:</b> the work sits at the intersection of uncertainty quantification, Bayesian methods, and atomistic simulation — exactly the multidisciplinary convergence Nature Computational Science targets.</li>
+      <li><b>Benchmarked rigorously on chemically relevant test cases:</b> two distinct demonstration systems (glycine conformational space, acetylacetone proton transfer) with quantitative comparison against multiple baselines (350 K, 600 K, 1,000 K MD-AL) provide a compelling evidence base.</li>
+      <li><b>Open software and reproducible data:</b> full code released at <a href="https://github.com/lanl/Active-Learning-Framework/tree/udd-al" target="_blank">GitHub (LANL)</a> and data deposited at <a href="https://doi.org/10.5281/zenodo.7526389" target="_blank">Zenodo</a>, meeting open-science standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd><strong>125 near-equilibrium glycine geometries</strong> as initial training set, sampled from a 5-ps MD trajectory at 350 K using the pre-trained ANI-1x potential. Each AL iteration adds 16 new DFT-computed conformations; the final training set comprises <strong>1,280 + 125 = 1,405 glycine conformations</strong>.</dd>
+      <dt>Test data</dt><dd><strong>50,000 glycine structures</strong> from a 50-ns MD simulation at 400 K using the ANI-1ccx potential (0.5-fs time step), used to benchmark model accuracy across the conformational space.</dd>
+      <dt>Quantum chemistry</dt><dd>Reference energies and forces computed at the <strong>&#969;B97X-D/cc-pVTZ</strong> level of theory using <strong>PSI4</strong> code. This DFT level of theory provides high-fidelity quantum reference data for new conformations added at each AL iteration.</dd>
+      <dt>Acetylacetone test</dt><dd>Pre-trained <strong>ANI-1x</strong> ensemble (trained at the wB97x DFT level). No new DFT data generated for this system; 0.5-ns trajectory analyses with 350 K MD, 350 K UDD, and 620 K MD simulations. The proton-transfer barrier is 4.7 kcal mol<sup>&minus;1</sup> (DFT) vs. 6.3 kcal mol<sup>&minus;1</sup> (ANI-1x overestimate).</dd>
+      <dt>ML model</dt><dd><strong>ANI-type neural network potentials</strong>: architecture 768:32:16:8:1, three hidden layers, Gaussian activations, eightfold cross-validation ensemble (N<sub>M</sub> = 8). Atomic environment vector: 32 radial parameters (cutoff 4.6 &#8491;), 8 radial + 8 angular parameters (cutoff 3.5 &#8491;), 768-element descriptor.</dd>
+      <dt>Data availability</dt><dd>All generated data at <a href="https://doi.org/10.5281/zenodo.7526389" target="_blank">Zenodo (doi:10.5281/zenodo.7526389)</a>. Source code at <a href="https://github.com/lanl/Active-Learning-Framework/tree/udd-al" target="_blank">GitHub/lanl/Active-Learning-Framework</a> and <a href="https://doi.org/10.5281/zenodo.7522399" target="_blank">Zenodo (doi:10.5281/zenodo.7522399)</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Glycine DFT conformations</td><td>AL training set (energies &amp; forces)</td><td>1,405 structures (&#969;B97X-D/cc-pVTZ)</td><td><a href="https://doi.org/10.5281/zenodo.7526389" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Glycine 50-ns MD test set</td><td>Benchmark for model accuracy</td><td>50,000 structures at 400 K (ANI-1ccx)</td><td><a href="https://doi.org/10.5281/zenodo.7526389" target="_blank">Zenodo</a></td></tr>
+        <tr><td>ANI-1x pre-trained ensemble</td><td>Acetylacetone MD driver + uncertainty estimator</td><td>Pre-trained; wB97x DFT level</td><td><a href="https://github.com/lanl/Active-Learning-Framework/tree/udd-al" target="_blank">GitHub (LANL)</a></td></tr>
+        <tr><td>UDD-AL source code</td><td>Reproducibility + reuse</td><td>Compiled standalone + source</td><td><a href="https://doi.org/10.5281/zenodo.7522399" target="_blank">Zenodo</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: data volumes are stated explicitly in the article. No external observational databases (e.g., crystal structure repositories) were used; all training configurations are generated on-the-fly during the AL procedure via DFT calculations.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Query-by-committee (QBC) active learning:</b> an ensemble of N<sub>M</sub>&nbsp;=&nbsp;8 ANI neural network potentials, trained on different cross-validation splits, provides an uncertainty estimate as the variance of ensemble energy predictions; configurations exceeding an uncertainty threshold &#961; are selected for DFT labeling and added to the training set.</li>
+      <li><b>Uncertainty-driven dynamics (UDD):</b> the bias potential E<sub>bias</sub>(&sigma;<sub>E</sub><sup>2</sup>) = A[exp(&minus;&sigma;<sub>E</sub><sup>2</sup> / N<sub>M</sub> N<sub>A</sub> B<sup>2</sup>) &minus; 1] is added to the physical energy surface. High-uncertainty configurations are energetically favored; forces derived via the chain rule steer dynamics toward under-sampled regions automatically, without any collective variable definition.</li>
+      <li><b>UMAP dimensionality reduction:</b> 672-dimensional atomic environment vector activations from the first layer of a pre-trained ANI-1x model are projected to 2D using UMAP for visualization of glycine conformational space coverage across sampling strategies.</li>
+      <li><b>Langevin thermostat MD:</b> all simulations use a Langevin thermostat (friction coefficient 0.01 a.u.), interfaced with the Atomic Simulation Environment (ASE). Each AL iteration runs 16 independent 200-ps MD simulations (1-fs time step, 200,000 steps limit).</li>
+      <li><b>Comparison baselines:</b> four strategies compared quantitatively &mdash; 350&nbsp;K MD-AL, 600&nbsp;K MD-AL, 1,000&nbsp;K MD-AL, and 350&nbsp;K UDD-AL &mdash; via energy-distribution histograms, RMSE on the held-out test set, UMAP coverage maps, and bond-length distribution analysis.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig1.png" target="_blank">
+        <img src="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig1.png" alt="Fig.1 Comparison of UDD-AL and MD-AL for glycine" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> UDD-AL workflow schematic and performance benchmarks for glycine: MD time to meet uncertainty criterion, energy distribution histograms, and RMSE on the 50-ns test set vs. AL iteration across all four sampling strategies.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig2.png" target="_blank">
+        <img src="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig2.png" alt="Fig.2 UMAP of glycine conformational space" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> 2D UMAP projection of glycine conformational space: coverage comparison between 350&nbsp;K MD-AL, 350&nbsp;K UDD-AL, 600&nbsp;K MD-AL, and 1,000&nbsp;K MD-AL, highlighting high-energy inner regions and the rare &ndash;OH rotation pathway.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig3.png" target="_blank">
+        <img src="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig3.png" alt="Fig.3 Glycine interatomic distance distributions" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Interatomic distance distributions for six bond types (O&ndash;H, N&ndash;H, C&ndash;H, C=O, C&ndash;N, C&ndash;C) across the four sampling strategies: UDD-AL retains sharp low-temperature distributions while still accessing broader configurational space.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig4.png" target="_blank">
+        <img src="assets/uncertainty-driven-dynamics-for-active-learning-of-interatomic-potentials__s43588-023-00406-5/fig4.png" alt="Fig.4 Ensemble uncertainty and UDD in acetylacetone" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Acetylacetone proton-transfer study: log-normalized uncertainty and energy maps with respect to proton position; combined bias potential shifts the minimum toward the transition state; C&ndash;H bond distributions confirm UDD targets the reactive coordinate selectively without global molecular distortion.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 table in main text (Extended Data Table 1, listing training timings on NVIDIA TITAN V GPUs); 2 supplementary tables (RMSE cross-tests, Supplementary Table 2).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable ML, active learning for spatial prediction, physics-informed graph learning).</p>
+
+    <div class="idea">
+      <h3>① Transfer UDD-AL's uncertainty-steered dynamics to geospatial active learning for spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>UDD-AL's central insight &mdash; that biasing a dynamical sampler toward high-uncertainty regions of the prediction space accelerates data collection far more efficiently than random or high-"temperature" sampling &mdash; is entirely domain-agnostic. The paper demonstrates this for molecular configuration space, but the same principle applies to any iterative data acquisition problem where an ensemble of models provides uncertainty estimates. A direct extension would be to replace molecular dynamics with a <strong>spatial random walk on a geographic graph</strong>, where the "temperature" analogue is geographic exploration radius, and the bias potential steers sensing resources (e.g., survey sites, sensor deployments) toward regions of high ensemble disagreement in a spatial prediction model. This would generalize UDD-AL from atomic to geographic space while keeping the mathematical structure of equation (4) intact.</p>
+      <p><span class="lab mine">Added value to my research</span>My GeoAI work involves spatial prediction tasks (healthcare accessibility, EV charging demand, disease rates) where labeled training points are costly to obtain and spatially biased toward accessible areas. Adapting UDD-AL's bias-potential framework to <strong>geospatial active sampling</strong> would steer field surveys or mobile data collection toward high-uncertainty spatial regions &mdash; directly improving the quality of MGWR/GWR regression training sets and reducing the spatial coverage gaps endemic to convenience sampling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep Bayesian active learning using in-memory computing hardware &mdash; <a href="https://doi.org/10.1038/s43588-024-00744-y" target="_blank">10.1038/s43588-024-00744-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace fixed bias parameters A and B with an adaptive, learned schedule</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper acknowledges that selecting bias magnitude A and width B is "context-dependent" and done empirically — arguably the method's main limitation. A productive extension would be to <strong>meta-learn an adaptive schedule for A and B</strong> across a suite of molecules: train a small policy network (taking as inputs the current uncertainty distribution, AL iteration, and energy barrier estimates) to output A and B that maximize the marginal information gain of the next selected structure. This would convert UDD-AL's two fixed hyperparameters into a <em>self-tuning</em> system, removing the only significant manual step remaining in the pipeline. The machine-guided path sampling framework from the corpus provides a natural reference for integrating such a learned controller into molecular dynamics sampling.</p>
+      <p><span class="lab mine">Added value to my research</span>The bandwidth-selection problem in MGWR/GWR is structurally analogous: the spatial kernel width h is a hyperparameter that controls the locality of regression and is currently chosen by cross-validation independently for each variable. An uncertainty-driven adaptive bandwidth scheduler — inspired by UDD-AL's self-referential bias approach — could accelerate bandwidth search and adapt to spatial non-stationarity more efficiently, particularly in data-sparse regions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine-guided path sampling to discover mechanisms of molecular self-organization &mdash; <a href="https://doi.org/10.1038/s43588-023-00428-z" target="_blank">10.1038/s43588-023-00428-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend UDD-AL from ensemble variance to calibrated conformal prediction intervals</h3>
+      <p><span class="lab paper">Extending this paper</span>UDD-AL uses ensemble variance (&sigma;<sub>E</sub><sup>2</sup>) as its uncertainty signal. Ensemble variance is a practical proxy but is known to be poorly calibrated: it can underestimate uncertainty in interpolation and overestimate it in extrapolation. A rigorous extension would replace the ensemble variance bias with <strong>conformal prediction intervals</strong> or <strong>deep kernel uncertainty estimates</strong> that provide coverage guarantees. This would make the "high-uncertainty regions" targeted by the dynamics provably correct &mdash; i.e., the regions where the trained potential genuinely cannot be trusted &mdash; rather than heuristic estimates. The drug-discovery active learning paper in the corpus benchmarks several such calibrated uncertainty methods in a closely related iterative labeling context.</p>
+      <p><span class="lab mine">Added value to my research</span>Calibrated uncertainty is equally critical for explainable spatial ML: when my ensemble of gradient boosting or random forest models predicts healthcare access scores, knowing whether the ensemble variance reflects genuine spatial data gaps or model artifacts matters for policy use. Importing conformal prediction into the spatial ensemble framework would provide statistically valid confidence intervals on accessibility maps &mdash; a key step toward trustworthy, publicly communicable GeoAI outputs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Taking a deep dive with active learning for drug discovery &mdash; <a href="https://doi.org/10.1038/s43588-024-00704-6" target="_blank">10.1038/s43588-024-00704-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Couple UDD-AL data diversity with universal graph neural network potentials for transferable coverage</h3>
+      <p><span class="lab paper">Extending this paper</span>UDD-AL is demonstrated with ANI-type potentials applied to single molecular systems (glycine, acetylacetone). A powerful extension would be to integrate UDD-AL's data-acquisition strategy with <strong>universal graph neural network interatomic potentials</strong> (e.g., M3GNet, CHGNet) that span the full periodic table. In such a setting, the uncertainty landscape extends over chemical as well as configurational space: the bias potential could steer sampling toward both under-explored <em>geometries</em> and under-represented <em>element combinations</em>, dramatically expanding the diversity of the resulting multi-element training corpus. The universal graph potential paper in the corpus provides the architectural foundation for this integration.</p>
+      <p><span class="lab mine">Added value to my research</span>This cross-domain analogy maps cleanly onto my work on <strong>geospatial foundation models</strong>: just as universal interatomic potentials must cover chemical diversity, foundation models for geospatial prediction must cover spatial, temporal, and demographic diversity. Adapting UDD-AL's uncertainty-steered data collection to identify under-represented spatial contexts (sparse rural areas, data-scarce low-income regions) would make fine-tuning of geospatial foundation models more data-efficient and equity-aware.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table &mdash; <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply UDD-AL's "rare event" logic to discover spatial tipping points in health accessibility systems</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most striking demonstration is that UDD steers molecular dynamics into <strong>chemically rare transition states</strong> &mdash; configurations almost never visited by unbiased low-temperature sampling but critical for reactive chemistry. This "rare event" logic is conceptually transferable to any complex system where important states are seldom visited under normal dynamics. For spatial health systems, the analogous rare events are <strong>accessibility tipping points</strong>: combinations of facility closure, population shift, or transport disruption that cause sudden large drops in healthcare access for vulnerable populations. Extending UDD-AL: define a spatial-accessibility ensemble (e.g., multiple 2SFCA-based models with different demand estimates) and use ensemble disagreement as a bias to steer Monte Carlo simulation of policy counterfactuals toward high-uncertainty, high-impact combinations of spatial changes.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps directly onto my Monte Carlo simulation methodology for healthcare accessibility. The UDD-inspired bias would replace uniform random sampling of facility-closure scenarios with <strong>uncertainty-targeted scenario generation</strong> &mdash; finding the tipping-point configurations most likely to cause large, inequitable accessibility failures. This would produce a far richer stress-test of health system resilience with far fewer simulation runs, directly useful for 2SFCA-based health geography policy analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning interatomic potentials at the centennial crossroads of quantum mechanics &mdash; <a href="https://doi.org/10.1038/s43588-025-00930-6" target="_blank">10.1038/s43588-025-00930-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and article text &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

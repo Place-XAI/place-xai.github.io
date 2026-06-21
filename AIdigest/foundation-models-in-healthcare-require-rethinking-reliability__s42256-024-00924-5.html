@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundation models in healthcare require rethinking reliability — AI Digest</title>
+<meta name="description" content="AI Digest: Foundation models in healthcare require rethinking reliability (Nature Machine Intelligence, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Foundation Models</span>
+      <span class="tag">Healthcare AI</span>
+      <span class="tag">Model Reliability</span>
+      <span class="tag">Clinical AI Evaluation</span>
+    </div>
+    <h1>Foundation models in healthcare require rethinking reliability</h1>
+    <div class="meta">
+      <span class="authors">Thomas Grote · Timo Freiesleben · Philipp Berens</span>
+      <span><b>Published</b> 2024-11-11</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-024-00924-5" target="_blank">10.1038/s42256-024-00924-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-024-00924-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Foundation models violate three core assumptions of the standard machine learning reliability paradigm — <strong>unseen test data</strong>, <strong>stable data distribution</strong>, and <strong>adequate output functionality</strong> — making existing evaluation methods conceptually inadequate, not merely practically challenging. New research infrastructure, more rigorous reasoning-capacity tests, and prospective clinical validation are needed before warranted trust in healthcare foundation models can be established.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Diagnoses a conceptual gap, not just a practical one.</b> The authors show that the problems with evaluating foundation models in healthcare are <strong>structural and principled</strong> — not engineering gaps that more data or larger benchmarks will fix. This reframing elevates the stakes for the entire clinical AI community.</li>
+      <li><b>Unpacks three broken assumptions.</b> The argument is precise: (1) "unseen test data" is incoherent for models trained on the whole internet; (2) without a defined data source, OOD detection loses its anchor; (3) open-ended generative outputs cannot be judged by classification accuracy alone — each point invalidates a specific tool in the reliability toolkit.</li>
+      <li><b>Calls out a pervasive evaluation shortcut.</b> The paper warns that recent foundation-model studies sidestep rather than address these conceptual problems, and that relying on medical licensing questionnaires tests memorization, not clinical reasoning or coherence.</li>
+      <li><b>Proposes actionable steps.</b> Three concrete recommendations emerge: systematic transparency in training data reporting, comprehensive reasoning-capacity testing (coherence, consistency, modal robustness), and prospective evaluation across a broad range of tasks and metrics — providing a checklist for reviewers and regulators.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Conceptual rather than empirical contribution:</b> Nature Machine Intelligence regularly publishes perspective and brief communication pieces that reframe entire subfields — this paper does exactly that by exposing a principled gap in reliability evaluation methodology.</li>
+      <li><b>Timely and high-impact:</b> foundation models entering healthcare is the leading story in applied ML in 2023–2024; a rigorous philosophical-epistemological critique is precisely what the field needs at this inflection point.</li>
+      <li><b>Interdisciplinary framing:</b> the authors integrate philosophy of science (epistemology of ML, warranted trust), medicine (clinical translation), and computer science (OOD detection, uncertainty quantification) — a hallmark of NMI's editorial preference.</li>
+      <li><b>Shapes community norms:</b> the paper's proposed evaluation standards, if adopted community-wide, would change how papers are reviewed and how regulators assess clinical AI submissions — a lasting structural impact.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>Brief Communication / Perspective — <strong>no empirical dataset</strong> is collected or analyzed. The paper is a conceptual and philosophical argument; all illustrative examples draw on published literature.</dd>
+      <dt>Illustrative cases</dt><dd>CT-scan diagnostic models (used as running example to ground the three reliability conditions); LLM medical licensing questionnaires (e.g., USMLE-style benchmarks cited in refs 13–15); protein language models; speech-to-text and multi-modal clinical systems — all cited from prior work, not newly collected.</dd>
+      <dt>Key cited datasets</dt><dd>No named datasets are introduced by the authors. Referenced studies (Jiang et al., Nature 2023; Hager et al., Nat. Med. 2024; Wornow et al., npj Digital Medicine 2023; Singhal et al., Nature 2023) rely on clinical EHR data, imaging archives, and medical exam corpora — proprietary or institutional access in most cases.</dd>
+      <dt>Data availability</dt><dd>Not applicable — the paper contains no original data, code, or supplementary tables. The <em>data_availability</em> field in the published article is blank.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Reference / Illustrative Source</th><th>Role in Argument</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Medical licensing exam benchmarks (e.g., USMLE)</td><td>Exemplar of insufficient evaluation strategy for LLMs</td><td>Multi-domain standardized questionnaires; exact item counts vary by study</td><td>Various publishers; see cited refs 13–15</td></tr>
+        <tr><td>Bommasani et al. (arXiv 2021) — Foundation Models report</td><td>Defines "foundation models" paradigm underpinning the paper's argument</td><td>Conceptual survey; no single dataset</td><td><a href="https://doi.org/10.48550/arXiv.2108.07258" target="_blank">arXiv:2108.07258</a></td></tr>
+        <tr><td>Moor et al. (Nature, 2023)</td><td>Premier reference for foundation models entering clinical practice</td><td>Review/perspective; covers imaging, NLP, multi-modal clinical data</td><td><a href="https://doi.org/10.1038/s41586-023-05881-4" target="_blank">nature.com</a></td></tr>
+        <tr><td>DeGrave et al. (Nat. Mach. Intell., 2021)</td><td>Illustrates shortcut learning / annotation artifacts in clinical imaging</td><td>COVID-19 chest X-ray datasets</td><td><a href="https://doi.org/10.1038/s42256-021-00338-7" target="_blank">doi link</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: this is a conceptual paper; all sources in the table above are cited references within the article's argument, not datasets collected by the authors. Numbers and coverage reflect the cited works, not this paper's own empirical scope.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Conceptual/analytic philosophy of ML:</b> the paper's core method is structured conceptual analysis — decomposing the standard reliability paradigm into three necessary conditions and systematically showing which ones foundation models violate and why.</li>
+      <li><b>Epistemic framing:</b> draws on philosophy of science (warranted trust, generalization error, rationality norms such as coherence and consistency) to articulate why evaluation failures are principled, not incidental.</li>
+      <li><b>Comparative case analysis:</b> uses a controlled illustrative comparison — a standard CT-scan diagnostic model vs. an LLM-based clinical assistant — to make the conceptual argument concrete and falsifiable.</li>
+      <li><b>Constructive critique of benchmarks:</b> analyzes the structure of medical licensing questionnaire evaluations (scenario simplicity, memorization vs. reasoning) to explain why they fail as proxies for clinical reliability.</li>
+      <li><b>Proposed framework:</b> translates the critique into three actionable research directions — better reporting, richer reasoning tests, and prospective multi-task evaluation — each grounded in the conceptual argument.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <p class="no-table">No figures available. This is a Brief Communication / Perspective piece; the published article contains no figures and no main-text tables. The argument is communicated entirely through prose and structured conceptual analysis.</p>
+    <p class="no-table">Tables: 0 in main text. Supplementary information: none noted.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, healthcare access equity).</p>
+
+    <div class="idea">
+      <h3>① Operationalize the paper's "warranted trust" framework with geospatial distribution-shift diagnostics</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper argues that OOD detection is incoherent for foundation models because there is no defined source distribution. A direct extension of the paper: propose a <strong>geospatially stratified evaluation protocol</strong> in which healthcare facility catchment areas define the data-generating process, making "distribution" spatially explicit. This grounds the paper's abstract OOD critique in a concrete, auditable geometry — each hospital's referral zone becomes the unit of distributional assessment, making external validation tractable again.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA/R2SFCA service-area delineation already operationalizes catchment zones. Extending that to define the <em>evaluation domain</em> for clinical AI models — rather than just access supply — creates a new use case: spatial catchment boundaries as OOD anchors for health AI reliability audits, directly linking my healthcare accessibility methods to the AI-evaluation gap this paper exposes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Access to care affects electronic health record reliability and AI-driven disease prediction — <a href="https://doi.org/10.1038/s44360-026-00054-9" target="_blank">10.1038/s44360-026-00054-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Build a prospective benchmark that tests the three reliability conditions simultaneously</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper proposes prospective evaluation but provides no concrete protocol. A practical extension: design a <strong>three-axis benchmark</strong> — (1) genuinely withheld data from facilities not in the training corpus, (2) explicit distributional provenance labels per sample, (3) task-specific adequacy metrics beyond accuracy — then run existing clinical foundation models through it and report where each condition fails. This converts the paper's conceptual audit into a reproducible leaderboard, supplying the "community-wide infrastructure" it calls for.</p>
+      <p><span class="lab mine">Added value to my research</span>Such a benchmark is a natural target for spatiotemporal explainable ML methods: MGWR / GWR can decompose where (geographically) a model's generalization error is largest, turning the paper's reliability audit into a spatial diagnostic tool. This connects my geospatial methods expertise to AI safety evaluation in healthcare.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging — <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace medical licensing questionnaires with coherence-stress tests grounded in causal reasoning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper argues that USMLE-style benchmarks test memorization rather than reasoning. A concrete extension: develop <strong>coherence-stress test sets</strong> that present the same clinical scenario in semantically equivalent but syntactically varied prompts, then check whether the model's output distribution is invariant (consistency) and whether counterfactual interventions produce causally correct responses (modal robustness). This directly implements the paper's abstract call for "norms of rationality" as a benchmark artifact.</p>
+      <p><span class="lab mine">Added value to my research</span>Causal consistency testing for LLMs mirrors my use of <strong>explainable ML with causal constraints</strong> in spatial prediction — both ask whether a model's output changes appropriately under a controlled perturbation. Applying such perturbation-invariance tests to health-AI fairness (across race, geography, and socioeconomic strata) aligns with my telehealth/digital-divide research and the spatial equity lens I bring to GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Improving generalization of machine learning-identified biomarkers using causal modelling with examples from immune receptor diagnostics — <a href="https://doi.org/10.1038/s42256-023-00781-8" target="_blank">10.1038/s42256-023-00781-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Quantify the hallucination–accuracy tradeoff for clinical LLMs across geographic access strata</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper notes that evaluating LLMs for accuracy can be misleading because it ignores uncertainty and output adequacy. Recent work shows that optimizing for accuracy on standard benchmarks structurally incentivizes hallucination. An extension of this paper: empirically map how the accuracy–hallucination tradeoff varies across <strong>clinical contexts defined by healthcare access levels</strong> (rural vs. urban, high vs. low physician density), using the paper's adequacy-of-output framework as the scoring rubric. This tests whether the reliability problem is uniformly distributed or spatially stratified — a critical policy question.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct bridge between the paper's reliability argument and my spatial accessibility and telehealth equity work. Mapping AI reliability gaps onto access-to-care geographies would reveal whether foundation models fail disproportionately in underserved areas — exactly the kind of spatial equity finding my research is positioned to produce and communicate to policy audiences.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating large language models for accuracy incentivizes hallucinations — <a href="https://doi.org/10.1038/s41586-026-10549-w" target="_blank">10.1038/s41586-026-10549-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Embed the paper's reliability conditions into multi-task medical foundation model training</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper focuses on post-hoc evaluation, but its three reliability conditions can also inform the <em>training</em> design. An extension: augment multi-task medical foundation model training with explicit <strong>reliability regularizers</strong> — an auxiliary loss penalizing divergence from held-out facility-specific test sets (condition 1), a distributional-provenance encoder that makes data-source conditioning explicit (condition 2), and a task-adequacy head trained on clinician preference scores rather than ground-truth labels (condition 3). This converts the paper's critique into a training objective.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models is one of my active research directions. The paper's framework translates directly: when fine-tuning a remote-sensing or mobility foundation model, I can apply the same three-condition checklist — ensuring the fine-tuning data is genuinely OOD with respect to the pre-training corpus, that distribution provenance is tracked, and that downstream task adequacy is measured by domain-specific metrics rather than generic accuracy. This provides a principled reliability audit protocol for GeoAI foundation-model work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-task learning for medical foundation models — <a href="https://doi.org/10.1038/s43588-024-00658-9" target="_blank">10.1038/s43588-024-00658-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Content copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

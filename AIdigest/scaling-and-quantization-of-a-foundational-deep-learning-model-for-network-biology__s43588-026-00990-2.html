@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scaling and quantization of a foundational deep learning model for network biology — AI Digest</title>
+<meta name="description" content="AI Digest: Scaling and quantization of a foundational deep learning model for network biology (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Foundation models</span>
+      <span class="tag">Single-cell transcriptomics</span>
+      <span class="tag">Model quantization</span>
+      <span class="tag">Scaling laws</span>
+    </div>
+    <h1>Scaling and quantization of a foundational deep learning model for network biology</h1>
+    <div class="meta">
+      <span class="authors">Han Chen · Christina V. Theodoris</span>
+      <span><b>Published</b> 2026-05-11</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-00990-2" target="_blank">10.1038/s43588-026-00990-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-00990-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>An expanded Geneformer model pretrained on <strong>~104 million single-cell human transcriptomes</strong> — a more than three-fold increase over the original — demonstrates clear <strong>scaling laws</strong>: larger, more diverse pretraining data and more parameters systematically improve zero-shot and few-shot predictions of gene network hierarchies. Critically, <strong>4-bit model quantization</strong> (via QLoRA) retains full biological accuracy while cutting inference time to <strong>15%</strong> and GPU memory to <strong>34%</strong> of the full-precision baseline, democratizing access to large biological foundation models.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Establishes scaling laws for biological foundation models.</b> This is among the first systematic demonstrations that transformer-based models trained on single-cell RNA sequencing data follow scaling laws analogous to those in NLP — larger data and more parameters reliably improve biological prediction accuracy, especially in zero-shot settings.</li>
+      <li><b>Solves the resource barrier for rare-disease research.</b> Most impactful use cases — rare diseases, underrepresented cell types — are data-limited. Zero-shot improvements from scaling directly translate into better predictions where experimental data are scarcest.</li>
+      <li><b>Quantization without biological cost.</b> The paper demonstrates that 4-bit quantization via QLoRA preserves the model's learned gene regulatory knowledge, resolving a feared trade-off and enabling resource-constrained labs to run state-of-the-art in silico perturbation screens.</li>
+      <li><b>Opens a roadmap toward spatio-temporal biological modeling.</b> The authors explicitly identify extending the model to incorporate temporal and spatial transcriptomic data as the next frontier — linking single-cell to spatial omics and tissue-wide therapeutic targets.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Principled scaling-law analysis in a new domain:</b> rigorously characterizes how performance scales with data volume and parameter count in biology — a fundamental contribution to understanding foundation models beyond NLP/vision.</li>
+      <li><b>Combines a methodological advance (quantization) with a scientific finding (scaling laws):</b> the combination of these two results in a single concise study makes for a focused, impactful brief communication.</li>
+      <li><b>Broad biological impact:</b> predictions of transcription factor dosage sensitivity, chromatin dynamics, and regulatory range underpin drug discovery and rare-disease target nomination — topics with clear societal stakes.</li>
+      <li><b>Democratization theme:</b> making large models accessible to labs with limited GPU resources aligns with open-science values and accelerates reuse across the single-cell community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Pretraining corpus</dt><dd><strong>~104 million human single-cell transcriptomes</strong> — a more than three-fold increase over the original Geneformer 1 corpus. Incorporates a more diverse range of tissues and cell states; exact databases contributing to the corpus are not enumerated in the brief communication text (the full study is <a href="https://doi.org/10.1038/s43588-026-00972-4" target="_blank">s43588-026-00972-4</a>).</dd>
+      <dt>Original Geneformer data</dt><dd>Original Geneformer (Theodoris et al., <em>Nature</em> 618, 616–624, 2023) trained on ~30 million cells; the new corpus represents a &gt;3× expansion.</dd>
+      <dt>Downstream tasks</dt><dd>Benchmarked on distinguishing <strong>dosage-sensitive vs. insensitive transcription factors</strong>, downstream TF targets, chromatin dynamics, and TF regulatory range; also compared against SVMs, random forest, and logistic regression baselines.</dd>
+      <dt>Quantization method</dt><dd><strong>QLoRA</strong> (Dettmers et al., arXiv:2305.14314, 2023) applied to the GF-316M model (316M parameters); 4-bit quantized vs. 32-bit full-precision models compared on processing time and GPU memory (<em>n</em> = 3 trials, Wilcoxon rank-sum test).</dd>
+      <dt>Key quantization result</dt><dd>4-bit quantized Geneformer achieves equivalent fine-tuning accuracy in <strong>15% of the time</strong> and using only <strong>34% of the GPU memory</strong> relative to the 32-bit GF-316M model.</dd>
+      <dt>Data availability</dt><dd>Data availability not stated in this brief communication; see the full companion article (DOI: 10.1038/s43588-026-00972-4) for complete data and code.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Single-cell human transcriptomes (expanded corpus)</td><td>Pretraining Geneformer</td><td>~104 million cells, multi-tissue, multi-cell-state</td><td>See full paper (DOI: 10.1038/s43588-026-00972-4)</td></tr>
+        <tr><td>Original Geneformer corpus</td><td>Baseline comparison</td><td>~30 million cells (Theodoris et al. 2023)</td><td><a href="https://doi.org/10.1038/s41586-023-06139-9" target="_blank">10.1038/s41586-023-06139-9</a></td></tr>
+        <tr><td>QLoRA quantization framework</td><td>4-bit model compression</td><td>Applied to GF-316M; n=3 benchmark trials</td><td><a href="https://arxiv.org/abs/2305.14314" target="_blank">arXiv:2305.14314</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this article is a research briefing summarizing a longer companion study. Exact dataset catalogues and code repositories are detailed in the full paper. Numbers here are taken verbatim from the brief communication text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Transformer-based pretraining (masked learning):</b> Geneformer is a BERT-style transformer that performs <strong>transcriptional masked learning</strong> — randomly masking genes in a rank-ordered single-cell expression input and learning to predict them from context. This yields a contextual embedding of each gene within a cell's regulatory network.</li>
+      <li><b>Scaling experiment:</b> trained Geneformer models with increasing numbers of parameters and increasing pretraining corpus size, measuring performance on multiple downstream biological tasks to characterize the scaling law behavior.</li>
+      <li><b>Zero-shot and few-shot evaluation:</b> models evaluated directly on downstream tasks without fine-tuning (zero-shot) and with limited task-specific examples (few-shot), the regime most relevant for rare-disease applications.</li>
+      <li><b>QLoRA quantization:</b> applied 4-bit quantization (via QLoRA; Dettmers et al. 2023) to the GF-316M model weights, reducing memory from 32 bits to 4 bits per parameter; fine-tuned with low-rank adapters (LoRA) to recover task performance post-quantization.</li>
+      <li><b>Benchmark comparison:</b> compared Geneformer predictions against traditional ML baselines — support vector machines, random forest, logistic regression — across all downstream tasks.</li>
+      <li><b>Statistical testing:</b> Wilcoxon rank-sum tests (*P &lt; 0.05) used to assess significance of computational speedup and memory reduction across repeated trials.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/scaling-and-quantization-of-a-foundational-deep-learning-model-for-network-biology__s43588-026-00990-2/fig1.png" target="_blank">
+        <img src="assets/scaling-and-quantization-of-a-foundational-deep-learning-model-for-network-biology__s43588-026-00990-2/fig1.png" alt="Fig.1 Improving predictive performance of Geneformer while reducing time and GPU memory requirements" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> <em>(a)</em> Self-supervised pretraining schema: large-scale transcriptome pretraining yields a gene network model applicable zero-shot or via fine-tuning. <em>(b)</em> Quantization efficiency: relative processing time and GPU memory for 4-bit quantized Geneformer vs. 32-bit GF-316M (n=3 trials; *P&lt;0.05, Wilcoxon rank sums).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0); full benchmarking data reported in companion article 10.1038/s43588-026-00972-4.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, fine-tuning geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Transfer the quantization-without-cost insight to geospatial foundation models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's headline result — 4-bit QLoRA quantization of a 316M-parameter biological foundation model loses essentially zero task-specific accuracy while cutting time to 15% and memory to 34% — was validated across a biological task suite. A direct extension is to characterize whether the same quantization-accuracy trade-off holds across <em>model sizes</em> (e.g., 30M vs. 316M vs. 1B parameter Geneformer variants) and <em>task types</em> (gene-level vs. cell-level vs. tissue-level tasks), producing scaling-and-quantization Pareto curves that jointly encode both dimensions. The paper currently reports the result at one operating point; a full curve is needed before practitioners can choose a model size-quantization combination for their specific resource budget.</p>
+      <p><span class="lab mine">Added value to my research</span>I am fine-tuning geospatial foundation models (e.g., Prithvi, Clay) for spatiotemporal prediction tasks. The Geneformer quantization result motivates an analogous experiment: whether 4-bit or 8-bit QLoRA quantization of large remote-sensing foundation models retains spatial prediction accuracy for land-use classification or accessibility mapping. If the biological analogy holds, resource-constrained urban-health labs could run frontier GeoAI models on modest hardware — a direct equity-in-compute argument for open geospatial AI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend pretraining to spatial transcriptomics for tissue-wide perturbation modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly identifies its key limitation and next step: the current pretraining corpus is composed of <em>dissociated</em> single-cell transcriptomes, losing spatial context. The authors call for extending Geneformer to incorporate spatial and temporal data to predict how perturbations shift cell state trajectories over time or affect neighboring cells within tissues. A concrete extension of the paper would pretrain a spatial Geneformer variant — or add a graph-based spatial attention layer over the existing transformer — on spatial transcriptomics data (e.g., 10x Visium, Slide-seq) from the same tissues, so the model learns to condition gene network predictions on spatial neighborhood context.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning agenda maps naturally onto this idea: a spatial transcriptomics extension of Geneformer is architecturally a graph neural network where nodes are cells and edges encode spatial adjacency, with the gene expression profile as node features. This is structurally identical to the spatiotemporal graph models I develop for urban accessibility — enabling me to contribute methodological cross-pollination: spatial GNN layers with locality priors (analogous to spatial weights matrices in MGWR) applied to biological systems.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrative deep learning of spatial multi-omics with SWITCH — <a href="https://doi.org/10.1038/s43588-025-00891-w" target="_blank">10.1038/s43588-025-00891-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Characterize and formalize the scaling law for transcriptional masked learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper observes that performance improves with more data and parameters — consistent with scaling laws — but does not fit a formal scaling law (e.g., a power-law exponent relating loss or task accuracy to compute, data size, or parameter count). A direct extension is to fit Chinchilla-style optimal compute allocation curves for Geneformer: given a compute budget C, what is the optimal split between model size N and data size D to maximize zero-shot biological accuracy? This would transform the paper's qualitative observation into a prescriptive formula for the single-cell foundation model community.</p>
+      <p><span class="lab mine">Added value to my research</span>Understanding scaling laws for domain-specific foundation models (biological or geospatial) directly informs how much pre-training data is "enough" before fine-tuning on a task-specific dataset — a core design decision in my own work fine-tuning geospatial foundation models for healthcare accessibility prediction. If sub-quadratic scaling laws hold in geography as in biology, a modest pre-training expansion might yield disproportionate zero-shot gains in underserved geographies where labeled data are scarce.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning training dynamics analysis for single-cell data — <a href="https://doi.org/10.1038/s43588-024-00728-y" target="_blank">10.1038/s43588-024-00728-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply the multi-task pretraining paradigm to build a more general biological foundation model</h3>
+      <p><span class="lab paper">Extending this paper</span>Geneformer is pretrained on a single objective: transcriptional masked prediction. The paper's companion study scales this objective; an orthogonal extension is to add auxiliary pretraining tasks (e.g., predicting cell type, tissue of origin, or disease status as auxiliary heads during pretraining) using the corpus of 104 million cells as a rich multi-label dataset. Prior work in medical imaging suggests multi-task pretraining can yield better representations than single-task pretraining even when the downstream task is unrelated to the auxiliary objectives — an effect that may be amplified in the data-limited rare-disease setting that motivates this paper.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-task pretraining logic directly parallels my multi-source data fusion work (mobile phone, social media, remote sensing, POIs). A geospatial foundation model pretrained on multiple auxiliary spatial tasks simultaneously (land-use prediction, population density estimation, transportation mode classification) may yield richer contextual embeddings of locations — improving downstream transfer for health accessibility mapping in the same way auxiliary biological tasks improve gene network representations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-task learning for medical foundation models — <a href="https://doi.org/10.1038/s43588-024-00658-9" target="_blank">10.1038/s43588-024-00658-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Explainable attribution of which genes drive zero-shot predictions</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates <em>that</em> Geneformer makes accurate zero-shot biological predictions but does not systematically explain <em>which</em> input gene context tokens are most influential in each prediction — a critical gap for drug-target discovery, where biologists need to understand and trust the model's reasoning. A natural extension is to apply attention attribution methods (e.g., integrated gradients, attention rollout) or SHAP-based feature importance to the trained Geneformer models to produce gene-level explanation maps for each downstream task, identifying which genes in the cell context are driving dosage-sensitivity or chromatin-state predictions.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the biological analog of my explainable machine learning for spatial prediction work: just as I apply SHAP to GWR/ML ensembles to attribute spatial accessibility predictions to specific socioeconomic or infrastructure features, Geneformer attention attribution maps attribute cell-level predictions to specific regulatory genes. The methodological overlap is direct — both require faithful local attribution of a complex model's output to input features, and insights from the spatial explainability literature (e.g., spatial scale-aware attribution) could transfer to the biological setting.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multi-task learning strategy to pretrain models for medical image analysis — <a href="https://doi.org/10.1038/s43588-024-00666-9" target="_blank">10.1038/s43588-024-00666-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature / Chen, H. et al. (CC BY 4.0); shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

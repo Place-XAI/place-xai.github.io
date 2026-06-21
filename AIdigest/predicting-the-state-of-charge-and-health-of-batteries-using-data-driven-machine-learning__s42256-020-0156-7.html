@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting the state of charge and health of batteries using data-driven machine learning — AI Digest</title>
+<meta name="description" content="AI Digest: Predicting the state of charge and health of batteries using data-driven machine learning (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Battery State Prediction</span>
+      <span class="tag">Explainable ML</span>
+      <span class="tag">Electric Vehicles</span>
+      <span class="tag">High-Throughput Data</span>
+    </div>
+    <h1>Predicting the state of charge and health of batteries using data-driven machine learning</h1>
+    <div class="meta">
+      <span class="authors">Man-Fai Ng · Jin Zhao · Qingyu Yan · Gareth J. Conduit · Zhi Wei Seh</span>
+      <span><b>Published</b> 2020-03-02</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-0156-7" target="_blank">10.1038/s42256-020-0156-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-0156-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Data-driven machine learning <strong>outperforms both equivalent circuit models (ECMs) and physics-based models (PBMs)</strong> for predicting battery state of charge (SOC), state of health (SOH), and remaining useful life (RUL), achieving mean errors of approximately 4% across all three quantities. No single ML technique dominates: <strong>neural networks excel for data-rich SOC tasks</strong>, while <strong>Gaussian processes and random forests are preferred for data-sparse SOH/RUL</strong> due to built-in uncertainty quantification. The field's future lies in <strong>hybrid physics–ML models</strong> trained on high-throughput automated experimental data, enabling real-time, explainable battery management.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Directly addresses EV range anxiety.</b> Accurate, real-time SOC and SOH estimation is the single biggest barrier to widespread EV adoption; this review maps which ML techniques can close that gap and at what accuracy level.</li>
+      <li><b>Synthesizes the accuracy landscape quantitatively.</b> The paper aggregates 26+ studies into a structured comparison table (Table 2), reporting consolidated percentage errors: 4.0% SOC, 5.0% SOH, 4.1% RUL — benchmarks that scattered primary papers never provided in one place.</li>
+      <li><b>Charts a path from black-box to explainable models.</b> The review frames the next frontier as incorporating domain knowledge into ML to produce interpretable, "white box" battery predictions — essential for safety-critical BMS deployment where engineers must justify predictions.</li>
+      <li><b>Identifies high-throughput data generation as the binding constraint.</b> By devoting a full section to automated synthesis, characterization, and electrochemical testing pipelines, the paper reframes data production — not the ML algorithm — as the key bottleneck for the field.</li>
+      <li><b>Covers the full battery life cycle.</b> The SOC–SOH–RUL triad spans a single charge cycle through end-of-life, linking manufacturing quality control, on-board BMS, second-life redeployment, and grid storage under one analytical framework.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary synthesis at the AI–energy frontier:</b> bridges battery electrochemistry and computational ML in a way that neither community alone would publish — matching Nature Machine Intelligence's mandate for transformative cross-disciplinary perspectives.</li>
+      <li><b>Timely societal relevance:</b> published at the inflection point of EV mass adoption (2020), capturing momentum in a topic with direct climate, transport, and energy-security implications.</li>
+      <li><b>Positions ML as a paradigm shift:</b> argues that DDMs fundamentally resolve the accuracy–efficiency trade-off that has constrained ECMs and PBMs for decades — a claim with field-wide significance rather than incremental improvement.</li>
+      <li><b>Opens new research agendas:</b> the "Future Outlook" identifies three concrete grand challenges — holistic multi-scale modelling, in-situ on-device computation, and high-throughput data pipelines — that will seed community-wide research directions.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Nature of data</dt><dd>This is a <strong>review paper</strong>; it synthesizes data from 26+ primary studies rather than depositing original experimental data. All numbers below are from the reviewed literature.</dd>
+      <dt>Key exemplar dataset</dt><dd><strong>Severson et al. (2019), Nature Energy</strong> — lithium iron phosphate/graphite (LiFePO<sub>4</sub>) cells, early-cycle charge/discharge data. A linear model predicts RUL after 100 cycles with 9.1% error. This is the most concretely cited primary dataset in the paper.</dd>
+      <dt>Materials Project</dt><dd>Public database at <a href="https://materialsproject.org" target="_blank">materialsproject.org</a> — hundreds of thousands of computed material entries for electrodes and electrolytes, used as a training resource for ML-guided battery materials discovery.</dd>
+      <dt>Open Quantum Materials Database (OQMD)</dt><dd><a href="https://oqmd.org" target="_blank">oqmd.org</a> — approximately 1 million calculated compounds, complementary to the Materials Project for ML training on solid-state battery material properties.</dd>
+      <dt>Input variables covered</dt><dd>Across reviewed studies: voltage, current, temperature, cycle number, impedance spectra, capacity curves. Battery chemistries: Li-ion (dominant), nickel–metal hydride, lead–acid.</dd>
+      <dt>Dataset sizes</dt><dd>Exact per-study cell counts are not consolidated by this review. Severson et al. used 124 commercial cells; other cited studies range from tens to a few hundred cells. No aggregate sample count is reported for the review as a whole.</dd>
+      <dt>Availability</dt><dd>No original data deposited. Primary datasets accessible through cited literature; Materials Project and OQMD are openly available online.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role in Review</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Severson et al. 2019 (Nature Energy)</td><td>Key exemplar: RUL prediction from early-cycle data</td><td>124 LiFePO<sub>4</sub>/graphite cells, 100+ cycles each</td><td><a href="https://doi.org/10.1038/s41560-019-0356-8" target="_blank">10.1038/s41560-019-0356-8</a></td></tr>
+        <tr><td>Materials Project</td><td>ML training source for materials-level battery properties</td><td>Hundreds of thousands of computed material entries</td><td><a href="https://materialsproject.org" target="_blank">materialsproject.org</a></td></tr>
+        <tr><td>Open Quantum Materials Database (OQMD)</td><td>Complementary materials simulation database</td><td>~1 million calculated compounds</td><td><a href="https://oqmd.org" target="_blank">oqmd.org</a></td></tr>
+        <tr><td>Table 2 synthesis (in-paper)</td><td>Structured summary of 26+ primary ML studies on SOC, SOH, RUL</td><td>SOC: 15 studies; SOH: 8; RUL: 8+</td><td>In-paper table</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this is a review; specific cell counts and dataset sizes belong to the cited primary studies. Numbers above are drawn verbatim from the article text and referenced works.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Systematic literature review:</b> structured survey of ECMs, PBMs (P2D model, single-particle model, reduced-order models), and DDMs with a unified accuracy-vs-CPU-time framework (Fig. 2).</li>
+      <li><b>ML techniques reviewed:</b> linear regression, random forest / tree ensembles, support-vector machines (SVMs), Gaussian process regression, convolutional neural networks (CNNs), recurrent neural networks / LSTMs, and hybrid physics–ML approaches.</li>
+      <li><b>Validation protocols assessed:</b> hold-out (80/20 train–test split) and k-fold cross-validation; error metrics include RMSE, coefficient of determination (R²), and mean percentage error.</li>
+      <li><b>Accuracy benchmark synthesis:</b> aggregates percentage errors across 26+ studies — 4.0% (SOC), 5.0% (SOH), 4.1% (RUL) — providing the first consolidated cross-paradigm benchmark.</li>
+      <li><b>High-throughput pipeline design:</b> describes a fully integrated automated workflow from electrode synthesis (thin-film sputtering, robotic combinatorial), high-throughput X-ray characterization (XRD, XRF, in-situ XAS), automated battery fabrication, to parallel electrochemical testing (cyclic voltammetry, galvanostatic cycling, EIS).</li>
+      <li><b>Active learning loop (proposed):</b> ML surrogate model identifies high-uncertainty conditions, targets new simulations or experiments, retrains iteratively — reducing the labeled data required for accurate SOH/RUL prediction.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/predicting-the-state-of-charge-and-health-of-batteries-using-data-driven-machine-learning__s42256-020-0156-7/fig1.png" target="_blank">
+        <img src="assets/predicting-the-state-of-charge-and-health-of-batteries-using-data-driven-machine-learning__s42256-020-0156-7/fig1.png" alt="Fig.1 ML approach for SOC, SOH and RUL prediction pipeline" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The ML pipeline for SOC, SOH and RUL: simulation and high-throughput experimental data feed an iterative ML loop that guides the next experiment or simulation round.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-the-state-of-charge-and-health-of-batteries-using-data-driven-machine-learning__s42256-020-0156-7/fig2.png" target="_blank">
+        <img src="assets/predicting-the-state-of-charge-and-health-of-batteries-using-data-driven-machine-learning__s42256-020-0156-7/fig2.png" alt="Fig.2 Accuracy vs CPU time for ECM, SPM, P2D, and DDM" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Accuracy versus CPU time across model classes (ECM, SPM, P2D, DDM): DDM with ML occupies the high-accuracy, low-compute region that traditional models cannot reach simultaneously.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-the-state-of-charge-and-health-of-batteries-using-data-driven-machine-learning__s42256-020-0156-7/fig3.png" target="_blank">
+        <img src="assets/predicting-the-state-of-charge-and-health-of-batteries-using-data-driven-machine-learning__s42256-020-0156-7/fig3.png" alt="Fig.3 High-throughput battery fabrication and electrochemical testing pipeline" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> High-throughput battery fabrication and testing: automated pipeline from electrode slurry mixing through coating, assembly, electrolyte filling, and parallel electrochemical testing to produce large ML training datasets.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables. <b>Table 1</b>: definitions of battery modelling acronyms (ECM, PBM, DDM, P2D, SPM, SOC, SOH, RUL, ROM, etc.). <b>Table 2</b>: structured summary of 26+ primary ML studies — input features, output targets, battery chemistry, ML method used, and accuracy achieved. Table 2 is the core analytical contribution of this review.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable ML for spatial prediction, physics-informed graph learning, EV charging efficiency–equity optimization).</p>
+
+    <div class="idea">
+      <h3>① Replace ad-hoc model selection with an uncertainty-driven active learning loop</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Table 2 shows that practitioners choose ML algorithms case-by-case — neural networks for data-rich SOC, Gaussian processes for data-sparse SOH — without a principled selection or acquisition protocol. A direct extension: replace this fixed choice with an <strong>uncertainty-driven active learning framework</strong> that, at each battery cycle, queries whichever operating condition has the highest predictive uncertainty, acquires that experimental data, and retrains. This would automate the model-selection trade-off the paper describes qualitatively, and reduce labeled data requirements for accurate SOH/RUL prediction by an order of magnitude — realizing the paper's envisioned "active learning" loop concretely.</p>
+      <p><span class="lab mine">Added value to my research</span>The same acquisition logic applies directly to my <strong>spatiotemporal kernel density estimation</strong> and spatial ML workflows: treat unlabeled geographic locations as "battery cycles," measure prediction uncertainty from my ensemble, and selectively acquire ground-truth measurements (field surveys, sensor deployments) at the most informative spatial units — turning static training sets into adaptive geospatial active-learning pipelines that reduce costly data collection.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Realize the paper's explainability vision with tree-based interpretable surrogates for BMS</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper advocates "white box" explainable ML as the successor to opaque neural networks but provides no concrete architecture. A direct extension: train a high-accuracy neural network for SOC/SOH prediction, then distill it into a <strong>gradient-boosted tree surrogate with SHAP feature attribution</strong> that a BMS microcontroller can execute in microseconds while retaining full interpretability. This lets engineers trace which voltage, temperature, or cycle-count signal drives each SOH prediction — closing the gap between the paper's accuracy benchmarks and its explainability aspiration, with safety-critical BMS deployment in mind.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors my explainable ML agenda for <strong>spatial prediction</strong>: distilling a high-accuracy ensemble into interpretable SHAP-attributed feature importance maps, where the "BMS microcontroller" is a city-level policy brief. The workflow — complex ML compresses into actionable, human-readable outputs — is identical across battery diagnostics and geospatial health-policy applications.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning with explainable trees — <a href="https://doi.org/10.1038/s42256-019-0142-0" target="_blank">10.1038/s42256-019-0142-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Bridge battery state prediction to EV charging-infrastructure spatial equity</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper treats EVs purely as motivation and focuses entirely on the cell. An extension that bridges scales: use real-time ML-predicted SOH/RUL outputs as inputs to a <strong>fleet-level charging-station scheduling model</strong>, so batteries near end-of-life are preferentially routed to slow neighborhood chargers while healthy batteries access fast-charge hubs. This couples the paper's cell-level ML with urban charging-network operations — turning SOH prediction into a spatial resource-allocation signal that the paper never exploits.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the natural bridge to my <strong>EV charging-station efficiency-vs-equity optimization</strong>: if SOH-aware heterogeneous charging demand replaces uniform demand assumptions, the spatial siting optimization of charging infrastructure changes fundamentally. Battery degradation heterogeneity becomes a spatial equity lever — batteries owned by lower-income users may degrade faster under irregular charging, creating inequitable access unless SOH-informed station siting is incorporated.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> The urgent electrolyte sustainability challenges for electric vehicle batteries — <a href="https://doi.org/10.1038/s41467-025-60711-7" target="_blank">10.1038/s41467-025-60711-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Instantiate the paper's hybrid physics–ML proposal as a physics-informed neural operator</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's "Future Outlook" proposes combining PBMs with ML to handle residuals but leaves the architecture entirely open. A concrete extension: encode the P2D model's governing PDEs as soft constraints in a <strong>physics-informed neural operator (PINO)</strong> that maps battery input trajectories directly to SOC/SOH outputs, learning the PDE solution operator rather than a single solution. This would generalize across battery geometries and chemistries — realizing the paper's holistic cross-scale modelling aspiration without the per-cell parameterization cost of the full P2D model.</p>
+      <p><span class="lab mine">Added value to my research</span>This is structurally analogous to my <strong>physics-informed graph learning</strong> agenda: just as the PINO encodes battery physics as a PDE soft constraint, my GNNs encode spatial interaction laws (gravity, network flow conservation) as structural priors. The training tricks — PDE residual loss, automatic differentiation over spatial operators — port directly into spatiotemporal GNN architectures for urban mobility and accessibility prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Morphological and molecular breast cancer profiling through explainable machine learning — <a href="https://doi.org/10.1038/s42256-021-00303-4" target="_blank">10.1038/s42256-021-00303-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Close the paper's high-throughput loop with an automated microfluidics–ML co-design platform</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 3 presents full automation from electrode synthesis to electrochemical testing as a future aspiration, but the paper does not specify how to select which composition to synthesize next. A realizable extension: couple the paper's automated battery-fabrication workflow with a <strong>microfluidics-based combinatorial synthesis</strong> platform where an ML acquisition function selects the next electrode composition to test, closing the loop between the paper's high-throughput data-generation recommendation and actual accelerated materials discovery — turning a passive pipeline into an intelligent co-design loop for next-generation Li-ion and solid-state batteries.</p>
+      <p><span class="lab mine">Added value to my research</span>The blueprint — an ML model selects the next data-collection action based on predicted information gain — is structurally identical to my <strong>multi-source data fusion and open-science reproducibility</strong> work: treating heterogeneous urban datasets (mobile phone records, social media, remote sensing) as a "composition space" and using an ML acquisition function to prioritize which data stream to collect or label next for maximum predictive improvement. The battery paper's intelligent experimental design directly informs my adaptive multi-source data collection strategy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Combining automated microfluidic experimentation with machine learning for efficient polymerization design — <a href="https://doi.org/10.1038/s42256-020-0166-5" target="_blank">10.1038/s42256-020-0166-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

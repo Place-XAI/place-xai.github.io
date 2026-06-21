@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep learning for predicting rate-induced tipping — AI Digest</title>
+<meta name="description" content="AI Digest: Deep learning for predicting rate-induced tipping (Nature Machine Intelligence, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Tipping points</span>
+      <span class="tag">Deep learning</span>
+      <span class="tag">Explainable AI</span>
+      <span class="tag">Climate resilience</span>
+    </div>
+    <h1>Deep learning for predicting rate-induced tipping</h1>
+    <div class="meta">
+      <span class="authors">Yu Huang &middot; Sebastian Bathiany &middot; Peter Ashwin &middot; Niklas Boers</span>
+      <span><b>Published</b> 2024-11-28</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-024-00937-0" target="_blank">10.1038/s42256-024-00937-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-024-00937-0" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>This paper presents the <strong>first deep learning framework</strong> capable of predicting the probability of <strong>rate-induced tipping (R-tipping)</strong> in nonlinear dynamical systems well before transitions occur. Classical critical-slowing-down indicators fail to distinguish tipping from non-tipping trajectories under rapid forcing and noise, but the CNN-based model achieves <strong>60&ndash;95% prediction accuracy</strong> up to 290 time steps ahead. Explainable AI (layer-wise relevance propagation) reveals specific <strong>fingerprints</strong> in system trajectories that betray impending R-tipping, and the trained model transfers across unseen forcing rates and distinct dynamical systems, advancing the definition of <strong>safe operating spaces</strong> for a broader class of complex systems.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Fills a critical gap in tipping-point science.</b> While bifurcation-induced tipping has mathematical theory (CSD), rate-induced tipping has had no predictive method until now &mdash; this work is the first to make R-tipping probabilistically forecastable from time series data alone.</li>
+      <li><b>Directly relevant to anthropogenic climate change.</b> Key Earth system components (polar ice sheets, the Atlantic Meridional Overturning Circulation, soil carbon systems) may be subject to R-tipping as climate forcing rates outpace their internal recovery timescales; this framework quantifies that risk ahead of time.</li>
+      <li><b>Distinguishes noise-induced from rate-induced tipping.</b> Random perturbations can push systems over unstable boundaries even below the critical forcing rate &mdash; the model captures this subtler N-tipping mechanism that CSD entirely misses.</li>
+      <li><b>Transferable across systems and forcing regimes.</b> The DL model generalizes to unseen forcing rates and distinct dynamical systems (saddle-node, Bautin, compost-bomb) without retraining, a key step toward a domain-general EWS tool.</li>
+      <li><b>Open data and code.</b> Full datasets and PyTorch implementation are publicly available via Zenodo (<a href="https://doi.org/10.5281/zenodo.13939234" target="_blank">zenodo.org</a>) and GitHub, enabling community replication and extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Genuine machine learning novelty applied to an unsolved scientific problem:</b> the paper is not merely an application of DL but the first-ever predictive method for a class of transitions &mdash; matching NMI's emphasis on ML solving problems that other approaches cannot.</li>
+      <li><b>Interpretability as a first-class contribution:</b> LRP-based fingerprint extraction explains <em>what</em> the model learns (not just that it works), satisfying NMI's appetite for explainable AI with scientific insight.</li>
+      <li><b>Demonstrated generalization and transferability:</b> out-of-sample performance across forcing rates and systems gives the method credibility beyond toy demos, consistent with NMI's standard for robust evaluation.</li>
+      <li><b>High societal impact framing:</b> climate tipping, safe operating spaces, and policy-relevant risk quantification give the work a compelling motivation well beyond a niche modeling exercise.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Data type</dt><dd>Entirely <strong>simulation-generated</strong>: time series produced by numerical integration of three prototypical stochastic differential equation systems. No empirical observational datasets are used.</dd>
+      <dt>Systems modeled</dt><dd>Three paradigmatic R-tipping systems: (1) <strong>saddle-node system</strong> (normal form for saddle-node bifurcation with additive white noise); (2) <strong>Bautin system</strong> (complex-valued ODE with periodic attractor and noise); (3) <strong>compost-bomb model</strong> (soil carbon&ndash;temperature feedback ODE pair with noise).</dd>
+      <dt>Ensemble size</dt><dd><strong>200,000 runs per system</strong>, each with an independent noise realization (Wiener process). For the saddle-node system, approximately 37% (~74,000) exhibit R-tipping; the training/validation/test split per model is 97,200 / 10,800 / 12,000 time series.</dd>
+      <dt>Integration scheme</dt><dd>Euler&ndash;Maruyama; time step = 0.01 (saddle-node and Bautin), 0.1 (compost-bomb). Forcing rates varied: saddle-node &epsilon; = 0.9&ndash;1.9; Bautin r = 0.06&ndash;0.1; compost-bomb v = 0.1&ndash;0.17.</dd>
+      <dt>Data availability</dt><dd>Publicly available via Zenodo at <a href="https://doi.org/10.5281/zenodo.13939234" target="_blank">doi.org/10.5281/zenodo.13939234</a> (data + code).</dd>
+      <dt>Code availability</dt><dd>PyTorch 1.12.0 implementation also on GitHub: <a href="https://github.com/yhuangDLClimate/predict-rate-induced-tipping" target="_blank">github.com/yhuangDLClimate/predict-rate-induced-tipping</a>.</dd>
+      <dt>Note on unknowns</dt><dd>The paper does not apply the model to any real-world observational time series; all performance metrics (60&ndash;95% accuracy, lead times) are derived from synthetic ensemble data. Real-world validation is deferred to future work.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Saddle-node SDE simulations</td><td>Primary training/test data for R-tipping prediction</td><td>200,000 ensemble runs; &epsilon; range 0.9&ndash;1.9</td><td><a href="https://doi.org/10.5281/zenodo.13939234" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Bautin system simulations</td><td>Generalization test (periodic attractor dynamics)</td><td>200,000 ensemble runs; r range 0.06&ndash;0.1</td><td><a href="https://doi.org/10.5281/zenodo.13939234" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Compost-bomb simulations</td><td>Generalization test (soil carbon&ndash;climate feedback)</td><td>200,000 ensemble runs; v range 0.1&ndash;0.17</td><td><a href="https://doi.org/10.5281/zenodo.13939234" target="_blank">Zenodo</a></td></tr>
+        <tr><td>PyTorch model weights &amp; code</td><td>Reproducibility and transfer testing</td><td>CNN + FC, trained on each system and combined</td><td><a href="https://github.com/yhuangDLClimate/predict-rate-induced-tipping" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all data are computationally generated from known equations; no observational or geospatial datasets are used. Numbers above are taken verbatim from the Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Ensemble stochastic simulation:</b> 200,000 independent noise realizations per system using the Euler&ndash;Maruyama scheme; tipping events identified by threshold exceedance of the non-tipping envelope.</li>
+      <li><b>CSD indicator benchmarking:</b> lag-1 autocorrelation and variance computed in a rolling window (120 time steps, after nonlinear detrending with a 100-step running mean); Kolmogorov&ndash;Smirnov tests confirm CSD cannot distinguish R-tipping from non-tipping.</li>
+      <li><b>CNN-based binary classification:</b> two 1D convolutional layers (kernel size 3, 64 filters) with average pooling connected to a fully connected layer; cross-entropy loss; SGD with lr = 0.01; separate model trained per lead time.</li>
+      <li><b>Layer-wise relevance propagation (LRP):</b> post-hoc XAI method that redistributes output relevance back through the network layers to each input time-step, producing saliency maps that identify temporal fingerprints of impending R-tipping.</li>
+      <li><b>Out-of-sample generalization testing:</b> models trained on a single forcing rate evaluated across the full forcing-rate range and across all three dynamical systems; combined multi-system training improves cross-system transfer.</li>
+      <li><b>Probability prediction:</b> sigmoid output provides a continuous tipping probability per time step and lead time; prediction deemed correct when &gt;50% probability aligns with the true class.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig1.png" target="_blank">
+        <img src="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig1.png" alt="Fig.1 R-tipping visualized as a particle in a basin of attraction" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> R-tipping conceptual diagram &mdash; particle-in-basin illustration showing slow vs. fast forcing and the interaction with noise-induced tipping.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig2.png" target="_blank">
+        <img src="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig2.png" alt="Fig.2 Ensemble simulation results for three R-tipping systems" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Ensemble simulations across saddle-node, Bautin, and compost-bomb systems &mdash; time series, forcing parameters, and R-tipping occurrence density.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig3.png" target="_blank">
+        <img src="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig3.png" alt="Fig.3 DL prediction of R-tipping vs. classical CSD indicators" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> DL-derived R-tipping probabilities vs. classical CSD (autocorrelation, variance) &mdash; shows CSD fails while DL clearly separates tipping from non-tipping.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig4.png" target="_blank">
+        <img src="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig4.png" alt="Fig.4 LRP saliency maps revealing R-tipping fingerprints" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> LRP saliency maps &mdash; layer-wise relevance scores reveal which time-series segments drive R-tipping predictions at different lead times.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig5.png" target="_blank">
+        <img src="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig5.png" alt="Fig.5 Prediction accuracy for out-of-sample forcing rates" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Out-of-sample accuracy (forcing rate vs. lead time heatmaps) &mdash; trained on a single forcing rate, models generalize across unseen rates in all three systems.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig6.png" target="_blank">
+        <img src="assets/deep-learning-for-predicting-rate-induced-tipping__s42256-024-00937-0/fig6.png" alt="Fig.6 Cross-system transferability of DL models" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Cross-system transferability &mdash; models trained on one dynamical system predict R-tipping in other systems; combined training further improves generalization.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text supplementary table (Supplementary Table 1, compost-bomb parameters); all performance statistics presented in Figs. 3&ndash;6 and Supplementary Figs. 1&ndash;14.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, urban/health analytics).</p>
+
+    <div class="idea">
+      <h3>&#9312; Replace per-lead-time static CNNs with a continuous probabilistic climate-mode emulator</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper trains a <strong>separate CNN per discrete lead time</strong>, requiring hundreds of independent models and assuming the user knows how far ahead to predict. A direct extension: adopt a <strong>recurrent or attention-based architecture</strong> that conditions its output on the instantaneous system state and outputs a continuous probability trajectory without needing to fix a lead time. The corpus paper on learning coupled climate-mode dynamics offers an architecture blueprint for exactly this &mdash; modeling how a dynamical system's internal state evolves and coupling that to a probabilistic output head, eliminating the per-lead-time limitation of the current design.</p>
+      <p><span class="lab mine">Added value to my research</span>This recurrent-continuous formulation generalizes to <strong>spatiotemporal prediction in urban systems</strong>: replacing a fixed-horizon forecast with a state-conditioned probability stream is precisely the improvement my spatiotemporal kernel density work needs for event-onset (e.g., healthcare demand surge) forecasting. The LRP fingerprint idea transfers directly &mdash; I can identify which spatial lags or temporal windows precede demand spikes in telehealth access, using saliency methods already validated here.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning the coupled dynamics of global climate modes &mdash; <a href="https://doi.org/10.1038/s42256-026-01245-5" target="_blank">10.1038/s42256-026-01245-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Test the framework's EWS fingerprints against real-world lake and ecological regime-shift data</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper is entirely <strong>simulation-based</strong> and acknowledges that applying the model to natural systems requires further work. The most immediate extension is empirical validation on datasets where abrupt ecological transitions have been documented &mdash; such as lake eutrophication records or savanna-forest transitions &mdash; comparing DL-derived R-tipping probabilities against CSD indicators on the same time series. The corpus paper on the limited applicability of EWS to lake data provides a direct testbed: it identifies the specific failure modes of CSD on empirical lake records, which the DL framework should be challenged to overcome on those same series.</p>
+      <p><span class="lab mine">Added value to my research</span>Early warning signals for regime shifts in urban health systems &mdash; e.g., sudden increases in emergency department utilization or collapse of primary-care access networks &mdash; are structurally analogous to ecological tipping. Applying this DL-EWS framework to <strong>spatiotemporal health-service utilization time series</strong> (mobile-phone or insurance-claim derived) would let me issue probabilistic warnings of access crises well before they manifest, a novel GeoAI application.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Early warning signals have limited applicability to empirical lake data &mdash; <a href="https://doi.org/10.1038/s41467-023-43744-8" target="_blank">10.1038/s41467-023-43744-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Couple the R-tipping predictor to a probabilistic downscaling model for fine-scale tipping-risk maps</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper operates on <strong>univariate or bivariate time series</strong> from lumped dynamical system models. Climate-relevant R-tipping events, however, manifest in spatially distributed fields. Extending this work: pipe the CNN's tipping probability output as a <strong>conditioning signal</strong> to a generative downscaling model that maps coarse Earth system model (ESM) fields to fine spatial resolution &mdash; producing gridded maps of local R-tipping risk rather than scalar probabilities. The corpus paper on fast, scale-adaptive, uncertainty-aware downscaling of ESM fields with generative ML provides exactly the downscaling architecture needed to spatialize this framework.</p>
+      <p><span class="lab mine">Added value to my research</span>Gridded tipping-risk maps at fine resolution feed directly into my <strong>health geography and accessibility work</strong>: flood risk from ice-sheet R-tipping, for instance, degrades road networks and physical accessibility to healthcare facilities. Linking a probabilistic tipping map to 2SFCA spatial accessibility scores creates a <strong>climate-risk-conditioned accessibility model</strong>, integrating resilience into facility-access planning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast, scale-adaptive and uncertainty-aware downscaling of Earth system model fields with generative machine learning &mdash; <a href="https://doi.org/10.1038/s42256-025-00980-5" target="_blank">10.1038/s42256-025-00980-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Leverage interpretable modeling theory to make the CNN's fingerprint scientifically falsifiable</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper uses LRP as a <strong>post-hoc explainability layer</strong> and observes that peaks in LRP scores near the end of the time series indicate proximity to tipping. However, the paper acknowledges it cannot deeply characterize these fingerprints &mdash; the 1D nature of the data limits visual interpretation. Extending this: replace or complement the LRP analysis with a framework of <strong>implicit model semantics</strong> that formalizes what the CNN is effectively computing in terms of dynamical quantities (e.g., distance to basin boundary, curvature of potential), turning a qualitative saliency map into a testable scientific hypothesis about the system's geometry. The corpus paper on interpretability and implicit model semantics in deep learning provides the formal language for this translation.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>explainable ML for spatial prediction</strong> (MGWR/GWR hybrids, feature-importance maps) faces the same gap: saliency scores identify important inputs but do not explain <em>why</em> they matter. Formalizing model semantics would let me translate spatial feature importances into verifiable hypotheses about how urban form affects health outcomes &mdash; connecting XAI to causal spatial theory.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Interpretability and implicit model semantics in biomedicine and deep learning &mdash; <a href="https://doi.org/10.1038/s42256-026-01177-0" target="_blank">10.1038/s42256-026-01177-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Extend R-tipping prediction to spatially heterogeneous multi-variable fields via probabilistic ensemble forecasting</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper briefly demonstrates that the CNN can handle <strong>two-dimensional (bivariate) inputs</strong> in the Bautin and compost-bomb systems (Supplementary Fig. 13), suggesting it can ingest multi-channel data. The natural extension is full <strong>probabilistic spatiotemporal R-tipping prediction</strong>: train the model on gridded fields (temperature, salinity, ice thickness) from Earth system model ensembles and output a per-gridpoint R-tipping probability distribution. The corpus paper on probabilistic weather forecasting with ML (GenCast-style ensemble methods) demonstrates how to produce calibrated forecast ensembles over spatial fields, a framework that can be fused with the paper's R-tipping predictor to yield calibrated, spatial early-warning maps.</p>
+      <p><span class="lab mine">Added value to my research</span>Producing calibrated <strong>probabilistic forecasts over space</strong> is the technical core of my spatiotemporal kernel density estimation and Monte Carlo simulation methods applied to urban health. This paper's ensemble-based approach &mdash; using 200,000 simulations to characterize probabilistic tipping &mdash; directly informs how I should design uncertainty quantification in my agent-based models of healthcare access under environmental shocks: simulate an ensemble, then apply the DL predictor to identify which simulation trajectories approach a service-collapse threshold.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Probabilistic weather forecasting with machine learning &mdash; <a href="https://doi.org/10.1038/s41586-024-08252-9" target="_blank">10.1038/s41586-024-08252-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

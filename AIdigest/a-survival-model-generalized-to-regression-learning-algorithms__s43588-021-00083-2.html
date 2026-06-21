@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A survival model generalized to regression learning algorithms — AI Digest</title>
+<meta name="description" content="AI Digest: A survival model generalized to regression learning algorithms (Nature Computational Science, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Survival analysis</span>
+      <span class="tag">Right-censored data</span>
+      <span class="tag">Clinical ML</span>
+      <span class="tag">Deep learning</span>
+    </div>
+    <h1>A survival model generalized to regression learning algorithms</h1>
+    <div class="meta">
+      <span class="authors">Yuanfang Guan · Hongyang Li · Daiyao Yi · Dongdong Zhang · Changchang Yin · Keyu Li · Ping Zhang</span>
+      <span><b>Published</b> 2021-06-21</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-021-00083-2" target="_blank">10.1038/s43588-021-00083-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-021-00083-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The paper introduces <strong>GuanRank (complete rank)</strong>, a statistical transformation that converts right-censored survival data into a standard regression target, enabling <strong>any</strong> regression learning algorithm — including gradient boosted trees, CNNs, and LSTMs — to be applied to survival prediction. By computing pairwise Kaplan–Meier-informed rank probabilities for every pair of samples (including previously ignored early-censored pairs), the method consistently outperforms the Cox model and Random Survival Forest in simulations and delivers new capabilities in cancer histopathology image survival prediction and industrial hard-disk failure prediction.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the algorithm lock-in of survival models.</b> The Cox model and RSF require specific statistical machinery (hazard ratios, tree splits). GuanRank outputs a single continuous rank score, so <em>any</em> regression learner — linear, tree, kernel, or neural — can be plugged in with no architectural modification.</li>
+      <li><b>Recovers signal from early-censored observations.</b> Classic methods discard or downweight pairs where the earlier sample is censored. The complete rank framework uses the K–M curve to assign a principled fractional rank to such pairs, extracting otherwise wasted information — a direct gain at high censoring rates.</li>
+      <li><b>Opens survival modeling to image and time-series data.</b> CNNs and RNNs cannot interface with partial log-likelihood loss; GuanRank bridges this gap, demonstrated with TCGA histopathological images (2,453 patients, 4 cancer types) and Backblaze time-series hard-disk data (2013–2015).</li>
+      <li><b>Computationally practical.</b> Rank computation takes approximately 30 seconds for 10,000 samples, fitting seamlessly before any downstream learner.</li>
+      <li><b>Open software.</b> Full source code and simulated data are available at <a href="https://github.com/GuanLab/GuanRank_All" target="_blank">github.com/GuanLab/GuanRank_All</a>, enabling direct adoption across domains.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>A principled unification, not an incremental tweak:</b> the method generalizes the entire landscape of survival models in one theorem-backed transformation — matching the journal's appetite for algorithmic contributions with broad computational reach.</li>
+      <li><b>Theory + three heterogeneous application domains:</b> simulated data, medical imaging (TCGA cancer cohorts), and industrial reliability (Backblaze) are validated in a single paper, demonstrating cross-domain generality.</li>
+      <li><b>Reproducibility-first design:</b> open code, simulated data, and third-party replicated real datasets make the contribution fully verifiable — aligned with Nature Computational Science's open-science mandate.</li>
+      <li><b>Addresses a long-standing gap</b> (50+ years since Cox) with a mathematically clean solution, fitting the journal's emphasis on foundational computational methodology.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulation data</dt><dd>Synthetic right-censored datasets generated in-house. Base parameters: <strong>1,000 samples, 100 features</strong>; censoring rate approximately 87.5% (about 12.5% events). Grid scans across sample size, feature count, noise factor, censoring fraction, and correlation structure. Available at <a href="https://github.com/GuanLab/GuanRank_All" target="_blank">GitHub</a>.</dd>
+      <dt>Cancer cohort (TCGA)</dt><dd><strong>2,453 patients</strong> across 4 cancer types: BRCA (1,084), COAD (457), KIRC (537), LIHC (375). <strong>6,201 hematoxylin &amp; eosin whole-slide images</strong> (BRCA 3,070; COAD 983; KIRC 1,656; LIHC 492). Clinical metadata: gender, race, age, tumor stage, primary diagnosis. Data accessed via the <strong>GDC Data Portal</strong> (TCGA); no specific access date stated in the paper.</dd>
+      <dt>Disk failure data</dt><dd><strong>Backblaze hard-drive telemetry, 2013–2015.</strong> Daily status records per disk; <strong>86 continuous features</strong> per day (storage metrics, running status). Exact disk count not stated. Data downloadable from the <a href="https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data" target="_blank">Backblaze website</a>.</dd>
+      <dt>Code / reproducibility</dt><dd>Full source code: <a href="https://github.com/GuanLab/GuanRank_All" target="_blank">github.com/GuanLab/GuanRank_All</a>. Deep learning implemented in TensorFlow (cancer images) and PyTorch (disk LSTM). Statistical evaluation via R <code>survival</code> package (C-index).</dd>
+      <dt>Time window</dt><dd>TCGA data acquisition date not specified. Backblaze data: 1 January 2013 – 31 December 2015.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>GuanLab simulation</td><td>Method validation under controlled conditions</td><td>1,000 samples × 100 features (base); varied in grid scans</td><td><a href="https://github.com/GuanLab/GuanRank_All" target="_blank">GitHub</a></td></tr>
+        <tr><td>TCGA (GDC Portal)</td><td>Cancer survival prediction from images &amp; clinical features</td><td>2,453 patients; 6,201 H&amp;E WSIs; 4 cancer types (BRCA, COAD, KIRC, LIHC)</td><td><a href="https://portal.gdc.cancer.gov" target="_blank">portal.gdc.cancer.gov</a></td></tr>
+        <tr><td>Backblaze HDD telemetry</td><td>Industrial time-series survival (disk failure)</td><td>2013–2015 daily; 86 features/disk/day; exact disk count not stated</td><td><a href="https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data" target="_blank">Backblaze</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact disk count in the Backblaze subset used for training/testing is not reported in the main text; numbers above are stated verbatim from the paper where available.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Complete rank transformation:</b> for every pair of training samples (A, B) with T<sub>A</sub> &lt; T<sub>B</sub>, the method assigns fractional rank increments using six case rules; ambiguous censored pairs are resolved via K–M survival probabilities. Summing all pairwise contributions and dividing by total sample count yields a continuous target in [0, 1].</li>
+      <li><b>Kaplan–Meier integration:</b> the population-level K–M curve provides the conditional failure probability needed to assign partial rank scores to early-censored–late-uncensored and early-censored–late-censored pairs — the key innovation over Cox and RSF.</li>
+      <li><b>Gradient boosted trees (XGBoost / LightGBM):</b> baseline regression learner in simulation experiments and clinical feature modeling; LightGBM used for TCGA clinical data (gender, race, age, tumor stage, primary diagnosis), achieving C-index ≥ 0.7 in 3 of 4 cancer types.</li>
+      <li><b>Convolutional neural network (CNN):</b> 14 convolutional layers + 4 max-pooling layers applied to 1,024 × 1,024 H&amp;E images; output trained against complete rank scores via MSE loss; Adam optimizer, 60 epochs. C-index 0.525–0.634 on histopathological images alone.</li>
+      <li><b>Bidirectional LSTM (BiLSTM):</b> two hidden layers in opposite directions for time-series disk telemetry; 86 × (T<sub>stop</sub> − T<sub>start</sub>) features; rank-trained model outperforms binary-label training at small sample sizes.</li>
+      <li><b>Evaluation:</b> concordance index (C-index) via R <code>survival</code> package; fivefold cross-validation (or 5-fold × 4 repeats) throughout; simulation robustness assessed across noise, sample size, feature count, censoring fraction, and censoring–feature correlation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig1.png" target="_blank">
+        <img src="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig1.png" alt="Fig.1 Generalizing right-censored data to a regression problem by complete rank" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Illustration of the complete rank concept: pairwise comparisons along the survival curve and the six case rules for assigning fractional rank increments to each sample pair.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig2.png" target="_blank">
+        <img src="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig2.png" alt="Fig.2 Simulation experiments for complete rank in different scenarios" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Simulation experiments: C-index comparisons across sample size, feature count, noise level, censoring–feature correlation, and censoring fraction; GuanRank vs. Cox and RSF.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig3.png" target="_blank">
+        <img src="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig3.png" alt="Fig.3 Complete rank with deep learning and LightGBM for cancer survival" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Cancer survival prediction: CNN on H&amp;E images and LightGBM on clinical features across BRCA, COAD, KIRC, and LIHC; combined model achieves C-index up to 0.757.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig4.png" target="_blank">
+        <img src="assets/a-survival-model-generalized-to-regression-learning-algorithms__s43588-021-00083-2/fig4.png" alt="Fig.4 BiLSTM for disk failure prediction using time-series data" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Disk failure prediction: sampling scheme for Backblaze time-series data; rank-trained BiLSTM outperforms binary-label training, especially at small sample sizes.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0 in the paper); supplementary contains 16+ supplementary figures covering additional simulation scenarios.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable spatiotemporal ML, spatiotemporal kernel density, public health geography).</p>
+
+    <div class="idea">
+      <h3>① Apply complete rank to spatial accessibility waiting-time data (right-censored service reach)</h3>
+      <p><span class="lab paper">Extending this paper</span>GuanRank is demonstrated on clinical and industrial time-to-failure data. A direct, underexplored extension of the paper is applying complete rank to <strong>spatial accessibility as a survival problem</strong>: when a patient or resident searches for the nearest available healthcare facility, the "observation time" is the actual travel time recorded and the "event" is whether they successfully received care. Many real-world data logs are right-censored (surveys cut off, trips not completed, digital health sessions ended). The paper's framework could be straightforwardly extended to predict individual-level probability of accessing a facility within a given travel-time budget, yielding a richer, censoring-aware accessibility score that subsumes classical 2SFCA.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA and R2SFCA work delineates service areas using fixed or Gaussian-decayed catchments. Recasting accessibility as a right-censored survival problem — where GuanRank provides the continuous rank target — gives a <strong>data-driven, censoring-aware distance-decay function</strong> learned from actual patient visit logs or GPS trajectories, directly replacing my assumed decay kernels. This connects spatiotemporal kernel density estimation (a current method theme) to clinically validated survival statistics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning to guide the use of adjuvant therapies for breast cancer — <a href="https://doi.org/10.1038/s42256-021-00353-8" target="_blank">10.1038/s42256-021-00353-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace partial pairwise ranking with a neural ranking head for spatiotemporal prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper produces rank scores via exhaustive pairwise K–M comparisons, which scale as O(n<sup>2</sup>) and are computed once before any learner is trained. A natural extension of the paper is to <strong>train the rank scoring jointly end-to-end</strong> inside a neural network using a differentiable pairwise loss (e.g., ListNet or LambdaRank), eliminating the two-stage separation. This would allow the survival rank to adapt as feature representations evolve during deep learning training, potentially closing the gap between the CNN's moderate histopathological C-index (0.525–0.634) and the LightGBM clinical C-index (≥ 0.7).</p>
+      <p><span class="lab mine">Added value to my research</span>For spatiotemporal prediction tasks I encounter — disease incidence, telehealth demand, mental-health crisis onset — ranking-based loss is a natural complement to my explainable gradient-boosted ensembles. Embedding a differentiable survival rank loss into my graph-based spatiotemporal models would let me predict <strong>relative risk order</strong> across geographic units without committing to a distributional assumption on event times, directly bridging my GeoAI methods to clinical epidemiology.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A pathology foundation model for cancer diagnosis and prognosis prediction — <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Fairness-aware complete rank: adjust K–M curves per demographic stratum</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper computes a single population-level K–M curve to resolve ambiguous censored pairs. If the dataset contains demographic subgroups with systematically different censoring patterns (for example, minority patients censored earlier due to care inequity), the global K–M curve will import that structural bias into the rank scores. A direct extension is to <strong>stratify the K–M curve by protected attributes</strong> (race, sex, socioeconomic status) and assign pairwise rank probabilities using the stratum-specific curve. This would make GuanRank's resolution of ambiguous pairs fairness-aware without changing the downstream regression learning algorithm at all.</p>
+      <p><span class="lab mine">Added value to my research</span>Equity is a core theme in my healthcare accessibility work. A stratum-aware GuanRank, when applied to telehealth adoption or mental-health service utilization data sliced by digital-divide proxies (broadband access, income), would allow me to detect and correct <strong>censoring-induced bias in accessibility metrics</strong> — a novel methodological contribution at the intersection of my health geography and fairness-in-ML themes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Algorithmic fairness and bias mitigation for clinical machine learning with deep reinforcement learning — <a href="https://doi.org/10.1038/s42256-023-00697-3" target="_blank">10.1038/s42256-023-00697-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend complete rank to spatial continuity: survival prediction from remote-sensing time series</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper notes that complete rank is suited to data with "spatial continuity" suited for CNNs, but only demonstrates temporal continuity (BiLSTM on disk telemetry) and spatial structure (H&amp;E pathology patches). An explicit spatial extension of the paper would apply the rank framework to <strong>satellite time-series imagery</strong> where the event is a land-cover transition, urban-heat exceedance, or flood onset — all of which are naturally right-censored by cloud cover or observation gaps. Here the CNN backbone would read a spatiotemporal stack, and the GuanRank target would replace the binary change-detection label.</p>
+      <p><span class="lab mine">Added value to my research</span>Remote sensing is one of my key data streams for geospatial foundation model fine-tuning. Applying GuanRank to satellite time-series survival tasks would let me frame <strong>urban heat event prediction and infrastructure aging</strong> as spatially continuous survival problems, opening up the full suite of regression learners (including spatiotemporal GNNs) to a class of problems currently handled by binary change-detection classifiers that ignore censoring.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multi-task learning strategy to pretrain models for medical image analysis — <a href="https://doi.org/10.1038/s43588-024-00666-9" target="_blank">10.1038/s43588-024-00666-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Population-wise survival distribution estimation from complete rank outputs</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly acknowledges as a future direction that "estimating the distribution of a new population using an existing population's observations is not well-formulated." A direct extension would combine GuanRank's continuous rank output with a <strong>normalizing flow or quantile regression head</strong> to reconstruct the full survival density for each individual — not just rank order but a calibrated time-to-event distribution. This would close the gap the authors themselves identify and turn GuanRank from a ranking tool into a full survival density estimator compatible with arbitrary regression learners.</p>
+      <p><span class="lab mine">Added value to my research</span>In urban health policy, decision-makers need more than a rank: they need to know the expected number of disease events in a census tract within the next 5 years. A quantile-regression extension of GuanRank applied to my SIR and Monte Carlo epidemic models would let me produce <strong>calibrated spatially disaggregated survival distributions</strong> for outbreak prediction, tying my agent-based modeling work to rigorous survival statistics at the population level.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A robust computational framework for methylation age and disease-risk prediction based on pairwise learning — <a href="https://doi.org/10.1038/s43588-025-00939-x" target="_blank">10.1038/s43588-025-00939-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

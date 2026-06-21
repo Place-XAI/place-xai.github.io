@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine-guided path sampling to discover mechanisms of molecular self-organization — AI Digest</title>
+<meta name="description" content="AI Digest: Machine-guided path sampling to discover mechanisms of molecular self-organization (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Path Sampling</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Molecular Self-Organization</span>
+      <span class="tag">Symbolic Regression</span>
+    </div>
+    <h1>Machine-guided path sampling to discover mechanisms of molecular self-organization</h1>
+    <div class="meta">
+      <span class="authors">Hendrik Jung · Roberto Covino · A. Arjun · Christian Leitold · Christoph Dellago · Peter G. Bolhuis · Gerhard Hummer</span>
+      <span><b>Published</b> 2023-04-24</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00428-z" target="_blank">10.1038/s43588-023-00428-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00428-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>An autonomous algorithm — AIMMD (AI for Molecular Mechanism Discovery) — integrates <strong>deep learning with transition path theory</strong> to iteratively sample rare molecular self-organization events and learn the committor function encoding their mechanism. Applied to four systems (ion pairing in water, methane-clathrate nucleation, polymer folding, and membrane-protein dimerization), the algorithm produces <strong>human-interpretable mechanistic models via symbolic regression</strong>, revealing many-body solvent effects, competing nucleation pathways, and transferable reaction coordinates, all without unphysical biasing forces. Mechanistic descriptions transfer across <strong>thermodynamic states and chemical space</strong> with minimal additional data.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the loop between sampling and learning.</b> Conventional molecular dynamics cannot access rare assembly events on timescales many orders of magnitude longer than the MD timestep; AIMMD autonomously focuses computational effort on transition states and simultaneously learns their quantitative mechanism — achieving ~10x speedup over standard transition path sampling.</li>
+      <li><b>Produces interpretable physics, not just a black box.</b> Symbolic regression distills deep neural network knowledge into compact, human-readable analytical expressions — for example, a four-variable equation governing ion association simultaneously for LiCl, LiI, NaCl, NaI, CsCl, and CsI — bridging machine learning and physical understanding.</li>
+      <li><b>Demonstrates remarkable cross-domain generality.</b> A single algorithmic framework succeeds on systems spanning atomistic ion solvation, crystalline phase nucleation, coarse-grained polymer folding, and membrane-embedded protein complexes — spanning many orders of magnitude in timescale and system size.</li>
+      <li><b>Transfer learning dramatically lowers cost.</b> A model pre-trained on LiCl can be fine-tuned to five other ionic species with only 1,000 additional shooting outcomes each, enabling rapid, data-efficient generalization across chemical space.</li>
+      <li><b>Reveals previously inaccessible mechanisms.</b> The clathrate case exposes a temperature-dependent switch from amorphous to crystalline nucleation; the Mga2 membrane-protein case uncovers two competing dimerization pathways that 3.6 ms of unbiased MD had never resolved.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Algorithmic novelty with broad applicability:</b> AIMMD is not a domain-specific tool but a general-purpose closed-loop learning framework deployable across diverse molecular simulation problems — exactly the class of contribution Nature Computational Science prioritizes.</li>
+      <li><b>Bridges AI and physical science rigorously:</b> deep learning is coupled to statistically rigorous transition path theory, ensuring learned models are physically meaningful and validated on held-out configurations via quantitative committor cross-correlations.</li>
+      <li><b>Interpretability via symbolic regression is timely and distinctive:</b> delivering compact analytical expressions from high-dimensional neural networks is a methodological advance resonating across computational chemistry, biophysics, and AI-for-science broadly.</li>
+      <li><b>Reproducibility and open science:</b> all code (AIMMD on GitHub and Code Ocean) and simulation data (Zenodo) are fully open, meeting Nature's reproducibility standards and enabling immediate community reuse.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulation systems</dt><dd>Four molecular systems: (1) <b>Ion pairs in water</b> — 6 species (LiCl, LiI, NaCl, NaI, CsCl, CsI), each with one ion pair solvated by ~370 TIP3P water molecules; (2) <b>Methane-clathrate nucleation</b> — 2,225 transition paths at 4 temperatures (270, 275, 280, 285 K), totaling 445.3 μs of simulated dynamics (pre-existing dataset from ref. 21); (3) <b>Polymer folding</b> — coarse-grained 128-bead homopolymer, using existing shooting data from refs. 24–25; (4) <b>Mga2 transmembrane homodimer</b> — Martini coarse-grained model, 313 POPC lipids, 5,348 water beads, 150 mM NaCl; ~4,000 dissociation events sampled in 20 days on a parallel supercomputer.</dd>
+      <dt>Feature sets</dt><dd>Ion pairs: 176–220 symmetry functions (G2/G5 type) encoding angular solvent geometry + interionic distance + Lennard-Jones parameters; Clathrate: 22 physical features (nucleus size, crystallinity, cage structure, composition) + temperature; Polymer: 35 low-resolution global features OR 384 high-resolution per-bead features (3 descriptors × 128 beads); Mga2: 28 interhelical pairwise contacts + center-of-mass distance + lipid organization descriptors.</dd>
+      <dt>Training volumes</dt><dd>Ion pairing: up to 100,000 MC TPS steps per species; Clathrate: 2,225 pre-existing TPs across 4 temperatures; Polymer: existing shooting data (exact count not stated); Mga2: 500 parallel TPS chains, preliminary shots from 1,160 starting points, then ~4,000 additional TPs.</dd>
+      <dt>Transfer learning</dt><dd>1,000 additional shooting outcomes per new ionic species suffices to fine-tune the LiCl-trained model to NaCl, NaI, LiI, CsCl, or CsI (only the last single-neuron layer is retrained).</dd>
+      <dt>Force fields &amp; engines</dt><dd>Ions: Joung–Cheatham + TIP3P, openMM; Mga2: Martini v2.2, GROMACS v4.6.7; neural network training: Keras + custom Python, openpathsampling.</dd>
+      <dt>Code &amp; data</dt><dd>AIMMD: <a href="https://github.com/bio-phys/aimmd" target="_blank">github.com/bio-phys/aimmd</a>; LiCl data + executable: Code Ocean ref. 72; all remaining data: Zenodo ref. 73; source data files provided with the paper.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Code Ocean capsule (AIMMD)</td><td>Executable code + LiCl training data + MD setup files</td><td>LiCl ion-pair system</td><td><a href="https://codeocean.com" target="_blank">Code Ocean ref. 72</a></td></tr>
+        <tr><td>Zenodo repository (ref. 73)</td><td>Simulation data for all remaining systems</td><td>NaX/CsX ions, polymer, clathrate, Mga2</td><td><a href="https://zenodo.org" target="_blank">zenodo.org</a></td></tr>
+        <tr><td>Pre-existing clathrate TPS dataset (ref. 21)</td><td>Training set for nucleation committor learning</td><td>2,225 transition paths; 4 T values; 445.3 μs total simulated time</td><td>Internal (referenced)</td></tr>
+        <tr><td>Pre-existing polymer shooting data (refs. 24–25)</td><td>Training set for polymer-folding committor</td><td>Coarse-grained 128-bead homopolymer; count not stated</td><td>Internal (referenced)</td></tr>
+        <tr><td>AIMMD GitHub</td><td>Open-source algorithm (Python: Keras, openpathsampling, openMM)</td><td>Full codebase</td><td><a href="https://github.com/bio-phys/aimmd" target="_blank">github.com/bio-phys/aimmd</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: All data are computationally generated (atomistic/coarse-grained molecular dynamics simulations). No observational datasets (satellite imagery, census records, etc.) are used. Data volumes are reported as numbers of transition paths and total simulated time; file sizes are not stated in the paper. Exact Zenodo and Code Ocean DOIs for refs. 72–73 are listed in the published article's reference list.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Transition path sampling (TPS) with two-way shooting:</b> Markov chain Monte Carlo in path space; a shooting point is chosen from the current transition path with redrawn Maxwell–Boltzmann velocities and two trial trajectories (forward and backward) are propagated until reaching either metastable state A or B.</li>
+      <li><b>Committor learning via pyramidal ResNet:</b> models p_B(x) = sigmoid(q(x|w)) where q(x|w) is a pyramidal residual network; trained by minimizing the negative log-likelihood of binary shooting outcomes (Bernoulli process). Self-consistent on-the-fly validation compares expected vs. observed TP counts; retraining is triggered only when they diverge, preventing overfitting.</li>
+      <li><b>Machine-guided shooting-point selection:</b> new starting points are drawn from the current TP via a Lorentzian distribution centered on the q=0 hypersurface (transition state ensemble), focusing computational effort where p(TP|x) is maximal — achieving ~10x speedup over uniform random selection.</li>
+      <li><b>Attribution / input importance analysis:</b> permutation-based sensitivity test identifies which input coordinates most strongly influence the trained committor, reducing the feature space from hundreds of coordinates to a handful for symbolic regression.</li>
+      <li><b>Symbolic regression with genetic algorithm (dcgpy):</b> searches function and parameter space simultaneously to produce compact analytical expressions; Pareto-front analysis (loss vs. mathematical complexity) selects models balancing accuracy and interpretability.</li>
+      <li><b>Transfer learning across chemical space:</b> only the final single-neuron layer of a pre-trained network is retrained on a new ionic species; 1,000 additional shooting outcomes per species are sufficient.</li>
+      <li><b>Hierarchical trajectory clustering (dynamic time warping):</b> projects all sampled TPs onto the symbolic-regression coordinate plane and clusters them to identify distinct mechanistic pathways (applied to Mga2 dimerization).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig1.png" target="_blank">
+        <img src="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig1.png" alt="Fig.1 Learning the assembly mechanism of ions in water" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Learning the assembly mechanism of ions in water — the AIMMD loop (path sampling + committor learning + symbolic regression), self-consistency and validation, and transfer learning across five ionic species.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig2.png" target="_blank">
+        <img src="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig2.png" alt="Fig.2 Interpretable multi-ion model of the assembly mechanism" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Interpretable multi-ion model — input relevance ranking for 179 coordinates, Pareto plot of symbolic regression candidates, and a single analytical expression valid for all six monovalent ion species.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig3.png" target="_blank">
+        <img src="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig3.png" alt="Fig.3 Data-driven discovery of methane-clathrate nucleation mechanism" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Methane-clathrate nucleation — molecular snapshots, committor validation, input importance revealing T, surface-water count n_w and cage count n_c, and a temperature-dependent switch from amorphous to crystalline growth.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig4.png" target="_blank">
+        <img src="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig4.png" alt="Fig.4 Learning the mechanism of polymer folding" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Polymer folding — committor heat map as a function of potential energy U and crystallinity Q6, with molecular snapshots at committor values 0, 0.5, and 1.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig5.png" target="_blank">
+        <img src="assets/machine-guided-path-sampling-to-discover-mechanisms-of-molecular-self-organization__s43588-023-00428-z/fig5.png" alt="Fig.5 Competing pathways of transmembrane dimer assembly" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Mga2 transmembrane dimer — snapshots, self-consistency, committor validation, and hierarchical TP clustering revealing two competing assembly pathways via interhelical contacts at positions 9 and 22.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 3 tables in the paper (Supplementary Tables 1–23 detail feature sets, neural network architectures, and symbolic regression candidates for each system). Extended Data contains 9 additional validation figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, physics-informed graph learning, healthcare accessibility modeling).</p>
+
+    <div class="idea">
+      <h3>① Replace the paper's ResNet committor backbone with a geometry-aware graph neural network</h3>
+      <p><span class="lab paper">Extending this paper</span>AIMMD models the committor with pyramidal ResNet architectures fed hand-engineered symmetry-function vectors — a representation that encodes rotational and permutational symmetries only through preprocessing. A direct extension of the paper: substitute the ResNet backbone with a <strong>graph neural network built on geometric vector perceptrons (GVP-GNN)</strong>, so that invariances are architectural rather than pre-computed. This would allow the committor to be learned directly from atomic coordinates for arbitrarily complex molecules without bespoke feature engineering for each new system. Recent corpus work has demonstrated that a GVP-GNN architecture learns the committor from raw atomic coordinates for peptide systems without any collective variables, validating the direction.</p>
+      <p><span class="lab mine">Added value to my research</span>Learning a "fate probability" from a high-dimensional state representation maps structurally onto learning a <strong>spatial accessibility index from a graph-structured place representation</strong>. Replacing fixed catchment radii in 2SFCA/R2SFCA with a GNN where nodes are facilities and residents and edges encode network travel costs — and training on observed access outcomes — mirrors AIMMD's architecture shift exactly. This motivates a <strong>physics-informed GNN for spatial accessibility</strong> where distance-decay functions are learned rather than assumed, directly advancing my graph-learning research agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning the committor without collective variables — <a href="https://doi.org/10.1038/s43588-026-00958-2" target="_blank">10.1038/s43588-026-00958-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Apply the paper's symbolic-regression Pareto-front selection to derive interpretable spatial indicators</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most distinctive contribution is using a genetic-algorithm symbolic regression to distill a deep neural network into compact analytical expressions, with Pareto-front analysis balancing accuracy vs. complexity. An extension of the paper would apply this pipeline to other high-dimensional molecular committor landscapes — multi-state protein folding or allosteric signaling — testing whether Pareto-optimal expressions consistently correspond to recognized physical order parameters or whether the search degenerates for strongly cooperative, multi-pathway systems.</p>
+      <p><span class="lab mine">Added value to my research</span>Symbolic regression on top of trained neural networks is exactly what <strong>explainable spatial ML</strong> needs: rather than post-hoc SHAP values describing a single prediction, a genetic-algorithm search for the minimal accurate expression of a spatial prediction function would produce a <em>transferable, interpretable model</em> of healthcare access disparities. I would apply this pipeline — train a spatial ML ensemble (MGWR/XGBoost), then run symbolic regression on its learned function — to produce closed-form spatial accessibility indicators that policymakers can audit, advancing my explainable-ML-for-health-geography agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead — <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Integrate variational path-ensemble consistency into AIMMD's learning loop</h3>
+      <p><span class="lab paper">Extending this paper</span>AIMMD learns the committor from binary shooting-move outcomes (success/failure). A natural extension is <strong>variational committor learning</strong>: instead of binary labels, minimize a variational functional over path ensembles, yielding committors provably consistent with the full transition path ensemble even when training trajectories are correlated or do not reach either endpoint. Integrating this variational loss into AIMMD's self-consistency loop would enable training on partial trajectories — greatly expanding effective training data per GPU-hour — and would formally guarantee convergence without the heuristic efficiency-factor retraining trigger the paper currently uses.</p>
+      <p><span class="lab mine">Added value to my research</span>The variational principle on partial paths maps onto <strong>learning spatial interaction models from censored mobility traces</strong>: GPS trajectories truncated by app uninstall or privacy masking are analogous to transition paths that never reach an endpoint. Incorporating a variational loss over incomplete mobility sequences into my spatiotemporal kernel density estimation would make mobility-based spatial interaction models robust to censoring — a key reproducibility challenge for GeoAI research relying on mobile-phone or GPS data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Iterative variational learning of committor-consistent transition pathways using artificial neural networks — <a href="https://doi.org/10.1038/s43588-025-00828-3" target="_blank">10.1038/s43588-025-00828-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use AIMMD's transfer-learning paradigm to build a foundational mechanism model for broader chemical space</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that fine-tuning only the last single-neuron layer of a LiCl-trained committor to a new ionic species requires just 1,000 additional shooting outcomes — a striking data-efficiency result. An ambitious extension: treat this as the foundation for a <strong>pre-trained universal solvation committor</strong> and expand coverage via active learning, using the trained model's epistemic uncertainty to identify which novel ion species would maximally improve out-of-distribution generalization. Corpus work on molecular deep learning at the edge of chemical space provides uncertainty-quantification methods directly applicable to this out-of-distribution exploration challenge.</p>
+      <p><span class="lab mine">Added value to my research</span>This "few-shot fine-tuning of a general model" architecture is the paradigm of <strong>fine-tuning geospatial foundation models</strong> — adapting a globally pre-trained urban-street-network or land-use embedding to predict access disparities in a new city with only a handful of labeled observations. AIMMD's empirical demonstration that 1,000 labeled trajectories suffice for reliable transfer provides quantitative grounding for expected label efficiency in geospatial foundation model fine-tuning, directly supporting my FAIR and reproducible GeoAI work with limited local ground-truth data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular deep learning at the edge of chemical space — <a href="https://doi.org/10.1038/s42256-026-01216-w" target="_blank">10.1038/s42256-026-01216-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Couple AIMMD's competing-pathway detection to an organic-reaction mechanism classification framework</h3>
+      <p><span class="lab paper">Extending this paper</span>For Mga2, AIMMD identifies two competing dimerization pathways by hierarchical clustering of transition paths using dynamic time warping — a post-hoc analysis after the committor is learned. An extension of the paper would integrate pathway detection <em>within</em> the AIMMD loop: when TP clustering reveals two mechanistically distinct clusters, automatically split the committor learning into <strong>pathway-specific sub-models</strong>, allowing each to converge on its own symbolic-regression expression. This connects naturally to the organic-chemistry mechanism classification literature, where ML assigns reaction pathways from molecular fingerprints; the same classification logic could seed the pathway-splitting decision inside AIMMD.</p>
+      <p><span class="lab mine">Added value to my research</span>Competing-pathway detection from trajectory clustering maps to <strong>network community detection in job-housing flow networks</strong>: commuter flows between residential zones and employment centers organize into competing "pathway clusters" encoding regional collaboration patterns. AIMMD's dynamic-time-warping clustering of molecular transition paths provides a methodological blueprint for clustering spatiotemporal mobility sequences — trajectories that are long, multi-stop, and semantically labeled — enabling finer-grained identification of distinct commuting regimes and urban agglomeration patterns in my spatiotemporal urban-analytics work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Organic reaction mechanism classification using machine learning — <a href="https://doi.org/10.1038/s41586-022-05639-4" target="_blank">10.1038/s41586-022-05639-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

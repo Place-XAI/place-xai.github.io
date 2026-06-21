@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generalizing deep learning electronic structure calculation to the plane-wave basis — AI Digest</title>
+<meta name="description" content="AI Digest: Generalizing deep learning electronic structure calculation to the plane-wave basis (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Electronic Structure</span>
+      <span class="tag">Density Functional Theory</span>
+      <span class="tag">Materials Simulation</span>
+    </div>
+    <h1>Generalizing deep learning electronic structure calculation to the plane-wave basis</h1>
+    <div class="meta">
+      <span class="authors">Xiaoxun Gong · Steven G. Louie · Wenhui Duan · Yong Xu</span>
+      <span><b>Published</b> 2024-10-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00701-9" target="_blank">10.1038/s43588-024-00701-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00701-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Deep learning electronic structure methods have been limited to the atomic-orbital (AO) basis, excluding the more accurate and widely used plane-wave (PW) basis. This work proposes a <strong>real-space reconstruction method</strong> that converts PW DFT results to AO Hamiltonian matrices with <strong>linear scaling</strong> and orders-of-magnitude speedup over projection-based alternatives. The reconstructed Hamiltonians faithfully reproduce PW electronic structure — demonstrated on magic-angle twisted bilayer graphene (11,164 atoms) and bilayer MoS₂ (546 atoms) — enabling deep learning models trained on small PW DFT datasets to generalize to large, complex Moiré systems with millielectronvolt accuracy.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes a critical compatibility gap.</b> Prior deep learning DFT Hamiltonian methods required the AO basis exclusively; the PW basis — used by the majority of solid-state DFT calculations — was inaccessible. This method bridges the two, unlocking the entire universe of PW materials databases for deep learning training.</li>
+      <li><b>Orders-of-magnitude computational speedup.</b> The real-space reconstruction method achieves <strong>linear O(N) scaling</strong> versus the O(N³) scaling of traditional projection methods, making it faster than even a full PW self-consistent field calculation at large system sizes.</li>
+      <li><b>Enables large-scale, high-fidelity training datasets.</b> Because PW DFT is more complete and easier to converge than AO DFT, interfacing it with deep learning produces more accurate neural network models. This opens a path to universal, broadly applicable electronic structure models.</li>
+      <li><b>Opens the door to advanced quantum methods.</b> The real-space reconstruction philosophy extends beyond DFT to density functional perturbation theory (electron–phonon interactions), GW many-body perturbation, and time-dependent DFT — vastly expanding the future scope of deep learning in quantum physics.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Foundational bridge, not an incremental improvement:</b> unifying two dominant DFT paradigms (PW and AO) is a structural advance rather than an application paper — matching Nature Computational Science's preference for methods with broad, field-altering impact.</li>
+      <li><b>Demonstrated on landmark systems:</b> magic-angle twisted bilayer graphene at θ = 1.08° is one of the most-studied condensed-matter systems; the ability to reproduce its flat bands with millielectronvolt accuracy is a compelling validation.</li>
+      <li><b>Cross-disciplinary reach:</b> the work is relevant to condensed matter physics, quantum chemistry, materials science, and the rapidly growing AI-for-science community simultaneously.</li>
+      <li><b>Open science posture:</b> code available at Zenodo and GitHub (<code>Xiaoxun-Gong/HPRO</code>), data at Zenodo, enabling immediate community adoption — a value Nature editorial teams explicitly reward.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training set (graphene)</dt><dd><strong>300 bilayer graphene 4×4 supercells</strong> with varied interlayer stackings and random atomic perturbations (±0.1 Å). PW DFT performed with <strong>Quantum ESPRESSO</strong> at 80 Ry wavefunction cutoff, Perdew–Burke–Ernzerhof functional, norm-conserving Vanderbilt pseudopotentials, 3×3 k-grid.</dd>
+      <dt>Training set (MoS₂)</dt><dd><strong>256 bilayer MoS₂ 3×3 supercells</strong> with varied stackings and random atomic perturbations. Wavefunction cutoff 60 Ry, charge density cutoff 240 Ry.</dd>
+      <dt>Test system (graphene)</dt><dd>Magic-angle twisted bilayer graphene at θ = 1.08° with <strong>11,164 atoms</strong> in the Moiré supercell. Neural-network predictions compared against published PW DFT benchmark.</dd>
+      <dt>Test system (MoS₂)</dt><dd>Fully relaxed θ = 6.01° twisted bilayer MoS₂ with <strong>546 atoms</strong> in the Moiré supercell. Errors: 0.30 meV (highest valence band) and 2.22 meV (lowest conduction band), averaged along Γ–K–M–Γ path.</dd>
+      <dt>DFT software</dt><dd><strong>Quantum ESPRESSO</strong> (<a href="https://www.quantum-espresso.org/" target="_blank">quantum-espresso.org</a>) for all PW DFT calculations. <strong>SIESTA</strong> (<a href="https://siesta-project.org/siesta/" target="_blank">siesta-project.org</a>) for generating numerical AO basis functions.</dd>
+      <dt>Data availability</dt><dd>Training/test datasets at <strong>Zenodo</strong> (ref. 76). Source code at Zenodo (ref. 77), GitHub (<a href="https://github.com/Xiaoxun-Gong/HPRO" target="_blank">Xiaoxun-Gong/HPRO</a>), and as Supplementary Software. Source data for Figs. 1 and 2 published with the manuscript.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Bilayer graphene training set</td><td>Neural-network training (PW DFT → AO)</td><td>300 4×4 supercells (±0.1 Å perturbations)</td><td><a href="https://zenodo.org" target="_blank">Zenodo (ref. 76)</a></td></tr>
+        <tr><td>Bilayer MoS₂ training set</td><td>Neural-network training (PW DFT → AO)</td><td>256 3×3 supercells</td><td><a href="https://zenodo.org" target="_blank">Zenodo (ref. 76)</a></td></tr>
+        <tr><td>Twisted bilayer graphene (θ=1.08°)</td><td>Generalization test (11,164 atoms)</td><td>1 Moiré supercell, magic-angle</td><td><a href="https://zenodo.org" target="_blank">Zenodo (ref. 76)</a></td></tr>
+        <tr><td>Twisted bilayer MoS₂ (θ=6.01°)</td><td>Generalization test (546 atoms)</td><td>1 fully relaxed Moiré supercell</td><td><a href="https://zenodo.org" target="_blank">Zenodo (ref. 76)</a></td></tr>
+        <tr><td>Quantum ESPRESSO</td><td>PW DFT engine</td><td>Open-source PW DFT package</td><td><a href="https://www.quantum-espresso.org/" target="_blank">quantum-espresso.org</a></td></tr>
+        <tr><td>SIESTA</td><td>AO basis generation</td><td>Numerical AO (DZP basis) for C, Mo, S</td><td><a href="https://siesta-project.org/siesta/" target="_blank">siesta-project.org</a></td></tr>
+        <tr><td>HPRO source code</td><td>Real-space reconstruction implementation</td><td>Open-source (MIT-compatible)</td><td><a href="https://github.com/Xiaoxun-Gong/HPRO" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: Exact Zenodo DOIs for the datasets are cited as references 76 and 77 in the article but are not spelled out in the public-facing abstract; all other data parameters are taken verbatim from the Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Real-space reconstruction (H(r) method):</b> the AO Hamiltonian is computed directly in real space from the PW effective potential V<sub>eff</sub>(r) and non-local pseudopotential projectors, exploiting the locality of AOs so that the computational cost scales <strong>linearly O(N)</strong> with the number of atoms — vs. O(N³) for the two projection-based alternatives.</li>
+      <li><b>Two-center integral technique:</b> kinetic energy and non-local pseudopotential matrix elements are computed analytically via spherical Bessel transforms and Gaunt coefficients, making the reconstruction applicable to any separable AO basis without re-parameterization.</li>
+      <li><b>Basis-set design:</b> double-zeta plus polarization (DZP) numerical AO basis sets generated by SIESTA, compatible with the norm-conserving Vanderbilt pseudopotentials used in the PW calculations, to maximize fidelity of the reconstructed Hamiltonian.</li>
+      <li><b>Neural network training:</b> deep learning DFT Hamiltonian model (building on DeePH framework, ref. 34) trained on reconstructed AO Hamiltonians from small, non-twisted training structures; generalized to large twisted Moiré supercells at inference time with no additional DFT calculations.</li>
+      <li><b>Benchmarking:</b> band structures from diagonalization of reconstructed/predicted AO Hamiltonians are compared directly with PW DFT references; energy errors reported in millielectronvolts along high-symmetry k-paths.</li>
+      <li><b>Extension to PAW formalism:</b> the reconstruction method is analytically extended to the projector augmented-wave (PAW) formalism, broadening compatibility to virtually all PW DFT codes (VASP, Abinit, etc.).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/generalizing-deep-learning-electronic-structure-calculation-to-the-plane-wave-basis__s43588-024-00701-9/fig1.png" target="_blank">
+        <img src="assets/generalizing-deep-learning-electronic-structure-calculation-to-the-plane-wave-basis__s43588-024-00701-9/fig1.png" alt="Fig.1 Deep learning DFT Hamiltonian under PW basis and twisted bilayer graphene" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Concept and workflow: PW DFT → AO Hamiltonian reconstruction → neural-network prediction, applied to magic-angle twisted bilayer graphene (11,164 atoms, θ = 1.08°). Band structures from PW-NN, AO-NN, and PW DFT benchmark are compared.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/generalizing-deep-learning-electronic-structure-calculation-to-the-plane-wave-basis__s43588-024-00701-9/fig2.png" target="_blank">
+        <img src="assets/generalizing-deep-learning-electronic-structure-calculation-to-the-plane-wave-basis__s43588-024-00701-9/fig2.png" alt="Fig.2 Application to twisted bilayer MoS2" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Application to bilayer MoS₂: comparison of reconstruction methods (accuracy and scaling), computation time versus system size, and neural-network prediction for θ = 6.01° twisted bilayer MoS₂ (546 atoms).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary Information contains Tables 1 and 2, and 1 supplementary figure, covering convergence tests (Supplementary Sections 1–5).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, spatial accessibility &amp; public health).</p>
+
+    <div class="idea">
+      <h3>① Build a universal Hamiltonian model by exploiting PW-accessible materials databases</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates reconstruction for two specific 2D material families (graphene, MoS₂). The Discussion explicitly targets a <strong>universal deep learning electronic structure model</strong> trained across diverse material families. A natural extension: use the HPRO pipeline to batch-process large open PW databases (e.g., Materials Project, AFLOW, OQMD — all PW-DFT-based), reconstruct AO Hamiltonians for tens of thousands of structures, and train a single equivariant neural network that generalizes across chemical species. The linear O(N) scaling of the reconstruction method is precisely what makes this tractable where projection methods would not be.</p>
+      <p><span class="lab mine">Added value to my research</span>The principle of <strong>converting heterogeneous computed outputs into a unified local representation for neural-network training</strong> directly parallels my multi-source data fusion agenda (mobile phone + remote sensing + social media). Just as HPRO reconstructs a common AO representation from PW outputs, my work on spatiotemporal foundation models needs a "reconstruction" layer that normalizes heterogeneous geospatial sensor formats into a common local patch representation for fine-tuning. The linear-scaling locality argument translates: a spatially local patch embedding that ignores global context is equally powerful and scalable.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Data as the next challenge in atomistic machine learning — <a href="https://doi.org/10.1038/s43588-024-00636-1" target="_blank">10.1038/s43588-024-00636-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Couple reconstruction with electron–phonon coupling for finite-temperature electronic properties</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reconstructs static ground-state Hamiltonians. A direct extension is to interface the reconstruction method with <strong>density functional perturbation theory (DFPT)</strong> outputs — which are also PW-based — to capture electron–phonon coupling matrices. This is explicitly mentioned as a future direction in the Discussion. Training a neural network on reconstructed DFPT-derived quantities would enable deep-learning prediction of phonon-mediated superconductivity, carrier mobility, and thermal transport in large twisted Moiré systems — currently inaccessible by direct DFT.</p>
+      <p><span class="lab mine">Added value to my research</span>The conceptual bridge is <strong>physics-informed graph learning under perturbation</strong>. In my spatiotemporal graph learning work (SIR models, agent-based modeling), I similarly need to propagate perturbation effects (e.g., a facility closure, a disease shock) through a network graph. The DFPT analogy — linearizing the response of a complex quantum system to a small perturbation and learning that response — maps onto learning the linearized spatial response of an urban network to a local intervention, motivating a physics-informed perturbation layer in my graph networks.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A machine learning tool to efficiently calculate electron–phonon coupling — <a href="https://doi.org/10.1038/s43588-024-00680-x" target="_blank">10.1038/s43588-024-00680-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the linear-scaling reconstruction to excited-state and many-body perturbation methods (GW, BSE)</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper restricts itself to Kohn–Sham DFT (ground state). The reconstruction framework is architecturally compatible with <strong>GW and GW-BSE quasiparticle methods</strong>, which compute the self-energy and screened Coulomb interaction on top of PW DFT — also explicitly flagged in the Discussion. Applying the H(r) reconstruction philosophy to the self-energy operator Σ(r,r') would require a non-local generalization, since GW self-energy is range-separated rather than strictly local. Benchmarking reconstruction accuracy of optical excitation energies and exciton binding in Moiré systems would be a landmark follow-up.</p>
+      <p><span class="lab mine">Added value to my research</span>The GW analogy maps to <strong>non-local spatial interactions in accessibility modeling</strong>: the paper's current method assumes that the AO Hamiltonian is near-sighted (local). In spatial econometrics, many dependent variables (house prices, health outcomes) have non-local interactions akin to the GW self-energy — they respond not just to local conditions but to spatially lagged quantities across a network. This motivates integrating a <em>screened spatial interaction kernel</em> into my MGWR/GWR framework, where the bandwidth is range-separated rather than a single smooth decay — a GW-inspired spatial regression architecture.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning — <a href="https://doi.org/10.1038/s43588-024-00747-9" target="_blank">10.1038/s43588-024-00747-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply active learning to select the most informative PW DFT structures for training</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper constructs training sets with <strong>fixed-size random perturbations</strong> (300 graphene supercells, 256 MoS₂ supercells). This is agnostic to which structures are actually most informative for the neural network's generalization to Moiré twists. An extension using <strong>uncertainty-driven active learning</strong> — query structures where the neural network is most uncertain, run PW DFT + reconstruction only on those, iterate — would reduce the required training set size by potentially an order of magnitude, making the approach feasible for heavier, more complex materials (e.g., transition metal oxides, heavy-fermion compounds) where PW DFT is expensive.</p>
+      <p><span class="lab mine">Added value to my research</span>Active learning for spatial data collection is a central concern in my GeoAI agenda: where to deploy sensors, which census tracts to survey for health data, which GPS trajectories to label. The uncertainty-driven query strategy in atomistic ML — select the structure where the model is most uncertain, validate it with ground truth — maps directly to <strong>spatial active learning for R2SFCA model improvement</strong>: query the location (hospital, clinic) where the accessibility prediction is most uncertain, validate with field survey, retrain. The corpus paper on uncertainty-driven dynamics for interatomic potentials provides the methodological template.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Replace the fixed AO basis set with a learned, material-adaptive basis optimized jointly with the neural network</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper uses a fixed DZP numerical AO basis generated by SIESTA, which must be chosen by the user and tuned per pseudopotential. The paper notes that the reconstruction method works for any AO basis that has separable radial-angular form. An extension: make the radial functions themselves <strong>learnable parameters</strong> that are optimized jointly with the neural-network Hamiltonian model via automatic differentiation through the reconstruction integral (Eq. 5). This would automatically discover the minimal, maximally expressive basis for each material family — analogous to how NeuralODE learns basis functions for dynamical systems — and remove the most significant remaining user-tuning burden.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps precisely to my <strong>fine-tuning of geospatial foundation models</strong>: rather than fixing a pre-defined spatial feature basis (e.g., fixed POI categories, fixed grid resolution), a learnable spatial basis jointly optimized with the downstream prediction task would automatically adapt to the spatial scale and feature mix that matters for each health or urban outcome. The technical analogy is tight: optimize the spatial basis functions (analogous to AO radial functions) end-to-end so the downstream model (analogous to the neural-network Hamiltonian) achieves minimum prediction error — a shared paradigm for both computational physics and GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep-learning density functional theory Hamiltonian for efficient ab initio electronic-structure calculation — <a href="https://doi.org/10.1038/s43588-022-00265-6" target="_blank">10.1038/s43588-022-00265-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

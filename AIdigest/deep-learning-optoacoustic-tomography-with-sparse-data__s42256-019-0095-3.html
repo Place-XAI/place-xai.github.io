@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep learning optoacoustic tomography with sparse data — AI Digest</title>
+<meta name="description" content="AI Digest: Deep learning optoacoustic tomography with sparse data (Nature Machine Intelligence, 2019)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Deep learning</span>
+      <span class="tag">Optoacoustic imaging</span>
+      <span class="tag">Sparse reconstruction</span>
+      <span class="tag">U-Net</span>
+    </div>
+    <h1>Deep learning optoacoustic tomography with sparse data</h1>
+    <div class="meta">
+      <span class="authors">Neda Davoudi · Xosé Luís Deán-Ben · Daniel Razansky</span>
+      <span><b>Published</b> 2019-09-16</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-019-0095-3" target="_blank">10.1038/s42256-019-0095-3</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-019-0095-3" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A deep convolutional neural network based on the <strong>U-Net architecture</strong>, trained exclusively on <strong>high-quality in vivo mouse images</strong> from a full-view 512-element ring scanner, can recover near-reference image quality from drastically undersampled or limited-view optoacoustic data — including as few as <strong>32 of 512 detection channels</strong> and angular apertures as narrow as 60°. Training with synthetic or phantom data yields significantly inferior results, underlining that <strong>in vivo experimental ground truth is the decisive ingredient</strong> for artefact-free deep learning reconstruction.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Makes sparse OA tomography clinically viable.</b> Reducing active detection channels from 512 to 32–128 cuts hardware cost and data-throughput demands — the network converts what was an unusable undersampled scan into diagnostically interpretable anatomy.</li>
+      <li><b>Demonstrates in vivo training supremacy.</b> A clear, quantitative comparison shows that synthetic phantoms and paper-printed vascular targets cannot substitute for living-tissue diversity when training for artefact removal — a transferable lesson for any domain-shift problem in biomedical imaging AI.</li>
+      <li><b>Removes artefacts even from fully sampled data.</b> The network eliminates residual streak artefacts that persist near strong absorbers even in the 512-channel ground truth, improving reference-quality images beyond what the physical scanner achieves alone.</li>
+      <li><b>Generalizes across imaging configurations.</b> The same image-domain pipeline handles both sparse-view (undersampled detectors) and limited-view (narrow angular aperture) scenarios, positioning it as a unified post-processing layer applicable to linear-array handheld probes and concave clinical geometries.</li>
+      <li><b>Processing speed compatible with real-time use.</b> At ~100 ms per slice, reconstruction is fast enough to integrate into live imaging workflows, enabling kilohertz-rate volumetric OA imaging with a fraction of the normal detector complement.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Principle over application:</b> the key contribution is not a marginal engineering gain but a conceptual reframing — in vivo experimental training data as the fundamental bottleneck in deep imaging reconstruction, a principle transferable to CT, MRI, PET and ultrasound.</li>
+      <li><b>Quantified training-data ablation:</b> the systematic comparison of training strategies (synthetic → phantom → in vivo → fine-tuned hybrid) with quantitative SSIM/PSNR/CNR metrics constitutes a rigorous machine-learning experiment, not only an imaging system paper.</li>
+      <li><b>Opens a new imaging-speed frontier:</b> enabling 16× undersampling with maintained image quality addresses a fundamental limit of OA temporal resolution — a high-impact biomedical result that fits Nature Machine Intelligence's mandate of ML methods with broad scientific significance.</li>
+      <li><b>Open science:</b> full dataset (Figshare DOI <code>10.6084/m9.figshare.9250784</code>) and code (<a href="https://github.com/ndavoudi/sparse_artefact_unet" target="_blank">GitHub</a>) are publicly released, meeting reproducibility standards expected by the journal.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd>Whole-body cross-sectional OA images of <strong>n = 6 athymic nude-Fox1<sup>nu</sup> mice</strong> (Harlan Laboratories) imaged in vivo with a custom-built 512-element full-ring transducer (80 mm diameter, 5 MHz central frequency, 0.37 mm element width). The ring array was scanned vertically over 50 mm in 0.5 mm steps, yielding <strong>100 cross-sectional images per mouse</strong> (600 slices total), covering full torso from shoulders to lower abdomen.</dd>
+      <dt>Dataset split</dt><dd>70 % training / 20 % validation / 10 % testing. Ground truth: reconstructions from all 512 elements. Inputs: reconstructions from 8, 16, 32, 64, 128, 256 (sparse-view) and 85, 192 (limited-view at 60° and 135°) elements.</dd>
+      <dt>Phantom data</dt><dd>28 agar-cylinder phantoms (16 mm diameter, 1.3 % wt/wt agar) with paper-printed black circles (2.5 mm diameter, 3 per phantom); 33 printed vascular-network phantoms. Data augmented with random rotation/translation to ~450 + 100 images.</dd>
+      <dt>Numerical simulations</dt><dd>Analytical forward model for parabolic and spherical absorbers at 512 detector positions; mouse cryosection image used as ground truth for a second numerical phantom. Used only for ablation comparisons — not primary training data.</dd>
+      <dt>Public release</dt><dd>Full in vivo mouse dataset available at <a href="https://doi.org/10.6084/m9.figshare.9250784" target="_blank">Figshare (10.6084/m9.figshare.9250784)</a>; training/inference code at <a href="https://github.com/ndavoudi/sparse_artefact_unet" target="_blank">GitHub: ndavoudi/sparse_artefact_unet</a>.</dd>
+      <dt>Compute</dt><dd>Training: GTX 1080Ti GPU; ~50 s per epoch; early stopping applied at ~100 epochs. Inference: ~0.1 s per cross-sectional image slice.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>In vivo mouse OA scans</td><td>Primary training, validation, test ground truth</td><td>6 mice × 100 slices = 600 images; 512-channel full-ring scanner</td><td><a href="https://doi.org/10.6084/m9.figshare.9250784" target="_blank">Figshare</a></td></tr>
+        <tr><td>Agar / paper phantom OA images</td><td>Ablation — training with phantom data only</td><td>28 dot phantoms (~450 augmented) + 33 vascular phantoms (~100 augmented)</td><td>Lab-generated (Helmholtz Center Munich)</td></tr>
+        <tr><td>Numerical simulations</td><td>Ablation — synthetic training baseline</td><td>Analytical forward model; parabolic / spherical absorbers at 512 positions</td><td>Code: <a href="https://github.com/ndavoudi/sparse_artefact_unet" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper is a single-lab experimental study. All data were generated at the Helmholtz Center Munich. No external open datasets (e.g., OpenStreetMap, WorldPop) are used. Numbers above are taken verbatim from the Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>U-Net deep convolutional architecture:</b> encoder–decoder with skip connections; trained in residual mode — the network predicts the <em>artefact map</em> (difference between undersampled and fully sampled images), which is subtracted from the artefactual input to obtain the corrected output.</li>
+      <li><b>Loss functions compared:</b> L1-norm (primary, better for high-channel counts) vs. L2-norm (slightly better for very sparse inputs); Adam optimizer (lr = 0.0005, momentum = 0.8, mini-batch = 1); early stopping monitored on validation L1-norm.</li>
+      <li><b>Image reconstruction baseline:</b> 2D universal back-projection algorithm; bandpass filter (0.5–8 MHz); speed-of-sound correction for mouse tissue vs. water coupling medium at 34 °C.</li>
+      <li><b>Evaluation metrics:</b> L1- and L2-norm error, peak signal-to-noise ratio (PSNR), structural similarity index (SSIM), contrast-to-noise ratio (CNR); manual vessel counting (TP/FP/TN/FN) on 42 test slices.</li>
+      <li><b>Training-strategy ablation:</b> four strategies compared — synthetic only, phantom only, in vivo only, phantom + in vivo fine-tuning — to isolate the contribution of data quality rather than network architecture.</li>
+      <li><b>Limited-view extension:</b> same network applied to images reconstructed from 85 elements (60° aperture) and 192 elements (135° aperture); Fourier-domain amplitude spectra used to visualize angular information recovery.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-learning-optoacoustic-tomography-with-sparse-data__s42256-019-0095-3/fig1.png" target="_blank">
+        <img src="assets/deep-learning-optoacoustic-tomography-with-sparse-data__s42256-019-0095-3/fig1.png" alt="Fig.1 U-Net architecture and OA image formation principle" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> U-Net approach for OA artefact removal — illustrates tomographic image construction, streak-artefact formation at different detector counts, the U-Net architecture, and a simulated artefact-removal example with intermediate network outputs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-optoacoustic-tomography-with-sparse-data__s42256-019-0095-3/fig2.png" target="_blank">
+        <img src="assets/deep-learning-optoacoustic-tomography-with-sparse-data__s42256-019-0095-3/fig2.png" alt="Fig.2 In vivo whole-body mouse tomography results" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Restoring OA image quality in whole-body mouse tomography in vivo — ground-truth 512-projection images, network corrections at 32 and 128 projections, SSIM metrics, training convergence curve, and 1D vessel-profile FWHM comparison.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-learning-optoacoustic-tomography-with-sparse-data__s42256-019-0095-3/fig3.png" target="_blank">
+        <img src="assets/deep-learning-optoacoustic-tomography-with-sparse-data__s42256-019-0095-3/fig3.png" alt="Fig.3 Limited-view artefact correction" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Network-based correction of limited-view effects — spatial images and Fourier-domain amplitude spectra for 60° and 135° apertures, before and after network correction, showing recovery of missing angular information.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary contains Figs. 1–10 and 4 supplementary videos.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Replace supervised in vivo training with self-supervised physics-consistency learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central finding is that paired in vivo ground truth (512-channel reference vs. sparse input) is irreplaceable for good reconstruction. But acquiring such full-view ground truth is only possible with a bespoke 512-element ring scanner — an expensive prerequisite that prevents replication in clinical settings. A direct extension: replace the supervised pairing with a <strong>self-supervised physics-consistency loss</strong> that enforces agreement between the predicted clean image and the known acoustic forward model, eliminating the need for matched full-view acquisitions. The corpus paper on self-supervised hologram reconstruction demonstrates that physics-consistency losses can recover image quality without paired ground truth — the same principle applied to OA signals would decouple the framework from the ring-scanner bottleneck.</p>
+      <p><span class="lab mine">Added value to my research</span>In my multi-source data fusion work, paired "ground truth" from high-quality sensors is often unavailable — mobile-phone pings lack GPS precision, social media lacks population representativeness. A physics-consistency self-supervised approach translates directly: constrain model predictions to honour known spatial priors (e.g., spatial autocorrelation structure, mass-conservation in mobility flows) rather than requiring matched high-quality labels, yielding self-supervised GeoAI for sparse or biased observational data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Self-supervised learning of hologram reconstruction using physics consistency — <a href="https://doi.org/10.1038/s42256-023-00704-7" target="_blank">10.1038/s42256-023-00704-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Integrate the network into a differentiable forward–inverse reconstruction loop</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's U-Net operates purely in the image domain — it receives a reconstructed (but artefactual) image and outputs a corrected image, never seeing the raw time-series signals. This image-domain decoupling is its strength (modality agnostic) but also its limitation: the network cannot exploit residual signal information that was discarded during back-projection. Extending it: embed the back-projection operator as a <strong>differentiable layer</strong> and jointly optimize signal-domain processing with image-domain artefact removal in a single end-to-end differentiable framework. Corpus work on differentiable visual computing for inverse problems provides exactly this infrastructure, allowing gradients to flow through the physical model into the neural network weights.</p>
+      <p><span class="lab mine">Added value to my research</span>This end-to-end differentiable paradigm mirrors my interest in physics-informed graph learning: bake the known spatial interaction model (gravity, diffusion, OA wave propagation) as a differentiable operator into the learning stack so the network learns corrections to physical assumptions rather than memorizing residuals from scratch. This architectural principle can sharpen spatiotemporal kernel density models and graph-learning layers that currently treat physical priors as fixed external constraints.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Differentiable visual computing for inverse problems and machine learning — <a href="https://doi.org/10.1038/s42256-023-00743-0" target="_blank">10.1038/s42256-023-00743-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the sparse-data framework to federated training across clinical imaging sites</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that network performance scales with training data quality and diversity — a second key finding is that fine-tuning with even a modest amount of in vivo data rescues a network pre-trained on synthetics. A natural extension: instead of training on a single lab's 6-mouse dataset, aggregate diverse anatomical diversity by <strong>federated learning across clinical OA imaging sites</strong>, each contributing local in vivo data without sharing raw images. This would address the "6 mice" limitation and test whether the in vivo-training principle generalizes across species, probe geometries, and tissue types. The corpus paper on secure federated ML in medical imaging provides the privacy-preserving aggregation framework needed.</p>
+      <p><span class="lab mine">Added value to my research</span>Federated training with heterogeneous local data maps onto my digital-divide and telehealth work: patient records, healthcare utilization data, and mobility logs are distributed across systems that cannot be pooled. A federated GeoAI pipeline trained on spatially heterogeneous local datasets without centralizing sensitive data is precisely the architecture needed for privacy-preserving health geography analysis at scale.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Secure, privacy-preserving and federated machine learning in medical imaging — <a href="https://doi.org/10.1038/s42256-020-0186-1" target="_blank">10.1038/s42256-020-0186-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply unpaired training to bridge the domain gap between phantoms and in vivo anatomy</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows a stark performance cliff between phantom-trained and in vivo-trained networks. A controlled extension: rather than requiring paired (sparse, full-view) examples from the same anatomy, use an <strong>unpaired deep-learning framework</strong> (e.g., cycle-consistency) to learn the domain translation from phantom image distributions to in vivo anatomical distributions, effectively synthesizing realistic training data from the existing 28-phantom and 33-vascular datasets. The corpus paper on unpaired deep-learning approaches for holographic image reconstruction demonstrates feasibility of this paradigm for wavefield reconstruction problems, which share the same ill-posed inverse-problem structure.</p>
+      <p><span class="lab mine">Added value to my research</span>Domain-gap bridging via unpaired learning is a core challenge in my remote-sensing fusion work: satellite imagery captured at different seasons, resolutions, or sensor types cannot always be paired. Cycle-consistency or unpaired contrastive learning to bridge across sensor modalities (Sentinel-2 vs. Landsat vs. aerial) without co-registered pairs would unlock larger training corpora for fine-tuning geospatial foundation models — directly addressing my reproducibility agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reusability report: Unpaired deep-learning approaches for holographic image reconstruction — <a href="https://doi.org/10.1038/s42256-024-00798-7" target="_blank">10.1038/s42256-024-00798-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Generalize the sparse-sensor reconstruction principle to sparse spatial sensor networks for environmental monitoring</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core problem — recovering high-fidelity spatial fields from a small fraction of sensors arranged around an object — is structurally isomorphic to recovering fine-grained environmental fields (air quality, temperature, noise) from a sparse network of urban monitoring stations. Extending the paper: replace the acoustic ring array with an <strong>urban sensor graph</strong>, replace the OA forward model with atmospheric or diffusion physics, and apply the same residual U-Net (or a graph-U-Net) trained on high-density reference readings to correct the low-density sparse-sensor estimate. The corpus paper on differentiable field reconstruction from sparse sensors provides a directly applicable learnable framework for this generalization.</p>
+      <p><span class="lab mine">Added value to my research</span>This is squarely within my spatiotemporal analysis agenda: spatial accessibility studies require fine-grained population and exposure surfaces (e.g., air quality, green-space proximity, noise), yet monitoring networks are far sparser than what policies demand. A deep-learning field-reconstruction layer trained on dense reference periods and evaluated on sparse-sensor real-time streams would deliver high-resolution exposure surfaces for 2SFCA health accessibility calculations — connecting OA tomography principles directly to urban health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing deep learning-based field reconstruction with a differentiable learning framework — <a href="https://doi.org/10.1038/s42256-025-01063-1" target="_blank">10.1038/s42256-025-01063-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

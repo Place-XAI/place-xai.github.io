@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free-energy machine for combinatorial optimization — AI Digest</title>
+<meta name="description" content="AI Digest: Free-energy machine for combinatorial optimization (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Combinatorial Optimization</span>
+      <span class="tag">Statistical Physics</span>
+      <span class="tag">GPU-Accelerated Solver</span>
+    </div>
+    <h1>Free-energy machine for combinatorial optimization</h1>
+    <div class="meta">
+      <span class="authors">Zi-Song Shen · Feng Pan · Yao Wang · Yi-Ding Men · Wen-Biao Xu · Man-Hong Yung · Pan Zhang</span>
+      <span><b>Published</b> 2025-03-24</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00782-0" target="_blank">10.1038/s43588-025-00782-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00782-0" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The <strong>free-energy machine (FEM)</strong> unifies combinatorial optimization within a single statistical-physics framework: by minimizing a variational mean-field free energy via GPU-parallel gradient descent with annealing, it solves MaxCut, balanced minimum cut, and Max k-SAT problems — scaled to millions of variables — <strong>outperforming state-of-the-art specialized algorithms</strong> in both accuracy and speed. FEM reaches best-known solutions in 448 of 454 MaxSAT competition instances and reduces FPGA inter-chip communication by up to 26.6% relative to METIS on a real-world chip-verification graph with 1.5 million nodes, demonstrating that combining statistical physics with modern machine-learning optimization tools yields broad-applicability, GPU-native solvers.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>One framework, many NP-hard problems.</b> Existing high-performance solvers (simulated bifurcation, coherent Ising machines) are locked to QUBO/Ising formulations. FEM handles multivalued Potts-model problems and higher-order k-SAT with a single codebase change — a genuine unification.</li>
+      <li><b>Supercharges parallel hardware.</b> All mean-field probabilities across an entire batch of replica distributions are updated simultaneously on a GPU, yielding ~10x speedup over CPU and making million-variable problems tractable in seconds.</li>
+      <li><b>Industry-grade validation.</b> The paper includes a confidential real-world FPGA chip-verification graph (1,495,802 nodes, 3,380,910 edges from Huawei) where FEM significantly outperforms the production tool METIS, bridging academic benchmarks and industrial practice.</li>
+      <li><b>Automatic differentiation lowers the barrier.</b> Practitioners only need to specify an energy function; PyTorch's autograd engine computes gradients automatically, so adaptation to a new COP requires changing literally one line of code.</li>
+      <li><b>Transparent benchmarking and open code.</b> All benchmark datasets and source code are publicly available on GitHub and Zenodo, enabling reproducibility and comparison by the community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Principled interdisciplinary synthesis:</b> FEM marries replica symmetry breaking theory from statistical physics with Adam/SGD optimizers from deep learning — a conceptual bridge that expands both fields.</li>
+      <li><b>Broad scope with rigorous evidence:</b> three structurally distinct NP-hard problem classes benchmarked, covering binary Ising, multivalued Potts, and higher-order k-SAT — demonstrating universality in the journal's spirit of general computational methods.</li>
+      <li><b>Scalability to industrial scale:</b> million-variable synthetic graphs and a proprietary real-world chip-verification instance demonstrate translation beyond toy benchmarks.</li>
+      <li><b>Open-science commitment:</b> GitHub + Zenodo code and data availability are fully compliant with Nature Portfolio's reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>MaxCut benchmarks</dt><dd><strong>K<sub>2,000</sub></strong>: complete graph with 2,000 nodes, best-known cut = 33,337 (intensively used in Ising-machine evaluations). <strong>G-set</strong>: 54 standard benchmark graphs (G1–G54) with 800–2,000 nodes, including random, regular, and scale-free degree distributions. Both available via Zenodo (<a href="https://doi.org/10.5281/zenodo.14874189" target="_blank">10.5281/zenodo.14874189</a>).</dd>
+      <dt>bMinCut benchmarks</dt><dd><strong>Chris Walshaw's archive</strong>: 4 widely-used real-world graphs (also used by D-Wave for quantum-annealing benchmarks). <strong>Erdos–Renyi random graphs</strong>: 4 synthetic graphs + extensive scalability set from 1,000 to 1,000,000 nodes, average degree 5. Also via Zenodo.</dd>
+      <dt>MaxSAT benchmark</dt><dd><strong>MaxSAT 2016 competition instances</strong>: 454 problem instances in 4 categories (s2: Max 2-SAT, N 120–200, M 1,200–2,600; s3: Max 3-SAT, N 70–110, M 700–1,500; HG3: Max 3-SAT, N 250–300, M 1,000–1,200; HG4: Max 4-SAT, N 100–150, M 900–1,350). Available via Zenodo.</dd>
+      <dt>Real-world FPGA graph</dt><dd><strong>Huawei Technologies (proprietary)</strong>: 1,495,802 operators (nodes) and 3,380,910 logical connections (edges); partitioned onto q = 4, 8, 16 FPGAs. <em>Not publicly released</em> due to proprietary product information.</dd>
+      <dt>Time period</dt><dd>Benchmark datasets are historical (G-set published 2002, Walshaw archive longstanding, MaxSAT 2016 competition). FPGA dataset is current production data from Huawei; date not specified in paper.</dd>
+      <dt>Code availability</dt><dd>Source code: <a href="https://github.com/Fanerst/FEM" target="_blank">github.com/Fanerst/FEM</a>; data + code archive: <a href="https://doi.org/10.5281/zenodo.14874189" target="_blank">Zenodo 10.5281/zenodo.14874189</a></dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>K<sub>2,000</sub> + G-set (G1–G54)</td><td>MaxCut benchmarking</td><td>54 graphs, 800–2,000 nodes</td><td><a href="https://doi.org/10.5281/zenodo.14874189" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Chris Walshaw's archive (4 graphs)</td><td>bMinCut real-world benchmarking</td><td>4 graphs, diverse sizes</td><td><a href="https://doi.org/10.5281/zenodo.14874189" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Erdos–Renyi random graphs</td><td>bMinCut scalability test</td><td>1,000 to 1,000,000 nodes, avg degree 5</td><td><a href="https://doi.org/10.5281/zenodo.14874189" target="_blank">Zenodo</a></td></tr>
+        <tr><td>MaxSAT 2016 competition instances</td><td>Max k-SAT benchmarking</td><td>454 instances, 4 categories</td><td><a href="https://doi.org/10.5281/zenodo.14874189" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Huawei FPGA operator graph</td><td>Real-world chip-verification application</td><td>1,495,802 nodes; 3,380,910 edges; q = 4/8/16</td><td>Proprietary (not public)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all benchmark counts above are taken verbatim from the paper. The FPGA dataset cannot be published per Huawei proprietary restrictions. Source data (Excel) are provided per figure for reproducibility.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Variational mean-field free-energy minimization:</b> the COP cost function is cast as a Boltzmann energy; a factored mean-field distribution P<sub>MF</sub>(&sigma;) = &prod;<sub>i</sub> P<sub>i</sub>(&sigma;<sub>i</sub>) approximates the Boltzmann distribution at zero temperature by minimizing the Kullback–Leibler divergence, equivalent to minimizing the variational mean-field free energy F<sub>MF</sub> = U<sub>MF</sub> &minus; S<sub>MF</sub>/&beta;.</li>
+      <li><b>Simulated annealing via inverse temperature schedule:</b> &beta; is gradually increased from &beta;<sub>min</sub> to &beta;<sub>max</sub> using either exponential or inverse-proportional schedules, allowing the system to escape local minima and converge to approximate ground states.</li>
+      <li><b>Automatic differentiation and Adam optimizer:</b> the N&times;q local-field parameters {h<sub>i</sub>(&sigma;<sub>i</sub>)} are updated by PyTorch autograd; Adam, SGD, and RMSprop are all supported, enabling fast and stable gradient descent on GPU.</li>
+      <li><b>Batched replica distributions (RSB-inspired):</b> inspired by replica symmetry breaking theory, m independent mean-field distributions are optimized in parallel (batch size R up to 1,000), capturing the rugged energy landscape diversity and selecting the minimum-energy configuration at the end.</li>
+      <li><b>Explicit gradient formulations and manipulated gradients:</b> for MaxCut and bMinCut, closed-form gradient expressions are derived; a normalization technique counteracts node-degree heterogeneity, stabilizing gradient magnitudes and boosting performance on scale-free graphs.</li>
+      <li><b>Softmax parameterization:</b> marginal probabilities P<sub>i</sub>(&sigma;<sub>i</sub>) = softmax(h<sub>i</sub>) enforce probabilistic constraints; the framework naturally handles q-state (Potts) and higher-order (k-SAT) problems without Ising reformulation overhead.</li>
+      <li><b>Benchmark comparison:</b> FEM is compared against dSBM (discrete simulated bifurcation machine), METIS, KaFFPaE, Max-CTDS, and MaxSAT 2016 competition solvers, using TTS (time-to-solution) and cut/clause-satisfaction quality metrics.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig1.png" target="_blank">
+        <img src="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig1.png" alt="Fig.1 Principle and framework of FEM" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Principle and framework of FEM — four COP model types, mean-field parameterization, annealing dynamics, and batched-replica inference.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig2.png" target="_blank">
+        <img src="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig2.png" alt="Fig.2 MaxCut benchmarking results" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> MaxCut benchmarking — FEM vs. dSBM on K<sub>2,000</sub> and G-set (G1–G54, 800–2,000 nodes); FEM wins on 33/54 G-set instances and all scale-free graphs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig3.png" target="_blank">
+        <img src="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig3.png" alt="Fig.3 Scalability test on Erdos-Renyi random graphs" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Scalability test for q-way bMinCut on Erdos–Renyi graphs (1,000 to 1,000,000 nodes) — FEM substantially outperforms METIS at all scales.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig4.png" target="_blank">
+        <img src="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig4.png" alt="Fig.4 FPGA chip verification application" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Real-world FPGA chip-verification — FEM reduces inter-FPGA edge cut by 22–27% vs. METIS on a 1.5M-node proprietary Huawei graph.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig5.png" target="_blank">
+        <img src="assets/free-energy-machine-for-combinatorial-optimization__s43588-025-00782-0/fig5.png" alt="Fig.5 MaxSAT 2016 competition benchmarking" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> MaxSAT 2016 competition — FEM achieves best-known in 448/454 instances; average GPU runtime 0.074 s vs. hours for Max-CTDS on CPU.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — bMinCut results on Walshaw real-world graphs comparing FEM, METIS, and KaFFPaE across q = 2, 4, 8, 16, 32 partitions). Supplementary Notes 1–9 contain additional derivations, pseudocode, ablation experiments, and detailed benchmarking.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>&#9312; Apply FEM to spatial facility-location optimization as a general COP</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper benchmarks FEM on MaxCut, bMinCut, and MaxSAT — all abstract combinatorial problems. A direct extension is to encode spatial <strong>facility-location problems</strong> (p-median, p-center, coverage maximization) as Potts-model COPs and benchmark FEM against integer-programming and local-search solvers. The softmax parameterization already handles multi-category assignment (which facility type a location receives), and the balanced-partition (bMinCut) objective maps naturally onto equitable service-area delineation with demand-balance constraints. The paper's framework needs only a new energy function specifying distance-weighted coverage.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly upgrades my EV-charging and healthcare-facility optimization pipelines: instead of heuristic greedy placement, FEM's GPU-parallel free-energy descent would find near-optimal placements at city scale in seconds. The Potts formulation (each candidate site takes a state from {type-A, type-B, unbuilt}) unifies single-facility-type and mixed-use placement in one objective — enabling the efficiency-vs-equity trade-off analysis I currently do with metaheuristics to run on GPUs with stronger theoretical grounding.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-enabled globally guaranteed evolutionary computation — <a href="https://doi.org/10.1038/s42256-023-00642-4" target="_blank">10.1038/s42256-023-00642-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Use FEM's variational free-energy framework for spatiotemporal graph community detection</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly notes (Methods, bMinCut formulation) that the balanced minimum-cut energy function is a close relative of the modularity objective in community detection. Extending FEM to <strong>temporal community detection</strong> — where graph edges change over time — requires only augmenting the energy function with a temporal-consistency term (e.g., penalizing assignment changes across time slices). FEM's batch-replica GPU parallelism could make dynamic community detection on million-node graphs tractable, something current message-passing or spectral methods cannot achieve at that scale.</p>
+      <p><span class="lab mine">Added value to my research</span>Dynamic community detection is the backbone of my job-housing network and urban agglomeration analyses that rely on mobile-phone trajectory graphs. FEM's Potts-model formulation of community detection would let me delineate functional urban regions and their evolution over time without reducing to two-community binary splits — directly enabling the multi-region functional area delineation that 2SFCA catchment design requires.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating network layouts using graph neural networks — <a href="https://doi.org/10.1038/s41467-023-37189-2" target="_blank">10.1038/s41467-023-37189-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Replace FEM's naive mean-field ansatz with a graph neural network variational distribution</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Discussion acknowledges that the naive mean-field approximation struggles with full replica-symmetry-breaking (RSB) regimes on large random graphs, where the energy landscape is deeply rugged. The natural upgrade — noted but not implemented — is a <strong>GNN-parameterized variational distribution</strong>: replace the independent-marginal factorization P<sub>MF</sub>(&sigma;) = &prod;<sub>i</sub> P<sub>i</sub>(&sigma;<sub>i</sub>) with a GNN that generates correlated marginals respecting graph topology. The free-energy objective remains identical; only the parameterization becomes expressive, building on established neural network ansatze for variational inference.</p>
+      <p><span class="lab mine">Added value to my research</span>A GNN-FEM hybrid is precisely what I need for my physics-informed graph learning agenda: the GNN encodes spatial autocorrelation (geographic topology) as an inductive bias, while the free-energy objective provides a principled training signal without labeled ground-truth solutions. Applied to road-network partitioning for service-area design, this could learn a transferable spatial catchment delineation operator that generalizes across cities — a reusable GeoAI primitive.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrating statistical physics and machine learning for combinatorial optimization — <a href="https://doi.org/10.1038/s43588-025-00794-w" target="_blank">10.1038/s43588-025-00794-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Encode spatial accessibility as a k-SAT problem and solve with FEM for optimal service coverage</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates FEM's Max k-SAT capability: each clause represents a logical constraint over Boolean variables. A direct extension is to encode spatial accessibility compliance as a k-SAT problem: each Boolean variable indicates whether a facility is opened at a candidate site; each clause encodes whether at least one open facility lies within the catchment of a demand node. Maximizing satisfied clauses is then equivalent to maximizing population coverage — a natural COP that FEM already solves. Scaling to city-level grids (millions of demand nodes) would leverage FEM's GPU parallelism.</p>
+      <p><span class="lab mine">Added value to my research</span>This gives my spatial accessibility research a direct pipeline to near-optimal facility placement without integer programming solvers. The Max k-SAT formulation is especially attractive for multi-modal catchment problems — where a clause is satisfied if any of k transport modes provides access — enabling me to quantify digital/physical hybrid healthcare access in the telehealth-vs-in-person framework I study, with guaranteed near-optimality rather than heuristic coverage.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Benchmark FEM against photonic/quantum Ising machines for geospatial graph partitioning</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper compares FEM with software-simulated Ising machines (dSBM) but not against physical hardware realizations (photonic Ising machines, D-Wave quantum annealers). The D-Wave benchmarks cited in the paper use Chris Walshaw's graphs for q = 2 partitioning; a cross-benchmarking study at q = 4, 8, 16 using the same graphs would reveal at which scale hardware Ising machines lose competitiveness to FEM. The paper's framing of the Potts-model bMinCut as a natural extension of Ising naturally invites this hardware comparison.</p>
+      <p><span class="lab mine">Added value to my research</span>This is relevant to evaluating near-future computational substrates for spatial optimization at scale. Understanding where software FEM (GPU) beats photonic/quantum hardware informs whether my large-scale spatial analysis pipelines — which require millions of graph partitioning queries for Monte Carlo accessibility simulation — should migrate to quantum cloud services or remain GPU-native, directly affecting reproducibility and cost decisions for my open-science workflows.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Programmable 200 GOPS Hopfield-inspired photonic Ising machine — <a href="https://doi.org/10.1038/s41586-025-09838-7" target="_blank">10.1038/s41586-025-09838-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

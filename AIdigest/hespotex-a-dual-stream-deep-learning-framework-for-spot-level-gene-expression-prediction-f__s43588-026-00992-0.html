@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HESpotEx: a dual-stream deep learning framework for spot-level gene expression prediction — AI Digest</title>
+<meta name="description" content="AI Digest: HESpotEx: a dual-stream deep learning framework for spot-level gene expression prediction from histological images (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Spatial Transcriptomics</span>
+      <span class="tag">Computational Pathology</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Gene Expression Prediction</span>
+    </div>
+    <h1>HESpotEx: a dual-stream deep learning framework for spot-level gene expression prediction from histological images</h1>
+    <div class="meta">
+      <span class="authors">Yin Wang · Peng Qin · Fanyi Meng · You Wan · Weilong Zhang · Yuan Zhou</span>
+      <span><b>Published</b> 2026-05-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-00992-0" target="_blank">10.1038/s43588-026-00992-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-00992-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>HESpotEx is a <strong>dual-stream deep learning framework</strong> that predicts spatial gene expression profiles — up to 5,457 genes per sampling spot — <strong>directly from H&amp;E-stained whole-slide histopathological images</strong>, eliminating the need for costly spatial transcriptomics assays. By aligning a pretrained image encoder (Quilt-Net) with a graph attention autoencoder via Pearson correlation loss, and decoding predictions through a ResNet-LSTM graph convolution network, HESpotEx <strong>consistently outperforms seven competing methods</strong> across cancer, noncancer, and large-scale cohort benchmarks (mean PCC 0.498 on 1,042 TCGA-BRCA samples) and demonstrates <strong>clinically meaningful prognostic stratification</strong> from histology alone.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Democratizes spatial molecular profiling.</b> Spatial transcriptomics costs thousands of US dollars per sample; HESpotEx recovers much of its molecular information from routine H&amp;E slides already archived at scale in hospitals worldwide.</li>
+      <li><b>Strong and reproducible performance gains.</b> On the external breast cancer cohort, HESpotEx achieved 140% higher PCC than the next-best method (IGI-DL, 0.24 vs. 0.10), and on TCGA-BRCA its mean PCC of 0.498 far exceeded the second-ranked method at 0.088.</li>
+      <li><b>Prognostic signal from histology alone.</b> Predicted expression profiles — without any bulk RNA-seq or clinical data — stratified 169 HER2+ breast cancer patients into subgroups with significantly different overall survival (log-rank P = 0.037; HR 2.399).</li>
+      <li><b>Generalizes beyond cancer.</b> Validated on noncommunicable inflammatory skin diseases (atopic dermatitis, lichen planus, psoriasis) and high-resolution Xenium / Visium HD platforms, showing broad tissue-type and technology robustness.</li>
+      <li><b>Open and reproducible.</b> Code released on GitHub under MIT license with processed datasets on Zenodo, enabling community benchmarking and extension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel computational framework with broad applicability:</b> the dual-stream embedding architecture addresses a recognized bottleneck — the gap between cheap histological images and expensive spatial molecular profiles — with a principled, extensible design.</li>
+      <li><b>Comprehensive multi-dataset benchmarking:</b> evaluation spans nine diverse datasets, seven baseline comparisons, and multiple cancer and noncancer tissue types, meeting the journal's expectation for rigorous, comparative computational research.</li>
+      <li><b>Direct clinical relevance:</b> prognostic stratification from histology alone bridges computational biology with actionable clinical decision support — a theme central to Nature Computational Science's scope.</li>
+      <li><b>Methodological depth:</b> the paper contributes components (GATE encoder alignment, Quilt-Net transfer, LSTM-GCN decoder, cell-nuclei postprocessing) that are individually reusable and together represent a real advance over Transformer-centric predecessors.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>HER2+ Breast Cancer</dt><dd>24 high-quality H&amp;E sections from 5 patients; 7,728 spots; 2,759 genes (after preprocessing). Source: Andersson et al., available at <a href="https://github.com/almaan/her2st/" target="_blank">github.com/almaan/her2st</a>.</dd>
+      <dt>External Breast Cancer</dt><dd>1,031 spots from 4 tissue samples sequenced by legacy ST technology; 3,964 shared genes used for external validation. Source: <a href="https://www.spatialresearch.org/resources-published-datasets/doi-10-1126science-aaf2403/" target="_blank">spatialresearch.org</a>.</dd>
+      <dt>cSCC Dataset</dt><dd>12 tissue sections from 4 patients; 8,671 spots; 1,971 genes. Captured via 10x Visium. Source: Ji et al., GEO accession <code>GSE144240</code>.</dd>
+      <dt>TCGA-BRCA</dt><dd>1,042 tumor samples with paired H&amp;E WSIs and bulk RNA-seq. 1,889 genes evaluated. Source: NCI Genomic Data Commons Portal, <a href="https://portal.gdc.cancer.gov/" target="_blank">portal.gdc.cancer.gov</a>.</dd>
+      <dt>ncISD (Skin Diseases)</dt><dd>AD: 9 lesional + 9 nonlesional; LP: 13 lesional + 10 nonlesional; Psoriasis: 12 lesional + 6 nonlesional. Retaining up to 5,457 genes (LP). Source: GEO accession <code>GSE206391</code>.</dd>
+      <dt>In-house cSCC H&amp;E</dt><dd>624 pathology images from 349 patients (42 carcinomas in situ; 391 well-differentiated; 144 moderately; 47 poorly). Captured at Gannan Medical University. Not publicly released.</dd>
+      <dt>Xenium CRC</dt><dd>3 colorectal cancer datasets from 10x Genomics Xenium platform (~100,000 spots each, ~few hundred genes). After pseudo-Visium pooling: 12,385 spots, 145 genes. Source: <a href="https://www.10xgenomics.com/products/visium-hd-spatial-gene-expression/dataset-human-crc" target="_blank">10xgenomics.com</a>.</dd>
+      <dt>Visium HD Mouse Intestine</dt><dd>91,033 spots; 2,968 genes (after preprocessing). 4×4 grid sub-sectioning. Source: <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-intestine" target="_blank">10xgenomics.com</a>.</dd>
+      <dt>Colon Tissues (HEST-1k)</dt><dd>4 colon cancer + 6 healthy colon samples; 42,212 spots; 2,468 genes. Source: <a href="https://huggingface.co/datasets/MahmoodLab/hest" target="_blank">huggingface.co/datasets/MahmoodLab/hest</a>.</dd>
+      <dt>Pretrained Image Encoder</dt><dd>Quilt-Net, pretrained on QUILT-1M (1 million histopathology image–text pairs). Outperformed UNI, CONCH, OmiCLIP, Phikon, CTransPath in ablation.</dd>
+      <dt>Processed Data</dt><dd>Available on Zenodo at <a href="https://doi.org/10.5281/zenodo.18281196" target="_blank">zenodo.org/record/18281196</a> and <a href="https://doi.org/10.5281/zenodo.18281214" target="_blank">zenodo.org/record/18281214</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>HER2+ ST (Andersson et al.)</td><td>Primary training/validation</td><td>24 sections, 7,728 spots, 2,759 genes</td><td><a href="https://github.com/almaan/her2st/" target="_blank">GitHub</a></td></tr>
+        <tr><td>cSCC ST (Ji et al.)</td><td>Primary training/validation</td><td>12 sections, 8,671 spots, 1,971 genes</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE144240" target="_blank">GEO GSE144240</a></td></tr>
+        <tr><td>External breast cancer ST</td><td>External generalization test</td><td>1,031 spots, 3,964 shared genes</td><td><a href="https://www.spatialresearch.org/resources-published-datasets/doi-10-1126science-aaf2403/" target="_blank">spatialresearch.org</a></td></tr>
+        <tr><td>TCGA-BRCA (NCI GDC)</td><td>Large-scale external validation</td><td>1,042 tumor samples, 1,889 genes</td><td><a href="https://portal.gdc.cancer.gov/" target="_blank">portal.gdc.cancer.gov</a></td></tr>
+        <tr><td>ncISD ST (GEO GSE206391)</td><td>Noncancer disease validation</td><td>59 samples across 3 disease types, up to 5,457 genes</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE206391" target="_blank">GEO GSE206391</a></td></tr>
+        <tr><td>Xenium CRC (10x Genomics)</td><td>High-resolution benchmark</td><td>3 sections, 12,385 pseudo-Visium spots, 145 genes</td><td><a href="https://www.10xgenomics.com/products/visium-hd-spatial-gene-expression/dataset-human-crc" target="_blank">10xgenomics.com</a></td></tr>
+        <tr><td>Visium HD Mouse Intestine</td><td>High-resolution sub-section benchmark</td><td>91,033 spots, 2,968 genes</td><td><a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-intestine" target="_blank">10xgenomics.com</a></td></tr>
+        <tr><td>HEST-1k (Colon)</td><td>Cancerous &amp; healthy colon tissue</td><td>10 samples, 42,212 spots, 2,468 genes</td><td><a href="https://huggingface.co/datasets/MahmoodLab/hest" target="_blank">HuggingFace</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Numbers are taken verbatim from the Methods section. The in-house cSCC dataset (624 images, 349 patients) was collected at Gannan Medical University under ethical approval no. 22SC-2024-192 and is not publicly available.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Dual-stream embedding alignment:</b> a graph attention autoencoder (GATE) encodes ST expression profiles into spot embeddings; a pretrained Quilt-Net image encoder + MLP produces patch embeddings from H&amp;E tiles; Pearson correlation loss aligns the two embedding spaces in a shared low-dimensional representation (size 64).</li>
+      <li><b>GCN decoder with residual structure:</b> a graph convolution network aggregates patch embeddings from spatial neighbors (k-nearest by Euclidean distance); LSTM layer-aggregation mitigates oversmoothing; residual addition of MLP output from original patch embeddings prevents neighbor bias.</li>
+      <li><b>Cell-nuclei postprocessing:</b> Cellpose nuclear segmentation quantifies the number of cell nuclei per image patch; predicted expression is scaled proportionally, reflecting the intuition that higher cell density implies greater total expression.</li>
+      <li><b>Two-stage training:</b> Stage 1 trains GATE on ST expression graphs to produce latent spot embeddings; Stage 2 trains the GCN decoder to map image patch embeddings to gene expression, supervised jointly by PCC loss and MSE loss.</li>
+      <li><b>Leave-one-out cross-validation:</b> for within-dataset benchmarking (HER2+, cSCC), all baseline models were retrained under the same split; external validation used the held-out breast cancer cohort and TCGA-BRCA.</li>
+      <li><b>Benchmarking against 7+ methods:</b> compared with OmiCLIP, IGI-DL, TCGN, mclSTExp, BLEEP, THItoGene, Hist2ST (and iStar, scstGCN for high-resolution tasks); evaluation metrics: Pearson Correlation Coefficient (PCC), KL divergence, MSE.</li>
+      <li><b>Ablation studies:</b> systematically evaluated dual-stream vs. image-only; Quilt-Net vs. 5 other pretrained encoders; batch effect correction (ComBat/Harmony); MLP+GCN vs. alternatives (Transformer, directed GATE decoder).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig1.png" target="_blank">
+        <img src="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig1.png" alt="Fig.1 Schematic overview of HESpotEx" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic overview of HESpotEx — dual-stream architecture with GATE encoder, Quilt-Net image encoder, PCC alignment, and GCN decoder with cell-nuclei postprocessing.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig2.png" target="_blank">
+        <img src="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig2.png" alt="Fig.2 Quantitative evaluation on breast cancer datasets" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Quantitative evaluation on breast cancer datasets and ablation study — PCC, KL divergence, and MSE comparisons across 8 methods, plus component-wise ablation results.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig3.png" target="_blank">
+        <img src="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig3.png" alt="Fig.3 Spatial expression patterns in ncISDs" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Visualization of predicted spatial expression patterns in noncommunicable inflammatory skin diseases — OVOL1 (atopic dermatitis), IL16 (lichen planus), OAS1 (psoriasis).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig4.png" target="_blank">
+        <img src="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig4.png" alt="Fig.4 Evaluation on TCGA-BRCA cohort" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Evaluation on TCGA-BRCA (1,042 samples) — overall and HER2+ subtype accuracy, unsupervised patient clustering, and Kaplan–Meier survival stratification (P = 0.037, HR 2.399).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig5.png" target="_blank">
+        <img src="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig5.png" alt="Fig.5 Spatial characterization in in-house cSCC WSIs" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Spatial characterization of differentiation states, lymphocytic infiltration, and NOTCH1 expression across in-house cSCC whole-slide H&amp;E images.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig6.png" target="_blank">
+        <img src="assets/hespotex-a-dual-stream-deep-learning-framework-for-spot-level-gene-expression-prediction-f__s43588-026-00992-0/fig6.png" alt="Fig.6 Cross-sectional prediction on high-resolution Xenium CRC" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Cross-sectional prediction on high-resolution Xenium CRC datasets — quantitative comparison with 9 methods and spatial visualization of MMP2 (immune biomarker).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0); Supplementary Information contains Notes 1–10 and Figs. 1–16.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal accessibility, explainable &amp; physics-informed graph learning, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Extend HESpotEx's spatial graph to encode true tissue topology via a pathology foundation model</h3>
+      <p><span class="lab paper">Extending this paper</span> HESpotEx builds its spot graph from simple Euclidean distance between sampling coordinates. Yet tissue architecture is hierarchical: nuclei cluster into cells, cells into functional regions (tumor vs. stroma vs. lymphoid aggregates), regions into spatial domains. A direct extension: replace or augment HESpotEx's GCN graph with a <strong>multi-scale hierarchical graph</strong> derived from a whole-slide foundation model (e.g., UNI or CONCH at patch level, Prov-GigaPath at slide level), so that the structural priors baked into a billion-parameter pretrained encoder — rather than raw Euclidean proximity — guide which spots exchange neighborhood information. This would address HESpotEx's acknowledged limitation that its accuracy depends on spatially coherent gene expression and that "housekeeping genes" with weak spatial patterns remain difficult to predict.</p>
+      <p><span class="lab mine">Added value to my research</span> Hierarchical spatial graph construction mirrors how I build multi-scale accessibility graphs in urban contexts (neighborhood → district → region). Adapting HESpotEx's GATE + GCN pipeline to encode <em>functional spatial hierarchy</em> rather than raw Euclidean adjacency would directly inform my physics-informed graph learning work: the same idea of encoding domain-specific topology (tissue region vs. street network catchment) as a graph prior can replace ad hoc k-nearest-neighbor graphs in both biomedical and urban GeoAI settings.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A whole-slide foundation model for digital pathology from real-world data — <a href="https://doi.org/10.1038/s41586-024-07441-w" target="_blank">10.1038/s41586-024-07441-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace PCC alignment with contrastive spatial-context loss to capture tissue-region specificity</h3>
+      <p><span class="lab paper">Extending this paper</span> HESpotEx aligns image patch embeddings and spot expression embeddings using a global Pearson correlation loss across the entire tissue section. This treats every spot equally, ignoring the fact that spots in tumor cores, tumor margins, or stromal regions have systematically different image–expression coupling strengths. A contrastive extension — drawing on the multimodal generative AI copilot paradigm — would apply <strong>spatially-stratified contrastive learning</strong>: positive pairs come from the same tissue sub-region (defined by unsupervised spatial clustering), and negatives are drawn from distinct regions. This teaches the alignment to respect the spatial hierarchy of tissue organization, potentially sharpening prediction in heterogeneous tumors where HESpotEx currently under-predicts low-expression and spatially diffuse genes.</p>
+      <p><span class="lab mine">Added value to my research</span> Spatially-stratified contrastive learning is a direct analogy to the neighborhood-stratified loss functions I use in spatiotemporal kernel density estimation. The idea of defining "positive pairs" by spatial context rather than global statistics can be ported to my geospatial foundation model fine-tuning work: region-aware contrastive pretraining on remote sensing + POI data would create spatially coherent embeddings for urban health accessibility prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multimodal generative AI copilot for human pathology — <a href="https://doi.org/10.1038/s41586-024-07618-3" target="_blank">10.1038/s41586-024-07618-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Transfer HESpotEx's prognostic stratification pipeline to spatial health geography at the population level</h3>
+      <p><span class="lab paper">Extending this paper</span> Fig. 4 demonstrates that predicted gene expression from WSIs — <em>without any clinical data</em> — separates HER2+ breast cancer patients into significantly different survival groups. The paper treats this as a byproduct, but a deliberate extension would build a <strong>survival-aware fine-tuning stage</strong>: after the GCN decoder produces expression predictions, add a differentiable Cox proportional hazards head that back-propagates a partial-likelihood survival loss, guiding the image encoder to weight the image features most predictive of patient outcomes. This directly addresses HESpotEx's limitation that it optimizes for expression accuracy (MSE/PCC), not clinical utility. Evaluation on TCGA-BRCA is ready-made.</p>
+      <p><span class="lab mine">Added value to my research</span> The insight that <em>spatial molecular maps predict population outcomes</em> is the tissue-scale analogue of my spatial accessibility research: just as spatial accessibility patterns of primary care predict health disparities at the neighborhood level, spatial gene expression patterns predict individual disease trajectories. This encourages me to explore "spatial biomarker of area-level health" — using explainable GeoAI to derive spatial signatures (from satellite, remote sensing, or urban morphology data) that predict community health outcomes with the same rigor HESpotEx applies to molecular biomarkers.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A pathology foundation model for cancer diagnosis and prognosis prediction — <a href="https://doi.org/10.1038/s41586-024-07894-z" target="_blank">10.1038/s41586-024-07894-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend HESpotEx from single-gene prediction to genotype–phenotype coupling maps via multimodal learning</h3>
+      <p><span class="lab paper">Extending this paper</span> HESpotEx predicts gene expression one spot at a time, treating each gene independently in the GCN decoder's output layer. It does not model the <strong>co-expression structure</strong> among genes or the feedback between gene expression patterns and morphological phenotype at the tissue level. A natural extension: incorporate a gene-level graph (co-expression network derived from scRNA-seq reference data) into the decoder so that predictions respect known transcriptional regulatory circuits, and pair this with a phenotype reconstruction head that maps the predicted expression back to interpretable tissue morphological features — turning HESpotEx from a "predictor" into a <strong>bidirectional genotype–phenotype mapping engine</strong>.</p>
+      <p><span class="lab mine">Added value to my research</span> Bidirectional genotype–phenotype mapping is structurally identical to the coupling I model between the built environment and health outcomes in my urban analytics work: both involve learning a latent representation that explains a morphological observation (tissue image / urban satellite image) by reference to an underlying generative process (gene network / socioeconomic network). The multimodal learning architecture in this cross-reference paper provides the blueprint for such bidirectional coupling that I can adapt to geospatial feature–health-outcome joint learning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multimodal learning for mapping genotype–phenotype dynamics — <a href="https://doi.org/10.1038/s43588-024-00765-7" target="_blank">10.1038/s43588-024-00765-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Port HESpotEx's dual-stream graph-alignment principle to spatial accessibility modeling with multi-source urban data</h3>
+      <p><span class="lab paper">Extending this paper</span> HESpotEx's core technical contribution — aligning two heterogeneous embedding spaces (image and expression) via a graph-structured low-dimensional latent space — is a generalizable alignment framework. A direct extension to spatial biology would apply the same principle to <strong>multi-modal ST data fusion</strong>: align Visium (transcriptomics), MERFISH/Xenium (in-situ sequencing), and H&amp;E image modalities in a shared spot-level embedding, enabling cross-platform transfer learning. The current paper validates cross-platform generalization only implicitly (Xenium and Visium HD); a multimodal fusion variant would make this explicit and enable leveraging larger, cheaper ST datasets as weak supervision for high-resolution platforms.</p>
+      <p><span class="lab mine">Added value to my research</span> The dual-stream PCC alignment mechanism directly informs my multi-source data fusion agenda for urban health: mobile phone trajectories (behavioral embedding) and remote sensing images (environmental embedding) can be aligned in a shared spatiotemporal latent space using an analogous PCC-based loss, with a spatial graph encoder replacing GATE. This would produce "spot-level" urban health indicators — fine-grained, location-specific estimates of health exposure or access — from the fusion of mobility and imagery, the exact kind of GeoAI tool needed for 2SFCA service-area delineation with behavioral realism rather than static Euclidean proximity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting tumour mutational burden from histopathological images using multiscale deep learning — <a href="https://doi.org/10.1038/s42256-020-0190-5" target="_blank">10.1038/s42256-020-0190-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

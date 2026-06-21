@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spatial planning of urban communities via deep reinforcement learning — AI Digest</title>
+<meta name="description" content="AI Digest: Spatial planning of urban communities via deep reinforcement learning (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Urban planning</span>
+      <span class="tag">Deep reinforcement learning</span>
+      <span class="tag">Graph neural networks</span>
+      <span class="tag">15-minute city</span>
+    </div>
+    <h1>Spatial planning of urban communities via deep reinforcement learning</h1>
+    <div class="meta">
+      <span class="authors">Yu Zheng · Yuming Lin · Liang Zhao · Tinghai Wu · Depeng Jin · Yong Li</span>
+      <span><b>Published</b> 2023-09-11</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00503-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A deep reinforcement learning model operating on <strong>urban contiguity graphs</strong> can generate community-level land-use and road layouts that outperform professional human planners on objective spatial-efficiency metrics by over <strong>48.6%</strong> in synthetic settings and over <strong>18.5%</strong> in real-world Beijing community renovations. The model transfers across community scales and forms, generates diverse planning styles, and enables a <strong>human–AI collaborative workflow</strong> that achieves Pareto-optimal plans in a fraction of the time — less than 1 second versus 50–100 minutes for human designers.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First DRL framework for full community spatial planning.</b> Tackles the last mile that GIS and human designers still do manually — determining the exact spatial layout of land use and roads — using a learnable, optimizable AI agent.</li>
+      <li><b>Handles irregular real-world urban geometry.</b> The urban contiguity graph representation generalizes beyond toy grid layouts to real-world communities collected from OpenStreetMap, a critical departure from prior chip-design or Go-playing DRL work.</li>
+      <li><b>Operationalizes the 15-minute city.</b> Converts the 15-minute city concept into a quantifiable reward signal (service accessibility within 500 m, ecological coverage within 300 m, road density and connectivity) that the DRL agent directly optimizes.</li>
+      <li><b>Demonstrated against real professionals.</b> Blind tests with 100 professional urban designers confirm that AI-generated plans are preferred or indistinguishable — a rare human-benchmark validation in computational urban planning.</li>
+      <li><b>Open code and data.</b> Data and full code on Zenodo and GitHub make the framework reproducible and extensible for diverse cities and planning styles worldwide.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel computational formulation of a classic real-world problem:</b> reformulates urban planning as a Markov decision process on a dynamic graph, bringing together GNNs, proximal policy optimization, and spatial geometry in a way no prior work had attempted at community scale.</li>
+      <li><b>Strong quantitative benchmarks:</b> experiments on synthetic and two real-world Beijing communities, baselines include rule-based heuristics, genetic algorithms, and eight professional human planners — a rigorous comparative suite expected by NCS.</li>
+      <li><b>Generalizable computational framework:</b> the graph-based formulation and transfer-learning approach are domain-agnostic building blocks applicable beyond urban planning (facility layout, circuit design, logistics networks).</li>
+      <li><b>Societal impact and policy relevance:</b> directly addresses vehicular dependency, CO₂ emissions, and urban equity through the 15-minute city lens — NCS values computational work with demonstrated real-world stakes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary source</dt><dd><strong>OpenStreetMap</strong> (<a href="https://www.openstreetmap.org" target="_blank">openstreetmap.org</a>) — road network topology and land-block geometries, accessed via Python packages <code>osmnx&nbsp;&gt;=1.1.2</code> and <code>geopandas&nbsp;&gt;=0.11.1</code>.</dd>
+      <dt>Spatial coverage</dt><dd>Three communities studied: (1) a synthetic 2.4 km × 2.4 km grid community with a 4 × 4 secondary-road network (16 vacant land blocks, 40 road segments, 25 intersections); (2) Huilongguan CP-02 (HLG), Beijing, ~4 km²; (3) Dahongmen (DHM), Beijing, ~4 km². Real-world communities are located within Beijing, China.</dd>
+      <dt>Time window</dt><dd>Not stated explicitly for OSM data acquisition; software versions suggest mid-2022 to 2023. Model training took ~48 h per community on a single GPU, generating over 1 million planning episodes per community.</dd>
+      <dt>Human benchmark</dt><dd>8 invited professional urban planners designed plans for HLG and DHM; 100 post-graduate-level designers participated in blind preference tests across 10 plan pairs.</dd>
+      <dt>Code &amp; data repo</dt><dd>Zenodo (<a href="https://doi.org/10.5281/zenodo.8175420" target="_blank">10.5281/zenodo.8175420</a>) and GitHub (<a href="https://github.com/tsinghua-fib-lab/DRL-urban-planning" target="_blank">tsinghua-fib-lab/DRL-urban-planning</a>). Source data provided with the paper.</dd>
+      <dt>Known limitations</dt><dd>Only 2 real-world community sites (both Beijing); no population demographic data or economic-constraint data are used. The number of training samples is large but still smaller than comparable DRL tasks like Go or chip design.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>OpenStreetMap</td><td>Road network + land-block geometries for real-world communities</td><td>2 Beijing communities (~4 km² each); accessed via OSMnx</td><td><a href="https://www.openstreetmap.org" target="_blank">openstreetmap.org</a></td></tr>
+        <tr><td>Synthetic grid community</td><td>Controlled benchmark for full two-stage planning</td><td>2.4 × 2.4 km, 4 × 4 grid, 16 blocks, 40 roads</td><td>Procedurally generated by authors</td></tr>
+        <tr><td>Human designer benchmark</td><td>Comparison baseline for service and ecology metrics</td><td>8 professional planners; 100-person blind-test panel</td><td>Collected by authors (Tsinghua University FIB-Lab)</td></tr>
+        <tr><td>Zenodo / GitHub release</td><td>Community geometry data + trained model code</td><td>3 communities; full training pipeline</td><td><a href="https://doi.org/10.5281/zenodo.8175420" target="_blank">zenodo.8175420</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact OSM access dates are not stated in the article. All numbers above are taken verbatim from the article text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Urban contiguity graph:</b> vector-geometry representation (Polygon for land blocks, LineString for road/boundary segments, Point for junctions) where edges encode spatial adjacency — handles irregular, non-orthogonal urban forms that raster/grid representations cannot capture.</li>
+      <li><b>Two-stage Markov decision process:</b> Stage 1 (land-use planning) — agent sequentially selects L–J edges to place functional land use; Stage 2 (road planning) — agent selects boundary segments to convert to roads. Rewards are issued only at stage completion, encoding service, ecology, and traffic metrics.</li>
+      <li><b>GNN state encoder:</b> multi-layer graph convolutional network with message-passing and neighbor aggregation captures spatial relationships between land blocks, road segments, and junctions; shared across policy and value networks.</li>
+      <li><b>Proximal policy optimization (PPO):</b> trains value network (predicts spatial efficiency reward), land-use policy network (scores L–J edges via MLP), and road policy network (scores S nodes) jointly; action masks enforce planning constraints.</li>
+      <li><b>Transfer learning:</b> pretrained models fine-tuned from small (3 × 3) to large (4 × 4) communities and from synthetic to real-world irregular communities, showing +4–8% gain over training from scratch.</li>
+      <li><b>Human–AI collaborative workflow:</b> human designers supply conceptual prototypes (centers and axes); the DRL agent realizes them by optimizing facility placement under concept-consistency reward terms added to the efficiency reward.</li>
+      <li><b>Baselines:</b> centralized heuristic, decentralized heuristic, genetic algorithm (GA), geometric set-coverage approximation (GSCA), DRL with MLP encoder (ablation), and 8 human professional planners.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig1.png" target="_blank">
+        <img src="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig1.png" alt="Fig. 1: Community renovation and 15-minute city demonstration" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Community renovation of the real-world HLG Beijing community (a), the 15-minute city concept (b), facility need configurations (c), and resulting service accessibility proportions under low/medium/high/mixed needs (d).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig2.png" target="_blank">
+        <img src="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig2.png" alt="Fig. 2: Model transferability across scales and community forms" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Transfer performance: pretrained model vs. training from scratch for (a,b) small-to-large grid scale and (c,d) synthetic-to-real-world community form, showing service/ecology gains and convergence curves.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig3.png" target="_blank">
+        <img src="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig3.png" alt="Fig. 3: Community plans of different styles" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> DRL-generated spatial plans for different planning styles: life-circle vs. green community (a,b) and varying road densities at 40%, 60%, 80% boundary selection (c,d).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig4.png" target="_blank">
+        <img src="assets/spatial-planning-of-urban-communities-via-deep-reinforcement-learning__s43588-023-00503-5/fig4.png" alt="Fig. 4: Comparison and collaboration with professional human designers" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> DRL vs. 8 professional human planners on HLG (a) and DHM (b) service/ecology metrics; blind-test votes from 100 designers for HLG (c) and DHM (d), showing AI achieves Pareto-optimal plans.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — quantitative comparison of all baseline methods and DRL model on synthetic and two real-world communities across service, ecology, and traffic metrics). Extended data: 3 extended-data figures. Supplementary: 16 supplementary figures and 5 supplementary tables.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>① Scale the DRL planner to city-wide multi-community coordination via hierarchical RL</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper is explicitly bounded to community-level planning (~4 km²) and acknowledges that city-scale extension "requires a substantial increase in training samples … and much more complex tasks." A direct extension: introduce a <strong>hierarchical multi-agent RL</strong> architecture where a high-level meta-agent allocates planning budgets across communities (inter-community resource allocation) and the paper's existing DRL agent handles intra-community layout. The paper's own urban contiguity graph is compositional — community graphs can be stitched along shared boundary edges. The "efficient and scalable RL for large-scale network control" framework from the corpus provides the engineering scaffold for scaling without the quadratic blowup in action space that would otherwise occur.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly addresses the city-level facility-location optimization problem in my urban analytics agenda. A hierarchical planner that first solves the inter-community allocation of hospitals and schools across a city and then refines placement within each community fuses my R2SFCA accessibility delineation (which operates at the service-area level) with DRL — producing a joint optimization of where to build facilities and what their effective catchment areas become.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace static service-distance rewards with demand-weighted flow accessibility (learned gravity)</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's service reward uses a hard 500 m Euclidean threshold — a facility is "accessible" if it is within walking distance, regardless of how many residents compete for it or how many actually travel there. This static supply-side proxy can misguide the agent: a hospital placed 490 m from 1,000 residences counts the same as one placed 100 m away. Extending the reward: replace the binary 15-minute-circle indicator with a <strong>learned gravity-based flow accessibility score</strong> calibrated from real mobility data. The corpus paper "Human mobility is well described by closed-form gravity-like models learned automatically from data" provides exactly the learnable gravity kernels that could replace the hard distance threshold, making the DRL agent's spatial decisions behaviorally consistent with actual movement patterns.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the natural upgrade path for my 2SFCA/R2SFCA work: instead of a fixed catchment radius, the DRL planner <em>learns</em> the distance-decay function from mobility data and co-optimizes facility placement against it. The result is an end-to-end differentiable accessibility optimizer — a direct bridge between my spatial accessibility models and reinforcement learning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Human mobility is well described by closed-form gravity-like models learned automatically from data — <a href="https://doi.org/10.1038/s41467-025-56495-5" target="_blank">10.1038/s41467-025-56495-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Integrate biodiversity and green-space continuity into the ecology reward for a true 15-minute green city</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's ecology metric measures only the <em>proportion of residential areas within 300 m of any park or open space</em> — a purely geometric coverage indicator. It is agnostic to the ecological <em>quality</em>, species richness, thermal regulation benefit, or green-network connectivity of planned green spaces. Extending the reward: incorporate a green-corridor connectivity penalty (the green network should form contiguous patches above a minimum area threshold) and a biodiversity-density term drawn from urban ecology literature. The corpus paper "Resetting the clock by integrating urban nature and its biodiversity into the 15-minute city concept" provides an operationalized biodiversity-augmented 15-minute city framework that could directly serve as an additional reward component in the DRL training loop.</p>
+      <p><span class="lab mine">Added value to my research</span>My research on healthy cities and urban analytics directly benefits: a DRL planner that jointly optimizes service accessibility and ecological/biodiversity quality across communities provides a computational foundation for quantifying the co-benefits of urban greening on public health — connecting my health-geography work on green-space exposure with my facility-location optimization methods.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Resetting the clock by integrating urban nature and its biodiversity into the 15-minute city concept — <a href="https://doi.org/10.1038/s41467-025-65170-8" target="_blank">10.1038/s41467-025-65170-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use GNNs to accelerate the urban contiguity graph layout itself, not just the planning decisions</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's GNN encodes the <em>current state</em> of the planning graph but does not use it to accelerate graph construction or to pre-compute approximate spatial layouts that guide early search. Each new land-use placement re-builds the contiguity graph from scratch. A natural extension: train a separate <strong>GNN graph-layout accelerator</strong> that pre-embeds likely high-quality connectivity patterns (from the paper's own million-episode training corpus), initializing the search near the Pareto frontier and cutting training time beyond the paper's current 48-hour wall clock. The corpus paper "Accelerating network layouts using graph neural networks" provides an exact blueprint — it shows GNNs can predict near-optimal graph embeddings in milliseconds, which could serve as a warm-start for the DRL agent's exploration phase.</p>
+      <p><span class="lab mine">Added value to my research</span>From a geospatial methods perspective, this merges my physics-informed graph learning work with urban planning: a GNN pre-trained on urban topology patterns transfers across cities the way a pre-trained vision model transfers across images. This is a concrete instance of the geospatial foundation-model fine-tuning direction in my research agenda — pre-training on synthetic community topologies, then fine-tuning on target cities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating network layouts using graph neural networks — <a href="https://doi.org/10.1038/s41467-023-37189-2" target="_blank">10.1038/s41467-023-37189-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Audit the DRL planner for spatial equity: explainable ML diagnosis of which communities benefit least</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper optimizes aggregate spatial efficiency metrics (mean service, mean ecology, mean traffic) but does not differentiate outcomes <em>across</em> residential blocks within a community. A community with high mean service may still leave peripheral or lower-density blocks far underserved — spatial inequity hidden by averaging. Extending it: add an <strong>equity constraint</strong> to the reward (e.g., minimize the variance or the bottom-decile service score), and apply Shapley-value attribution or LIME-style explanations to the GNN's decisions to identify which urban geometric features (block shape, road proximity, junction density) systematically predict under-served areas. The companion paper "A universal framework for inclusive 15-minute cities" already shows that redistribution alone meaningfully reduces inequity — the DRL framework is the natural tool to enforce equity as an optimization objective rather than a post-hoc evaluation.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial equity is central to my research on public-facility accessibility and health geography. Applying explainable ML (XAI) to diagnose <em>why</em> the DRL planner systematically underserves certain block types — and then correcting it via reward shaping — directly extends my explainable machine learning for spatial prediction agenda into a reinforcement-learning setting, producing both a fairer urban planner and new interpretable evidence about the geometry-equity relationship in Chinese cities.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal framework for inclusive 15-minute cities — <a href="https://doi.org/10.1038/s44284-024-00119-4" target="_blank">10.1038/s44284-024-00119-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

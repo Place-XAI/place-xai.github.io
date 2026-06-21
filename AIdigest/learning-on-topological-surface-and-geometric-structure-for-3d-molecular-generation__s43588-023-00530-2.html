@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning on topological surface and geometric structure for 3D molecular generation — AI Digest</title>
+<meta name="description" content="AI Digest: Learning on topological surface and geometric structure for 3D molecular generation (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">3D Molecular Generation</span>
+      <span class="tag">Structure-Based Drug Design</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Drug Resistance</span>
+    </div>
+    <h1>Learning on topological surface and geometric structure for 3D molecular generation</h1>
+    <div class="meta">
+      <span class="authors">Odin Zhang · Tianyue Wang · Gaoqi Weng · Dejun Jiang · Ning Wang · Xiaorui Wang · Huifeng Zhao · Jialu Wu · Ercheng Wang · Guangyong Chen · Yafeng Deng · Peichen Pan · Yu Kang · Chang-Yu Hsieh · Tingjun Hou</span>
+      <span><b>Published</b> 2023-10-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00530-2" target="_blank">10.1038/s43588-023-00530-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00530-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>SurfGen, a structure-based 3D molecular generative model, encodes protein-pocket topology via two equivariant graph neural networks — Geodesic-GNN and Geoattn-GNN — that jointly learn <strong>topological surface interactions and spatial ligand–pocket geometry</strong>, mimicking the lock-and-key principle. SurfGen outperforms state-of-the-art deep learning methods on both the CrossDock2020 benchmark and a curated real-world therapeutic-target set in binding affinity and 3D shape similarity. Critically, its sensitivity to pocket geometry makes it capable of generating <strong>mutation-adapted drug candidates</strong> for drug-resistant protein variants — an otherwise unsolved challenge for existing approaches.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the gap between chemical-space search and target-specific design.</b> Most prior generative models explore ligand chemical space without faithfully modeling pocket topology; SurfGen makes the pocket surface itself a first-class geometric object, yielding molecules that are geometrically and energetically complementary to the target.</li>
+      <li><b>Demonstrates 3D rationality as a prerequisite for affinity claims.</b> By introducing the scoring-energy metric (in-situ evaluation without conformational re-search), the paper exposes that models with good docking scores can generate thermodynamically unstable, distorted molecules — a methodological contribution to benchmark design.</li>
+      <li><b>Directly addresses mutation-induced drug resistance.</b> SurfGen is sensitive enough to pocket structural changes caused by single amino-acid substitutions, enabling generation of hit candidates tailored to mutated, drug-resistant targets — a first for end-to-end 3D generative models.</li>
+      <li><b>Provides a practical open resource.</b> Code and training data (CrossDock2020) are publicly available; real-world COVID-19 (3CL protease, PDB 6LU7) examples are included as ready-to-run discovery starting points.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty at the intersection of geometry and ML:</b> the combination of geodesic graph convolution on triangulated surfaces with equivariant attention is a genuinely new architectural contribution, not a routine application.</li>
+      <li><b>Broad scientific impact across drug discovery:</b> addresses a recognized bottleneck (de novo SBDD for drug-resistant targets) with a solution that improves on all established baselines on multiple metrics.</li>
+      <li><b>Demonstrates real-world relevance:</b> COVID-19 and multi-target benchmarks with experimentally validated actives ground the paper in translational drug design, not just academic benchmarking.</li>
+      <li><b>Open code + reproducible benchmarks:</b> all training data (CrossDock2020, PDB, BindingDB) and code (GitHub) are public, fitting Nature Computational Science's commitment to reproducibility.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd><strong>CrossDock2020</strong> — 22.5 million protein–ligand pairs generated by cross-docking crystal structures from the PDB. Only docked conformations within 2 Å RMSD of the crystal conformation are used for training (actual training subset size not stated in the main text).</dd>
+      <dt>Protein structures</dt><dd><strong>Protein Data Bank (PDB)</strong> (<a href="https://www.rcsb.org/" target="_blank">rcsb.org</a>) — therapeutic target structures taken from PDB; specific case studies use PDB IDs 1ZYU (shikimate kinase, antibacterial target) and 6LU7 (SARS-CoV-2 3CL protease, COVID-19 target).</dd>
+      <dt>Experimentally validated actives</dt><dd><strong>BindingDB</strong> — 200 experimentally validated active molecules collected per target for the real-world benchmark covering more than 20 therapeutic targets (including COVID-19 targets).</dd>
+      <dt>Docking software</dt><dd><strong>AutoDock Vina</strong> (Trott &amp; Olson, 2010) — used for binding-affinity assessment (both docking and scoring modes); also used by CrossDock2020 to generate training pairs.</dd>
+      <dt>Data repository</dt><dd>Processed data deposited at <strong>Zenodo</strong> (<a href="https://doi.org/10.5281/zenodo.8307911" target="_blank">doi.org/10.5281/zenodo.8307911</a>).</dd>
+      <dt>Code</dt><dd>GitHub: <a href="https://github.com/HaotianZhangAI4Science/SurfGen" target="_blank">HaotianZhangAI4Science/SurfGen</a></dd>
+      <dt>Negative controls</dt><dd>200 randomly selected molecules per target drawn from a compound library serve as negative controls in real-world benchmarks.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>CrossDock2020</td><td>Model training — protein–ligand pairs</td><td>22.5 million pairs (subset within 2 Å RMSD)</td><td><a href="https://zenodo.org/record/8307911" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Protein Data Bank (PDB)</td><td>Therapeutic target 3D structures</td><td>Global repository; 1ZYU and 6LU7 used as case studies</td><td><a href="https://www.rcsb.org/" target="_blank">rcsb.org</a></td></tr>
+        <tr><td>BindingDB</td><td>Experimentally validated active ligands</td><td>200 actives per target; 20+ therapeutic targets</td><td><a href="https://www.bindingdb.org/" target="_blank">bindingdb.org</a></td></tr>
+        <tr><td>AutoDock Vina</td><td>Binding affinity estimation (docking + scoring)</td><td>All generated molecules evaluated</td><td>Open source</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: the exact number of protein structures in the CrossDock2020 training split and the precise test-set size are not stated in the main text; 22.5 million is the full CrossDock2020 pool before RMSD filtering. Numbers are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Protein surface representation:</b> the protein pocket is modeled as a triangulated topological surface (mesh of surface nodes) rather than as a point cloud or graph of residue atoms, capturing the geometric shape complementarity of the binding site.</li>
+      <li><b>Geodesic-GNN:</b> an equivariant graph neural network that performs message passing along geodesic distances on the curved pocket surface, using Gaussian curvature, mean curvature, shape index, Poisson–Boltzmann charge, hydrogen-bond donors, and hydropathy as node features — ensuring the receptive field respects the topology of the surface (no "leakage" through the pocket wall).</li>
+      <li><b>Geoattn-GNN:</b> an equivariant geometric-attention graph neural network that models spatial interactions between ligand atoms and pocket surface nodes via Euclidean distances, enabling the model to learn van der Waals and electrostatic interaction patterns.</li>
+      <li><b>Geometric vector perceptron (GVP):</b> used throughout to jointly process scalar and vector features while enforcing rotation-equivariance (Eq. 1) and invariance (Eq. 2).</li>
+      <li><b>Autoregressive 3D generation:</b> atoms are placed sequentially into the pocket; each step predicts (i) a focal atom / starting surface node, (ii) the next atom's 3D coordinates via a Gaussian mixture model (NLL loss), and (iii) the atom type and bond order via cross-entropy with kNN aggregation and triangle attention.</li>
+      <li><b>Evaluation metrics:</b> scoring affinity (in-situ Vina energy without conformational re-search), docking affinity (with conformational re-search), RMSD, 3D shape similarity (SP), Tanimoto topological similarity, SA, QED, and internal diversity.</li>
+      <li><b>Mutation sensitivity experiment:</b> single- and multi-point alanine mutations on shikimate kinase (1ZYU) used to verify that SurfGen generates geometrically adapted molecules in response to pocket volume and interaction changes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/learning-on-topological-surface-and-geometric-structure-for-3d-molecular-generation__s43588-023-00530-2/fig1.png" target="_blank">
+        <img src="assets/learning-on-topological-surface-and-geometric-structure-for-3d-molecular-generation__s43588-023-00530-2/fig1.png" alt="Fig. 1 Generated molecules for COVID-19 3CL protease" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Generated and docked molecules for the COVID-19 3CL protease (PDB 6LU7) across all methods. Rows show: directly generated conformations, best docked conformations (RMSD to generated), original ligand and generated overlays, and 3D shape similarity (SP) to the crystal ligand.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-on-topological-surface-and-geometric-structure-for-3d-molecular-generation__s43588-023-00530-2/fig2.png" target="_blank">
+        <img src="assets/learning-on-topological-surface-and-geometric-structure-for-3d-molecular-generation__s43588-023-00530-2/fig2.png" alt="Fig. 2 SurfGen on real-world targets" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> SurfGen on real-world therapeutic targets. (a) Binding affinity distributions versus experimentally active and random molecules. (b) Protein–ligand interaction analysis (hydrophobic and hydrogen-bond contacts) for SurfGen-generated vs. crystal ligands.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-on-topological-surface-and-geometric-structure-for-3d-molecular-generation__s43588-023-00530-2/fig3.png" target="_blank">
+        <img src="assets/learning-on-topological-surface-and-geometric-structure-for-3d-molecular-generation__s43588-023-00530-2/fig3.png" alt="Fig. 3 Conditional generation on shikimate kinase mutants" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Conditional molecule generation on shikimate kinase (1ZYU) wild-type and alanine-substitution mutants. Molecular and pocket volumes illustrate how SurfGen adapts molecule size and functional groups to changes in pocket shape and key interaction residues.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables in main text: 3 — Table 1 (mean binding energies and drug-like properties for top-1/-3/-5/-10 molecules on CrossDock test set); Table 2 (binding energies and drug-likeness for top-5 molecules on real-world targets); Table 3 (molecular similarity analysis on real-world targets).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal kernel density, physics-informed graph learning, explainable ML, spatial accessibility &amp; facility location).</p>
+
+    <div class="idea">
+      <h3>① Transfer SurfGen's geodesic surface learning to spatial accessibility delineation</h3>
+      <p><span class="lab paper">Extending this paper</span>SurfGen models the protein pocket as a <strong>topological surface with geodesic distances</strong>, ensuring that the receptive field of each node respects the curved geometry rather than cutting through structural barriers. This is a direct analogy to the urban street-network problem: pedestrian catchment areas for a healthcare facility are bounded by actual network distances, not Euclidean radii, yet most GNN-based spatial models use flat Euclidean adjacency. Extending SurfGen's Geodesic-GNN block — replacing the protein surface mesh with a city's road-network planar graph and surface node features with POI density, land use, and population — would yield a <em>topology-respecting catchment delineator</em> for 2SFCA/R2SFCA. The training objective would shift from affinity to realized service utilization rates.</p>
+      <p><span class="lab mine">Added value to my research</span>My 2SFCA and R2SFCA work defines service areas by fixed radii or gravity decay, both agnostic to network topology. Importing SurfGen's geodesic message-passing as the backbone of a learned catchment delineator would allow the service-area boundary to <em>emerge from the network structure and demand distribution</em> rather than from a tuned parameter — a concrete GeoAI upgrade to spatial accessibility modeling directly aligned with my health geography agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Encode mutation sensitivity as a spatial heterogeneity detector</h3>
+      <p><span class="lab paper">Extending this paper</span>SurfGen's mutation experiment demonstrates that the model is <strong>sensitive to single residue substitutions</strong> — small structural perturbations produce measurably different generated outputs. This pocket-level perturbation sensitivity is an architectural property of the geodesic and geometric-attention design, not a post-hoc analysis. Extending the paper: systematically benchmark this sensitivity against an information-theoretic measure (e.g., mutual information between pocket perturbation magnitude and output distribution shift) to quantify how much topological change is detectable, and compare across model classes. This would position SurfGen as a <em>molecular sensitivity analysis tool</em> for allosteric drug-resistance studies.</p>
+      <p><span class="lab mine">Added value to my research</span>The sensitivity-to-perturbation framing maps directly onto my explainable ML for spatial prediction agenda: just as SurfGen detects pocket mutations via output shifts, a GeoAI model could detect <em>urban policy interventions</em> (e.g., a new clinic opening) via spatially localized output changes. The equivariant-GNN design for sensitivity is transferable to spatiotemporal models where the "mutation" is a change in zoning, infrastructure, or demographic composition.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace the CrossDock training objective with a multi-objective equity–efficacy criterion</h3>
+      <p><span class="lab paper">Extending this paper</span>SurfGen is trained end-to-end on binding affinity (implicitly, via learned interaction patterns) and evaluated on a single-target affinity plus drug-likeness. However, real drug-discovery campaigns require molecules that are potent <em>and</em> selective (not toxic to off-targets) <em>and</em> synthesizable. Extending the paper: incorporate a <strong>multi-objective training signal</strong> — binding affinity to primary target, predicted off-target penalty, and a synthesizability score (SA) — into SurfGen's NLL + cross-entropy loss, balancing efficacy against selectivity and accessibility to synthesis. MISATO's quantum-mechanical features on protein–ligand complexes would enrich the training representation.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-objective framing mirrors my EV-charging and healthcare-facility optimization work, where I balance efficiency and equity. Translating SurfGen's generative architecture into a <em>multi-objective spatial facility locator</em> — generating candidate facility placements that jointly maximize accessibility, equity, and cost — would be a methodologically direct transfer with real urban-planning impact.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein–ligand complexes for structure-based drug discovery — <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply SurfGen's autoregressive atom-placement logic to sequential spatial entity generation</h3>
+      <p><span class="lab paper">Extending this paper</span>SurfGen's autoregressive generation places atoms one at a time, each conditioned on the current pocket state and the already-placed atoms, using a focal-selection step followed by coordinate prediction (Gaussian mixture) and topology assignment (atom type + bond). This sequential pocket-filling logic is structurally identical to <strong>sequential facility placement</strong>: place each new facility conditioned on existing facilities and local demand. Extending the paper: replace atoms with facility types, bonds with service-area overlaps, and the pocket surface with a city's demand density surface, and retrain SurfGen's generation backbone on facility-placement trajectories — yielding an end-to-end learned facility-location generator.</p>
+      <p><span class="lab mine">Added value to my research</span>My facility-location and healthcare-accessibility work currently relies on optimization (e.g., p-median, 2SFCA) rather than generation. Porting SurfGen's autoregressive atom-placement architecture to a facility-placement generator would enable <em>diverse candidate generation</em> for urban service networks — moving from finding the single optimal solution to sampling a Pareto-diverse set of high-quality placements, directly supporting scenario planning for public health policy.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A deep learning approach for rational ligand generation with toxicity control via reactive building blocks — <a href="https://doi.org/10.1038/s43588-024-00718-0" target="_blank">10.1038/s43588-024-00718-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Ground SurfGen's surface energy features in physics-informed spatial kernels</h3>
+      <p><span class="lab paper">Extending this paper</span>SurfGen attaches six physics-derived features (Gaussian curvature, mean curvature, shape index, Poisson–Boltzmann charge, H-bond donors, hydropathy) to pocket surface nodes, encoding known biophysical priors as soft constraints on the learned representations. This is physics-informed representation learning, but the constraints are only in the feature engineering step, not in the loss. Extending the paper: encode these biophysical priors as <strong>physics-informed loss terms</strong> (e.g., penalize generated conformations that violate Lennard-Jones exclusion volumes) so the model is architecturally constrained to obey physics in addition to being feature-informed — improving generalization to unseen target families and reducing the rate of thermodynamically implausible outputs.</p>
+      <p><span class="lab mine">Added value to my research</span>Physics-informed graph learning is a core methodological theme in my research. SurfGen's architecture offers a concrete blueprint: my spatiotemporal GNNs for urban health prediction could similarly encode physical-law constraints (e.g., conservation of population flows, spatial autocorrelation decay) as architectural priors, making predictions robust to data-sparse regions — analogous to how SurfGen's equivariance prevents implausible 3D poses in data-sparse pocket environments.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> SynGFN: learning across chemical space with generative flow-based molecular discovery — <a href="https://doi.org/10.1038/s43588-025-00902-w" target="_blank">10.1038/s43588-025-00902-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effectively detecting anomalous diffusion via deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Effectively detecting anomalous diffusion via deep learning (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Anomalous diffusion</span>
+      <span class="tag">Single-particle tracking</span>
+      <span class="tag">Out-of-distribution detection</span>
+    </div>
+    <h1>Effectively detecting anomalous diffusion via deep learning</h1>
+    <div class="meta">
+      <span class="authors">Adrian Pacheco-Pozo &middot; Diego Krapf</span>
+      <span><b>Published</b> 2024-10-11</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00705-5" target="_blank">10.1038/s43588-024-00705-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00705-5" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A deep learning network trained on five canonical anomalous diffusion models &mdash; CTRW, ATTM, FBM, L&eacute;vy walks, and SBM &mdash; can <strong>classify single-particle tracking trajectories</strong> while simultaneously detecting whether a trajectory belongs to a <strong>model outside the training set</strong>. By incorporating out-of-distribution (OOD) outlier trajectories from five additional diffusion models into training, the classifier reliably flags <em>unknown dynamics</em> rather than forcing them into a known category, making it directly applicable to real biological and physical experiments where the true underlying process may be unanticipated.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves the open-world recognition problem for stochastic processes.</b> Prior deep learning classifiers for anomalous diffusion forced every trajectory into a known model category. This work lets a network <em>abstain and flag novelty</em>, which is essential when analyzing experimental data where the biophysical mechanism is genuinely unknown.</li>
+      <li><b>Directly applicable to single-molecule and live-cell microscopy.</b> SPT experiments routinely generate thousands of short trajectories from crowded cellular environments; automated, uncertainty-aware classification replaces painstaking manual or hypothesis-driven analysis.</li>
+      <li><b>Extends the AnDi community benchmark.</b> Building on the Anomalous Diffusion (AnDi) challenge framework, this paper advances the state of the art toward deployment-ready classifiers that quantify confidence and detect regime shifts in biological systems.</li>
+      <li><b>Provides a general design principle for physics-informed ML.</b> The strategy of enriching training data with OOD outlier models is transferable to any physical process classification task where the model space is inherently open-ended.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Transferable computational method:</b> the OOD-augmented training strategy applies broadly across scientific ML, not just biophysics &mdash; matching Nature Computational Science's appetite for cross-disciplinary methodological contributions.</li>
+      <li><b>Clean, compact contribution:</b> as a Brief Communication the paper delivers a single sharp idea with immediate reproducibility potential, fitting the journal's high-impact concise format.</li>
+      <li><b>Timely intersection of reliability and scientific ML:</b> uncertainty-aware deep learning for scientific data is a central challenge across computational science, making the work relevant beyond the single-molecule community.</li>
+      <li><b>Editorial pairing:</b> published alongside a companion paper on reliable deep learning for OOD anomalous diffusion (DOI: 10.1038/s43588-024-00703-7), constituting a field-defining package moment for the anomalous diffusion ML community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd><strong>Simulated SPT trajectories</strong> drawn from ten anomalous diffusion models: five <em>in-distribution</em> (CTRW, ATTM, FBM, L&eacute;vy walks, SBM) and five <em>OOD outlier</em> models (directed Brownian motion, two-state model, combined anomalous diffusion, Sinai diffusion, Ornstein&ndash;Uhlenbeck). Exact trajectory counts per model are not reported in the available abstract or figure caption.</dd>
+      <dt>Trajectory type</dt><dd>Single-particle tracking (SPT) position time series from simulations and from experimentally obtained biological measurements. Trajectory lengths and step-count distributions are not specified in available metadata.</dd>
+      <dt>Experimental validation</dt><dd>The classifier is applied to <em>experimentally obtained</em> trajectories from biological systems, as indicated by the framing in single-molecule biophysics. Specific cell types, organisms, or experimental datasets are not named in the available abstract.</dd>
+      <dt>Reference benchmark</dt><dd><strong>AnDi Challenge</strong> (Mu&ntilde;oz-Gil et al. 2021, <em>Nature Communications</em> 10.1038/s41467-021-26320-w) &mdash; the community-standard framework for standardized simulated trajectory datasets and evaluation metrics for anomalous diffusion classification.</dd>
+      <dt>Data / code availability</dt><dd>Not explicitly stated in scraped metadata (fields empty in source). Consult the original article at nature.com for software and data links.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Simulated SPT trajectories (in-distribution)</td><td>Training + evaluation for 5 canonical models: CTRW, ATTM, FBM, LW, SBM</td><td>Exact count not stated; generated via Monte Carlo simulation per model</td><td>Generated in-house</td></tr>
+        <tr><td>Simulated SPT trajectories (OOD outliers)</td><td>OOD training signal for 5 additional models: DBM, TSM, CBM, SINAI, OU</td><td>Exact count not stated; injected as outlier class</td><td>Generated in-house</td></tr>
+        <tr><td>AnDi Challenge benchmark</td><td>Community-standard reference for anomalous diffusion classification</td><td>Multiple diffusion models; community trajectory sets</td><td><a href="https://doi.org/10.1038/s41467-021-26320-w" target="_blank">Mu&ntilde;oz-Gil et al. 2021</a></td></tr>
+        <tr><td>Experimental SPT trajectories</td><td>Real-world validation on biologically obtained particle tracks</td><td>Specific dataset not named in available metadata</td><td>Original article</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: precise trajectory counts, length distributions, and experimental dataset identifiers are not available in the scraped metadata. Values here reflect what is stated in the abstract and figure caption; consult the full paper for exact numbers.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Deep learning trajectory classifier:</b> a neural network trained end-to-end to map raw SPT trajectories to one of five in-distribution anomalous diffusion models (CTRW, ATTM, FBM, L&eacute;vy walks, SBM) or to an out-of-distribution flag.</li>
+      <li><b>OOD-augmented training:</b> five additional diffusion models (DBM, TSM, CBM, Sinai, OU) are injected as outlier classes during training, teaching the network to recognize the statistical signatures of unknown dynamics without treating them as in-distribution categories.</li>
+      <li><b>Open-set recognition:</b> at inference time, trajectories are either assigned to a known in-distribution model or classified as OOD, producing reliable predictions on open-world experimental data.</li>
+      <li><b>End-to-end feature learning:</b> the network learns discriminative representations directly from position time series, capturing memory, heavy tails, ageing, and confinement signatures without hand-crafted features such as MSD exponents.</li>
+      <li><b>Experimental validation:</b> the trained classifier is applied to biologically obtained single-particle trajectories to demonstrate practical applicability and to identify when the physical process departs from all trained models.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/effectively-detecting-anomalous-diffusion-via-deep-learning__s43588-024-00705-5/fig1.png" target="_blank">
+        <img src="assets/effectively-detecting-anomalous-diffusion-via-deep-learning__s43588-024-00705-5/fig1.png" alt="Fig.1 Workflow of the deep-learning approach for detecting anomalous diffusion" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Workflow of the deep-learning approach. The network is trained on five in-distribution models (CTRW, ATTM, FBM, LW, SBM) with outlier trajectories from five additional models (DBM, TSM, CBM, SINAI, OU). At inference, trajectories are either assigned to a known model or flagged as out-of-distribution.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0 per metadata). A single figure (Fig. 1) is available in the Brief Communication format.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, accessibility).</p>
+
+    <div class="idea">
+      <h3>&#9312; From OOD-augmented diffusion classification to multi-regime trajectory segmentation</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper classifies each trajectory as a whole into one in-distribution model or flags it as OOD. Real biological trajectories frequently exhibit <strong>switching behavior</strong> &mdash; a particle alternating between confined diffusion and free Brownian motion at different time windows. A direct extension: combine the paper's OOD-augmented training with a temporal <strong>change-point detection</strong> layer that segments each trajectory into sub-windows and assigns a model (or OOD flag) per segment. The companion paper (10.1038/s43588-024-00703-7) addresses OOD uncertainty differently; merging both architectures could yield a robust segmentation-plus-detection pipeline for heterogeneous biological data.</p>
+      <p><span class="lab mine">Added value to my research</span>My GPS and mobile-phone trajectory analysis regularly encounters <strong>heterogeneous movement regimes</strong> &mdash; commuting, loitering, transit &mdash; where no single mobility model fits the whole trace. Adapting the OOD-augmented training paradigm to human mobility trajectories would identify anomalous behavioral patterns (unusual routing, sudden mode switches, mobility deprivation episodes) without forcing them into prespecified categories, extending my spatiotemporal kernel density and agent-based modeling toolkit with a data-driven anomaly flag.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reliable deep learning in anomalous diffusion against out-of-distribution dynamics &mdash; <a href="https://doi.org/10.1038/s43588-024-00703-7" target="_blank">10.1038/s43588-024-00703-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Replace the sequence head with a geometric deep learning architecture for multi-particle graph inputs</h3>
+      <p><span class="lab paper">Extending this paper</span>The current network treats each trajectory as an independent 1D sequence. In real SPT experiments, many particles are tracked simultaneously and their spatial relationships &mdash; proximity, correlated motion, confinement by cell boundaries &mdash; carry additional information about the underlying diffusion mechanism. Extending this paper: represent the ensemble of co-tracked particles as a <strong>dynamic spatial graph</strong> and apply a geometric deep learning layer that propagates information across neighboring tracks. This would improve classification accuracy in crowded cellular environments and enable detection of <em>collective</em> anomalous diffusion regimes that single-track classifiers necessarily miss.</p>
+      <p><span class="lab mine">Added value to my research</span>The geometric graph perspective maps onto my <strong>physics-informed graph learning</strong> agenda. In spatial accessibility modeling, facilities and demand points form a bipartite graph where learned message-passing can encode geometric constraints and OOD pattern detection simultaneously &mdash; for instance, flagging a healthcare facility catchment whose actual usage pattern deviates from all modeled service-area geometries, signaling an unmet-need anomaly.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Geometric deep learning of particle motion by MAGIK &mdash; <a href="https://doi.org/10.1038/s42256-023-00660-2" target="_blank">10.1038/s42256-023-00660-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Open the black box: attribution methods to extract interpretable physical features</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates reliable classification and OOD detection but does not open the black box to reveal <em>which trajectory statistics</em> &mdash; autocorrelation structure, displacement distribution tails, ergodicity breaking &mdash; drive each prediction. Extending it: apply attribution methods (SHAP, integrated gradients, or attention rollout over the sequence) to identify discriminative features, then verify whether they match known analytical fingerprints of each diffusion model. This yields a <strong>learned biophysical feature dictionary</strong> that simultaneously validates the network, deepens physical understanding, and produces human-readable diagnostics alongside the classification output.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainability is central to my GeoAI work &mdash; I routinely apply SHAP and MGWR to attribute spatial predictions to interpretable covariates. Translating that agenda to sequence/trajectory models (explaining <em>which time lags and position displacements</em> drove an anomaly flag) would enrich my spatiotemporal anomaly detection pipeline and create a unified explainability framework applicable across both mobility trajectories and biophysical track data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles &mdash; <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Extend the model set to include non-equilibrium and actively driven diffusion in biological media</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper trains on ten diffusion models drawn from the AnDi challenge set, which is comprehensive but not exhaustive. Missing are regimes particularly relevant to membrane biophysics: <strong>hop diffusion</strong> across domain boundaries, transient binding kinetics (adsorption&ndash;desorption superimposed on free diffusion), and active-transport components (motor-driven ballistic phases). Extending the paper: add these as additional in-distribution or outlier model classes using the same OOD-augmented framework &mdash; the architecture is already designed to accept new model entries. The companion sensor work on particle mobility at single-molecule resolution provides concrete experimental contexts for these extended model classes.</p>
+      <p><span class="lab mine">Added value to my research</span>The conceptual transfer to my domain: in <strong>health geography and 2SFCA accessibility</strong>, patient "diffusion" through the healthcare landscape can be anomalous &mdash; non-Markovian return visits, confinement to local facilities, telehealth-induced long-range jumps. A classifier trained to distinguish these accessibility archetypes would identify population segments whose healthcare-seeking behavior lies outside the standard catchment model, informing R2SFCA delineation for underserved or digitally excluded subgroups.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Continuous biomarker monitoring by particle mobility sensing with single molecule resolution &mdash; <a href="https://doi.org/10.1038/s41467-018-04802-8" target="_blank">10.1038/s41467-018-04802-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Formalize the OOD-augmentation principle as a benchmark construction standard for scientific ML</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's methodological core &mdash; deliberately including out-of-distribution outlier classes during training to improve reliability on unknown inputs &mdash; is applied to biophysics but is framed as a general principle. A generalizing extension: formalize this as a <strong>benchmark construction methodology</strong> for scientific machine learning. For any physical classification task (fluid flow regime, material phase, reaction pathway), the benchmark should include both a target model set and a curated OOD perturbation set; the classifier's reliability on held-out OOD categories becomes a standard evaluation metric alongside in-distribution accuracy. This could be as influential for ML on physics data as the AnDi challenge itself was for anomalous diffusion.</p>
+      <p><span class="lab mine">Added value to my research</span>My work on <strong>open science and FAIR data reproducibility</strong> aligns directly: building benchmark datasets for geospatial anomaly detection &mdash; unusual mobility patterns, accessibility outliers, spatial prediction failures in multi-source fusion &mdash; that include OOD perturbation sets would raise the scientific standard for GeoAI model evaluation and align my corpus of GPS, social-media, and remote-sensing data studies with reproducible ML benchmarking principles.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing computational fluid dynamics with machine learning &mdash; <a href="https://doi.org/10.1038/s43588-022-00264-7" target="_blank">10.1038/s43588-022-00264-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

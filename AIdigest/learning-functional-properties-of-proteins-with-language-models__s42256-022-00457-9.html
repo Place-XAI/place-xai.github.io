@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning functional properties of proteins with language models — AI Digest</title>
+<meta name="description" content="AI Digest: Learning functional properties of proteins with language models (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Protein Language Models</span>
+      <span class="tag">Representation Learning</span>
+      <span class="tag">Protein Function Prediction</span>
+      <span class="tag">Benchmarking</span>
+    </div>
+    <h1>Learning functional properties of proteins with language models</h1>
+    <div class="meta">
+      <span class="authors">Serbulent Unsal · Heval Atas · Muammer Albayrak · Kemal Turhan · Aybar C. Acar · Tunca Doğan</span>
+      <span><b>Published</b> 2022-03-21</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00457-9" target="_blank">10.1038/s42256-022-00457-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00457-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Large-scale protein language models — especially <strong>transformer-based architectures</strong> like ProtT5-XL and ProtALBERT — <strong>consistently outperform classical representations</strong> across four functional benchmarks (semantic similarity, ontology-based function prediction, drug-target family classification, and binding affinity estimation), even when sequence similarity between training and test sets is as low as 15%. The benchmarking platform <strong>PROBE</strong> provides a reproducible standard for evaluating any new protein representation method on these four tasks, accelerating progress toward solving open problems in protein science.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the annotation gap in protein science.</b> As of May 2021, only ~0.26% of ~215 million UniProt protein entries are manually annotated; this benchmark clarifies which representation method best fills that gap computationally.</li>
+      <li><b>Establishes the first multi-task, multi-model standard for protein representations.</b> Covering 23 learned and classical methods across 4 functional benchmarks, PROBE offers a unified, reproducible yardstick previously absent from the field.</li>
+      <li><b>Demonstrates generalization beyond sequence similarity.</b> Top learned representations (ProtT5-XL, ProtALBERT) maintain strong performance even at the 15% sequence similarity split — below the "twilight zone" — implying capture of deeper structural/functional patterns.</li>
+      <li><b>Directly enables drug discovery and biomedicine.</b> Accurate drug-target family classification and binding affinity estimation from sequence alone can shortcut costly wet-lab experiments and open new avenues in rational protein design.</li>
+      <li><b>Delivers open infrastructure.</b> The PROBE codebase, datasets, pre-trained vectors, and an interactive web tool (<a href="https://PROBE.kansil.org" target="_blank">PROBE.kansil.org</a>) make every result reproducible and every new model immediately evaluable.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary convergence at the NLP–biology frontier:</b> the paper directly transposes transformer-based language-model advances into protein science — exactly the kind of methodological bridge NMI champions.</li>
+      <li><b>Comprehensive, reproducible benchmark:</b> rather than proposing a single model, the study defines the evaluation infrastructure, fitting NMI's preference for contributions that advance a whole sub-field.</li>
+      <li><b>High societal relevance:</b> protein function prediction underpins drug discovery, disease understanding, and biotechnology — aligning with Nature's demand for broad scientific and societal impact.</li>
+      <li><b>Transparent about failure modes:</b> data leakage analysis, similarity-controlled splits, and explicitness about when classical methods compete — the rigour meets Nature's standards for scientific integrity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Protein sequences &amp; annotations</dt><dd><strong>UniProtKB/Swiss-Prot</strong> and <strong>UniProt-GOA</strong> (releases 2019_10 and 2019_11) — human proteome entries with expert-reviewed GO annotations (IEA excluded). Finalized dataset: 14,625 distinct GO terms; 326,009 annotations covering MF, BP, and CC aspects.</dd>
+      <dt>Semantic similarity datasets</dt><dd>Three benchmark subsets derived from the human proteome: <em>Well_Annotated_500</em> (top 500 proteins by annotation count), <em>Well_Annotated_200</em>, and <em>Sparse_Uniform</em> (247 pairs from 40 proteins). Pairwise similarity via Lin similarity in GoSemSim.</dd>
+      <dt>Drug-target dataset</dt><dd><strong>ChEMBL database v.25</strong> — curated drug/compound–target interactions. Final dataset: 4,365 enzymes, 835 GPCRs, 347 ion channels, 1,034 transcription factors, 1,019 "others." Four similarity-threshold splits (random, UniClust50, UniClust30, MMSEQ-15) to control for sequence leakage.</dd>
+      <dt>Binding affinity dataset</dt><dd><strong>SKEMPI database</strong> — 3,047 equilibrium dissociation constant (K<sub>D</sub>) measurements for 158 PDB structures across 85 protein–protein complexes; 2,950 data points used for train/test.</dd>
+      <dt>Representation methods tested</dt><dd>23 methods total (15 learned + 8 classical), covering sequence-based, PPI-informed, MSA-based, and multi-modal approaches (SeqVec, ProtBERT-BFD, ProtT5-XL, ProtALBERT, ESM-1b, Mut2Vec, MSA-Transformer, HMMER, BLAST, and others).</dd>
+      <dt>Availability</dt><dd>All datasets, pre-trained vectors, and source code: <a href="https://github.com/kansil/PROBE" target="_blank">github.com/kansil/PROBE</a>. Protein representation and MSA files: <a href="https://doi.org/10.5281/zenodo.5795850" target="_blank">Zenodo 10.5281/zenodo.5795850</a>. Interactive web tool: <a href="https://PROBE.kansil.org" target="_blank">PROBE.kansil.org</a> (CodeOcean).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>UniProtKB/Swiss-Prot + UniProt-GOA</td><td>Protein sequences, GO annotations for semantic similarity &amp; PFP benchmarks</td><td>Human proteome; 14,625 GO terms; 326,009 annotations (2019 releases)</td><td><a href="https://www.uniprot.org" target="_blank">uniprot.org</a></td></tr>
+        <tr><td>ChEMBL v.25</td><td>Drug-target protein family labels</td><td>~7,600 human proteins across 5 families; 4 similarity-threshold splits</td><td><a href="https://www.ebi.ac.uk/chembl/" target="_blank">ebi.ac.uk/chembl</a></td></tr>
+        <tr><td>SKEMPI</td><td>Protein–protein binding affinity change (mutation-based)</td><td>3,047 K<sub>D</sub> measurements; 158 PDB structures; 85 PPI complexes</td><td><a href="https://life.bsc.es/pid/skempi2" target="_blank">life.bsc.es/pid/skempi2</a></td></tr>
+        <tr><td>PROBE (GitHub + Zenodo)</td><td>Benchmark software, pre-computed vectors, MSA files</td><td>23 representation methods; open access</td><td><a href="https://github.com/kansil/PROBE" target="_blank">github.com/kansil/PROBE</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the drug-target dataset size varies slightly across representation methods (by &lt;3%) due to vector availability differences. All numbers are taken verbatim from the article's Methods section.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Protein representation collection:</b> pre-computed or freshly generated representation vectors for 15 learned methods (small-scale: SeqVec, UniRep, CPCProt, etc.; large-scale transformers: ProtBERT-BFD, ProtT5-XL, ProtALBERT, ESM-1b, MSA-Transformer) and 8 classical baselines (BLAST, HMMER, AAC, APAAC, K-Sep, PFAM, rule-based methods). Mean pooling aggregates residue-level to protein-level vectors.</li>
+      <li><b>Semantic similarity inference:</b> Spearman rank-order correlation between cosine/Manhattan/Euclidean representation similarities and GO-derived Lin semantic similarities across three datasets per GO aspect (MF, BP, CC).</li>
+      <li><b>Ontology-based protein function prediction (PFP):</b> linear SVM (SGD, hinge loss) trained per GO-term group; 5-fold cross-validation; 275 GO terms selected to span 27 specificity/frequency groups across MF, BP, CC; evaluated by weighted F1-score.</li>
+      <li><b>Drug target protein family classification:</b> multitask linear SVM (OneVsRest) with 10-fold cross-validation on four sequence-similarity-controlled splits (random, 50%, 30%, 15%); evaluated by F1-score, accuracy, and Matthews Correlation Coefficient (MCC).</li>
+      <li><b>Protein–protein binding affinity estimation:</b> element-wise vector multiplication of protein pair representations; Bayesian Ridge Regression with 10-fold cross-validation against SKEMPI K<sub>D</sub> values; evaluated by Pearson correlation, MSE, MAE, compared against PIPR baseline.</li>
+      <li><b>Data leakage control:</b> explicit sequence-similarity-based train/test splits (UniClust50/30, MMSEQ-15); methods with potential data leakage flagged in figures.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig1.png" target="_blank">
+        <img src="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig1.png" alt="Fig.1 Schematic representation of the study" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic overview of the PROBE benchmark study — from multiple data sources and representation strategies to four functional prediction tasks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig2.png" target="_blank">
+        <img src="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig2.png" alt="Fig.2 Protein semantic similarity inference benchmark results" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Semantic similarity benchmark — Spearman correlation between representation-based and GO-derived pairwise similarities across MF, BP, CC, coloured by model class.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig3.png" target="_blank">
+        <img src="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig3.png" alt="Fig.3 Ontology-based protein function prediction benchmark results" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> PFP heat maps — weighted F1-scores across 9 GO groups (specificity × frequency) for MF, BP, and CC prediction tasks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig4.png" target="_blank">
+        <img src="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig4.png" alt="Fig.4 Drug target protein family classification benchmark results" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Drug-target classification — box plots of F1/accuracy/MCC across four sequence-similarity-controlled dataset splits.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig5.png" target="_blank">
+        <img src="assets/learning-functional-properties-of-proteins-with-language-models__s42256-022-00457-9/fig5.png" alt="Fig.5 Protein–protein binding affinity estimation benchmark results" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Binding affinity estimation — Pearson correlation, MSE, and MAE box plots with PIPR baseline; ProtALBERT achieves ~25% improvement over the PIPR benchmark.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables — Table 1 (comprehensive list of 39 protein representation learning methods with technical details) and Table 2 (average performance of all benchmarked methods across four tasks).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Transfer the PROBE benchmarking philosophy to geospatial foundation models</h3>
+      <p><span class="lab paper">Extending this paper</span>PROBE's central contribution is a <strong>multi-task, method-agnostic benchmarking platform</strong>: it separates the quality of a representation from the power of the downstream classifier by using a deliberately weak linear SVM. This design principle is directly exportable. Extending this paper: apply the same representation-decoupling logic to geospatial sequence models (e.g., trajectory encoders, remote sensing patch embeddings), defining analogous benchmark tasks — spatial semantic similarity, land-use class prediction, and mobility-flow affinity — and constructing similarity-controlled train/test splits by geographic distance instead of sequence identity. This would give the geospatial AI community its own PROBE equivalent.</p>
+      <p><span class="lab mine">Added value to my research</span>My fine-tuning agenda for geospatial foundation models currently lacks a principled evaluation standard. A PROBE-style spatial benchmark — with linear probe heads on frozen encoders — would let me fairly compare geospatial foundation models (SatCLIP, GeoCLIP, RemoteCLIP) on accessibility and health-geography tasks without conflating representation quality with classifier complexity. This directly advances the reproducibility and FAIR-data themes in my research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Decoding omics via representation learning — <a href="https://doi.org/10.1038/s43588-025-00909-3" target="_blank">10.1038/s43588-025-00909-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Integrate multi-source heterogeneous data for richer spatial representations</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper finds that Mut2Vec — which combines PPI networks, mutation profiles, and biomedical text — outperforms purely sequence-based models in biological process and cellular component prediction, pointing to multi-source fusion as a productive direction. A direct extension: construct holistic protein vectors by concatenating independently pre-trained representations from sequence, structural graphs (PDB), and functional text (literature), then training a unified multi-modal encoder using contrastive learning. The paper already proposes this direction (Supplementary Fig. 13); systematically evaluating it within PROBE's four benchmarks would validate the strategy.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-source fusion lesson maps directly onto my spatiotemporal data fusion work (mobile phones, social media, remote sensing, POIs). Instead of late-fusion concatenation, I can adopt the protein-space approach of pre-training each modality independently and learning cross-modal alignment — a strategy that should improve predictions of spatial health outcomes where each data stream captures a different dimension of human activity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Protein sequence design by deep learning — <a href="https://doi.org/10.1038/s43588-022-00274-5" target="_blank">10.1038/s43588-022-00274-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Disentangle spatial representation vectors for explainable GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies <strong>model interpretability</strong> as a critical open challenge: most learned protein vectors are black boxes where it is unknown which vector dimension encodes which biological property. It calls for disentanglement frameworks that associate vector positions with measurable protein attributes. Extending this paper: adapt recent disentanglement methods (beta-VAE, concept activation vectors) to protein language model embeddings, then evaluate using PROBE's four tasks as ground-truth attribute probes — turning the benchmark into a disentanglement test bed.</p>
+      <p><span class="lab mine">Added value to my research</span>The disentanglement challenge is structurally identical to interpretability in spatiotemporal embeddings. In my explainable ML work for spatial prediction (health, housing prices, EV charging), I need to know which dimensions of a learned place embedding encode socioeconomic status, transit access, or green-space exposure. Borrowing protein disentanglement metrics — probing each dimension with a linear classifier against a ground-truth attribute — gives me a principled tool for auditing geospatial foundation model representations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Evaluating deep learning for predicting epigenomic profiles — <a href="https://doi.org/10.1038/s42256-022-00570-9" target="_blank">10.1038/s42256-022-00570-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply sequence-similarity-controlled evaluation to spatial accessibility studies</h3>
+      <p><span class="lab paper">Extending this paper</span>One of the paper's most rigorous methodological contributions is the use of <strong>sequence-similarity-controlled train/test splits</strong> (UniClust50/30 and MMSEQ-15), which reveal that classical methods degrade sharply as similarity drops to 15%, while large transformers remain robust. This is a domain-general lesson about overfitting to superficial similarity rather than learning deep structure. Extending this paper: apply the same leakage-probing logic across all four PROBE benchmarks with even lower similarity thresholds to map the "extrapolation frontier" of each model class.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatial prediction tasks (e.g., predicting primary care accessibility in unseen census tracts or cities), I typically split by random geographic partitioning. The protein-field lesson suggests I should use <strong>spatial-autocorrelation-controlled splits</strong> — ensuring training and test areas are truly geographically dissimilar — to honestly assess whether my explainable ML models learn transferable patterns or just memorize spatial proximity. This rigour is directly applicable to MGWR and ML ensemble models I use for health and accessibility prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A generalizable deep learning framework for inferring fine-scale germline mutation rate maps — <a href="https://doi.org/10.1038/s42256-022-00574-5" target="_blank">10.1038/s42256-022-00574-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Leverage DNA/sequence language model architectures for spatiotemporal trajectory encoding</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that transformer attention heads naturally discover <strong>sequence motifs</strong> and amino-acid co-variation patterns in an unsupervised way, enabling performance on tasks never seen during pre-training. This is the core of the transfer learning success story here. Extending this paper: the same pre-training strategy — next-token prediction on long biological sequences — could be applied to protein families not yet covered by existing models (e.g., disordered regions, membrane proteins), with PROBE providing immediate downstream evaluation.</p>
+      <p><span class="lab mine">Added value to my research</span>GPS trajectories and urban mobility sequences are structurally analogous to protein sequences: long symbolic strings with local motifs (activity clusters), long-range dependencies (commuting patterns), and a finite vocabulary (location categories, POI types). Pre-training a transformer on massive GPS trajectory corpora — using next-location prediction as the self-supervised task — and then evaluating frozen representations with linear probes on downstream tasks (health outcome prediction, telehealth access, job-housing balance) mirrors precisely what PROBE establishes. The paper's lesson that <em>large-scale, multi-head attention outperforms all classical baselines on functional tasks</em> suggests investing in trajectory language models for spatial health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Explicit dynamic cross-strand interactions for DNA sequence language modelling — <a href="https://doi.org/10.1038/s42256-026-01249-1" target="_blank">10.1038/s42256-026-01249-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

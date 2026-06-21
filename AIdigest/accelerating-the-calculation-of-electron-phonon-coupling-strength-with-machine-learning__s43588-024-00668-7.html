@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accelerating the calculation of electron–phonon coupling strength with machine learning — AI Digest</title>
+<meta name="description" content="AI Digest: Accelerating the calculation of electron–phonon coupling strength with machine learning (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Electron–phonon coupling</span>
+      <span class="tag">Graph neural network</span>
+      <span class="tag">Materials simulation</span>
+      <span class="tag">Superconductivity</span>
+    </div>
+    <h1>Accelerating the calculation of electron–phonon coupling strength with machine learning</h1>
+    <div class="meta">
+      <span class="authors">Yang Zhong · Shixu Liu · Binhua Zhang · Zhiguo Tao · Yuting Sun · Weibin Chu · Xin-Gao Gong · Ji-Hui Yang · Hongjun Xiang</span>
+      <span><b>Published</b> 2024-08-08</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00668-7" target="_blank">10.1038/s43588-024-00668-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00668-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A machine learning framework (HamEPC) built on an <strong>E(3)-equivariant graph neural network (HamGNN)</strong> accelerates electron–phonon coupling (EPC) calculations by <strong>several orders of magnitude</strong> compared with fully first-principles density functional perturbation theory. Trained on only ~30 DFT Hamiltonian matrices per material, the method accurately predicts EPC strengths for GaAs (carrier mobility 8,386 cm² V⁻¹ s⁻¹ vs. experiment ~8,200–8,900) using the hybrid HSE functional, and reproduces the experimentally observed <strong>double-dome superconducting phase diagram</strong> in the Kagome crystal CsV₃Sb₅ — a system of 972 atoms otherwise intractable by DFPT. The framework opens EPC-based investigations of large, correlated, and topological materials to computationally affordable hybrid-functional quality.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Removes a decades-old computational bottleneck.</b> DFPT scales as O(N³) and is restricted to local/semi-local DFT functionals. HamEPC circumvents this by learning the Hamiltonian and its atomic-displacement gradients, enabling HSE-quality EPC calculations that previously required prohibitive compute.</li>
+      <li><b>Enables faithful carrier-mobility predictions in semiconductors.</b> Standard PBE functionals overestimate GaAs electron mobility by 3× (26,864 vs. ~8,200–8,900 cm² V⁻¹ s⁻¹); only HSE captures the correct effective mass, revealing a systematic flaw in prior literature.</li>
+      <li><b>First precise EPC calculation for a topological Kagome CDW superlattice.</b> The 2×2×1 CDW phase of CsV₃Sb₅ has 36 atoms (972 in the supercell used) — well beyond conventional DFPT reach. The framework provides the first phonon-mode-resolved attribution of superconductivity in this disputed system.</li>
+      <li><b>Transferability across material families.</b> A single HamGNN model trained on 426 carbon allotropes predicts EPC strengths for graphene and diamond without retraining, demonstrating cross-structure generalizability.</li>
+      <li><b>Fully open-source artifact.</b> Code (HamEPC) and training data released on GitHub and Zenodo, making the speedup immediately reproducible for the community.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Computational breakthrough at scale:</b> the paper solves a long-standing problem (EPC beyond DFT) with a principled ML approach, producing the efficiency gains and accuracy benchmarks Nature Computational Science rewards.</li>
+      <li><b>Methodological generality:</b> the equivariant GNN + nonorthogonal AO basis formalism applies to any crystal, not a narrow class of materials — fitting the journal's preference for broad computational methods.</li>
+      <li><b>Physical discovery beyond method paper:</b> findings on GaAs functional sensitivity and the CDW-phase superconductivity mechanism constitute scientific insights, not merely engineering acceleration.</li>
+      <li><b>Open code + data:</b> aligns with Nature Computational Science's reproducibility standards; Zenodo DOI and GitHub repository provided for both datasets and code.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd>Hamiltonian matrices computed by DFT for <strong>30 supercells per material</strong> at each pressure/phase — a very small training set by ML standards, enabling rapid deployment. For GaAs: 30 supercells of 2×2×2 unit cells computed with the HSE functional via HONPAS. For CsV₃Sb₅: 30 supercells of 2×2×2 per pressure point via OpenMX with PBE.</dd>
+      <dt>Validation materials</dt><dd>Silicon (Si) and silicon carbide (SiC): 100 supercells each (3×3×3); graphene and diamond: one pre-trained carbon model (426 carbon allotrope structures). GaAs: experimental lattice constant 5.65 Å, 300 K mobility target. CsV₃Sb₅: pressure range 0–50+ GPa, CDW 2×2×1 phase (36-atom unit cell, 972 atoms in EPC supercell).</dd>
+      <dt>DFT codes used</dt><dd>OpenMX, HONPAS, ABACUS (AO-basis DFT); VASP (structural optimization, force constants); Quantum ESPRESSO + EPW (benchmark reference); Phonopy (phonon spectra).</dd>
+      <dt>Published data</dt><dd>Hamiltonian and gradient data on <strong>Zenodo</strong>: <a href="https://doi.org/10.5281/zenodo.11204268" target="_blank">10.5281/zenodo.11204268</a>. HamEPC code on <strong>GitHub</strong> + Zenodo: <a href="https://doi.org/10.5281/zenodo.12685941" target="_blank">10.5281/zenodo.12685941</a>.</dd>
+      <dt>Efficiency figures</dt><dd>GaAs HSE EPC gradient: ~78.3 core-hours (DFT) → ~21 s GPU inference + 7.66 h training overhead — nearly an order of magnitude faster overall. DFPT for CsV₃Sb₅ (QE+EPW): 46,080 core-hours for perturbation potentials alone; HamEPC avoids this entirely.</dd>
+      <dt>k-grid convergence</dt><dd>300×300×300 k-points with 5×10⁶ Monte Carlo q-points (polar part) for GaAs mobility convergence — infeasible with standard DFPT, enabled by HamEPC inference speed.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Code</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Zenodo: HamGNN Hamiltonian &amp; gradient data</td><td>Training &amp; validation data for GaAs, CsV₃Sb₅</td><td>30 supercells/material × multiple pressures</td><td><a href="https://doi.org/10.5281/zenodo.11204268" target="_blank">zenodo.11204268</a></td></tr>
+        <tr><td>GitHub: HamEPC code</td><td>Mobility &amp; superconductivity calculation pipeline</td><td>Full open-source release</td><td><a href="https://github.com/QuantumLab-ZY/HamEPC" target="_blank">QuantumLab-ZY/HamEPC</a></td></tr>
+        <tr><td>Zenodo: HamEPC code archive</td><td>Reproducible code snapshot</td><td>Versioned release</td><td><a href="https://doi.org/10.5281/zenodo.12685941" target="_blank">zenodo.12685941</a></td></tr>
+        <tr><td>Carbon allotrope Hamiltonian DB (ref. 14)</td><td>Pre-trained transferable HamGNN model</td><td>426 carbon allotrope structures</td><td>Prior HamGNN publication</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: No experimental dataset (census, spatial, or observational) is used; all data are DFT-generated ab initio Hamiltonian matrices. Exact atom counts and DFT compute times are stated verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>E(3)-equivariant graph neural network (HamGNN):</b> maps crystal structure directly to the real-space atomic orbital (AO) Hamiltonian matrix H and overlap matrix S, bypassing DFT self-consistent field iterations. Node/edge features encode the local atomic environment; outputs are the on-site H<sub>ii</sub> and off-site H<sub>ij</sub> blocks.</li>
+      <li><b>Hamiltonian gradient via finite difference:</b> supercells with each central-unit-cell atom displaced ±0.01 Å along each Cartesian axis; HamGNN predicts H for each displaced supercell; ∂H/∂τ computed by finite difference — avoiding expensive DFPT perturbation calculations.</li>
+      <li><b>Nonorthogonal AO EPC formalism:</b> novel derivation of the EPC matrix element g<sub>μνb</sub>(k,q) in the nonorthogonal AO basis (equations 6 and 14 in the paper), accounting for the overlap matrix S and auxiliary matrices A<sup>κ</sup>, B<sup>κ</sup> — required because AOs (unlike Wannier functions) are non-orthogonal.</li>
+      <li><b>Long-range polar EPC correction:</b> for polar semiconductors (GaAs), analytic correction for dipole interactions at q→0 using Born effective charges and dielectric tensor (equation 15), decomposed into polar and remainder parts for Monte Carlo integration.</li>
+      <li><b>Relaxation time approximation + Monte Carlo q-sampling:</b> scattering rates computed via Fermi's golden rule; Monte Carlo with Cauchy importance sampling converges mobility at 300 K on a 300×300×300 k-grid with 5×10⁶ q-points (polar) and 5×10⁵ (remainder).</li>
+      <li><b>Allen–Dynes–McMillan formula for T<sub>c</sub>:</b> Eliashberg spectral function α²F(ω) and phonon linewidths γ<sub>qν</sub> computed from the ML EPC matrix; superconducting T<sub>c</sub> estimated with μ*<sub>c</sub>=0.12.</li>
+      <li><b>Training protocol:</b> 80/10/10 train/validation/test split; separate models trained per material/pressure; MAEs of 0.15–1.72 meV on Hamiltonian matrix elements depending on material complexity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig1.png" target="_blank">
+        <img src="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig1.png" alt="Fig. 1 HamGNN framework for EPC calculation" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> HamGNN architecture (a) and EPC calculation workflow (b): from crystal structure → Hamiltonian → gradient → EPC matrix, showing the end-to-end pipeline replacing DFPT.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig2.png" target="_blank">
+        <img src="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig2.png" alt="Fig. 2 Comparison of EPC matrix elements for Si, SiC, graphene, diamond" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Validation: HamGNN vs. DFT EPC matrix elements |g<sub>μνb</sub>(k,q)| for Si, SiC (material-specific models) and graphene, diamond (single transferable carbon model).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig3.png" target="_blank">
+        <img src="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig3.png" alt="Fig. 3 GaAs band structures, mobility convergence, scattering rates" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> GaAs: (a) HSE band structure HamGNN vs. HONPAS; (b) k-grid convergence of mobility (HSE: 8,386 vs. PBE: 26,864 cm² V⁻¹ s⁻¹); (c–d) mode-resolved scattering rates revealing LO/LA phonon dominance switch.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig4.png" target="_blank">
+        <img src="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig4.png" alt="Fig. 4 CsV3Sb5 crystal structure and T_c pressure diagram" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> CsV₃Sb₅: crystal and Kagome lattice in CDW phase (a–b); double-dome T<sub>c</sub>–pressure phase diagram: HamGNN vs. QE+EPW vs. experiment (c).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig5.png" target="_blank">
+        <img src="assets/accelerating-the-calculation-of-electron-phonon-coupling-strength-with-machine-learning__s43588-024-00668-7/fig5.png" alt="Fig. 5 CDW phase bands, phonon spectrum, EPC mode attribution" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> CDW phase of CsV₃Sb₅: energy bands vs. DFT (a); phonon spectrum with mode-resolved EPC strength γ<sub>qν</sub> (b); detail of dominant M1, M2, M3 modes (c–e) and their atomic vibration patterns (f–h).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — band gap and electron effective mass: HSE vs. PBE vs. experiment for GaAs). Supplementary contains Figs. 1–8, Discussions 1–3, and Tables 1–4 (computational cost comparison, T<sub>c</sub> vs. μ*<sub>c</sub>, etc.).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable machine learning, physics-informed graph learning, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Replace material-specific HamGNN models with a universal pretrained Hamiltonian foundation model</h3>
+      <p><span class="lab paper">Extending this paper</span>The current HamEPC framework trains a separate HamGNN model for each material (and even each pressure for CsV₃Sb₅), requiring 30 DFT supercell calculations per target. The authors acknowledge this limitation and gesture toward "universal Hamiltonian models," but HamEPC itself does not implement one. A direct extension: replace the per-material training stage with a <strong>foundation model pretrained on a broad elemental database</strong> that can be fine-tuned with ≤5 DFT calculations per new material. The paper already shows cross-structure transferability within carbon allotropes — the same idea scaled to multi-element systems would make the framework truly zero-shot for common semiconductor families. A concurrent corpus paper on deep-learning electronic structure calculation in plane-wave bases demonstrates that transferability across materials is achievable with the right architectural and basis choices.</p>
+      <p><span class="lab mine">Added value to my research</span>The idea of a pretrained, fine-tunable spatial model directly parallels my interest in <strong>fine-tuning geospatial foundation models</strong> for new cities or data modalities. Just as HamGNN encodes material symmetry as an inductive bias, my GeoAI work encodes spatial autocorrelation and scale as priors. The cross-domain lesson: small labeled datasets suffice for transfer when the pretrained model encodes the right physical/spatial invariance — a principle I can apply to spatiotemporal kernel density estimation with limited ground-truth observations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Generalizing deep learning electronic structure calculation to the plane-wave basis — <a href="https://doi.org/10.1038/s43588-024-00701-9" target="_blank">10.1038/s43588-024-00701-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend the equivariant GNN to directly predict explainable EPC contributions by phonon mode and spatial motif</h3>
+      <p><span class="lab paper">Extending this paper</span>HamEPC produces accurate aggregate EPC values and T<sub>c</sub> predictions, but attribution of why a given material is a good or poor superconductor remains a post-hoc analysis (the paper identifies M1/M2/M3 modes manually from the phonon spectrum). A logical extension: augment the equivariant GNN with an <strong>attention mechanism over bond types and atomic neighborhoods</strong> that produces mode-resolved EPC contributions as primary outputs, not derived quantities. This would enable the model to flag which structural motifs (Kagome triangles, Cs interlayer positions) drive Cooper pairing, transforming HamEPC from a calculator into a <em>design assistant</em> — predicting new high-T<sub>c</sub> candidates by screening structural perturbations. A corpus paper on deep-learning acceleration of nanomaterial discovery demonstrates this "predict-then-explain" pipeline for complex materials.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors my agenda of <strong>explainable machine learning for spatial prediction</strong>: just as SHAP/MGWR attributes healthcare access gaps to specific spatial covariates, an explainable HamEPC would attribute T<sub>c</sub> to specific phonon-structural features. The methodological transfer is direct — attention-based feature attribution in graph networks applies both to crystal bond graphs and to spatial accessibility networks where I need to explain why certain neighborhoods are underserved.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply the HSE-level mobility pipeline to defect and alloy engineering in wide-bandgap semiconductors</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper demonstrates that standard DFT functionals (PBE) produce a 3× overestimate of GaAs electron mobility due to incorrect effective mass, and shows HSE is needed. The authors explicitly flag that their approach "facilitates accurate studies of alloy and defect effects on semiconductor transport properties." The extension is concrete: apply HamEPC with HSE training data to systems like GaN, SiC, or GaAs with substitutional dopants (as supercells with broken translation symmetry), where DFPT + Wannier interpolation is essentially intractable. The companion corpus paper (the same-day published alternative EPC ML tool) benchmarks a related method; comparing their AO-basis vs. Wannier-basis approaches across defected systems would jointly validate both frameworks.</p>
+      <p><span class="lab mine">Added value to my research</span>While the direct material focus is outside my domain, the <strong>framework of active learning under data scarcity</strong> is highly relevant. In spatial epidemiology, healthcare facility access data is similarly sparse — one must train on a small labeled set (clinics with measured catchment areas) and generalize to unobserved facilities. The HamEPC lesson — 30 training samples suffice when the model architecture encodes the right symmetry — informs my approach to R2SFCA service-area delineation with limited mobility data, motivating physics-constrained spatial models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A machine learning tool to efficiently calculate electron–phonon coupling — <a href="https://doi.org/10.1038/s43588-024-00680-x" target="_blank">10.1038/s43588-024-00680-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Couple the ML EPC framework with active learning to close the loop between prediction and DFT validation</h3>
+      <p><span class="lab paper">Extending this paper</span>HamEPC currently trains on a fixed set of 30 randomly perturbed supercells per material. There is no mechanism to detect when the model enters an unreliable region (e.g., near a phase transition, or for a chemically distant structure) and request additional DFT calculations. An active-learning extension would monitor the <strong>ensemble uncertainty of the Hamiltonian prediction</strong> across structures in a candidate library, trigger DFT recalculations only for the most uncertain samples, and update the model in cycles. For the CsV₃Sb₅ pressure scan, this would automatically concentrate DFT effort near the T<sub>c</sub> dome peaks rather than uniform pressure sampling. The deep-learning magnetic superstructure paper in our corpus demonstrates exactly this pattern for electronic structure with magnetic ordering — a template directly applicable here.</p>
+      <p><span class="lab mine">Added value to my research</span>Active learning loops for spatial data collection are a direct parallel: when deploying R2SFCA or accessibility models in data-scarce urban contexts (Global South cities, rural areas), I want the model to identify <strong>which spatial locations to survey next</strong> to reduce access-prediction uncertainty most efficiently. The HamEPC active-learning architecture — uncertainty-triggered sampling, small-batch DFT → spatial survey — translates directly, with DFT replaced by ground-truth mobility surveys.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep-learning electronic-structure calculation of magnetic superstructures — <a href="https://doi.org/10.1038/s43588-023-00424-3" target="_blank">10.1038/s43588-023-00424-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use the large-scale transport simulation capability to study thermal and phononic properties relevant to urban heat island modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper frames HamEPC as a general EPC tool covering "electrical transport, optical and superconducting behaviors." The Discussion explicitly mentions EPC-contributed <strong>thermal conductivity</strong> and Debye–Waller effects as next targets. Extending the framework to thermal transport (phonon–phonon and electron–phonon contribution to lattice thermal conductivity) in urban construction materials — concrete, asphalt, glass facades — would directly couple materials-scale physics to meso-scale thermal comfort modeling. The large-scale transport simulation paper in our corpus (deep learning for transport simulation) shows that learned Hamiltonians can scale to large systems where phonon transport regimes differ qualitatively from bulk — directly relevant for nanostructured or composite building materials.</p>
+      <p><span class="lab mine">Added value to my research</span>My urban health and <strong>healthy cities</strong> research encounters urban heat island (UHI) effects as a major environmental health determinant. First-principles thermal conductivity of building materials, accelerated by HamEPC, could inform material choices in urban design interventions (e.g., cool roofs, green facades). More concretely, integrating material-property predictions into my <strong>spatiotemporal analysis</strong> pipeline — mapping predicted surface thermal conductivity onto remote-sensing land surface temperature — would create a physics-informed GeoAI model for UHI prediction that goes beyond empirical correlations.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Large-scale transport simulation by deep learning — <a href="https://doi.org/10.1038/s43588-021-00080-5" target="_blank">10.1038/s43588-021-00080-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

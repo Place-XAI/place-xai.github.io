@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bridging peptide presentation and T cell recognition with multi-task learning — AI Digest</title>
+<meta name="description" content="AI Digest: Bridging peptide presentation and T cell recognition with multi-task learning (Nature Machine Intelligence, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&larr; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Multi-task learning</span>
+      <span class="tag">Immunoinformatics</span>
+      <span class="tag">Peptide-HLA binding</span>
+      <span class="tag">T cell recognition</span>
+    </div>
+    <h1>Bridging peptide presentation and T cell recognition with multi-task learning</h1>
+    <div class="meta">
+      <span class="authors">Li Su &middot; Duolin Wang &middot; Dong Xu</span>
+      <span><b>Published</b> 2025-02-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-025-01004-y" target="_blank">10.1038/s42256-025-01004-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-025-01004-y" target="_blank">nature.com &nearr;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Antigen immunogenicity depends on two interconnected binding events &mdash; peptide presentation by HLA molecules and recognition by T cell receptors (TCRs) &mdash; yet prior models tackled each in isolation. <strong>UnifyImmun</strong>, a new transformer-based model using <strong>alternating multi-task learning</strong> with cross-attention, jointly predicts peptide&ndash;HLA and peptide&ndash;TCR binding by sharing a continuously updated peptide encoder, directly capturing the coupled nature of antigen immunogenicity in a single framework.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the two-step immunogenicity gap.</b> Effective cancer immunotherapy and vaccine design require antigens that are both presented by HLA molecules <em>and</em> recognized by TCRs; UnifyImmun is the first model to jointly predict both binding events, removing the compound error introduced by chaining two separate tools.</li>
+      <li><b>Shared encoder enforces biological coupling.</b> The peptide encoder is updated iteratively across both prediction tasks, so what the model learns about HLA binding informs TCR recognition and vice versa &mdash; directly encoding the cooperative biology rather than approximating it.</li>
+      <li><b>Advances neoantigen prioritization for personalized medicine.</b> By jointly scoring presentation and recognition in one pass, the model accelerates identification of tumor-specific neoantigens for personalized cancer vaccines and adoptive T cell therapies.</li>
+      <li><b>Demonstrates alternating multi-task learning as a general ML principle.</b> The iterative task-alternation strategy avoids negative transfer between related-but-distinct prediction targets and provides a reusable architectural recipe for other biological binding problems.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Architectural novelty at the intersection of deep learning and biology:</b> the cross-attention plus alternating multi-task design is a genuine methodological contribution, not an incremental benchmark improvement.</li>
+      <li><b>High-impact biomedical application:</b> cancer immunotherapy and neoantigen vaccines are among the most consequential current biomedical challenges; a method that advances both simultaneously carries strong clinical relevance.</li>
+      <li><b>Transformer applied to a domain-specific problem with clear mechanistic justification:</b> the paper explains <em>why</em> coupling matters (the HLA&ndash;TCR co-dependency) rather than applying transformers opportunistically.</li>
+      <li><b>Brief Communication format, high information density:</b> the key architectural idea and its validation fit a tightly scoped NMI article without requiring a standalone large-scale benchmark paper.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Peptide&ndash;HLA data</dt><dd>Curated peptide&ndash;MHC binding datasets from the NetMHCpan-4.0 lineage (Jurtz et al., <em>J. Immunol.</em> 2017). HLA pseudo-sequences are predicted by <strong>NetMHCpan-4.0</strong>. Exact training-set sizes are not disclosed in the public abstract or figure captions (Brief Communication format).</dd>
+      <dt>Peptide&ndash;TCR data</dt><dd>Published peptide&ndash;TCR binding benchmarks (Wells et al., <em>Cell</em> 2020 and follow-on NMI works 2023&ndash;2025). Exact sequence counts are not stated in available public metadata.</dd>
+      <dt>Structural example</dt><dd>PDB ID <code>7RM4</code> &mdash; crystal structure of TCR 6-11 bound to p53R175H neoantigen presented by HLA-A*02:01, visualized with <strong>ChimeraX</strong>; used for architectural illustration in Fig. 1b.</dd>
+      <dt>Input representation</dt><dd>Three amino acid sequence streams: HLA-A2 pseudo-sequence (NetMHCpan-4.0 format), peptide sequence, and CDR3 sequences of TCR &alpha;- and &beta;-chains.</dd>
+      <dt>Data availability</dt><dd>Not specified in available public metadata (Brief Communication; refer to the full article for data and code availability statements).</dd>
+      <dt>Time period</dt><dd>Training benchmarks accumulated up to approximately 2024; structural illustration from RCSB PDB entry 7RM4.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>NetMHCpan-4.0 pseudo-sequences</td><td>HLA representation for pMHC binding input</td><td>Pan-HLA; exact allele count not stated in public metadata</td><td><a href="https://services.healthtech.dtu.dk/services/NetMHCpan-4.0/" target="_blank">DTU Health Tech</a></td></tr>
+        <tr><td>Peptide&ndash;MHC binding benchmarks</td><td>Training / evaluation for pMHC task</td><td>Not stated in public metadata</td><td>Jurtz et al. 2017 lineage</td></tr>
+        <tr><td>Peptide&ndash;TCR binding benchmarks</td><td>Training / evaluation for pTCR task</td><td>Not stated in public metadata</td><td>Wells et al. 2020 lineage</td></tr>
+        <tr><td>PDB 7RM4 (RCSB)</td><td>Structural illustration of TCR&ndash;pHLA complex</td><td>Single crystal structure</td><td><a href="https://www.rcsb.org/structure/7RM4" target="_blank">rcsb.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: This is a Brief Communication; precise training-set sequence counts are not available in the public abstract or figure captions. Entries listed as "not stated" are honest representations of the available metadata &mdash; no numbers have been fabricated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Three self-attention encoders:</b> separate transformer encoders extract sequence embeddings independently from the HLA pseudo-sequence, the peptide sequence, and the TCR CDR3 sequences.</li>
+      <li><b>Cross-attention for task-specific feature extraction:</b> two cross-attention layers capture interaction features specific to (i) peptide&ndash;HLA binding and (ii) peptide&ndash;TCR binding, allowing each task to attend to the shared peptide representation through a biologically meaningful lens.</li>
+      <li><b>Alternating multi-task learning:</b> the pMHC and pTCR prediction tasks are trained iteratively in an alternating fashion; the shared peptide encoder is updated by both tasks in each cycle, enforcing the coupling between antigen presentation and T cell recognition.</li>
+      <li><b>Joint prediction heads (UnifyImmun):</b> outputs of the two cross-attention streams are passed to task-specific prediction heads for simultaneous binary (or affinity) prediction of pMHC and pTCR binding.</li>
+      <li><b>Sequence-level inference:</b> the method operates purely on amino acid sequences (no 3D structure required at inference time), making it broadly applicable to novel antigens and HLA alleles across populations.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/bridging-peptide-presentation-and-t-cell-recognition-with-multi-task-learning__s42256-025-01004-y/fig1.png" target="_blank">
+        <img src="assets/bridging-peptide-presentation-and-t-cell-recognition-with-multi-task-learning__s42256-025-01004-y/fig1.png" alt="Fig. 1 UnifyImmun alternating multi-task learning workflow" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The UnifyImmun model: (a) cartoon of neoantigen presentation to a T cell; (b) TCR 6-11&ndash;p53R175H&ndash;HLA-A*02:01 complex structure (PDB 7RM4, visualized with ChimeraX); (c) input sequence formats (HLA pseudo-sequence, peptide, CDR3); (d) full model workflow showing three self-attention encoders, two cross-attention layers for pHLA and pTCR tasks, and the shared peptide encoder updated iteratively across both tasks.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables&nbsp;=&nbsp;0 per metadata). The paper is a Brief Communication; performance benchmarks likely appear in supplementary information.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable ML, multi-source data fusion, spatial accessibility modeling).</p>
+
+    <div class="idea">
+      <h3>&#9312; Extend UnifyImmun's shared encoder to a meta-learning regime for rare HLA alleles</h3>
+      <p><span class="lab paper">Extending this paper</span>UnifyImmun's alternating multi-task framework shares a peptide encoder across pMHC and pTCR tasks, but it still requires sufficient labeled examples per HLA allele. Many rare or population-specific alleles have very few labeled binding pairs. A direct extension: replace the standard training regime with a <strong>meta-learning strategy</strong> (few-shot, MAML-style), so the shared encoder can rapidly adapt to unseen alleles from only a handful of examples. The TCR-binding task would serve as an auxiliary meta-task, regularizing the encoder in the low-data regime &mdash; combining the paper's coupling insight with few-shot generalization to underrepresented HLA diversity.</p>
+      <p><span class="lab mine">Added value to my research</span>The meta-learning-from-limited-labels challenge is structurally analogous to my <strong>spatial transferability problem</strong>: building predictive models on data-rich cities/regions and rapidly adapting to data-sparse ones. The same few-shot adaptation framework could be applied to my MGWR and spatiotemporal kernel density models, enabling rapid calibration to under-surveyed areas &mdash; a shared inductive bias across biomedical and geospatial domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Meta-learning for T cell receptor binding specificity and beyond &mdash; <a href="https://doi.org/10.1038/s42256-023-00641-5" target="_blank">10.1038/s42256-023-00641-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Initialize UnifyImmun's encoders with protein language model embeddings</h3>
+      <p><span class="lab paper">Extending this paper</span>UnifyImmun encodes amino acid sequences using self-attention encoders trained on binding data. A natural extension: initialize or replace the three encoders with embeddings from a <strong>protein language model</strong> (e.g., ESM-2 or ProtTrans), which encode deep evolutionary co-variation across millions of protein sequences. This would give the cross-attention layers access to evolutionary priors about which peptide positions are tolerant of mutation &mdash; critical for generalizing to novel neoantigen mutations not seen in binding training data, directly extending the paper's sequence-only prediction strategy to out-of-distribution neoantigens.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors my agenda of <strong>fine-tuning geospatial foundation models</strong>: just as protein language models encode sequence-level biology, geospatial foundation models (e.g., SatCLIP, GeoCLIP) encode spatial co-variation. The transfer-learning pipeline &mdash; pretrain on massive unlabeled data, fine-tune on small labeled task-specific sets &mdash; is architecturally identical, and lessons from immunoinformatics fine-tuning strategy directly inform my geospatial downstream adaptation pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning functional properties of proteins with language models &mdash; <a href="https://doi.org/10.1038/s42256-022-00457-9" target="_blank">10.1038/s42256-022-00457-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Add conformational flexibility prediction as a third auxiliary task in UnifyImmun</h3>
+      <p><span class="lab paper">Extending this paper</span>UnifyImmun operates on sequences and predicts binding as a scalar output, but HLA&ndash;peptide and TCR&ndash;peptide interactions depend critically on the conformational ensemble of the bound complex &mdash; a static affinity score misses allosteric effects and conformationally driven off-target binding. Extending the paper: add a <strong>third task head</strong> that predicts conformational flexibility of the CDR3 loops or peptide backbone using data from molecular dynamics ensembles or NMR experiments. The alternating multi-task training strategy the paper introduces is already designed to absorb additional tasks with minimal architectural change, and conformational flexibility signals would further constrain the shared peptide encoder.</p>
+      <p><span class="lab mine">Added value to my research</span>Adding a physically-grounded auxiliary prediction task to improve a primary task is directly applicable to my <strong>physics-informed graph learning</strong> work: auxiliary tasks enforcing spatial autocorrelation, traffic flow conservation, or mass-balance constraints can regularize GNN predictions in urban accessibility modeling, exactly as conformational flexibility constraints regularize binding prediction here &mdash; a domain-agnostic principle of physics-informed auxiliary supervision.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning conformational flexibility of immune receptors &mdash; <a href="https://doi.org/10.1038/s42256-025-01133-4" target="_blank">10.1038/s42256-025-01133-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Fuse mass spectrometry immunopeptidomics data as a fourth modality in UnifyImmun</h3>
+      <p><span class="lab paper">Extending this paper</span>UnifyImmun bridges two sequence-level binding tasks; a multimodal extension bridges sequence-level predictions with mass spectrometry (MS) immunopeptidomics evidence. MS can directly detect which peptides are presented on HLA molecules in real tumor samples &mdash; but connecting MS spectra to TCR-binding predictions requires a shared peptide representation across very different data modalities. Extending the paper: incorporate <strong>multimodal MS spectrum embeddings</strong> as a fourth cross-attention stream, with the peptide encoder shared across pMHC binding, pTCR binding, and MS spectrum prediction &mdash; producing a truly multimodal immunogenicity model grounded in both sequence biology and experimental proteomics.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-source data fusion is a core theme of my work (mobile phone + social media + remote sensing + POIs). The cross-attention mechanism UnifyImmun uses to fuse heterogeneous sequence inputs is architecturally similar to <strong>cross-modal attention fusion</strong> in my spatiotemporal models, where GPS trajectories, social media signals, and satellite data must be fused for urban health prediction. The alternating training strategy directly informs how I handle asynchronous, heterogeneous multi-source data streams with different signal-to-noise ratios.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A large-scale unified deep learning model for peptide mass spectrum interpretation trained on multimodal data &mdash; <a href="https://doi.org/10.1038/s42256-026-01234-8" target="_blank">10.1038/s42256-026-01234-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Recast the alternating multi-task cross-attention design for coupled spatial health outcomes</h3>
+      <p><span class="lab paper">Extending this paper</span>The architectural insight of UnifyImmun &mdash; that two related prediction targets (pMHC and pTCR) benefit from a <strong>shared encoder updated by alternating task-specific cross-attention heads</strong> &mdash; is a general principle for any setting where two outputs are causally coupled through a common latent representation. A domain extension: apply the identical design to coupled multi-task pretraining for medical analysis tasks (e.g., segmentation + classification), where alternating task updates regularize the shared backbone more effectively than joint training.</p>
+      <p><span class="lab mine">Added value to my research</span>This multi-task cross-attention template maps directly onto my <strong>GeoAI accessibility and health geography modeling</strong>: two coupled spatial outcomes (e.g., healthcare service utilization and health outcome, or spatial accessibility and housing price) share a common latent spatial representation but diverge in which features they emphasize. Adopting UnifyImmun's alternating update strategy could replace my current separate-model pipelines for related health geography outcomes with a single jointly optimized model &mdash; reducing compound prediction error in exactly the same way the paper reduces compound pMHC&ndash;pTCR error, while improving interpretability of the shared representation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multi-task learning strategy to pretrain models for medical image analysis &mdash; <a href="https://doi.org/10.1038/s43588-024-00666-9" target="_blank">10.1038/s43588-024-00666-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

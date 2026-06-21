@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapid protein model refinement by deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Rapid protein model refinement by deep learning (Nature Computational Science, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Graph Neural Network</span>
+      <span class="tag">Protein Structure</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Model Refinement</span>
+    </div>
+    <h1>Rapid protein model refinement by deep learning</h1>
+    <div class="meta">
+      <span class="authors">Osama Abdin · Philip M. Kim</span>
+      <span><b>Published</b> 2021-07-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-021-00104-0" target="_blank">10.1038/s43588-021-00104-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-021-00104-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>GNNRefine</strong>, a graph-neural-network-based framework for protein model refinement, substantially outperforms state-of-the-art approaches in both <strong>accuracy and speed</strong>. By encoding residues as graph nodes and passing structural features over edges via <strong>message passing layers</strong>, GNNRefine improves predicted protein structures more effectively than 3D-convolution or ResNet-based alternatives — making high-quality structural refinement practical at scale for the first time.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Addresses the last mile of structure prediction.</b> Even the best predictors (including AlphaFold-era methods) produce models that benefit from refinement; GNNRefine provides an efficient, learnable post-processing step that can be composed with any upstream predictor.</li>
+      <li><b>Graph topology matches molecular geometry.</b> Encoding protein residues as a graph allows the network to naturally respect the local connectivity and spatial neighborhood relationships that define 3D structure — something grid-based 3D-convolution approximates poorly.</li>
+      <li><b>Speed advantage is operationally significant.</b> By replacing costly molecular dynamics-based refinement with a single forward pass through a GNN, the framework enables refinement at the throughput needed for large-scale structural proteomics and drug discovery pipelines.</li>
+      <li><b>Generalizable architecture principle.</b> The message-passing formulation for coordinate refinement transfers directly to other 3D structural biology problems (ligand docking, antibody modeling, RNA structure) where relative spatial relationships dominate.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Computational innovation with immediate scientific impact:</b> proposes and validates a new algorithmic paradigm (graph-based refinement) on a canonical benchmark (CASP), fitting Nature Computational Science's mandate for method contributions that change practice.</li>
+      <li><b>Cross-disciplinary reach:</b> graph neural networks from the machine-learning community applied to structural biology — the interface between AI/ML and the life sciences is a central focus of the journal.</li>
+      <li><b>Benchmark-grounded claims:</b> systematic comparison against 3D-CNN and ResNet baselines on held-out CASP targets gives the paper the rigor expected of a high-impact computational methods paper.</li>
+      <li><b>Brief Communication format:</b> a focused, complete result with a single key figure — well-suited to Nature Computational Science's News &amp; Views / Brief Communications track that highlights algorithmic insights concisely.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training data</dt><dd>Protein structural decoys generated from <strong>Protein Data Bank (PDB)</strong> entries — a standard source for training protein structure prediction and refinement models. The paper does not explicitly state the number of training targets or decoys used in its brief-communication format; exact counts are not reported.</dd>
+      <dt>Benchmark / evaluation</dt><dd><strong>CASP (Critical Assessment of Protein Structure Prediction)</strong> targets — specifically cited as the competitive benchmark used to evaluate state-of-the-art refinement methods (Ref. 2: Jumper et al., CASP 2020). The paper benchmarks GNNRefine against CASP performance metrics (GDT_TS / TM-score improvement).</dd>
+      <dt>Baseline comparisons</dt><dd>Two published alternative deep-learning approaches: (1) 3D-CNN on local volumetric residue representations followed by global 2D-convolutions (Hiranuma et al., <i>Nat. Commun.</i> 12, 1340, 2021; Ref. 10); (2) ResNet operating on distance matrix (Ref. not named inline). All results compared on the same CASP decoy sets.</dd>
+      <dt>Input features</dt><dd>Residue-level node features + pairwise edge features encoding inter-residue distances and spatial orientation, encoded into the protein graph. Exact feature dimensionality not enumerated in the brief-communication text.</dd>
+      <dt>Data availability</dt><dd>No explicit data-availability statement provided in the article metadata. CASP data and PDB are publicly available resources. Code availability not stated in metadata.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Protein Data Bank (PDB)</td><td>Source of native structures for training/evaluation</td><td>~200,000+ structures (public as of 2021); exact subset not stated</td><td><a href="https://www.rcsb.org" target="_blank">rcsb.org</a></td></tr>
+        <tr><td>CASP targets &amp; decoys</td><td>Benchmark for refinement evaluation</td><td>CASP13/CASP14 targets; exact N not stated in brief-comm format</td><td><a href="https://predictioncenter.org" target="_blank">predictioncenter.org</a></td></tr>
+        <tr><td>Hiranuma et al. (Ref. 10) decoys</td><td>Baseline comparison dataset (3D-CNN)</td><td>Same CASP targets as above</td><td><a href="https://doi.org/10.1038/s41467-021-21511-x" target="_blank">10.1038/s41467-021-21511-x</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: As a Brief Communication, this paper does not report detailed dataset statistics in the main text. Volume figures above reflect the public resources used, not numbers explicitly stated in the article. Do not treat them as paper-reported counts.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Graph encoding:</b> each protein model is encoded as a graph where <strong>residues are nodes</strong> and spatial neighbors (within a distance cutoff) form <strong>edges</strong> carrying inter-residue geometric features (distances, orientations).</li>
+      <li><b>Message passing GNN:</b> stacked message-passing layers aggregate structural information over the graph, iteratively updating each residue's latent representation by aggregating information from its neighborhood — the core innovation over grid-based representations.</li>
+      <li><b>Coordinate refinement:</b> the GNN outputs per-residue displacement predictions that move the initial model coordinates toward the native structure, framed as a supervised regression on known native–decoy pairs.</li>
+      <li><b>Baseline comparison:</b> systematic comparison against (a) a 3D-CNN on local volumetric representations + global 2D-CNN, and (b) a ResNet on the full pairwise distance matrix — demonstrating the graph approach is superior for both accuracy and speed.</li>
+      <li><b>Evaluation metric:</b> standard CASP metrics (GDT_TS, TM-score) quantify improvement in global topology relative to the native structure; the paper reports improvement over the initial (unrefinied) model and over competitor methods.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/rapid-protein-model-refinement-by-deep-learning__s43588-021-00104-0/fig1.png" target="_blank">
+        <img src="assets/rapid-protein-model-refinement-by-deep-learning__s43588-021-00104-0/fig1.png" alt="Fig.1 Comparison of GNNRefine to alternative deep learning approaches" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Comparison of GNNRefine's message-passing architecture to 3D-CNN and ResNet alternatives, illustrating how graph-based aggregation over residue nodes and edges differs structurally from volumetric and distance-matrix approaches.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). This is a Brief Communication with a single key figure; quantitative results are presented in the figure and discussed in the main text.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal graph learning, explainable ML for spatial prediction, physics-informed graph operators, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Lift GNNRefine from supervised to self-supervised via molecular contrastive learning</h3>
+      <p><span class="lab paper">Extending this paper</span>GNNRefine is trained fully supervised on native–decoy pairs from the PDB and CASP, which limits it to proteins with known structures. A direct extension: apply <strong>contrastive pre-training</strong> to the protein graph encoder so that structurally similar residue environments are pulled together in latent space, enabling the model to be pre-trained on the entire PDB without refinement labels and fine-tuned with far fewer labeled decoys. The paper's architecture (node/edge message passing) is directly compatible with graph-level contrastive objectives.</p>
+      <p><span class="lab mine">Added value to my research</span>The same self-supervised graph pre-training logic applies to my <strong>geospatial foundation-model fine-tuning agenda</strong>: spatial context graphs (street networks, facility graphs) can be pre-trained contrastively on unlabeled geospatial data so that downstream spatial-prediction tasks (access scores, health outcomes) require only small labeled samples — directly transferring the protein-refinement insight to GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace coordinate-regression output with a physics-infused energy constraint</h3>
+      <p><span class="lab paper">Extending this paper</span>GNNRefine predicts residue displacements as a regression target without explicitly enforcing stereochemical validity (bond lengths, clash avoidance). Extending it: bake a <strong>physics-informed loss term</strong> (derived from force-field energy terms or Ramachandran plot priors) into the GNN training objective so that predicted moves are energetically plausible by construction. A heterogeneous graph architecture that distinguishes backbone vs. side-chain node types could carry the physics prior in its structure rather than just in the loss.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the structural analogue of my <strong>physics-informed graph learning</strong> agenda for spatial prediction: incorporating domain constraints (network conservation laws, spatial autocorrelation) directly into the GNN topology rather than the loss function alone. The protein case offers a concrete worked example of how to encode physical priors as graph-structural inductive biases.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend GNNRefine from single-chain to protein–ligand complex refinement</h3>
+      <p><span class="lab paper">Extending this paper</span>GNNRefine refines single protein models; the natural extension is to <strong>co-refine protein–ligand complexes</strong>, where ligand atoms become additional graph nodes connected to proximal residue nodes. The learned characteristics that make GNNs excel at protein–ligand affinity prediction also govern complex geometry — the same message-passing framework can propagate structural corrections bidirectionally between the protein and bound molecule, improving the accuracy of docked poses as a post-processing step.</p>
+      <p><span class="lab mine">Added value to my research</span>The bipartite graph formulation (protein nodes + ligand nodes with cross-edges) maps directly onto my <strong>spatial interaction graph models</strong>, where facility nodes and demand nodes interact via flow edges. GNNRefine's residual-correction paradigm — move a point toward its refined position — can be re-read as a <strong>spatial demand–supply rebalancing operator</strong> on service-access graphs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply GNNRefine's residual-correction paradigm to sequence-conditioned structure design</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's pipeline refines a given structural model toward the native. The complementary direction — <strong>designing a sequence for a target structure</strong> — is equally challenging and uses the same PDB/CASP infrastructure. A combined pipeline where GNNRefine iteratively corrects intermediate backbone configurations generated by a sequence-design model would close the loop: predict sequence → fold → refine → re-design, turning refinement into an inner loop of a generative structure design engine.</p>
+      <p><span class="lab mine">Added value to my research</span>The iterative predict–correct loop mirrors the <strong>Monte Carlo correction steps</strong> I use in spatiotemporal simulation (SIR, ABM): running a generative spatial model and then refining its outputs with an ML corrector is a pattern I can apply to simulating health-access scenarios — generate a plausible service-configuration, then GNN-correct it toward observed utilization.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Protein sequence design by deep learning — <a href="https://doi.org/10.1038/s43588-022-00274-5" target="_blank">10.1038/s43588-022-00274-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Make GNNRefine explainable: which edges drive the largest coordinate corrections?</h3>
+      <p><span class="lab paper">Extending this paper</span>GNNRefine is a black-box corrector — it improves GDT_TS scores but does not reveal which inter-residue contacts are most responsible for the correction. Extending it with <strong>edge-attribution methods</strong> (GNN-Explainer, integrated gradients on edge weights) would identify the spatial contacts that most determine refinability, potentially discovering geometric signatures of easily vs. hardly refinable decoy classes — turning the model into a structural-insight tool, not just a score booster.</p>
+      <p><span class="lab mine">Added value to my research</span>This is exactly my <strong>explainable GeoAI</strong> agenda applied to structural biology: the same edge-attribution framework I use to interpret which spatial connections drive health-outcome predictions can be applied to protein graphs. Developing domain-agnostic GNN-attribution tools that work for both molecular and geospatial graphs would be a methodological contribution bridging both fields.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep contrastive learning of molecular conformation for efficient property prediction — <a href="https://doi.org/10.1038/s43588-023-00560-w" target="_blank">10.1038/s43588-023-00560-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning properties of ordered and disordered materials from multi-fidelity data — AI Digest</title>
+<meta name="description" content="AI Digest: Learning properties of ordered and disordered materials from multi-fidelity data (Nature Computational Science, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&larr; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Multi-fidelity Learning</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Materials Property Prediction</span>
+      <span class="tag">Disordered Materials</span>
+    </div>
+    <h1>Learning properties of ordered and disordered materials from multi-fidelity data</h1>
+    <div class="meta">
+      <span class="authors">Chi Chen &middot; Yunxing Zuo &middot; Weike Ye &middot; Xiangguo Li &middot; Shyue Ping Ong</span>
+      <span><b>Published</b> 2021-01-14</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-020-00002-x" target="_blank">10.1038/s43588-020-00002-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-020-00002-x" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Multi-fidelity graph networks (MEGNet) provide a <strong>universal framework</strong> for materials property prediction that bridges cheap low-fidelity computations (e.g., PBE) with scarce high-fidelity data (e.g., HSE, experiment), achieving a <strong>22&ndash;45% reduction in mean absolute error</strong> on experimental band gap predictions. The same learned elemental embeddings also offer a <strong>natural representation for disordered crystals</strong> — addressing a long-standing blind spot in computational materials science — by encoding mixed-occupancy sites as linear combinations of element vectors.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the data-scarcity bottleneck.</b> High-accuracy ab initio calculations (HSE, SCAN) and experiments are orders of magnitude fewer than cheap PBE results; multi-fidelity graph networks exploit all fidelity tiers jointly, allowing models to achieve experimental-quality predictions from a fraction of the usual training data.</li>
+      <li><b>Generalizes across both ordered and disordered crystals.</b> Over 120,000 of the ~200,000 crystals in the Inorganic Crystal Structure Database exhibit site disorder; prior ML models could not handle these. The elemental-embedding interpolation scheme extends graph networks to the vast disordered landscape for the first time.</li>
+      <li><b>Outperforms transfer learning and model stacking baselines.</b> Direct multi-fidelity joint training captures non-linear cross-fidelity relationships that two-step (freeze-then-retrain) transfer learning misses, especially for experimental targets.</li>
+      <li><b>Latent space analysis reveals <em>why</em> multi-fidelity works.</b> t-SNE visualization shows the large PBE data set teaches the graph network far richer structural features that separate materials by band gap — providing mechanistic insight, not just a performance claim.</li>
+      <li><b>Open data and code.</b> The full multi-fidelity band gap dataset (figshare) and MEGNet codebase (GitHub) are publicly released, enabling reproducibility and downstream benchmarking.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Universal framework, not a single task:</b> the multi-fidelity graph network architecture is demonstrated on band gaps of crystals <em>and</em> molecular energies, supporting the journal's preference for broadly transferable computational methods.</li>
+      <li><b>Addresses a fundamental problem:</b> scarce high-fidelity data is a defining constraint across all of computational materials science; this is a direct structural solution, not an incremental tweak.</li>
+      <li><b>Methodological novelty:</b> fidelity embedding as a trainable global state in a graph network is architecturally novel — distinct from co-kriging, transfer learning, and multi-task networks — and rigorously compared to all three.</li>
+      <li><b>Dual contribution — ordered <em>and</em> disordered materials:</b> the disordered extension is an independent conceptual advance, broadening the paper's significance beyond a standard ML-for-materials benchmark.</li>
+      <li><b>Open infrastructure:</b> code (MEGNet on GitHub, Zenodo-archived) and data (figshare) constitute a community resource, consistent with Nature Computational Science's reproducibility mandate.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Low-fidelity (PBE)</dt><dd><strong>Materials Project</strong> database (materialsproject.org) — <strong>52,348</strong> crystal structures with PBE band gap calculations, accessed 1 June 2019 via the pymatgen Materials API. Used as the backbone low-fidelity training set.</dd>
+      <dt>Computed high-fi (GLLB-SC)</dt><dd><strong>2,290</strong> GLLB-SC band gaps from Castelli et al., obtained via MPContribs, after filtering for valid structures and bond lengths (&le;5 &Aring;). All entries have positive band gaps by construction.</dd>
+      <dt>Computed high-fi (SCAN)</dt><dd><strong>472</strong> nonmagnetic SCAN band gaps from Borlido et al. (2019).</dd>
+      <dt>Computed high-fi (HSE)</dt><dd><strong>6,030</strong> HSE band gaps downloaded from MaterialGo website, after filtering ill-converged calculations; 2,775 are metallic.</dd>
+      <dt>Experimental band gaps</dt><dd>From Zhuo et al. — <strong>2,703 ordered</strong> (938 binary, 1,306 ternary, 459 quaternary) and <strong>278 disordered</strong> (41 binary, 132 ternary, 105 quaternary) crystal&ndash;band gap pairs. Structures sourced from the lowest-energy polymorph in the Materials Project, cross-referenced with the <strong>Inorganic Crystal Structure Database (ICSD)</strong>.</dd>
+      <dt>Molecular data</dt><dd><strong>QM9</strong> (G4MP2, B3LYP energies) and <strong>QM7b</strong> (CCSD(T), MP2, HF energies) datasets used in Supplementary multi-fidelity molecular energy experiments.</dd>
+      <dt>Multi-fidelity dataset</dt><dd>All band gap data publicly released at <a href="https://doi.org/10.6084/m9.figshare.13040330" target="_blank">figshare (doi:10.6084/m9.figshare.13040330)</a>.</dd>
+      <dt>Code</dt><dd>MEGNet at <a href="https://github.com/materialsvirtuallab/megnet" target="_blank">github.com/materialsvirtuallab/megnet</a>; multi-fidelity scripts at the <code>multi-fidelity</code> branch; archived at <a href="https://doi.org/10.5281/zenodo.4072029" target="_blank">Zenodo</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Materials Project (PBE)</td><td>Low-fidelity backbone</td><td>52,348 crystals (accessed 2019-06-01)</td><td><a href="https://materialsproject.org" target="_blank">materialsproject.org</a></td></tr>
+        <tr><td>Castelli et al. / MPContribs (GLLB-SC)</td><td>High-fidelity computed</td><td>2,290 crystals (positive band gaps only)</td><td><a href="https://mpcontribs.org" target="_blank">mpcontribs.org</a></td></tr>
+        <tr><td>Borlido et al. (SCAN)</td><td>High-fidelity computed</td><td>472 nonmagnetic crystals</td><td>Published supplementary data</td></tr>
+        <tr><td>MaterialGo (HSE)</td><td>High-fidelity computed</td><td>6,030 crystals (2,775 metallic)</td><td>MaterialGo website</td></tr>
+        <tr><td>Zhuo et al. experimental</td><td>Experimental ground truth</td><td>2,981 crystals (2,703 ordered + 278 disordered)</td><td>Published dataset; <a href="https://doi.org/10.6084/m9.figshare.13040330" target="_blank">figshare</a></td></tr>
+        <tr><td>QM9 / QM7b</td><td>Molecular energy proof-of-concept</td><td>Standard ML benchmarks</td><td>Public benchmarks</td></tr>
+        <tr><td>Inorganic Crystal Structure Database (ICSD)</td><td>Structure cross-reference for disordered materials</td><td>~200,000 unique crystals (&gt;120,000 disordered)</td><td>Licensed database</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: data volumes above are stated verbatim from the article's Methods section. The SCAN dataset is notably small (472 entries) relative to others, which the authors acknowledge as a limiting factor for 5-fi model performance.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Multi-fidelity graph network (MEGNet):</b> atoms = nodes, bonds = edges with Gaussian-expanded distances, and the global state encodes <em>fidelity level</em> (PBE=0, GLLB-SC=1, SCAN=2, HSE=3, experiment=4) as a trainable fidelity embedding vector. Sequential graph convolution updates atom, bond, and state features jointly.</li>
+      <li><b>Elemental embedding matrix:</b> each element's atomic number is mapped to a trainable 16-dimensional embedding; for disordered sites, the node feature is computed as a weighted linear combination of constituent element embeddings according to their occupancy fractions &mdash; no retraining needed for previously unseen compositions.</li>
+      <li><b>Multi-fidelity joint training:</b> all fidelity tiers trained simultaneously on a shared graph architecture; fidelity-level information flows through the global state without requiring all properties labeled for all data points (overcoming multi-task learning's homogeneity requirement).</li>
+      <li><b>Baseline comparisons:</b> 1-fi (single fidelity), 1-fi-stacked (linear correction on frozen PBE model), and transfer learning (frozen graph-conv layers, retrained output) — all outperformed by multi-fidelity joint training, especially on experimental targets.</li>
+      <li><b>Data scaling analysis:</b> 2-fi models trained on systematically subsampled high-fi data (varying N<sub>high-fi</sub>) with varying N<sub>PBE</sub> — confirms approximately linear MAE decay with log<sub>10</sub>(N<sub>PBE</sub>).</li>
+      <li><b>Latent space visualization:</b> t-SNE (2D projection, complexity=1,000) of learned structural features; pairwise band-gap difference vs. normalized feature distance plotted over 3,651,753 unique crystal pairs to quantify feature resolution.</li>
+      <li><b>Training setup:</b> TensorFlow; 3 graph-conv layers; Set2Set readout; MLP layers [64, 64, 32]; shifted softplus activation; Adam optimizer (lr=10<sup>-3</sup>); batch size 128; max 1,500 epochs; 80:10:10 train/val/test split repeated 6 times per fidelity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig1.png" target="_blank">
+        <img src="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig1.png" alt="Fig.1 Multi-fidelity materials graph networks architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Multi-fidelity graph network schematic: atoms as nodes, bonds as edges, fidelity encoded in the global state; graph convolution layers sequentially update atom, bond, and state features.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig2.png" target="_blank">
+        <img src="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig2.png" alt="Fig.2 Test MAEs of multi-fidelity model predictions on ordered crystal band gaps" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> MAE comparisons across fidelity combinations (1-fi to 5-fi) and as a function of PBE data size N<sub>PBE</sub>, demonstrating ~22&ndash;45% reduction vs. 1-fi baselines.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig3.png" target="_blank">
+        <img src="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig3.png" alt="Fig.3 Latent structural features: t-SNE projections for 1-fi vs 2-fi models" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> t-SNE projections show PBE augmentation dramatically sharpens latent structural feature space; band-gap difference vs. feature distance confirms near-linear correspondence for 2-fi models.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig4.png" target="_blank">
+        <img src="assets/learning-properties-of-ordered-and-disordered-materials-from-multi-fidelity-data__s43588-020-00002-x/fig4.png" alt="Fig.4 Performance on disordered materials band gap engineering systems" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Disordered model predictions on AlGaN, ZnCdSe, MgZnO, and LuGaAlO<sub>4</sub> alloy systems &mdash; qualitative trends and near-quantitative accuracy reproduced without additional training data.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 0 main-text tables. Extended data includes 4 additional figures (error distributions, pairwise band-gap correlations, disordered perovskite predictions, and molecular energy multi-fidelity results). Supplementary Data includes 3 XLS files with MAE statistics across all fidelity combinations.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, multi-source data fusion, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>&#9312; Replace discrete fidelity integers with a learned continuous fidelity manifold</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper encodes fidelity as a discrete integer (0&ndash;4) fed into a trainable embedding table. This works when fidelity levels are pre-defined and non-overlapping, but collapses when new computational methods (e.g., r2SCAN, meta-GGA hybrids) are added post-training. A direct extension: replace the integer-to-embedding lookup with a <strong>continuous fidelity encoder</strong> that maps method descriptors (accuracy, cost, systematic bias) to a shared latent fidelity space. Trained jointly with the graph network, this would allow smooth interpolation between known fidelities and zero-shot generalization to new computational methods without retraining. The paper's own data &mdash; with its five fidelity tiers spanning 0.27 to 0.62 eV MAE &mdash; provides a clean test bed: does a continuous encoder learn a manifold where position correlates with systematic correction magnitude?</p>
+      <p><span class="lab mine">Added value to my research</span>In GeoAI, data sources occupy an analogous "fidelity spectrum": GPS trajectories are high-resolution but sparse; mobile phone records are dense but coarse; social media check-ins are opportunistic. Casting these as points on a learnable fidelity manifold &mdash; rather than domain-specific preprocessing choices &mdash; would enable my <strong>multi-source data fusion</strong> pipelines to jointly train on GPS, cellular, and POI layers with principled cross-source calibration, directly mirroring the paper's cross-fidelity correction logic.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Data as the next challenge in atomistic machine learning &mdash; <a href="https://doi.org/10.1038/s43588-024-00636-1" target="_blank">10.1038/s43588-024-00636-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Active fidelity selection: decide <em>which tier to compute next</em> using the model's own uncertainty</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper trains on fixed, pre-existing datasets for each fidelity. But in practice, a computational chemist can choose whether to run a new PBE, HSE, or experimental measurement for a candidate material. An extension: augment the multi-fidelity graph network with a <strong>Bayesian uncertainty head</strong> and couple it to an active learning loop that selects the next (material, fidelity) pair to compute based on expected information gain. The paper already demonstrates that adding N<sub>PBE</sub> data decreases MAE log-linearly &mdash; this gives an empirical cost&ndash;accuracy curve for PBE, which could seed a bandit-style acquisition policy for choosing whether to run cheap PBE or expensive HSE for a given candidate.</p>
+      <p><span class="lab mine">Added value to my research</span>This is directly transferable to my work on <strong>geospatial foundation model fine-tuning</strong>: instead of passive fine-tuning on whatever labeled spatial data is available, an active fidelity selector would decide whether to collect high-cost field surveys (high fidelity) or cheap remote sensing labels (low fidelity) for the next spatial unit &mdash; a principled data-efficient strategy for building spatial models in data-scarce regions relevant to health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials &mdash; <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Extend the elemental-embedding interpolation to spatial attribute interpolation for heterogeneous regions</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most elegant idea is that disordered sites are handled by a weighted sum of elemental embeddings: <strong>W<sub>disordered</sub> = &sum; x<sub>i</sub> W<sub>Zi</sub></strong>. This works because the learned embeddings encode chemistry in a way that is naturally interpolatable. The extension: apply this same principle to <em>temporal</em> disorder &mdash; materials whose structure fluctuates over time (amorphous phases, thermal disorder) can be represented as time-weighted averages of ordered configurations, allowing the existing 4-fi model to predict properties of dynamically disordered systems without explicit molecular dynamics sampling. The paper's own Supplementary discussion of the virtual crystal approximation points toward exactly this direction.</p>
+      <p><span class="lab mine">Added value to my research</span>The embedding-interpolation idea maps cleanly onto <strong>spatially heterogeneous regions</strong> in my work: census tracts or grid cells that are transitional between urban types (neither fully residential nor commercial) could be represented as compositional mixtures of "pure" type embeddings in a spatial graph network. This would allow my GeoAI models for urban analytics &mdash; predicting health outcomes, facility accessibility, housing prices &mdash; to handle <strong>mixed land-use zones</strong> without discretizing them into dominant categories, preserving gradient information critical for equity analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table &mdash; <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Use latent structural feature geometry as an interpretability tool for graph network predictions</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 3 demonstrates that the 2-fi model's latent space has near-linear correspondence between feature distance and band-gap difference &mdash; a remarkably clean interpretability signal. The extension: formalize this into an <strong>explanatory attribution framework</strong> for graph network predictions. For any prediction, the model could report which reference materials in the training set share the closest latent position, providing a "nearest neighbor in feature space" explanation. Combined with the fidelity embedding, this could further attribute how much of a prediction's confidence derives from the PBE backbone vs. the high-fidelity data &mdash; giving computational chemists a principled uncertainty decomposition that goes beyond a single scalar MAE.</p>
+      <p><span class="lab mine">Added value to my research</span>Latent feature geometry as explanation maps directly onto my agenda of <strong>explainable machine learning for spatial prediction</strong>. In my GWR/MGWR work, non-stationarity is the explanatory signal; in graph networks, it is latent distance. Connecting these two notions &mdash; does spatial proximity imply latent proximity in a spatial graph network? &mdash; would ground the interpretability of my physics-informed graph learning models for health geography in a rigorous, publication-quality validation framework analogous to this paper's Fig. 3c,d analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks &mdash; <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Transfer the multi-fidelity framework to spatial data science: satellite + survey + census as fidelity tiers</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper frames multi-fidelity as a hierarchy of computational cost and accuracy. The same structure appears in earth-observation science: free global satellite imagery (Sentinel, Landsat) is "PBE-equivalent" &mdash; large volume, systematic bias; national household surveys (DHS, MICS) are "HSE-equivalent" &mdash; accurate but scarce and geographically clustered; fine-grained census records are "experimental" &mdash; rare, high-resolution, country-specific. Extending the paper: encode each geospatial data source as a fidelity tier in a spatial graph network (nodes = grid cells or census units, edges = adjacency), and jointly train to predict socioeconomic or health indicators. The paper's own log-linear scaling result gives a quantitative prediction of how many cheap satellite samples are needed to achieve a target accuracy &mdash; directly applicable to survey design in data-sparse regions.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the closest connection to my core research agenda. My work on <strong>multi-source data fusion (mobile phone, social media, remote sensing)</strong> already implicitly treats these as different-quality signals; the multi-fidelity graph network provides a principled architecture to do so explicitly. Applied to <strong>spatial accessibility of primary care and mental health services</strong>, I could train a fidelity-aware graph network on abundant POI data (PBE tier) and scarce utilization records or patient surveys (experimental tier) to produce fine-grained accessibility predictions in underserved areas &mdash; directly advancing both health geography and open science / FAIR data goals.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating the prediction of stable materials with machine learning &mdash; <a href="https://doi.org/10.1038/s43588-023-00536-w" target="_blank">10.1038/s43588-023-00536-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

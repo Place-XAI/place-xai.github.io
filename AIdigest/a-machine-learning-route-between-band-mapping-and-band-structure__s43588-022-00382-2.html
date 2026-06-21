@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A machine learning route between band mapping and band structure — AI Digest</title>
+<meta name="description" content="AI Digest: A machine learning route between band mapping and band structure (Nature Computational Science, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Probabilistic ML</span>
+      <span class="tag">Band Structure</span>
+      <span class="tag">Photoemission</span>
+      <span class="tag">Materials Informatics</span>
+    </div>
+    <h1>A machine learning route between band mapping and band structure</h1>
+    <div class="meta">
+      <span class="authors">R. Patrick Xian · Vincent Stimper · Marios Zacharias · Maciej Dendzik · Shuo Dong · Samuel Beaulieu · Bernhard Schölkopf · Martin Wolf · Laurenz Rettig · Christian Carbogno · Stefan Bauer · Ralph Ernstorfer</span>
+      <span><b>Published</b> 2022-12-30</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-022-00382-2" target="_blank">10.1038/s43588-022-00382-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-022-00382-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A <strong>probabilistic machine learning pipeline</strong> based on Markov random fields bridges photoemission band mapping and electronic band structure reconstruction, successfully recovering <strong>all 14 valence bands</strong> of the semiconductor WSe<sub>2</sub> at full Brillouin-zone coverage. The approach outperforms conventional pointwise line fitting in accuracy, stability, and computational efficiency by orders of magnitude, while <strong>geometric featurization</strong> via Zernike polynomials enables data reduction by over 5,000× and direct integration into materials science databases.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes a critical gap in materials characterization.</b> Photoemission band mapping produces enormous, high-dimensional data (hundreds of MB per experiment), yet extracting quantitative band structure has been limited to sparse, hand-picked momentum points — this pipeline automates global reconstruction at scale.</li>
+      <li><b>Combines domain knowledge with probabilistic inference.</b> By encoding band continuity as a Markov random field prior and using DFT calculations as a warm start, the method achieves higher accuracy than supervised deep learning without requiring ground-truth labels from experiment.</li>
+      <li><b>Enables database-scale band structure informatics.</b> The geometric fingerprinting via Zernike polynomials compresses each energy band to a feature vector of ~24 kB (from ~235 MB raw data), making systematic, resolution-independent comparison and archiving viable for the first time.</li>
+      <li><b>Reveals previously inaccessible physics.</b> The full-zone reconstruction of WSe<sub>2</sub> uncovers a spin-orbit gap at the saddle point M' of 338 meV — substantially larger than DFT predictions — demonstrating that the method produces scientifically novel findings beyond mere automation.</li>
+      <li><b>Generalizes across material classes.</b> Validated on a semiconductor (WSe<sub>2</sub>), a topological insulator (Bi<sub>2</sub>Te<sub>2</sub>Se), and a metal (Au(111)), confirming broad applicability to the growing corpus of publicly accessible photoemission datasets.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological contribution with broad reach:</b> the MRF pipeline is a general-purpose tool applicable to any periodic material with available band-mapping data — fitting NCS's mission of novel computational methods for natural sciences.</li>
+      <li><b>Principled fusion of ML and domain physics:</b> Bayesian probabilistic inference + DFT warm start represents a mature, interpretable alternative to black-box deep learning, directly relevant to NCS's emphasis on trustworthy, physics-grounded AI.</li>
+      <li><b>Data scale and reproducibility:</b> all raw photoemission data deposited on Zenodo, DFT calculations on NOMAD, code on GitHub — exemplary open-science practice consistent with NCS editorial requirements.</li>
+      <li><b>Enables materials informatics infrastructure:</b> the Zernike-polynomial featurization creates a query-able band-structure fingerprint that could seed a new class of materials databases, offering infrastructure impact beyond the single study.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary material</dt><dd><strong>WSe<sub>2</sub> (tungsten diselenide)</strong> — 2D layered semiconductor, 2H stacking polytype. Raw photoemission band-mapping data binned to 256 × 256 × 470 voxels (~235 MB; reduced from 7.8 GB single-event data); 14 valence bands reconstructed across the full projected Brillouin zone (~7 eV energy range, ~3 Å<sup>−1</sup> momentum range).</dd>
+      <dt>Other test materials</dt><dd><strong>Bi<sub>2</sub>Te<sub>2</sub>Se</strong> (topological insulator) — 4 energy bands including Dirac surface state; <strong>Au(111)</strong> (noble metal) — bulk d-bands reconstructed using synchrotron data. Both deposited on Zenodo.</dd>
+      <dt>DFT calculations</dt><dd>Electronic structure calculations for WSe<sub>2</sub> using four exchange-correlation functionals (LDA, GGA-PBE, GGA-PBEsol, HSE06) with the FHI-aims all-electron code. Momentum grid spacing 0.012 Å<sup>−1</sup>. Deposited at the NOMAD repository (<a href="https://doi.org/10.17172/NOMAD/2020.03.28-1" target="_blank">NOMAD/2020.03.28-1</a>).</dd>
+      <dt>Photoemission setup</dt><dd>High-harmonic-generation XUV source (21.7 eV, 500 kHz) + METIS 1000 momentum microscope. Momentum resolution &lt;0.01 Å<sup>−1</sup>, energy resolution &lt;15 meV. WSe<sub>2</sub> purity &gt;99.995%.</dd>
+      <dt>Benchmark data</dt><dd>Synthetic photoemission datasets with known ground-truth band structures (DFT-based and analytic Hamiltonians); regions tested at 2, 4, 8, and 14 bands. Ground-truth r.m.s. errors reported per-band per-spectrum.</dd>
+      <dt>Availability</dt><dd>WSe<sub>2</sub> data: <a href="https://doi.org/10.5281/zenodo.7314278" target="_blank">zenodo.7314278</a>; Bi<sub>2</sub>Te<sub>2</sub>Se: <a href="https://doi.org/10.5281/zenodo.7317667" target="_blank">zenodo.7317667</a>; Au(111) + DFT: <a href="https://doi.org/10.5281/zenodo.7305241" target="_blank">zenodo.7305241</a>; Code: <a href="https://github.com/mpes-kit/fuller" target="_blank">github.com/mpes-kit/fuller</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>WSe<sub>2</sub> photoemission data (Zenodo)</td><td>Primary reconstruction target; 14 valence bands</td><td>256×256×470 voxels, ~235 MB (from 7.8 GB)</td><td><a href="https://doi.org/10.5281/zenodo.7314278" target="_blank">zenodo.7314278</a></td></tr>
+        <tr><td>Bi<sub>2</sub>Te<sub>2</sub>Se photoemission data (Zenodo)</td><td>Topological insulator validation; Dirac surface state</td><td>4 energy bands; same lab setup as WSe<sub>2</sub></td><td><a href="https://doi.org/10.5281/zenodo.7317667" target="_blank">zenodo.7317667</a></td></tr>
+        <tr><td>Au(111) photoemission + DFT (Zenodo)</td><td>Metal validation; synchrotron data; d-band extraction</td><td>Several d-bands; synchrotron X-ray source</td><td><a href="https://doi.org/10.5281/zenodo.7305241" target="_blank">zenodo.7305241</a></td></tr>
+        <tr><td>WSe<sub>2</sub> DFT calculations (NOMAD)</td><td>Initialization (warm start) for MRF optimization</td><td>4 XC functionals; 0.012 Å<sup>−1</sup> grid</td><td><a href="https://doi.org/10.17172/NOMAD/2020.03.28-1" target="_blank">NOMAD repo</a></td></tr>
+        <tr><td>Synthetic benchmark data</td><td>Ground-truth accuracy and efficiency benchmarking</td><td>2, 4, 8, 14 bands; K-point and high-symmetry line</td><td>Generated via Fuller code</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact sample sizes and data volumes are taken verbatim from the article's Methods and Data availability sections. The paper applies to 3 materials; broader applicability to other materials is discussed in the Discussion section but not numerically quantified in this publication.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Markov Random Field (MRF) probabilistic model:</b> energy values at each momentum grid point are random variables; a nearest-neighbor Gaussian prior enforces band continuity, and photoemission intensity at each EDC provides the likelihood. The joint posterior is maximized via MAP estimation.</li>
+      <li><b>Data pre-processing pipeline:</b> (1) intensity symmetrization along crystallographic symmetry axes; (2) multidimensional contrast-limited adaptive histogram equalization (MCLAHE) for contrast enhancement; (3) Gaussian smoothing along k<sub>x</sub>, k<sub>y</sub>, and E axes.</li>
+      <li><b>DFT warm-start initialization:</b> semi-local DFT calculations (LDA, GGA-PBE, GGA-PBEsol, HSE06 via FHI-aims) provide initial band positions; hyperparameter tuning aligns them to experimental data via rigid energy shifts and momentum scaling.</li>
+      <li><b>Parallelized MAP optimization:</b> iterated conditional mode (ICM) with checkerboard coloring on the MRF graph; implemented in TensorFlow on multicore CPUs and GPUs (single band reconstructed in ~7 s on NVIDIA GTX980).</li>
+      <li><b>Zernike polynomial featurization:</b> each 3D dispersion surface is decomposed into hexagonal Zernike polynomials, producing geometry fingerprints for multiscale band comparison; cosine similarity and Euclidean distance metrics quantify theory–experiment agreement at any resolution.</li>
+      <li><b>Benchmarking framework:</b> comparison against Levenberg–Marquardt pointwise line fitting (the state-of-the-art alternative); metrics include per-band per-spectrum computing time, r.m.s. error, hyperparameter tuning time, and reconstruction instability (s.d. of residuals).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig1.png" target="_blank">
+        <img src="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig1.png" alt="Fig.1 From band mapping to BS" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic of photoemission band-mapping experiment and the full computational reconstruction pipeline (pre-processing → MRF → band dispersion surfaces).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig2.png" target="_blank">
+        <img src="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig2.png" alt="Fig.2 Band reconstruction from WSe2 photoemission data" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> All 14 reconstructed valence bands of WSe<sub>2</sub> — exploded view, overlay on data, and band-wise DFT comparison across the full Brillouin zone.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig3.png" target="_blank">
+        <img src="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig3.png" alt="Fig.3 Digitization and comparison of WSe2 band structures" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Zernike polynomial decomposition of band dispersions; cosine-similarity matrix; band-structure distance matrix comparing DFT initializations with reconstructed bands.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig4.png" target="_blank">
+        <img src="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig4.png" alt="Fig.4 Performance evaluation on benchmarks" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Benchmark comparison: MRF vs. pointwise line fitting — computing time, r.m.s. error, hyperparameter tuning time, and reconstruction instability vs. number of bands.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig5.png" target="_blank">
+        <img src="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig5.png" alt="Fig.5 Local band structure parameters of WSe2" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Local band structure parameters of WSe<sub>2</sub> — spin-orbit gaps at K and M' saddle points, trigonal warping model fit; reveals 338 meV gap larger than DFT prediction.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig6.png" target="_blank">
+        <img src="assets/a-machine-learning-route-between-band-mapping-and-band-structure__s43588-022-00382-2/fig6.png" alt="Fig.6 Band reconstruction for Bi2Te2Se and Au(111)" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Generalization to Bi<sub>2</sub>Te<sub>2</sub>Se (topological insulator, Dirac point) and Au(111) (metal, d-bands) — 3D/2D views and reconstruction overlays.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 table in main text (Supplementary Table 1: hyperparameter settings; Supplementary Tables 2–4: benchmark results, DFT initialization robustness, local band parameters). Main text table count = 1 (implicitly referenced; the paper lists Supplementary Tables 2–4 extensively).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, public health and urban accessibility).</p>
+
+    <div class="idea">
+      <h3>① Replace the band-by-band sequential MRF with a joint multi-band deep learning Hamiltonian</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reconstructs energy bands <em>sequentially</em>, one band at a time, which requires knowing the number of bands N<sub>b</sub> in advance and cannot learn inter-band interactions (crossings, spin-orbit coupling patterns) in a unified pass. A natural extension: replace the MRF's factored posterior with a <strong>deep-learning DFT Hamiltonian network</strong> that predicts all bands jointly from the raw 3D photoemission volume, leveraging the same DFT warm-start idea but as a trainable prior that encodes crystal symmetry and inter-band coupling directly into the network weights. This addresses the paper's first stated limitation (needing known N<sub>b</sub>) while maintaining its domain-knowledge-guided philosophy.</p>
+      <p><span class="lab mine">Added value to my research</span>The core lesson — encoding physical structure (periodicity, symmetry, continuity) as inductive bias into a learnable model rather than as a hard constraint — directly maps onto my <strong>physics-informed graph learning</strong> agenda. In my context, replacing band periodicity with spatial autocorrelation structure (Moran's I, variogram) as a graph-neural-network prior would yield a spatially self-consistent GeoAI model for health-outcome prediction, where the "warm start" is a spatial lag model rather than DFT.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep-learning density functional theory Hamiltonian for efficient ab initio electronic-structure calculation — <a href="https://doi.org/10.1038/s43588-022-00265-6" target="_blank">10.1038/s43588-022-00265-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend the Zernike fingerprint idea to a universal materials-database similarity engine</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Zernike polynomial featurization compresses each 3D dispersion surface to ~24 kB while preserving geometry at &lt;0.8% relative error. This is demonstrated on three materials but never scaled to a database. Extending the paper: build a <strong>geometry-fingerprint index</strong> over the full NOMAD/Materials Project database of DFT band structures, enabling nearest-neighbor retrieval of materials with similar band topologies — turning the paper's data reduction step into a searchable phonon/band-structure analogue of crystal structure databases. The paper anticipates this but does not implement it.</p>
+      <p><span class="lab mine">Added value to my research</span>Zernike-like geometric decomposition is directly applicable to <strong>spatiotemporal kernel density fields</strong> in my work: decompose a city's POI density surface or disease-incidence surface into orthonormal basis coefficients, enabling similarity search across cities or time periods without recomputing spatial statistics from scratch — a data reduction for urban geospatial fingerprinting analogous to the paper's band fingerprinting.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating the prediction of stable materials with machine learning — <a href="https://doi.org/10.1038/s43588-023-00536-w" target="_blank">10.1038/s43588-023-00536-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Quantify epistemic uncertainty in the reconstruction and propagate it to downstream applications</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's probabilistic MRF formulation naturally supports uncertainty quantification: the posterior width encodes confidence in each reconstructed band locus. However, the paper reports only point estimates (MAP) and benchmarks r.m.s. error against synthetic ground truth — it never outputs per-pixel uncertainty maps or propagates uncertainty into the derived local band parameters (spin-orbit gap, trigonal warping). Extending it with <strong>posterior sampling (MCMC or variational inference)</strong> would produce credible intervals on the 338 meV M' gap and other physically significant values, making the reconstruction outputs usable in quantitative theory–experiment discrepancy analysis.</p>
+      <p><span class="lab mine">Added value to my research</span>My <strong>explainable ML for spatial prediction</strong> also suffers from point-estimate overconfidence. The same extension — from MAP to a Laplace approximation or variational posterior — would give spatially resolved confidence intervals on, e.g., R2SFCA accessibility scores or MGWR coefficient surfaces, directly improving how I communicate uncertainty to health-policy stakeholders.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning — <a href="https://doi.org/10.1038/s43588-024-00747-9" target="_blank">10.1038/s43588-024-00747-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Adapt the pre-processing + reconstruction pipeline to time-resolved photoemission for non-equilibrium dynamics</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly anticipates use case (1): online monitoring of band structure during phase transitions, yielding 4D data I(k, E, t). The current MRF operates on a single snapshot. Extending it to time-resolved band mapping requires a <strong>temporal smoothness prior</strong> in addition to the spatial NN prior — a 3D MRF on (k<sub>x</sub>, k<sub>y</sub>, t) slices — effectively tracking how band energies evolve after an ultrafast laser pulse. This would make the pipeline a real-time diagnostic tool for pump-probe spectroscopy, where speed (seconds per band per snapshot) is critical.</p>
+      <p><span class="lab mine">Added value to my research</span>Temporal extension of a Markov-structured spatial model maps directly onto my <strong>spatiotemporal kernel density estimation</strong> work: treating time as a third MRF dimension, with energy-band loci replaced by event-density surfaces, would allow tracking of, e.g., social-media event clusters or mobile-phone activity surfaces through time — a probabilistic spatiotemporal signal extraction framework analogous to this band-tracking pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep-learning electronic-structure calculation of magnetic superstructures — <a href="https://doi.org/10.1038/s43588-023-00424-3" target="_blank">10.1038/s43588-023-00424-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the warm-start + scalable MAP paradigm to open materials databases for pre-train/fine-tune workflows</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's "warm start" from DFT is a principled form of transfer learning: a cheaper, approximate model provides initialization for a more expensive, accurate reconstruction. The framework does not exploit the growing availability of large-scale DFT databases (Materials Project, AFLOW, NOMAD) as pre-training corpora. Extending it: <strong>pre-train a neural-network posterior approximator</strong> on thousands of DFT band structures to learn a universal band-shape prior, then fine-tune on new experimental photoemission data with minimal hyperparameter tuning — reducing the reconstruction from tens of minutes of tuning to seconds. This is the natural next step given the paper's data-reduction and database-integration ambitions.</p>
+      <p><span class="lab mine">Added value to my research</span>The warm-start/fine-tune paradigm directly informs my interest in <strong>fine-tuning geospatial foundation models</strong>: just as DFT provides an approximate prior that the MRF refines with experimental data, a pretrained geospatial foundation model (e.g., on satellite imagery) provides spatial priors that can be fine-tuned with scarce local health-outcome labels — the methodological lesson is identical across domains.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Data as the next challenge in atomistic machine learning — <a href="https://doi.org/10.1038/s43588-024-00636-1" target="_blank">10.1038/s43588-024-00636-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

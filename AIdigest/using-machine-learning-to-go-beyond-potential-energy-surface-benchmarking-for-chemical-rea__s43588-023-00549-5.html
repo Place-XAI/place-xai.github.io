@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using machine learning to go beyond potential energy surface benchmarking for chemical reactivity — AI Digest</title>
+<meta name="description" content="AI Digest: Using machine learning to go beyond potential energy surface benchmarking for chemical reactivity (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">ML Potentials</span>
+      <span class="tag">Active Learning</span>
+      <span class="tag">Chemical Reactivity</span>
+      <span class="tag">Hybrid ML–Physics</span>
+    </div>
+    <h1>Using machine learning to go beyond potential energy surface benchmarking for chemical reactivity</h1>
+    <div class="meta">
+      <span class="authors">Xingyi Guan · Joseph P. Heindel · Taehee Ko · Chao Yang · Teresa Head-Gordon</span>
+      <span><b>Published</b> 2023-11-16</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00549-5" target="_blank">10.1038/s43588-023-00549-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00549-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Standard ML potential energy surfaces (PESs) are <strong>structurally incomplete</strong> because they rely on chemical intuition for data acquisition — leading to unphysical predictions in molecular dynamics. A <strong>"negative design" active learning workflow</strong> using metadynamics systematically discovers and fills high-energy gaps, producing a hydrogen combustion ML model that achieves <strong>two orders of magnitude cost reduction over ab initio MD</strong>. Remaining rough spots are handled not by retraining but by a <strong>hybrid ML–physics strategy</strong> that falls back to ab initio forces on demand, with &lt;0.2% DFT calls needed while running 99.8%+ on ML.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Identifies a fundamental blind spot in ML potentials.</b> The paper demonstrates that even accurate, well-benchmarked ML PESs fail catastrophically during molecular dynamics because training data misses high-energy and unphysical regions that any real trajectory will visit.</li>
+      <li><b>Reframes active learning as "negative design."</b> Rather than sampling where the model is most uncertain near the IRC, the workflow deliberately explores where the model should predict high/unphysical energies — a principled inversion of conventional data acquisition strategy.</li>
+      <li><b>Introduces a practical hybrid ML–physics fallback.</b> By substituting ab initio forces only when committee models disagree, the approach maintains ML efficiency (&gt;99.8% of steps) while avoiding the instability of purely ML-driven trajectories — without costly retraining.</li>
+      <li><b>Enables finite-temperature free-energy surfaces.</b> The completed PES makes it possible to reconstruct free-energy transition states for multiple hydrogen combustion channels, revealing entropic effects (8–12 kcal mol<sup>−1</sup>) invisible to 0 K IRC benchmarks.</li>
+      <li><b>Broadly transferable paradigm.</b> The negative-design + hybrid workflow applies to any reactive system where chemical diversity is hard to enumerate a priori — which is essentially all of gas-phase reactive chemistry.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological innovation, not just application:</b> the paper contributes a generalizable active learning paradigm — negative design via metadynamics — that changes how the field thinks about training-set construction for reactive ML potentials.</li>
+      <li><b>Bridges two sub-fields:</b> it unifies the statistical-mechanics community's metadynamics tools with the ML community's query-by-committee active learning, which is exactly the cross-disciplinary synthesis Nature Computational Science favors.</li>
+      <li><b>Demonstrates limits, then surpasses them:</b> the paper's intellectual contribution is first proving that the standard benchmark-focused paradigm is insufficient, then showing a principled fix — a rare combination of diagnosis and remedy.</li>
+      <li><b>Two-orders-of-magnitude efficiency gain:</b> the quantitative speedup over AIMD at confirmed physical accuracy makes the result directly impactful for the computational chemistry community at scale.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary dataset</dt><dd><strong>HCombustion dataset</strong> (Guan et al., original ref. 17) — energies and forces generated at the ωB97X-V/cc-pVTZ DFT level. Covers <strong>19 elementary hydrogen combustion reaction channels</strong>, sampled via AIMD and normal-mode perturbations near transition states. ~5,000 data points per reaction in the original set.</dd>
+      <dt>Augmented dataset</dt><dd><strong>IRC dilation data</strong> — generated by proportionally scaling each IRC geometry at 14 dilation ratios (0.6–3.2×), producing high-energy dissociation/contraction configurations unavailable in AIMD. Available at <a href="https://doi.org/10.6084/m9.figshare.23290115.v1" target="_blank">figshare:23290115.v1</a>.</dd>
+      <dt>Active learning data</dt><dd><strong>48,582 new data points</strong> generated over ~48 AL rounds through metadynamics with six reaction channels (rxn09, 10, 13, 16, 17, 18) at 300 K, with simulation lengths increasing from 2 ps (rounds 1–20) to 5 ps (rounds 21–33) to 10 ps (rounds 34–48). Also deposited at <a href="https://doi.org/10.6084/m9.figshare.23290115.v1" target="_blank">figshare:23290115.v1</a>.</dd>
+      <dt>Original dataset repo</dt><dd>Coordinates, energies, and forces at <a href="https://doi.org/10.6084/m9.figshare.19601689" target="_blank">figshare:19601689</a>.</dd>
+      <dt>Chemistry scope</dt><dd>Hydrogen/oxygen system (H, O atoms only), 19 elementary reaction channels covering at least the known gas-phase H<sub>2</sub> combustion mechanism including radical species and multiple spin states. Energies in kcal mol<sup>−1</sup> relative to isolated atom energies.</dd>
+      <dt>QM level of theory</dt><dd>ωB97X-V range-separated hybrid meta-GGA functional, cc-pVTZ basis set, computed with Q-Chem 5.2. Unrestricted open-shell, ultrafine integration grid (99 radial × 590 angular), SCF convergence 10<sup>−8</sup>.</dd>
+      <dt>Code availability</dt><dd>Full AL workflow at <a href="https://github.com/THGLab/H2Combustion_AL" target="_blank">github.com/THGLab/H2Combustion_AL</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>HCombustion original dataset</td><td>Baseline training set (AIMD + normal modes)</td><td>19 reactions, ~5,000 pts/reaction</td><td><a href="https://doi.org/10.6084/m9.figshare.19601689" target="_blank">figshare:19601689</a></td></tr>
+        <tr><td>IRC dilation data + AL data</td><td>Negative-design augmentation + active learning</td><td>48,582 AL pts + dilation geometries</td><td><a href="https://doi.org/10.6084/m9.figshare.23290115.v1" target="_blank">figshare:23290115.v1</a></td></tr>
+        <tr><td>NewtonNet ML model</td><td>Equivariant message-passing NN (energy + forces)</td><td>4-member committee, cut-off 5.0 Å</td><td><a href="https://github.com/THGLab/H2Combustion_AL" target="_blank">GitHub</a></td></tr>
+        <tr><td>Plumed (metadynamics)</td><td>Enhanced sampling + bias potential + free-energy reconstruction</td><td>Well-tempered metadynamics, 200 ps production runs</td><td><a href="https://www.plumed.org" target="_blank">plumed.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact total data counts are taken verbatim from the article (48,582 AL-generated points; ~5,000/reaction in original set). The number of DFT single-point calls for labeling is not separately stated but implied by the clustering/downselection step.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>NewtonNet equivariant NN:</b> physics-inspired message-passing neural network equivariant to translations and rotations; trained simultaneously on energies, forces, and latent force directions via a Boltzmann-weighted loss function.</li>
+      <li><b>IRC dilation (negative design):</b> each IRC geometry is proportionally scaled at 14 ratios (0.6–3.2×) to generate high-energy dissociation/contraction configurations that teach the model what to avoid — sampling in directions orthogonal to the IRC.</li>
+      <li><b>Query-by-committee active learning:</b> a 4-member ensemble of NewtonNet models; when force predictions exceed a 2 kcal mol<sup>−1</sup> Å<sup>−1</sup> standard-deviation threshold during metadynamics, structures are flagged for DFT labeling and retraining.</li>
+      <li><b>Well-tempered metadynamics (Plumed):</b> Gaussians deposited on collective variables (coordination numbers) every 100 steps at 300 K to escape free-energy wells and explore high-energy configurations; simulation length escalated from 2 ps to 10 ps across AL rounds.</li>
+      <li><b>Coulomb matrix + mini-batch K-means downselection:</b> flagged structures are represented as Coulomb matrix eigenspectra and clustered; one representative per cluster is selected for DFT labeling to maximize structural diversity while minimizing compute cost.</li>
+      <li><b>Hybrid ML–physics fallback:</b> after AL, remaining rough PES spots trigger a real-time ab initio DFT force call (Q-Chem) instead of retraining — keeping &gt;99.8% of trajectory steps on ML while preventing numerical instability.</li>
+      <li><b>Committer analysis:</b> 300/500 K MD trajectories from IRC transition states evaluate the probability of reaching reactant vs. product, validating PES quality and detecting entropic effects absent from 0 K benchmarks.</li>
+      <li><b>Free-energy surface reconstruction:</b> 200 ps well-tempered metadynamics with diffusion-map-inspired collective variables; free energy summed via Plumed's <code>sum_hills</code> utility.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig1.png" target="_blank">
+        <img src="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig1.png" alt="Fig.1 Missing data in the original ML model and the IRC dilation data" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Failure of the original ML model (rxn16 trajectory veering to unphysical states) vs. the coverage added by IRC dilation — motivating the negative-design strategy.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig2.png" target="_blank">
+        <img src="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig2.png" alt="Fig.2 AL workflow schematic" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Schematic of the query-by-committee + metadynamics AL workflow — the four-step iterative process that builds the complete PES.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig3.png" target="_blank">
+        <img src="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig3.png" alt="Fig.3 AL data coverage and error reduction for rxn18" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Progressive AL data coverage and energy/force MAE reduction for rxn18 across all AL rounds — shows convergence from ~8 to &lt;1 kcal mol<sup>−1</sup> Å<sup>−1</sup> force error.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig4.png" target="_blank">
+        <img src="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig4.png" alt="Fig.4 Hybrid ML-physics workflow schematic" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Hybrid ML–physics workflow: ML forces drive the trajectory; ab initio forces substitute on demand when committee disagreement exceeds threshold.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig5.png" target="_blank">
+        <img src="assets/using-machine-learning-to-go-beyond-potential-energy-surface-benchmarking-for-chemical-rea__s43588-023-00549-5/fig5.png" alt="Fig.5 Free-energy surfaces for hydrogen combustion channels" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Free-energy surfaces reconstructed from hybrid metadynamics for six reaction channels (rxn01, 09, 10, 14, 17, 18) — revealing entropic shifts of up to 8–12 kcal mol<sup>−1</sup> from the 0 K IRC transition state.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1, committer statistics at 500 K comparing original vs. final AL model). Supplementary contains 4 additional tables and 2 supplementary figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Translate the "negative design" data strategy to spatial ML model completeness</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central insight is that ML models for reactive systems fail not where training data is sparse, but where training data is systematically absent by design — high-energy configurations were never considered. A direct extension: apply the same negative-design diagnostic to <strong>universal interatomic potentials</strong> (such as M3GNet for the full periodic table) to identify which elemental or compositional regimes are structurally absent from training — and whether metadynamics-style adversarial augmentation can fill those gaps transferably across the periodic table, not just for H/O systems.</p>
+      <p><span class="lab mine">Added value to my research</span>The negative-design principle maps directly onto a blind spot in <strong>geospatial ML models</strong>: models trained on data-rich urban cores systematically miss rural, peri-urban, and rapidly developing regions. I can operationalize "negative design" for my spatiotemporal prediction models — deliberately seeking out the input-space regions (low-density suburbs, informal settlements, underserved census tracts) where the model has no training analogs, then using targeted simulation or synthetic data generation to fill those gaps and audit healthcare-accessibility predictions for exactly the populations most at risk.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table — <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace batch AL retraining with a real-time hybrid fallback for spatiotemporal prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's hybrid ML–physics model is elegant in its simplicity: instead of retraining when uncertain, invoke the "ground-truth oracle" (DFT) for that single step and continue. This idea is underexplored for the paper's own system — the current threshold (committee standard deviation &gt;2 kcal mol<sup>−1</sup> Å<sup>−1</sup>) is hand-tuned. Extending the paper: learn the fallback threshold adaptively using a meta-learner trained on committed trajectory outcomes, and quantify the efficiency–accuracy Pareto surface as a function of committee size N (the paper notes N<sup>1/2</sup> scaling) to identify the optimal ensemble size for different reactive systems.</p>
+      <p><span class="lab mine">Added value to my research</span>In my <strong>agent-based and spatiotemporal simulation models</strong> (SIR epidemic spreading, EV-charging load dynamics), there are analogous "rough spot" events — sudden local surges, extreme weather, data voids — where the trained ML surrogate loses reliability. The hybrid fallback architecture suggests a practical design pattern: run the ML surrogate at full speed, monitor ensemble disagreement, and substitute a physics-based or mechanistic sub-model for only those cells and time steps where uncertainty exceeds a learned threshold — dramatically reducing compute without sacrificing prediction integrity at critical events.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Carry Boltzmann-weighted training to rare-event reweighting in social systems</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Boltzmann weighting down-weights high-energy configurations during training but does not discard them — it preserves their structural information at reduced gradient influence. A natural extension: combine Boltzmann weighting with <strong>importance-sampling corrections</strong> so that free-energy surfaces can be reconstructed from trajectories that were biased by metadynamics without introducing systematic error — a well-known challenge in enhanced sampling but not fully addressed for equivariant NN potentials under long metadynamics runs.</p>
+      <p><span class="lab mine">Added value to my research</span>Rare events in urban systems — disease outbreaks, extreme mobility disruptions, sudden hospital surge — are analogous to high-energy configurations: rare, important, and almost never in training data. The Boltzmann-weighting idea suggests a practical technique for my <strong>Monte Carlo and kernel density models</strong>: define an "energy" proxy (e.g., anomaly score or spatio-temporal outlier metric), apply down-weighted but not discarded rare-event training samples, and test whether that calibration improves tail prediction for epidemic peak timing or EV demand surge events that standard empirical training would systematically underfit.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Traversing chemical space with active deep learning for low-data drug discovery — <a href="https://doi.org/10.1038/s43588-024-00697-2" target="_blank">10.1038/s43588-024-00697-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Use committee-model disagreement as a spatial uncertainty map for policy guidance</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper uses committee disagreement purely as a binary trigger (retrain or call DFT). A richer extension: treat the <em>spatial distribution of committee disagreement</em> across the PES as a continuous uncertainty landscape, and couple it to a Bayesian experimental-design objective so that each round of AL targets regions of maximum expected information gain — not just maximum variance. This would formalize what the paper achieves heuristically (escalating metadynamics simulation length as AL rounds proceed) into a principled optimal stopping criterion.</p>
+      <p><span class="lab mine">Added value to my research</span>My <strong>explainable ML models for spatial prediction</strong> (MGWR, ML ensembles for health geography) produce point estimates with limited uncertainty quantification. The committee-disagreement paradigm from this paper directly provides a template: train multiple independently initialized spatial ML models (analogous to the 4-member NewtonNet committee), use their spatial disagreement map to identify the neighborhoods or census tracts where model confidence is lowest, and feed those locations preferentially to a targeted data-collection campaign (additional surveys, sensor deployment, telehealth records linkage) — a principled active learning loop for geospatial models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning interatomic potentials at the centennial crossroads of quantum mechanics — <a href="https://doi.org/10.1038/s43588-025-00930-6" target="_blank">10.1038/s43588-025-00930-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Encode physics priors (conservation laws, symmetry) into spatial-graph ML via equivariance</h3>
+      <p><span class="lab paper">Extending this paper</span>NewtonNet's equivariance to rotations and translations is crucial: it means the PES learned is physically consistent regardless of molecular orientation. Extending the paper: add <strong>time-reversal and permutation equivariance</strong> explicitly to the committee model so that forward and reverse reaction channels share the same PES representation — currently each of the 19 reactions is treated independently. This would reduce training data requirements and enforce thermodynamic consistency (microscopic reversibility) as an architectural constraint rather than a hope.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my core <strong>physics-informed graph learning</strong> agenda: for spatiotemporal GNNs modeling healthcare access or disease diffusion, encoding conservation laws (population conservation, flow balance in transport networks) as architectural equivariance constraints rather than soft regularizers. The lesson from this paper is concrete — equivariant architectures generalize with far less data, and the same logic applies to spatial graphs: a GNN equivariant to network topology permutations and scale transformations should generalize better across cities and time periods, reducing the data hunger that currently limits geospatial foundation model transfer.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials — <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

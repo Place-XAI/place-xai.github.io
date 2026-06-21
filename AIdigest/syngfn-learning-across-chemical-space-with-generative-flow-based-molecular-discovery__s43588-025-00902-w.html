@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SynGFN: learning across chemical space with generative flow-based molecular discovery — AI Digest</title>
+<meta name="description" content="AI Digest: SynGFN: learning across chemical space with generative flow-based molecular discovery (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Generative AI</span>
+      <span class="tag">Drug Discovery</span>
+      <span class="tag">Chemical Space</span>
+      <span class="tag">Synthesizability</span>
+    </div>
+    <h1>SynGFN: learning across chemical space with generative flow-based molecular discovery</h1>
+    <div class="meta">
+      <span class="authors">Yuchen Zhu · Shuwang Li · Jihong Chen · Donghai Zhao · Xiaorui Wang · Yitong Li · Yifei Liu · Yue Kong · Beichen Zhang · Chang Liu · Tingjun Hou · Chang-Yu Hsieh</span>
+      <span><b>Published</b> 2025-11-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00902-w" target="_blank">10.1038/s43588-025-00902-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00902-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>SynGFN bridges the design–make gap in AI-driven drug discovery by treating molecular generation as a <strong>cascade of simulated chemical reactions</strong> over synthesizable building blocks. Its hierarchically pretrained GFlowNet policy explores a chemical space <strong>up to an order of magnitude larger</strong> than competing synthesis-aware models (as measured by #Circles coverage), while simultaneously producing molecules that are <strong>diverse, synthesizable, and high-performing</strong>. In a real-world wet-lab validation against a neuropsychiatric target (GluN1/GluN3A), ten SynGFN-proposed compounds were synthesized within 30 days and six showed measurable inhibitory activity — demonstrating that AI-generated synthetic routes can be directly executed in the laboratory.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the "synthesizability dilemma."</b> Most generative models optimize for predicted activity but produce molecules that cannot actually be made. SynGFN integrates synthesis planning directly into generation, yielding molecules with explicit, lab-executable synthetic routes.</li>
+      <li><b>Order-of-magnitude larger chemical space coverage.</b> Using the topology-inspired #Circles metric, SynGFN-XL achieves up to 70× greater chemical-space coverage than the top-1,000 subset of baseline models — a qualitative leap rather than incremental improvement.</li>
+      <li><b>Efficient exploration with multifidelity acquisition.</b> By combining a GFlowNet sampler with multifidelity Bayesian optimization, SynGFN matches or exceeds the diversity of brute-force virtual screening of ~1 million compounds while evaluating only ~100,000 — roughly a 10× reduction in scoring cost.</li>
+      <li><b>Accelerated DMTA cycle in practice.</b> The wet-lab case study on GluN1/GluN3A inhibitors doubled synthesis throughput: traditional teams produce 2–3 compounds per synthesizer per month; SynGFN's synthesizable-route output enabled 10 compounds in 30 days, with 6 showing biological activity.</li>
+      <li><b>Scalable to industrial-size libraries.</b> The XL reactant library contains ~100,000 Enamine building blocks; the hierarchical pretraining strategy solves the high-dimensional action-space problem that stymies simpler GFlowNet formulations at that scale.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Cross-disciplinary synthesis:</b> merges generative deep learning, combinatorial chemistry, Bayesian optimization, and wet-lab biology — exactly the kind of integrative computational-science contribution Nature Computational Science champions.</li>
+      <li><b>New metric with broad applicability:</b> the #Circles coverage metric and its application as a rigorous, topology-inspired benchmark for chemical-space exploration provides a methodological contribution beyond this single paper.</li>
+      <li><b>End-to-end validation:</b> the paper does not stop at in silico results — six out of ten synthesized compounds showed measurable IC50, providing unusually strong experimental validation for a computational study.</li>
+      <li><b>Addresses a critical field-wide bottleneck:</b> the synthesizability gap is widely recognized as the biggest obstacle to operationalizing AI drug discovery; a paper that credibly solves it carries high translational significance.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Building blocks</dt><dd><strong>Enamine global building-block stock</strong> (accessed July 2023) — 262,329 compounds before processing, refined to 239,583 after element-type and ring filters. Partitioned into four scales: S (1,879), M (7,958), L (26,509), XL (99,886) reactants.</dd>
+      <dt>Reaction templates</dt><dd>87 curated reaction templates drawn from Hartenfeller et al. (58 reactions) and Button et al. (64 reactions); includes 13 single-component and 74 two-component reactions; 42 ring-forming reactions.</dd>
+      <dt>Virtual chemical space</dt><dd>S-scale two-step enumeration yields ~300 million compounds. XL-scale space is not enumerated exhaustively but is navigated by SynGFN's policy.</dd>
+      <dt>Proxy/scoring models</dt><dd><strong>AURKA</strong>: GOSTAR database, ~10,000 pIC50 entries, D-MPNN (chemprop). <strong>DRD2</strong>: ExCAPE-DB, ~100,000 entries, SVM classifier. <strong>sEH</strong>: 300,000 AutoDock-scored molecules, MPNN. Known active inhibitors sourced from ChEMBL (AURKA 1,244; DRD2 2,255; sEH 1,284 compounds with IC50 &lt;50 nM).</dd>
+      <dt>Wet-lab target</dt><dd>GluN1/GluN3A NMDA receptor (eGlyR). No crystal structure available; ligand-based design using shape queries EU1180-438 and WZB117. 10 candidate compounds (D1–D10) synthesized and assayed; best compound D1 IC50 = 2.68 µM.</dd>
+      <dt>Code &amp; data</dt><dd>SynGFN and building-block dataset: <a href="https://github.com/ChemloverYuchen/SynGFN" target="_blank">github.com/ChemloverYuchen/SynGFN</a> and <a href="https://zenodo.org/records/17034917" target="_blank">zenodo.org/records/17034917</a>.</dd>
+      <dt>Time window</dt><dd>Enamine library accessed July 2023; ChEMBL and other bioactivity databases queried at manuscript preparation time (dates not separately stated).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Enamine building blocks</td><td>Reactant library for synthesis-aware generation</td><td>239,583 compounds (July 2023), partitioned into 4 scales</td><td><a href="https://enamine.net" target="_blank">enamine.net</a></td></tr>
+        <tr><td>Reaction templates (Hartenfeller + Button)</td><td>Synthesis rules defining valid chemical transformations</td><td>87 templates (13 unimolecular, 74 bimolecular)</td><td>Published in literature (refs. 34, 35)</td></tr>
+        <tr><td>ChEMBL</td><td>Known active inhibitors for target validation</td><td>1,244 AURKA, 2,255 DRD2, 1,284 sEH inhibitors (&lt;50 nM)</td><td><a href="https://www.ebi.ac.uk/chembl/" target="_blank">ebi.ac.uk/chembl</a></td></tr>
+        <tr><td>GOSTAR</td><td>QSAR training data for AURKA proxy model</td><td>~10,000 pIC50 entries</td><td><a href="https://www.gostardb.com/" target="_blank">gostardb.com</a></td></tr>
+        <tr><td>ExCAPE-DB</td><td>QSAR training data for DRD2 proxy model</td><td>~100,000 entries with pIC50 labels</td><td>Published (ref. 42)</td></tr>
+        <tr><td>PDB structures</td><td>Protein targets for docking (AutoDock Vina)</td><td>AURKA 2BMC, DRD2 6CM4, sEH 4JNC</td><td><a href="https://www.rcsb.org" target="_blank">rcsb.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all data volumes and dates are taken verbatim from the article's Methods section. The virtual chemical space size of ~300 million refers to the S-scale enumeration only; the XL-scale combinatorial space is not fully enumerated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>GFlowNet with synthesis-aware MDP:</b> molecule generation is formulated as a Markov decision process on a directed acyclic graph; the GFlowNet policy samples molecules with probability proportional to their reward — inherently producing diverse outputs unlike greedy or RL-argmax approaches.</li>
+      <li><b>Hierarchical dual-agent policy network:</b> two separate neural networks handle action-1 (reaction-rule selection, conditioned on current molecular state via Morgan fingerprints) and action-2 (reactant selection, conditioned on state + chosen reaction). Reaction-compatible masking removes invalid actions before sampling.</li>
+      <li><b>Multilabel classification pretraining:</b> policy model 2 is pretrained via a multilabel task to recognize template-compatible reactants before GFlowNet training begins — critical for the high-dimensional XL action space (~100,000 reactants).</li>
+      <li><b>Trajectory balance (TB) training objective:</b> the loss ensures the partition function Z times forward-path probability matches reward times backward probability; backward probabilities collapse to 1 due to the unique parent structure of synthesis trees.</li>
+      <li><b>#Circles coverage metric:</b> topology-inspired packing-number metric (Tanimoto distance) measuring the maximum number of non-overlapping chemical-space "circles" — robust to naive diversity hacking and used for both evaluation and diversity-adjusted scoring.</li>
+      <li><b>Multifidelity Bayesian optimization:</b> SynGFN acts as the sampler within a multifidelity acquisition loop, using cheap QSAR proxy models for most evaluations and expensive docking scores sparingly — balancing exploration, exploitation, and compute cost.</li>
+      <li><b>Virtual screening comparison:</b> for the S-scale space (~300M compounds), full enumeration followed by random 1M sampling and top-1% selection provides a reference; SynGFN matches or exceeds coverage using only 100,000 evaluations.</li>
+      <li><b>Wet-lab validation:</b> ROCS 3D shape alignment (OMEGA conformers + OEOverlay Tanimoto Combo Score) guides generation toward known active scaffolds; 10 top candidates synthesized and assayed for GluN1/GluN3A inhibitory activity.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/syngfn-learning-across-chemical-space-with-generative-flow-based-molecular-discovery__s43588-025-00902-w/fig1.png" target="_blank">
+        <img src="assets/syngfn-learning-across-chemical-space-with-generative-flow-based-molecular-discovery__s43588-025-00902-w/fig1.png" alt="Fig.1 Overview of the SynGFN algorithm" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the SynGFN algorithm — illustrates the hierarchical dual-agent MDP (a), the AI-driven DMTA cycle (b), and example generated molecules with explicit synthetic routes for three drug targets (c).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1: #Circles coverage comparison across models and targets at thresholds t = 0.7, 0.75, 0.8). Extended Data contains 5 multi-panel figures (ED Figs. 1–5). Supplementary contains Figs. 1–50, Tables 1–3, Sections 1–3.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, spatial accessibility, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Transfer SynGFN's hierarchical GFlowNet policy to spatial facility-placement optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>SynGFN's core innovation is converting a combinatorial synthesis problem into a sequential, reward-proportional sampling task that achieves superior coverage over greedy enumeration. The same MDP formulation — dual agents selecting an action type first (reaction rule) then a component (reactant) — maps directly onto facility-location problems where an agent first selects a service category (e.g., healthcare, transit, retail) and then selects a spatial unit for placement. Extending SynGFN beyond molecular space: replace the reaction-compatibility mask with a spatial-feasibility mask (zoning, capacity, equity constraints), replace Morgan fingerprints with spatiotemporal embeddings, and replace QSAR rewards with accessibility or equity scores. The hierarchical pretraining trick (multilabel classification identifying compatible reactants) directly translates into pretraining that identifies spatially appropriate locations per service type.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a concrete blueprint for upgrading my <strong>EV-charging station siting and healthcare facility-location optimization</strong> work. The GFlowNet's diversity guarantee means the optimizer would not collapse onto a single high-scoring spatial configuration but instead produce a <em>set</em> of Pareto-diverse siting plans, directly addressing the efficiency-vs-equity dilemma I study. The #Circles spatial-coverage analog would also serve as a new diversity-adjusted equity metric for comparing siting strategies.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Apply multifidelity acquisition to multi-source spatial data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>SynGFN's multifidelity Bayesian optimization framework uses cheap QSAR proxies for most evaluations and expensive docking scores sparingly, cutting evaluation cost ~10× without losing exploration quality. This "cheap proxy first, expensive oracle later" pattern is directly extensible within the molecular design loop: one could add a third fidelity tier (e.g., cell-based assays) or adapt the acquisition function to budget constraints across different target classes. More broadly, the framework provides an open template for any sequential design problem with heterogeneous evaluation costs.</p>
+      <p><span class="lab mine">Added value to my research</span>In spatiotemporal GeoAI, I regularly encounter multi-source data with <strong>heterogeneous fidelity and cost</strong>: coarse mobile-phone records are cheap and ubiquitous; high-resolution GPS traces or household travel surveys are expensive and sparse. SynGFN's multifidelity acquisition directly maps onto <strong>active learning for spatiotemporal prediction</strong> — use the cheap data to guide where to collect expensive survey data, reducing field-data cost while maintaining model quality. This is especially relevant for my 2SFCA/R2SFCA work where demand-side travel behavior is hard to measure at scale.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Traversing chemical space with active deep learning for low-data drug discovery — <a href="https://doi.org/10.1038/s43588-024-00697-2" target="_blank">10.1038/s43588-024-00697-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the #Circles coverage metric to evaluate spatial diversity of facility networks</h3>
+      <p><span class="lab paper">Extending this paper</span>The #Circles metric is introduced as a topology-inspired, scale-aware, and diversity-manipulation-resistant coverage measure for chemical spaces. The paper demonstrates it outperforms standard diversity metrics (internal diversity, QED, novelty) at capturing the breadth of explored space. A direct extension: port #Circles into molecular discovery evaluation benchmarks as a standard metric alongside QED and SA score. The paper currently validates it only for Tanimoto distance on Morgan fingerprints; testing it with graph-edit distance or 3D-shape similarity would increase its scope.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial accessibility research lacks a rigorous analog to #Circles for measuring the <strong>geographic diversity</strong> of facility networks. I can adapt the packing-number concept to a spatial metric space (e.g., travel-time distance), defining #Circles as the maximum number of facilities whose pairwise travel times all exceed threshold t — a diversity-adjusted facility-coverage score. Applied to healthcare facility siting or EV-station placement, this produces a spatial analogue of the enrichment-factor analysis in SynGFN: does the siting algorithm achieve higher #Circles-coverage per facility added than a random or greedy baseline?</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Rapid traversal of vast chemical space using machine learning-guided docking screens — <a href="https://doi.org/10.1038/s43588-025-00777-x" target="_blank">10.1038/s43588-025-00777-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Replace Morgan-fingerprint state representations with graph neural network embeddings for richer reward landscapes</h3>
+      <p><span class="lab paper">Extending this paper</span>SynGFN currently represents molecular states as Morgan fingerprints (4,096-bit hashing) fed into MLPs for both policy networks. Morgan fingerprints are fixed and lose 3D/topological nuance for large, complex scaffolds — a limitation that becomes more acute as reactant libraries grow toward the XL scale. A direct extension: replace the MLP+fingerprint architecture with a message-passing GNN operating directly on the molecular graph at each synthesis step, sharing parameters between action-1 and action-2 networks. This would (a) encode structural context more expressively, (b) enable the policy to exploit substructure similarity across reactions, and (c) generalize better to new building-block libraries without re-pretraining from scratch.</p>
+      <p><span class="lab mine">Added value to my research</span>This extension aligns with my <strong>physics-informed graph learning</strong> work: the synthesis tree is itself a graph where intermediate states are nodes and reaction steps are edges. Encoding this structure with a GNN that respects chemical invariances (atom permutations, bond rotations) is exactly the kind of structure-aware representation I pursue for spatial graphs. More concretely, developing GNN-based policy networks for SynGFN is methodologically parallel to developing GNN-based accessibility estimators where road-network topology replaces molecular topology.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use SynGFN as a template for generative region design in urban planning</h3>
+      <p><span class="lab paper">Extending this paper</span>The conceptual framework of SynGFN — assemble complex objects from a library of building blocks via a constrained sequence of composable transformations, guided by a GFlowNet to sample high-reward, diverse outputs — is domain-agnostic. Within the molecular discovery domain, an immediate extension is applying SynGFN to multi-target or multi-property co-optimization (e.g., potency + selectivity + toxicity simultaneously), which requires multi-objective GFlowNet training — a known open problem the paper does not address. Such extensions would substantially broaden applicability from single-target inhibitor design to ADMET-aware lead optimization.</p>
+      <p><span class="lab mine">Added value to my research</span>For urban analytics, this suggests a <strong>generative urban region design</strong> framework: urban zones are "assembled" from land-use blocks (residential, commercial, green space, transit) through zoning "reaction rules" (adjacency constraints, density limits, accessibility targets). A GFlowNet trained to maximize a multi-objective reward (walkability, equity, carbon footprint, economic viability) would generate diverse, constraint-compliant urban configurations — a direct extension of my healthy-cities and 15-minute-neighborhood research. The diversity guarantee would surface non-obvious spatial designs that greedy planners would miss, while the synthesis-route analog (the explicit sequence of zoning changes) would make the generated plans interpretable and actionable.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A deep learning approach for rational ligand generation with toxicity control via reactive building blocks — <a href="https://doi.org/10.1038/s43588-024-00718-0" target="_blank">10.1038/s43588-024-00718-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

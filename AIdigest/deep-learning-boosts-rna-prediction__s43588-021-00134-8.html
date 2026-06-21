@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep learning boosts RNA prediction — AI Digest</title>
+<meta name="description" content="AI Digest: Deep learning boosts RNA prediction (Nature Computational Science, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">RNA structure prediction</span>
+      <span class="tag">Deep learning</span>
+      <span class="tag">Molecular modelling</span>
+      <span class="tag">Rotationally equivariant networks</span>
+    </div>
+    <h1>Deep learning boosts RNA prediction</h1>
+    <div class="meta">
+      <span class="authors">Jie Pan</span>
+      <span><b>Published</b> 2021-09-16</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-021-00134-8" target="_blank">10.1038/s43588-021-00134-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-021-00134-8" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A deep neural network named <strong>ARES</strong> (Atomic Rotationally Equivariant Scorer) achieves state-of-the-art 3D RNA structure quality assessment using only <strong>atomic coordinates and elemental types</strong> as input — no hand-crafted RNA-specific features needed. Trained on just 18,000 structural models from 18 known RNA structures, ARES reduces the average RMSD of predicted RNA models from ~16 Å (existing methods) to ~12 Å, and attained <strong>top-ranked accuracy in the RNA-Puzzles blind structure prediction challenge</strong>. The work demonstrates that rotationally equivariant deep learning generalizes effectively even under severe data scarcity, and points toward similarly data-sparse biological structure prediction problems.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridging the protein-to-RNA gap.</b> AlphaFold-era methods for protein structure cannot be directly transferred to RNA because of far fewer known RNA 3D structures. ARES shows a principled path: build structural priors via rotational equivariance rather than sequence-level co-evolutionary statistics.</li>
+      <li><b>Minimal input, maximal generalization.</b> By requiring only atomic coordinates and element types — rather than nucleotide-level annotations, double-helix identifiers, or sequence — the scoring function is formalism-agnostic and generalizable to any biomolecule class.</li>
+      <li><b>Data efficiency at the extreme.</b> Training on only 18 experimentally solved RNA structures while outperforming three established baselines (Rosetta, RASP, 3dRNAscore) demonstrates that geometric inductive biases can substitute for large training sets.</li>
+      <li><b>Blind-challenge validation.</b> Top performance in the RNA-Puzzles challenge — where predictions are submitted before experimental structures are revealed — provides independent, unbiased confirmation of practical utility beyond benchmark comparisons.</li>
+      <li><b>Blueprint for other data-scarce macromolecules.</b> The ARES framework directly applies to other classes of RNA (aptamers, riboswitches) and, by extension, to RNA–protein complexes and other biomolecular structures where solved examples remain limited.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Computational innovation with broad biological impact:</b> the paper introduces a new class of scoring function using rotational equivariance — a methodological novelty that sits squarely at the intersection of machine learning and structural biology, exactly Nature Computational Science's remit.</li>
+      <li><b>Principled handling of data scarcity:</b> the work turns a known bottleneck (few known RNA structures) into a scientifically interesting design problem solved by geometric deep learning, rather than sidestepped by data augmentation or transfer learning shortcuts.</li>
+      <li><b>Real-world challenge benchmark:</b> validation through the RNA-Puzzles competition elevates the work beyond a computational study, providing community-recognized credibility.</li>
+      <li><b>Transferability claim with mechanistic grounding:</b> the architectural choice (equivariance to 3D rotation) is scientifically motivated, making the generalization claim testable and falsifiable — fitting the journal's appetite for rigorous ML-for-science.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training structures</dt><dd><strong>18 experimentally determined RNA 3D structures</strong> from the Protein Data Bank (PDB), used to generate approximately <strong>18,000 structural models</strong> (decoys) via existing prediction pipelines. This is a deliberately small set, chosen to reflect the real-world scarcity of known RNA 3D structures.</dd>
+      <dt>Prediction target</dt><dd>RNA structures <strong>not present in the training set</strong> — held-out test cases. Exact count not stated explicitly in the highlight; the benchmark suite is drawn from established scoring-function evaluation protocols used for Rosetta, RASP, and 3dRNAscore.</dd>
+      <dt>Blind challenge</dt><dd><strong>RNA-Puzzles</strong> community competition (<a href="https://www.rnapuzzles.org/" target="_blank">rnapuzzles.org</a>) — an ongoing blind RNA structure prediction challenge where predictors submit models before the experimental structure is released. Number of rounds and puzzles completed not specified in this highlight.</dd>
+      <dt>Baseline datasets</dt><dd>Compared against three published scoring methods: <strong>Rosetta</strong> (fragment-based energy function), <strong>RASP</strong> (Ribonucleic Acid Statistical Potential), and <strong>3dRNAscore</strong> — all evaluated on the same held-out structures.</dd>
+      <dt>Data availability</dt><dd>This is a Research Highlight (commentary), not a primary research article; the underlying methods and data are fully described in Townshend, R. J. L. et al. <i>Science</i> <b>373</b>, 1047–1051 (2021) — DOI <a href="https://doi.org/10.1126/science.abe5650" target="_blank">10.1126/science.abe5650</a>.</dd>
+      <dt>Code &amp; models</dt><dd>Not reported in this highlight; original Science article should be consulted for availability details.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Protein Data Bank (PDB)</td><td>Source of experimentally known RNA 3D structures for training</td><td>18 RNA structures → ~18,000 structural models (decoys)</td><td><a href="https://www.rcsb.org/" target="_blank">rcsb.org</a></td></tr>
+        <tr><td>RNA-Puzzles challenge</td><td>Blind structure prediction benchmark</td><td>Community-submitted targets (number of rounds not stated in highlight)</td><td><a href="https://www.rnapuzzles.org/" target="_blank">rnapuzzles.org</a></td></tr>
+        <tr><td>Rosetta / RASP / 3dRNAscore</td><td>Baseline scoring methods for comparison</td><td>Same held-out RNA structures as ARES test set</td><td>Published methods (see primary article)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: This article is a Research Highlight (brief commentary) rather than a full primary research paper. Quantitative details are drawn from the primary Science paper (Townshend et al. 2021) as reported in the highlight text. Exact held-out test-set size and RNA-Puzzles rounds are not specified in this highlight.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Atomic Rotationally Equivariant Scorer (ARES):</b> a deep neural network that takes only <strong>3D atomic coordinates and elemental type</strong> as input — no nucleotide-level features, no sequence information. The network output is an RMSD-based quality score for a predicted RNA structural model.</li>
+      <li><b>Rotational equivariance:</b> the architecture is built to respect the symmetry of 3D space — rotating the input structure produces a consistently rotated (not randomized) output. This geometric inductive bias allows learning from fewer examples and makes the scorer invariant to arbitrary molecular orientations.</li>
+      <li><b>Hierarchical feature learning:</b> ARES learns both <strong>local motif information</strong> (short-range atomic interactions) and <strong>extended global properties</strong> in deeper network layers, capturing structural patterns at multiple scales simultaneously.</li>
+      <li><b>Training on decoys:</b> ~18,000 structural models generated by existing RNA prediction pipelines from just 18 experimentally known RNA structures are used to teach the network which predicted structures are close to reality (low RMSD) versus poor models (high RMSD).</li>
+      <li><b>Benchmark evaluation:</b> performance measured as average RMSD of the top-ranked predicted models on held-out RNA structures, compared against Rosetta, RASP, and 3dRNAscore baselines.</li>
+      <li><b>RNA-Puzzles blind challenge submission:</b> prospective validation by submitting ARES-ranked models to an independent community challenge where experimental ground truth was withheld during prediction.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <p class="no-table">No figures available: this article is a one-page Research Highlight (commentary format); the original figures are in the primary research paper by Townshend et al. (<i>Science</i> 373, 2021). No figures were captured in the corpus for this highlight entry, and figures.json is empty.</p>
+    <p class="no-table">Tables: none in this highlight. Tables reporting full numerical results appear in Townshend et al. 2021.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, spatial accessibility, urban health).</p>
+
+    <div class="idea">
+      <h3>① Transfer the rotationally equivariant scoring design to spatial graph scoring of urban networks</h3>
+      <p><span class="lab paper">Extending this paper</span>ARES works because it encodes a <strong>symmetry prior</strong> (rotational equivariance in 3D molecular space) that is physically exact, allowing tiny training sets to generalize. The extension: apply the same symmetry-driven design philosophy to <strong>predict 3D molecular spectra and conformational properties</strong> of nucleotide analogs — e.g., drug-like RNA aptamers — using the same equivariant architecture, so that the data-efficiency virtue of ARES scales to drug discovery. This would extend the paper from a scoring tool to a generative screening pipeline, linking directly to the corpus work on deep learning for drug discovery and molecular property prediction.</p>
+      <p><span class="lab mine">Added value to my research</span>The core lesson — encode <strong>geometric symmetry as a hard architectural constraint</strong> rather than a regularizer learned from data — translates directly to <strong>physics-informed graph learning for spatiotemporal accessibility</strong>: encoding spatial invariances (rotation-/translation-invariant travel time) as hard constraints in a GNN would allow training accessibility models on far fewer city observations, matching the data-scarce regime I face with fine-grained health accessibility data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning large-scale drug discovery and repurposing — <a href="https://doi.org/10.1038/s43588-024-00679-4" target="_blank">10.1038/s43588-024-00679-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② From single-molecule scoring to ensemble uncertainty quantification for RNA structural ensembles</h3>
+      <p><span class="lab paper">Extending this paper</span>ARES produces a <strong>single point-estimate RMSD score</strong> for each structural model and thus cannot express epistemic uncertainty — a critical limitation when the training set contains only 18 known structures and the test molecule is distant from anything seen. Extending this paper: equip ARES with a <strong>Bayesian or conformal-prediction layer</strong> that outputs calibrated confidence intervals on the RMSD score, and then use these intervals to rank structural ensembles by coverage rather than point rank. This directly addresses the reliability question that the RNA-Puzzles judges face when comparing competing models. The corpus paper on molecular conformation deep learning provides a relevant methodological anchor for self-supervised uncertainty in 3D molecular models.</p>
+      <p><span class="lab mine">Added value to my research</span>Calibrated uncertainty in a data-scarce prediction setting is a challenge I share in <strong>spatial accessibility prediction</strong>: when predicting 2SFCA-based healthcare access in rural or data-sparse regions, confidence intervals on the predicted score matter as much as the point estimate. The ARES extension above provides a template for how geometric deep learning models can be made uncertainty-aware without large held-out validation sets.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep contrastive learning of molecular conformation for efficient property prediction — <a href="https://doi.org/10.1038/s43588-023-00560-w" target="_blank">10.1038/s43588-023-00560-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Replace nucleotide-specific features with universal atom-type inputs across RNA–protein complexes</h3>
+      <p><span class="lab paper">Extending this paper</span>ARES deliberately uses <strong>only atomic coordinates and elemental type</strong>, stripping away RNA-specific features to remain general. The natural next extension: apply ARES to <strong>RNA–protein complex scoring</strong>, where no dedicated scoring functions exist and known complexes are even scarcer than pure RNA structures. The paper argues this should work because the architecture respects chemistry at the atomic level, not at the residue level. The corpus work on protein sequence design by deep learning provides a complementary pipeline: once ARES scores an RNA–protein complex, the sequence design network can propose protein partners with optimal interface geometry.</p>
+      <p><span class="lab mine">Added value to my research</span>The cross-domain transferability argument — same architecture, new molecule class, no additional engineering — is exactly the argument I need for <strong>transferable GeoAI models</strong>: a graph operator trained on healthcare accessibility in one city class (e.g., dense Asian megacities) should transfer to sparse US suburban contexts without retraining, if spatial invariances are built in architecturally. ARES provides the proof-of-concept that this is achievable under severe data scarcity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Protein sequence design by deep learning — <a href="https://doi.org/10.1038/s43588-022-00274-5" target="_blank">10.1038/s43588-022-00274-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Scale ARES-style equivariant graph networks to universal biomolecular potential surfaces</h3>
+      <p><span class="lab paper">Extending this paper</span>ARES functions as a <strong>quality discriminator</strong> (good vs. bad structural model) rather than a generative model of the potential energy surface. The corpus paper on universal graph deep learning interatomic potentials (M3GNet) shows that exactly the same graph-convolution-plus-equivariance recipe can produce an energy function covering the entire periodic table. Extending ARES: reformulate its RMSD scorer as a <strong>coarse-grained free energy estimator</strong> for RNA conformations — bridging scoring to thermodynamics — and leverage M3GNet's universal IAP design to handle the mixed organic chemistry of nucleotide backbone and non-canonical base pairs without element-specific hand-engineering.</p>
+      <p><span class="lab mine">Added value to my research</span>The design pattern — a single universal graph operator that covers a continuous input space (atomic configurations; or, in my case, spatial configurations of facilities and populations) rather than being calibrated per molecule class (or per city) — is directly transferable to <strong>universal spatial accessibility operators</strong> that work across city types and service categories without refitting. This aligns with my geospatial foundation model fine-tuning research direction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table — <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Combine topological surface learning with ARES-style equivariant scoring for 3D RNA-targeted drug design</h3>
+      <p><span class="lab paper">Extending this paper</span>ARES excels at <strong>discriminating structural model quality</strong> but does not generate new RNA structures or design small molecules that bind them. The corpus paper on learning on topological surfaces for 3D molecular generation provides exactly the complementary generative capability. Extending ARES into a full design pipeline: (i) use ARES to score and filter generated RNA structural decoys, (ii) feed high-scoring structures to the topological surface generator as binding-pocket targets, (iii) iterate scorer and generator jointly via reinforcement learning. This closes the loop between structural scoring and molecular design, turning ARES from a tool for structural biologists into a drug-discovery accelerator for RNA-targeting therapeutics.</p>
+      <p><span class="lab mine">Added value to my research</span>The <strong>scorer + generator + RL loop</strong> design pattern is directly translatable to my <strong>facility-location and EV charging-station optimization</strong> work: a spatial scorer (measuring equity + efficiency of a facility configuration) paired with a generative policy (proposing new placements) and closed via RL mirrors the drug design pipeline exactly. ARES shows that a data-scarce scorer can still guide a generative model effectively — a reassuring result for urban optimization where ground-truth optimal configurations are never observed.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning on topological surface and geometric structure for 3D molecular generation — <a href="https://doi.org/10.1038/s43588-023-00530-2" target="_blank">10.1038/s43588-023-00530-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

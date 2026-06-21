@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A machine learning-based model for the quantification of mental conflict — AI Digest</title>
+<meta name="description" content="AI Digest: A machine learning-based model for the quantification of mental conflict (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Computational Neuroscience</span>
+      <span class="tag">Reinforcement Learning</span>
+      <span class="tag">Decision Making</span>
+    </div>
+    <h1>A machine learning-based model for the quantification of mental conflict</h1>
+    <div class="meta">
+      <span class="authors">Yuki Konaka · Honda Naoki</span>
+      <span><b>Published</b> 2023-05-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00444-z" target="_blank">10.1038/s43588-023-00444-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00444-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Mental conflict — long considered purely subjective — can now be <strong>quantified from behavioral time-series</strong>. By extending the Free Energy Principle (FEP) with a meta-parameter governing the balance between reward-seeking and curiosity, and pairing it with a machine learning decoder, the authors show that rats' reward–curiosity conflict can be tracked moment-to-moment from observed choices: animals exhibited <strong>negative average curiosity</strong> (preferring certain rewards) yet <strong>adaptively spiked curiosity</strong> in response to sudden environmental changes, demonstrating active inference with autonomously controlled exploration.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>First quantitative window into subjective mental conflict.</b> The work transforms an inherently private psychological state (the tension between wanting a sure reward versus satisfying curiosity) into a <strong>continuous, time-resolved signal</strong> readable from observable behavior alone.</li>
+      <li><b>Bridges computational theory and translational psychiatry.</b> By decoding curiosity dynamics without access to the animal's brain, the framework opens a path toward <strong>quantitative behavioral biomarkers</strong> for conditions such as ADHD (excess curiosity), autism (reduced curiosity), and social withdrawal (hikikomori) — all without neuroimaging.</li>
+      <li><b>Unifies reward and information-maximization theories.</b> Standard reinforcement learning (RL) maximizes reward; the FEP maximizes information gain. This paper provides a <strong>single parameterized model</strong> that interpolates between the two, capturing irrational or exploratory decision-making neither theory alone can explain.</li>
+      <li><b>Observer-side decoding:</b> the decoder operates from the <em>external observer's perspective</em> — no invasive neural recording needed — making it directly applicable to any behavioral experiment or clinical interview enhanced with behavioral logging.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty at the interface of ML and neuroscience:</b> introduces a new algorithmic framework (inverse FEP decoder) with broad applicability to behavioral science — the kind of transferable computational contribution the journal prizes.</li>
+      <li><b>Concise, high-impact form:</b> the paper is a Research Briefing — demonstrating a tight, self-contained proof of concept that translates a deep theoretical idea (FEP) into a practical ML tool for quantifying hidden mental states.</li>
+      <li><b>Strong interdisciplinary reach:</b> simultaneously advances computational modeling, animal behavioral neuroscience, and clinical psychiatry, aligning with the journal's cross-disciplinary mandate.</li>
+      <li><b>Expert endorsement from a field founder:</b> Karl J. Friston (originator of the FEP) called the inverse-FEP procedure "compelling" and noted its potential for pharmacological translation — underscoring the significance of the contribution.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary data</dt><dd>Behavioral time-series from a <strong>rat slot machine task</strong> (originally published by Samejima et al., J. Neuroscience 2009; doi: 10.1523/JNEUROSCI.6157-08.2009). The task presents two options with the same reward but different probabilities; reward probabilities switch intermittently. Exact number of rats and trials is not stated in the article text; the referenced dataset is from an existing published study.</dd>
+      <dt>Task design</dt><dd>Two-armed bandit (slot machine) in which reward probabilities change over time, creating alternating phases of high certainty and sudden recognition uncertainty — the behavioral signature of reward–curiosity conflict.</dd>
+      <dt>Model parameters</dt><dd>The FEP is extended with a scalar <strong>meta-parameter</strong> controlling the temporal dynamics of conflict between reward and curiosity. This parameter is estimated via machine learning (decoding) from the observed choice sequence.</dd>
+      <dt>Code / Software</dt><dd>No public repository stated in article text. The article is a Research Briefing; detailed methods are implicit in the theoretical derivation. Code availability not explicitly declared.</dd>
+      <dt>Data availability</dt><dd>Raw behavioral data are from the referenced Samejima et al. (2009) study. No independent new data repository is declared in this briefing article.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Rat slot machine task (Samejima et al., 2009)</td><td>Primary behavioral time-series for decoding</td><td>Animal subjects; exact N not stated in briefing</td><td><a href="https://doi.org/10.1523/JNEUROSCI.6157-08.2009" target="_blank">doi link</a></td></tr>
+        <tr><td>Extended FEP model (this work)</td><td>Theoretical/computational framework</td><td>Single meta-parameter model; simulation-based validation</td><td>Nature Computational Science (2023)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this is a Research Briefing of a primary research article (doi: 10.1038/s43588-023-00439-w). The briefing does not independently report sample sizes or data access links; exact experimental volumes should be sought from the companion full paper.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Extended Free Energy Principle (FEP):</b> the standard FEP (which maximizes the sum of reward and environmental information gain) is augmented with a <strong>time-varying meta-parameter</strong> that controls how much an agent weights curiosity versus reward at each moment — enabling a formal, continuous representation of conflict.</li>
+      <li><b>Machine learning decoding:</b> the temporal dynamics of the curiosity parameter are <strong>decoded from observed behavioral sequences</strong> (choices), treating the animal as a black box and inferring its internal conflict state from the outside. The 68% confidence interval on estimated curiosity is reported, providing uncertainty quantification.</li>
+      <li><b>Active inference test:</b> the authors develop a method to <strong>discriminate curiosity-driven exploration from random exploration</strong>, demonstrating that rats engage in deliberate (active) inference rather than stochastic wandering.</li>
+      <li><b>Slot machine paradigm:</b> using a two-armed bandit with intermittently switching reward probabilities as a controlled behavioral probe that reliably induces and varies the reward–curiosity conflict.</li>
+      <li><b>Inverse problem framing:</b> the ML step solves an <em>inverse FEP</em> — inferring hidden belief states (curiosity level, recognition confidence) of the experimental subject purely from observable behavior, analogous to observer-side state estimation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-machine-learning-based-model-for-the-quantification-of-mental-conflict__s43588-023-00444-z/fig1.png" target="_blank">
+        <img src="assets/a-machine-learning-based-model-for-the-quantification-of-mental-conflict__s43588-023-00444-z/fig1.png" alt="Fig.1 Decoding reward-curiosity conflict from rat behavioral data" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Decoding reward–curiosity conflict from rat behavioral data. Panel (a): slot machine task illustration — reward probabilities for both options switch intermittently. Panel (b): decoded curiosity over time — the orange line and shaded 68% CI show mostly negative curiosity (preference for certainty) with adaptive spikes after reward-probability switches.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 in this Research Briefing). The companion full article (10.1038/s43588-023-00439-w) may contain supplementary materials.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis for public/urban health policy).</p>
+
+    <div class="idea">
+      <h3>① Scale the inverse-FEP decoder to multi-timescale conflict dynamics</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper introduces a single meta-parameter that smoothly interpolates between reward and curiosity at one temporal resolution. However, real decision-making involves <strong>multiple nested timescales</strong> — within-trial fast reactions, episode-level habit formation, and long-run life strategy. A direct extension: decompose the meta-parameter into a hierarchy of timescales, each decoded separately, and test whether the brain arbitrates between them as recent neuroscience suggests (multi-timescale RL in corticostriatal circuits). This would make the conflict decoder richer and more neurobiologically grounded.</p>
+      <p><span class="lab mine">Added value to my research</span>The multi-timescale idea maps onto my <strong>spatiotemporal kernel density estimation</strong> work: just as behavioral conflict operates across nested time horizons, spatial access patterns (commute, weekly errand, occasional hospital visit) operate across nested spatial-temporal scales. The inverse-FEP hierarchy could inspire a <em>multi-scale accessibility decoder</em> that infers latent travel-demand conflict (distance vs. time vs. cost) from observed mobility traces — relevant for 2SFCA catchment design under multi-modal transport.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multi-timescale reinforcement learning in the brain — <a href="https://doi.org/10.1038/s41586-025-08929-9" target="_blank">10.1038/s41586-025-08929-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace the single meta-parameter with a learned recurrent network that discovers cognitive strategies</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's conflict parameter is a <strong>scalar</strong> estimated by fitting a single equation to behavioral data. This limits expressiveness: real animals may switch between qualitatively different cognitive strategies (exploitation, rule-following, novelty-seeking) not captured by a one-dimensional dial. Extending the paper: replace the scalar meta-parameter with a <strong>tiny recurrent neural network (RNN)</strong> trained to decode latent strategy from behavioral sequences, then interpret the RNN's hidden states as conflict dimensions. This follows recent work showing that minimal RNNs can discover human-interpretable cognitive strategies in choice tasks.</p>
+      <p><span class="lab mine">Added value to my research</span>For my <strong>explainable ML</strong> agenda, this is a direct template: a small interpretable RNN acting as a state decoder whose hidden states correspond to named conflict axes (reward preference, curiosity drive, uncertainty aversion). In health-geography terms, the same architecture could decode latent access-seeking strategies from patient GPS trajectories — revealing when a person switches from routine GP visits to urgent care-seeking, informing R2SFCA's dynamic catchment shape.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Discovering cognitive strategies with tiny recurrent neural networks — <a href="https://doi.org/10.1038/s41586-025-09142-4" target="_blank">10.1038/s41586-025-09142-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply distributional RL to model not just mean curiosity but the full distribution of conflict states</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reports a point estimate of curiosity with a 68% confidence interval, but the full <strong>distribution of reward expectations</strong> — not just the mean — may be the neurally relevant signal. An extension: reformulate the conflict meta-parameter within a <strong>distributional RL</strong> framework, where separate pathways encode optimistic and pessimistic reward expectations, and the curiosity drive emerges from their disagreement. This would connect the paper to the emerging neuroscience of distributional RL encoded in opponent striatal circuits.</p>
+      <p><span class="lab mine">Added value to my research</span>Distributional thinking transfers directly to spatial health equity: instead of a point estimate of healthcare access, compute the <strong>full distribution of access levels</strong> for a population cell, and define equity as the tails of that distribution narrowing. This distributional R2SFCA would provide richer equity metrics than current mean-access scores — and the optimistic/pessimistic split mirrors spatial optimization scenarios (best-case redistribution vs. worst-case congestion).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> An opponent striatal circuit for distributional reinforcement learning — <a href="https://doi.org/10.1038/s41586-024-08488-5" target="_blank">10.1038/s41586-024-08488-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Make the conflict decoder interpretable: open the ML black box for clinical psychiatry</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's ML decoder is presented as a proof of concept but the article does not discuss <strong>what features of the behavioral sequence</strong> drive the decoded curiosity value — the decoder is essentially a black box relative to the clinician. Extending it: apply post-hoc explainability methods (SHAP, attention maps) to identify which behavioral signatures (reaction times, switch frequency, streak length) are the most informative predictors of the conflict state. This would make the framework usable for diagnostic interpretability and regulatory transparency in clinical settings, avoiding the pitfall that opaque ML models for high-stakes decisions invite.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps squarely onto my <strong>explainable ML for spatial prediction</strong> agenda: the same SHAP-based attribution logic I apply to geospatial features (e.g., which neighborhood attributes most drive mental health service utilization) can be applied here to temporal behavioral features — creating a unified explainability workflow for both spatial and temporal black-box decoders in health contexts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead — <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the reward–curiosity conflict model to spatial decision-making and digital health accessibility</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper focuses on a temporal slot machine, but <strong>spatial choices</strong> (which clinic to visit, which route to take, whether to try a new facility) involve the same reward–curiosity trade-off: known nearby options (certain reward) versus unexplored farther options (curiosity-driven). Extending the framework to <strong>spatial decision tasks</strong> would allow decoding the temporal dynamics of facility-choice conflict from GPS or app-interaction logs — enabling a spatially-situated version of the conflict quantifier applied to urban or healthcare mobility.</p>
+      <p><span class="lab mine">Added value to my research</span>For my <strong>telehealth and digital health divide</strong> work, this is immediately actionable: patients face a reward–curiosity conflict between trusted known providers (low curiosity, certain reward) and new digital/telehealth options (high curiosity, uncertain reward). Decoding that conflict from appointment and search logs — using the paper's ML framework extended to spatial sequences — could predict adoption of telehealth services and inform targeted outreach. It would also enrich my mental health accessibility analysis by measuring the <em>revealed willingness to explore</em> new care modalities beyond revealed proximity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reward magnitude determines reinforcement learning efficiency — <a href="https://doi.org/10.1126/science.aeb0813" target="_blank">10.1126/science.aeb0813</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature / Konaka, Y. et al., CC BY 4.0; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

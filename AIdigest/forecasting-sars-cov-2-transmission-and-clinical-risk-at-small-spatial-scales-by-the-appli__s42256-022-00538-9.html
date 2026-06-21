@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forecasting SARS-CoV-2 transmission and clinical risk at small spatial scales — AI Digest</title>
+<meta name="description" content="AI Digest: Forecasting SARS-CoV-2 transmission and clinical risk at small spatial scales by the application of machine learning architectures to syndromic surveillance data (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Syndromic Surveillance</span>
+      <span class="tag">Spatiotemporal ML</span>
+      <span class="tag">COVID-19 Forecasting</span>
+      <span class="tag">Public Health</span>
+    </div>
+    <h1>Forecasting SARS-CoV-2 transmission and clinical risk at small spatial scales by the application of machine learning architectures to syndromic surveillance data</h1>
+    <div class="meta">
+      <span class="authors">Thomas Ward · Alexander Johnsen · Stanley Ng · François Chollet</span>
+      <span><b>Published</b> 2022-10-21</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00538-9" target="_blank">10.1038/s42256-022-00538-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00538-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A novel <strong>spatio-integrated LSTM (SI-LSTM)</strong> neural network architecture, trained on digital syndromic data — Google Trends search volumes, Google and telecoms mobility, NHS Pathways 119 calls, and website testing journeys — can forecast SARS-CoV-2 <strong>hotspot locations at the local authority district (LAD) level</strong> in the UK over horizons of up to <strong>40 days</strong> with accuracy exceeding <strong>99%</strong> on case risk scores, improving over shallow baselines by up to <strong>15%</strong>. In operational public health use, the models detected the pre-exponential growth of the <strong>Alpha</strong> (Nov 2020), <strong>Delta</strong> (Apr 2021), and <strong>Omicron</strong> (Nov 2021) variants within UK local authorities <em>before</em> clinical data confirmed their spatial spread.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Turns digital exhaust into an early-warning system.</b> By fusing Google Trends RSVs, mobility records, call-centre logs, and website testing journeys — all available with near real-time latency — the framework identifies outbreak hotspots weeks before traditional clinical indicators respond.</li>
+      <li><b>Fine-grained spatial resolution.</b> Operating at the <strong>local authority district (LAD)</strong> level across all four UK nations (363 LADs), the approach delivers actionable sub-national spatial intelligence that national-level models cannot provide.</li>
+      <li><b>A novel architecture that embeds spatial epidemiology.</b> The SI-LSTM's <em>inter-location concatenation layer</em> — merging 363 parallel LAD branches into a shared tensor — enables inter-location information sharing and is the specific design responsible for the performance leap over both non-spatial deep models and all shallow baselines.</li>
+      <li><b>Operationally validated in real pandemic management.</b> Models were deployed within the UK's coordinated COVID-19 response, providing decision-ready spatial risk scores, not retrospective research results — a rare example of epidemiological ML used live in policy.</li>
+      <li><b>Generalizable framework for future pathogens.</b> The SI-LSTM architecture and digital-data pipeline are pathogen-agnostic; the authors explicitly anticipate uses beyond COVID-19, including long-COVID geography and inter-pandemic respiratory surveillance.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel neural architecture with domain insight:</b> the SI-LSTM/SI-CNN-LSTM designs embed spatial epidemiology structure — inter-LAD interaction — directly into the network topology, a genuine ML methodological contribution, not just an application of existing tools.</li>
+      <li><b>Measurable, real-world impact:</b> operational deployment within UKHSA/SAGE during an active pandemic satisfies NMI's preference for contributions with demonstrated societal benefit at scale.</li>
+      <li><b>Multi-source data fusion methodology:</b> introduces a systematic approach to selecting, lagging, and fusing heterogeneous digital data streams for spatiotemporal forecasting — a reusable pipeline of broad methodological interest beyond COVID-19.</li>
+      <li><b>Scale and rigor:</b> 2,057 total models including sensitivity analyses, k-fold cross-validation, multi-epoch deep learning with convergence analysis, and a prospective public-health validation against sequenced variant genomic data.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Spatial coverage</dt><dd>All four UK nations at <strong>local authority district (LAD)</strong> level — <strong>363 LADs</strong> used as independent spatial branches in the deep learning model.</dd>
+      <dt>Temporal window</dt><dd>Data collected from <strong>1 October 2020</strong>; model performance evaluated to <strong>July 2021</strong>, covering the Alpha and Delta waves; operational use extended through November 2021 (Omicron detection).</dd>
+      <dt>Google Trends</dt><dd>Hourly relative search volumes (RSVs) for <strong>1,108 COVID-19-related search terms</strong> collected across <strong>4,013 city-level locations</strong> in the UK; 94 terms retained after generalized additive model screening. Data accessed via Google Health Trends API (with Google editorial team support for data acquisition).</dd>
+      <dt>Google Mobility</dt><dd>Change in visits/length of stay at six place categories (grocery &amp; pharmacy, parks, transit, retail &amp; recreation, residential, workplaces) versus Jan–Feb 2020 baseline, at LAD level. Available at <a href="https://www.google.com/covid19/mobility" target="_blank">google.com/covid19/mobility</a>.</dd>
+      <dt>Telecoms mobility</dt><dd>Journey counts by demographic and person category (resident/worker/visitor) at <strong>middle layer super output area (MSOA)</strong> level from UK telecoms operators, aggregated to LAD via ONS lookups.</dd>
+      <dt>NHS Pathways 119</dt><dd>Call records from the NHS Test &amp; Trace 119 line (established May 2020), including call date, reason, and geographic location, aggregated to LAD — two call types: "Test enquiry — request a test" and all calls regardless of reason.</dd>
+      <dt>Website testing demand</dt><dd>Symptomatic and asymptomatic COVID-19 test booking journeys from the <strong>Test and Trace Adobe Analytics platform</strong>, geolocated by IP address and aggregated to LAD; includes a testing availability metric (completions / final-stage users per location per day).</dd>
+      <dt>Clinical targets</dt><dd>Population-normalized PCR-positive cases (UKHSA National Pathology Exchange), hospitalizations (Admitted Patient Care dataset — APC), and mortalities (UKHSA COVID-19 death linelist + Scotland/NI public dashboards), all at LAD level, smoothed over rolling 7-day windows. UK coronavirus dashboard: <a href="https://coronavirus.data.gov.uk" target="_blank">coronavirus.data.gov.uk</a>.</dd>
+      <dt>Data access</dt><dd>Google mobility and Google Trends publicly available. PCR/APC/mortality data require application to UK Health Security Agency Office for Data Release (<a href="https://www.gov.uk/government/publications/accessing-public-health-england-data/about-the-phe-odr-and-accessing-data" target="_blank">PHE ODR</a>); subject to Caldicott principles and GDPR provisions.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Google Trends RSV</td><td>Leading indicator: symptom &amp; healthcare-seeking search behaviour</td><td>1,108 terms; 4,013 UK locations; hourly; 94 retained after screening</td><td><a href="https://trends.google.com" target="_blank">trends.google.com</a> / Health Trends API</td></tr>
+        <tr><td>Google Mobility</td><td>Leading indicator: movement patterns vs. pre-pandemic baseline</td><td>6 place categories, LAD level, UK-wide</td><td><a href="https://www.google.com/covid19/mobility" target="_blank">google.com/covid19/mobility</a></td></tr>
+        <tr><td>Telecoms Mobility</td><td>Leading indicator: journey counts by person type</td><td>MSOA level, aggregated to 363 LADs</td><td>UK telecoms operators (restricted)</td></tr>
+        <tr><td>NHS Pathways 119 calls</td><td>Leading indicator: healthcare-seeking demand</td><td>Call date/reason/location, aggregated to LAD</td><td>NHS Test &amp; Trace (restricted)</td></tr>
+        <tr><td>Website test request journeys</td><td>Leading indicator: testing demand &amp; availability metric</td><td>Symptomatic/asymptomatic completions, LAD level</td><td>Test and Trace Adobe Analytics (restricted)</td></tr>
+        <tr><td>UKHSA PCR cases, hospitalisations &amp; deaths</td><td>Target variable: risk score training labels</td><td>363 LADs, daily, normalized per million, 7-day rolling smooth</td><td><a href="https://coronavirus.data.gov.uk" target="_blank">coronavirus.data.gov.uk</a> / UKHSA ODR</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact total observation counts are not stated in the paper; figures above are taken verbatim from the article. Telecoms and NHS data require formal data-sharing agreements with UKHSA. Wales mortality data were not available at LAD geography and are excluded from mortality targets.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Leading indicator screening:</b> generalized additive models with negative binomial error structure and <strong>dynamic time warping</strong> applied to 1,108 Google Trends terms plus other digital sources to identify 94 useful leading terms and rank feature groups by importance.</li>
+      <li><b>Outbreak risk scoring:</b> dynamic, epidemiologically informed risk thresholds for population-normalized PCR cases, hospitalizations, and mortalities at LAD level — adjusted per epidemic phase and variant severity to be robust to ascertainment bias fluctuations.</li>
+      <li><b>Shallow learning baselines:</b> Random Forest, XGBoost, GBM, and Naïve Bayes with features lagged 15–40 days; k-fold cross-validation (k=10); ensemble stacking via second-level XGBoost meta-learner; total of 2,057 models including hyperparameter sensitivity sweeps.</li>
+      <li><b>SI-LSTM architecture:</b> 363 parallel location-specific branches (each: LSTM layers → time-distributed dropout → dense side-output), all concatenated into a single inter-location tensor before a final softmax dense layer — simultaneously encoding intra- and inter-location spatio-temporal signals.</li>
+      <li><b>SI-CNN-LSTM variant:</b> prepends 1D convolutional layers, max pooling, and flatten layers before LSTM stages in each branch, exploiting weight sharing to amplify features and reduce parameter count before temporal modelling.</li>
+      <li><b>Training protocol:</b> 7-day lookback window; log-transform + z-score normalization; one-hot encoded categorical targets; categorical cross-entropy loss; RMSprop optimizer (lr ≈ 0.001, dynamic decay on validation-loss plateau); batch shuffling; convergence in 15–30 epochs depending on target.</li>
+      <li><b>Univariate benchmark:</b> ARIMA with modified Hyndman–Khandakar algorithm for stepwise performance tuning — demonstrated &lt;50% accuracy at epidemic change points, establishing the hard floor the deep learning models must exceed.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig1.png" target="_blank">
+        <img src="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig1.png" alt="Fig.1 SI-LSTM architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Architecture of the SI-LSTM — 363 parallel LAD branches with LSTM layers and time-distributed dropout, each producing a side-output, all concatenated into a single inter-location tensor for the final softmax output.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig2.png" target="_blank">
+        <img src="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig2.png" alt="Fig.2 SI-CNN-LSTM architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Architecture of the SI-CNN-LSTM — adds 1D convolutional layers, max-pooling, and flatten layers before the LSTM stages in each branch to amplify features and reduce parameters via weight sharing.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig3.png" target="_blank">
+        <img src="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig3.png" alt="Fig.3 Geospatial connection network of 363 LADs" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> The geospatial connection network — all 363 LAD tensor branches merged on a single concatenation axis, enabling the model to learn inter-location feature weighting across the UK.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig4.png" target="_blank">
+        <img src="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig4.png" alt="Fig.4 Top-30 Google Trends search terms by RSV" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Top-30 Google Trends search terms by relative search volume at LAD — COVID-19 test requests dominate; key symptom entity terms include sore throat, cough, fatigue, fever, and shortness of breath.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig5.png" target="_blank">
+        <img src="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig5.png" alt="Fig.5 Model accuracy across temporal lag periods" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Model accuracy for case, hospitalization, and mortality risk scores across 15–40 day lag periods — SI-LSTM peaks at 99.4% (cases, 25d lag), 96.3% (hospitalisations, 40d lag), 84.8% (mortality, 25d lag).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig6.png" target="_blank">
+        <img src="assets/forecasting-sars-cov-2-transmission-and-clinical-risk-at-small-spatial-scales-by-the-appli__s42256-022-00538-9/fig6.png" alt="Fig.6 Case risk predictions vs. sequenced Alpha and Omicron variants" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Maps of England showing confirmed case risk predictions (1 Nov 2020; 20 Nov 2021) vs. sequenced Alpha/Omicron case counts — model identifies the Kent Alpha cluster and London/South-East Omicron seeding weeks before clinical confirmation.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (main text tables = 0). Extended Data contains 2 tables (ARIMA performance and feature importance by algorithm/phase). Supplementary contains Tables 1–2 (feature summary; hyperparameters) and Figs. 1–5, plus R code for deep and shallow models.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal ML, health geography).</p>
+
+    <div class="idea">
+      <h3>① Replace the fixed spatial topology with a learned, mobility-weighted disease-spread graph</h3>
+      <p><span class="lab paper">Extending this paper</span>The SI-LSTM's inter-location concatenation layer hard-wires all 363 LADs into one shared tensor — effective but topologically agnostic, giving equal latent weight to Kent and a remote rural LAD regardless of actual connectivity. A direct extension of the paper: replace this fixed concatenation with a <strong>learned adjacency matrix derived from inter-LAD telecoms mobility flows</strong>, updated dynamically as mobility patterns shift across epidemic phases. This would make inter-location signal weighting epidemiologically grounded — high-flow LAD pairs share information more strongly — and could reveal which spatial transmission corridors were predictive for each variant wave: a question the current architecture cannot answer.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning agenda is precisely about encoding domain priors (here: mobility-weighted contagion) into network architectures. Reformulating the SI-LSTM inter-location layer as an <strong>adaptive mobility graph</strong> is a concrete test-case for building spatiotemporal GNNs where graph topology is a latent variable — directly applicable to my work on graph-based prediction for public-health and urban access settings.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Mobility network models of COVID-19 explain inequities and inform reopening — <a href="https://doi.org/10.1038/s41586-020-2923-3" target="_blank">10.1038/s41586-020-2923-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Make the risk score interpretable with spatially stratified SHAP attribution</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper uses a Random Forest for overall feature group importance but the SI-LSTM's predictions are black-box: policymakers know that Google Trends matters most nationally but cannot see <em>which specific terms</em> drove the Kent hotspot flag in November 2020 versus the London Omicron cluster in November 2021. Extending it: apply <strong>spatially stratified SHAP values</strong> to SI-LSTM outputs — one SHAP profile per LAD per time step — to map which digital signal (mobility drop, symptom search term, 119 call surge) carries the most weight at each location and epidemic phase. This also flags structural failures: LADs where prediction confidence is high but SHAP attribution is noisy signal model artifacts rather than epidemiological signal, often in digitally deprived areas.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable ML for spatial health prediction is a central theme of my work. Adding spatial SHAP to an operational epidemic model sharpens the argument that <strong>XAI methods can be trusted in high-stakes public health decisions</strong> — a parallel to my GeoShapley work for healthcare access prediction. It also opens a path to understanding digital-divide effects on model reliability across LAD deprivation gradients, linking XAI to health equity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning for data-centric epidemic forecasting — <a href="https://doi.org/10.1038/s42256-024-00895-7" target="_blank">10.1038/s42256-024-00895-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Embed a healthcare accessibility surface as a confounding layer in risk scoring</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper acknowledges that ascertainment bias — especially in deprived areas with poor testing access — distorts the confirmed case risk score. The correction employed (testing availability as a model feature) is indirect and conflates supply shortage with demand behaviour. A more principled extension: explicitly embed a <strong>spatial healthcare accessibility surface</strong> (e.g., a 2SFCA-derived score for testing-site access at LAD level) as a structural covariate in the risk scoring layer. LADs with low testing access would have their digital-signal predictions up-weighted while their case-count targets would be correspondingly de-weighted in training loss, producing a spatially calibrated, heteroskedastic model rather than one that naively trusts raw case counts.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly couples my 2SFCA/R2SFCA healthcare accessibility methods to epidemic surveillance — a bridge between health geography and data-driven modelling. It generates a <strong>spatial equity layer for pandemic prediction</strong>: showing where algorithmic risk scores are structurally less reliable due to access inequity, which is itself a health geography finding relevant to telehealth and digital-divide research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Socio-spatial inequality and the effects of density on COVID-19 transmission in US cities — <a href="https://doi.org/10.1038/s44284-023-00008-2" target="_blank">10.1038/s44284-023-00008-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Transfer the SI-LSTM pipeline to multi-pathogen respiratory surveillance</h3>
+      <p><span class="lab paper">Extending this paper</span>The authors explicitly state that the SI-LSTM "has uses beyond the epidemiological application described in this paper" but do not operationalize this claim. A concrete extension: re-train the pipeline on <strong>18 co-circulating respiratory viruses</strong> (influenza A/B, RSV, rhinovirus, adenovirus, parainfluenza, etc.) simultaneously, replacing the single COVID risk label with a multi-label target and modifying the inter-location concatenation to share spatial signal across both LADs and pathogens. Google Trends already captures symptom terms (cough, fever, shortness of breath) that are pathogen-non-specific, making the feature set immediately transferable without re-collection.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-pathogen spatiotemporal modelling sharpens my methodological toolkit in two ways: it tests whether <strong>the spatially integrated LSTM design generalizes across disease contexts</strong> (relevant to my SIR-informed ML models), and the resulting multi-label spatial risk maps are directly useful for health facility siting and catchment re-design via 2SFCA — if respiratory burden clusters in certain LADs, service-area delineation should reflect that burden distribution.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Impacts of human mobility on the citywide transmission dynamics of 18 respiratory viruses in pre- and post-COVID-19 pandemic years — <a href="https://doi.org/10.1038/s41467-024-48528-2" target="_blank">10.1038/s41467-024-48528-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Fuse aggregated mobility with individual-level trajectory entropy to refine the leading-indicator signal</h3>
+      <p><span class="lab paper">Extending this paper</span>The telecoms mobility data in the paper are aggregated journey counts by person type — useful for trend detection but unable to distinguish whether reduced mobility reflects NPI compliance, school closures, or voluntary behavioural change, and they smooth over within-LAD heterogeneity. Extending the pipeline: fuse the paper's aggregated mobility features with <strong>anonymized individual-trajectory entropy metrics</strong> (radius of gyration, visitation frequency distribution, contact diversity index) derived from mobile-phone GPS logs. These entropy signals have been shown to predict transmission risk more precisely than gross mobility change, and they vary heterogeneously across LADs in ways aggregate data cannot reveal. The SI-LSTM's per-branch architecture already accommodates additional features per LAD without architectural changes.</p>
+      <p><span class="lab mine">Added value to my research</span>Mobile-phone GPS trajectory analysis is one of my core data sources for spatiotemporal human mobility modelling. Connecting individual-level entropy metrics to an operational epidemic forecasting pipeline is a direct proof-of-concept for my <strong>multi-source data fusion agenda</strong> — demonstrating that fine-grained mobility signatures from phones, when spatially indexed to LAD geography, add predictive signal beyond what Google's aggregate reports capture, with implications spanning both public health and urban analytics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A systematic review of using population-level human mobility data to understand SARS-CoV-2 transmission — <a href="https://doi.org/10.1038/s41467-024-54895-7" target="_blank">10.1038/s41467-024-54895-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

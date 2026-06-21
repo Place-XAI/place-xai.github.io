@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listening in to perceived speech with contrastive learning — AI Digest</title>
+<meta name="description" content="AI Digest: Listening in to perceived speech with contrastive learning (Nature Machine Intelligence, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Speech Decoding</span>
+      <span class="tag">Contrastive Learning</span>
+      <span class="tag">EEG/MEG</span>
+      <span class="tag">Brain-Computer Interface</span>
+    </div>
+    <h1>Listening in to perceived speech with contrastive learning</h1>
+    <div class="meta">
+      <span class="authors">Sergey D. Stavisky · Maitreyee Wairagkar</span>
+      <span><b>Published</b> 2023-10-18</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-023-00742-1" target="_blank">10.1038/s42256-023-00742-1</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-023-00742-1" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A contrastive deep learning pipeline — pairing a <strong>brain module</strong> processing EEG/MEG signals with a <strong>speech module</strong> encoding candidate audio segments — enables <strong>non-invasive decoding of perceived speech</strong> directly from neural activity recorded outside the scalp. By training the brain module to produce representations that are <strong>maximally distinguishable</strong> across speech candidates, the approach achieves state-of-the-art word identification without requiring surgical implants, marking a significant step toward accessible neural speech prosthetics.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Non-invasive speech BCI becomes viable.</b> Prior high-accuracy speech decoding required invasive intracranial electrodes; this work demonstrates competitive performance using scalp-level EEG or MEG — dramatically widening the population of potential users.</li>
+      <li><b>Contrastive learning bridges two modalities.</b> The paper articulates a principled framework: rather than regressing neural signals directly to phonemes, the method <em>aligns brain representations to speech representations</em> in a shared embedding space — a conceptual advance applicable beyond speech.</li>
+      <li><b>Removes the labeling bottleneck.</b> Contrastive training exploits naturally paired (neural recording, audio stimulus) examples, reducing dependence on expensive phoneme-level annotations, and enabling large-scale pre-training on naturalistic listening data.</li>
+      <li><b>Clinical relevance for communication disorders.</b> Locked-in syndrome, ALS, and severe aphasia patients could one day use wearable EEG headsets to restore speech communication, enabled by this non-invasive decoding paradigm.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methods at the intersection of AI and neuroscience:</b> the paper demonstrates how a modern ML technique (contrastive self-supervised learning) solves a long-standing neuroscience challenge — the ideal territory for Nature Machine Intelligence.</li>
+      <li><b>Broad transferability of the framework:</b> the brain-module + speech-module architecture is a general recipe; the editorial value lies in the conceptual contribution, not just the accuracy numbers.</li>
+      <li><b>Societal and clinical impact:</b> non-invasive BCI for speech restoration is among the most anticipated assistive technologies — aligning with the journal's emphasis on high-impact AI applications.</li>
+      <li><b>News &amp; Views format:</b> as a commentary on the primary Défossez et al. paper (published in the same issue), this piece contextualizes the advance for the broader machine intelligence community — exactly the bridging role the journal's News &amp; Views section serves.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>This is a <strong>News &amp; Views</strong> commentary on the primary research paper by Défossez et al. (Nature Machine Intelligence, 2023). It does not present its own dataset; all data described below refers to the Défossez et al. study.</dd>
+      <dt>Neural recording modalities</dt><dd><strong>EEG</strong> (electroencephalography) and <strong>MEG</strong> (magnetoencephalography) — non-invasive recordings of brain electrical/magnetic activity during passive listening to speech stimuli.</dd>
+      <dt>Stimulus material</dt><dd>Speech audio segments from naturalistic listening tasks; participants listened to spoken sentences or words and neural responses were co-recorded. Exact corpus size and language(s) are described in the primary paper (Défossez et al.).</dd>
+      <dt>Training paradigm</dt><dd>Contrastive learning: for each neural recording segment, the model identifies the matching speech audio from a defined candidate set. The <strong>brain module</strong> and <strong>speech module</strong> are co-trained to maximize similarity between paired neural–audio representations.</dd>
+      <dt>Reference model</dt><dd>The speech module is initialized from <strong>wav2vec 2.0</strong> (Baevski et al., NeurIPS 2020) — a self-supervised speech representation model — providing rich acoustic embeddings as comparison targets for the neural data.</dd>
+      <dt>Participant scope</dt><dd>Details on the number of subjects and recording sessions are reported in the Défossez et al. primary paper. This News &amp; Views article does not independently specify these numbers.</dd>
+      <dt>Data availability</dt><dd>No independent data availability statement for this commentary. The primary study's data availability is governed by Défossez et al.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Component</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>EEG/MEG neural recordings</td><td>Input to brain module — neural activity during speech listening</td><td>Non-invasive scalp recordings; exact N described in primary paper</td><td>Défossez et al. (Nat. Mach. Intell. 2023)</td></tr>
+        <tr><td>Speech audio stimuli</td><td>Input to speech module — candidate audio segments for contrastive matching</td><td>Naturalistic speech corpora used in listening experiments</td><td>Défossez et al. (Nat. Mach. Intell. 2023)</td></tr>
+        <tr><td>wav2vec 2.0 pre-trained model</td><td>Speech encoder backbone for the speech module</td><td>Pre-trained on large English speech corpora (LibriSpeech-scale)</td><td><a href="https://ai.meta.com/research/publications/wav2vec-2-0-a-framework-for-self-supervised-learning-of-speech-representations/" target="_blank">Meta AI / Baevski et al. 2020</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: As a News &amp; Views article, this paper summarizes and contextualizes the primary research. Specific data volumes (number of subjects, recording hours, word-identification accuracy figures) are taken from Défossez et al. and are not independently verifiable from this article alone.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Contrastive learning pipeline:</b> a dual-encoder architecture with (1) a <strong>brain module</strong> that transforms raw EEG/MEG signals into a learned representation, and (2) a <strong>speech module</strong> that encodes audio segments — trained to align paired (neural, audio) representations and separate unpaired ones.</li>
+      <li><b>Speech module initialization:</b> the speech encoder leverages <strong>wav2vec 2.0</strong> representations as a powerful pre-trained foundation, providing rich phonetic and acoustic structure that the brain module learns to match.</li>
+      <li><b>Candidate-set decoding:</b> at inference time, the model identifies <em>which</em> of a defined set of speech segments best matches the neural recording — a closed-set recognition task that sidesteps the harder open-vocabulary generation problem.</li>
+      <li><b>Discriminative training objective:</b> the brain module is optimized to produce embeddings that are <strong>maximally distinguishable</strong> across the speech candidates in the training dataset — a contrastive loss (similar in spirit to CLIP) applied across neural-language modalities.</li>
+      <li><b>Non-invasive acquisition:</b> the entire pipeline operates on signals from <strong>scalp-level electrodes</strong> (EEG) or sensors (MEG), requiring no surgical procedures — a critical practical constraint shaping the method design.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/listening-in-to-perceived-speech-with-contrastive-learning__s42256-023-00742-1/fig1.png" target="_blank">
+        <img src="assets/listening-in-to-perceived-speech-with-contrastive-learning__s42256-023-00742-1/fig1.png" alt="Fig.1 A deep learning strategy for decoding perceived speech" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The dual-module contrastive pipeline: a brain module processes EEG/MEG recordings, while a speech module encodes candidate audio segments. The brain module is trained to output embeddings maximally useful for distinguishing among speech candidates — illustrated here for the MEG modality.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0). This is a single-figure News &amp; Views article.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, public health &amp; accessibility).</p>
+
+    <div class="idea">
+      <h3>① Extend the contrastive brain-speech framework to multi-subject federated training</h3>
+      <p><span class="lab paper">Extending this paper</span>The brain module currently learns a single representation per subject, but EEG/MEG signals vary substantially across individuals due to anatomy and electrode placement. A direct extension: apply <strong>federated disentangled representation learning</strong> to separate subject-invariant speech-decoding features from subject-specific noise — training across many subjects without pooling raw neural data. This would make the paper's pipeline clinically deployable where data cannot leave hospital systems, and substantially increase the effective training corpus.</p>
+      <p><span class="lab mine">Added value to my research</span>The same federated disentanglement principle applies to my multi-source geospatial data fusion work: mobile-phone records, social media, and GPS trajectories from different cities/operators encode a mix of universal human-mobility patterns and operator-specific artifacts. A federated disentangled encoder could isolate the transferable spatial-behavior signal — exactly the GeoAI foundation-model fine-tuning challenge I pursue.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Federated disentangled representation learning for unsupervised brain anomaly detection — <a href="https://doi.org/10.1038/s42256-022-00515-2" target="_blank">10.1038/s42256-022-00515-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace the fixed candidate set with an open-vocabulary generative decoder</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's contrastive approach frames decoding as <em>retrieval from a closed candidate set</em>, sidestepping open-vocabulary generation — a deliberate design choice that limits clinical utility. A natural extension: use the contrastive brain module as an <strong>encoder backbone</strong> within a larger foundation model (pre-trained on speech + text), where the neural embedding conditions an autoregressive language decoder. The brain module's representation would serve as a soft prompt that steers the language model toward the perceived utterance, enabling free-form speech reconstruction rather than candidate ranking. The corpus paper on multi-task medical pre-training offers a blueprint for bridging the encoder–decoder gap in low-data settings.</p>
+      <p><span class="lab mine">Added value to my research</span>This encoder-as-prompt paradigm translates directly to geospatial foundation model fine-tuning: a spatiotemporal encoder (processing mobility traces, satellite imagery) produces embeddings that steer a generative model toward natural-language urban health descriptions — enabling AI-assisted policy narration from sensor data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A multi-task learning strategy to pretrain models for medical image analysis — <a href="https://doi.org/10.1038/s43588-024-00666-9" target="_blank">10.1038/s43588-024-00666-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply self-supervised consistency to validate brain-module representations without labels</h3>
+      <p><span class="lab paper">Extending this paper</span>A core risk in neural decoding is that the brain module may latch onto confounds (motor artifacts, eye movements, heartbeat) rather than genuine speech representations. The paper does not address this validation gap. An extension: adapt <strong>self-supervised physics consistency</strong> — augmenting EEG/MEG recordings with known signal transformations (electrode masking, temporal jitter, noise injection) and requiring the brain module's output to be invariant to these while remaining discriminative across speech candidates. This would function both as a regularizer during training and as an unsupervised probe of representation quality — analogous to the hologram-reconstruction paper's physics-consistency loss.</p>
+      <p><span class="lab mine">Added value to my research</span>Physics-informed consistency regularization directly supports my spatiotemporal kernel density estimation work: requiring estimated density surfaces to satisfy known spatial-autocorrelation priors (Tobler's law, distance-decay) under data augmentation provides a self-supervised signal that reduces overfitting without labeled ground truth — applicable to sparse health-incidence mapping.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Self-supervised learning of hologram reconstruction using physics consistency — <a href="https://doi.org/10.1038/s42256-023-00704-7" target="_blank">10.1038/s42256-023-00704-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Audit the neural speech decoder for demographic bias before clinical deployment</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper achieves a milestone in non-invasive speech decoding but does not examine whether performance is <strong>equitable across speaker demographics</strong> (accent, age, sex) or patient populations (neurological conditions that alter EEG patterns). Before clinical deployment, the brain module must be stress-tested for distribution shift: a model trained on healthy young adults may fail for elderly ALS patients whose neural signals have different spectral profiles. The corpus paper on causal dataset bias in medical imaging provides a principled auditing framework — apply it to identify which subgroups are systematically underserved by the contrastive decoder.</p>
+      <p><span class="lab mine">Added value to my research</span>Demographic-aware auditing is central to my health geography work: explainable ML models for spatial access prediction (2SFCA/R2SFCA) must be tested for differential performance across income, race, and rurality strata. The causal-bias framework from medical imaging applies directly — identifying which spatial covariates drive model errors for underserved populations informs equitable resource allocation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging — <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the contrastive neural–audio alignment idea to spatiotemporal signal–context matching</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's core insight — train a <strong>signal module</strong> to produce embeddings that match a <strong>context module</strong> representing concurrent stimuli — is a modality-agnostic architecture. A direct extension: instead of brain-signal + audio, apply the same dual-encoder contrastive structure to <strong>wearable biosignals + environmental context</strong> (GPS location, ambient noise, green space exposure). Training the biosignal module to predict the environmental context without labels would produce rich physiological-place embeddings that generalize across subjects — opening non-invasive sensing of how urban environments affect body-state.</p>
+      <p><span class="lab mine">Added value to my research</span>This generalizes my GeoAI agenda to the body-environment interface: a contrastive sensor-to-place encoder trained on wearable health signals (heart rate, EDA) co-recorded with GPS trajectories could serve as a foundation model for urban health geography — quantifying physiological responses to spatial exposures (green space, noise, air quality) without self-report. This directly extends my healthy-cities and 15-minute-neighborhood research with objective, continuous health measurement at urban scale.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Wearable data link urban green space to physical activity — <a href="https://doi.org/10.1038/s44360-025-00011-y" target="_blank">10.1038/s44360-025-00011-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

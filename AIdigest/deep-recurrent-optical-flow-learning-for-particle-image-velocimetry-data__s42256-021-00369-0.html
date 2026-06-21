@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep recurrent optical flow learning for particle image velocimetry data — AI Digest</title>
+<meta name="description" content="AI Digest: Deep recurrent optical flow learning for particle image velocimetry data (Nature Machine Intelligence, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Optical flow learning</span>
+      <span class="tag">Fluid dynamics</span>
+      <span class="tag">Deep learning</span>
+      <span class="tag">Spatiotemporal prediction</span>
+    </div>
+    <h1>Deep recurrent optical flow learning for particle image velocimetry data</h1>
+    <div class="meta">
+      <span class="authors">Christian Lagemann · Kai Lagemann · Sach Mukherjee · Wolfgang Schröder</span>
+      <span><b>Published</b> 2021-07-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-021-00369-0" target="_blank">10.1038/s42256-021-00369-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-021-00369-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The paper introduces <strong>RAFT-PIV</strong>, a deep recurrent neural network architecture for estimating dense velocity fields from particle image pairs. Adapted from the RAFT optical flow architecture with a convolutional gated recurrent unit (Conv-GRU), it <strong>outperforms all existing classical and deep-learning PIV methods</strong> on public benchmarks, achieves up to <strong>64× higher spatial resolution</strong> than cross-correlation algorithms, and generalizes robustly to out-of-distribution real-world experimental flows — demonstrating that end-to-end optical flow learning can replace the handcrafted pipelines that have dominated experimental fluid mechanics for two decades.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Displaces decades of handcrafted engineering.</b> Classical cross-correlation PIV algorithms require manual parameter tuning and complex multi-grid schemes; RAFT-PIV is largely automated, end-to-end trainable, and yields denser outputs with less human effort.</li>
+      <li><b>Resolution leap with physical fidelity.</b> Per-pixel optical flow provides up to 64× more spatial resolution than window-based cross-correlation, enabling resolution of fine turbulent fluctuations and gradients previously inaccessible to experimental measurement.</li>
+      <li><b>Cross-domain generalization demonstrated.</b> A single model trained on synthetic particle images transfers to turbulent boundary layers and wavy channel flows without re-training or post-processing — a critical step toward a universal PIV solver.</li>
+      <li><b>Opens a path to physics-informed self-supervised PIV.</b> The recurrent iterative refinement architecture is compatible with unsupervised/self-supervised loss objectives and physics constraints (Navier–Stokes), pointing toward annotation-free scientific measurement.</li>
+      <li><b>Publicly reproducible.</b> Training data (Zenodo), reference code (GitHub + Code Ocean capsule), and benchmark comparisons are all openly available, supporting community replication.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm shift in scientific measurement:</b> replaces a decades-old handcrafted algorithm family with a learnable end-to-end alternative — a clean "AI versus classical engineering" story that NMI prizes.</li>
+      <li><b>Broad application domain:</b> PIV is used across aerospace, automotive, cardiovascular, and environmental engineering — the impact is not niche.</li>
+      <li><b>Technically rigorous benchmark:</b> unlike many CV papers, the paper has access to physics-based ground truth (DNS simulations) for quantitative accuracy, satisfying the journal's demand for verifiable claims.</li>
+      <li><b>Transfer-learning narrative:</b> shows how an architecture from computer vision (RAFT) generalizes to a physical-measurement domain with minimal domain-specific modification — a reusable methodological insight.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Problem Class I</dt><dd><strong>Public PIV particle image database</strong> (<a href="https://github.com/shengzesnail/PIV_dataset" target="_blank">github.com/shengzesnail/PIV_dataset</a>) — 15,050 synthetic particle image pairs (5 flow categories: isotropic turbulence, backward-facing step, cylinder flow Re = 40–1,500, turbulent channel flow, SQG surface flow); 12,000 training + 3,050 validation images; high SNR ≈ 11.1, max displacement ±10 px, 256 × 256 px.</dd>
+      <dt>Problem Class II</dt><dd><strong>New realistic dataset</strong> generated by the authors, available at <a href="https://doi.org/10.5281/zenodo.4432496" target="_blank">Zenodo (10.5281/zenodo.4432496)</a> — 19,000 training + 1,000 validation images at 256 × 256 px; mean SNR ≈ 3.6 (range 0.1–70), max displacement ±24 px, reduced particle density (N<sub>ppp</sub> = 0.005–0.1), added Gaussian camera noise.</dd>
+      <dt>Problem Class III (test only)</dt><dd>Two out-of-distribution real/synthetic test sets: (1) DNS of transitional zero-pressure-gradient boundary layer (Re<sub>θ</sub> = 5,000; 1,200 synthetically rendered image pairs); (2) experimental PIV of turbulent wavy channel flow (real-world data, no precise count stated in article).</dd>
+      <dt>Ground truth</dt><dd>Physics-based DNS solutions of Navier–Stokes equations (no temporal or spatial turbulence modeling) serve as gold-standard displacement fields for synthetic test cases.</dd>
+      <dt>Code &amp; compute</dt><dd>PyTorch; Nvidia Quadro RTX 6000 GPUs; training time ≈ 18 h (RAFT256-PIV) / 72 h (RAFT32-PIV); reference code at <a href="https://github.com/princeton-vl/RAFT" target="_blank">github.com/princeton-vl/RAFT</a> and Code Ocean (<a href="https://doi.org/10.24433/CO.4413978.v1" target="_blank">10.24433/CO.4413978.v1</a>).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Public PIV database (Problem Class I)</td><td>Training &amp; benchmark evaluation; 5 synthetic flow categories</td><td>15,050 image pairs; 256×256 px; SNR ≈ 11.1</td><td><a href="https://github.com/shengzesnail/PIV_dataset" target="_blank">GitHub</a></td></tr>
+        <tr><td>Realistic PIV dataset (Problem Class II)</td><td>Training under challenging experimental-like conditions</td><td>20,000 image pairs; max disp. ±24 px; SNR ≈ 3.6</td><td><a href="https://doi.org/10.5281/zenodo.4432496" target="_blank">Zenodo</a></td></tr>
+        <tr><td>DNS boundary layer (Problem Class III)</td><td>Out-of-distribution generalization test (synthetic)</td><td>1,200 image pairs; Re<sub>θ</sub> = 5,000</td><td>Authors (not separately released)</td></tr>
+        <tr><td>Experimental wavy channel flow (Problem Class III)</td><td>Real-world generalization test</td><td>Exact count not stated in article</td><td>Authors (not separately released)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all volume figures are taken verbatim from the article's Methods section. The exact image count for the experimental wavy-channel test case is not reported in the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>RAFT-PIV architecture:</b> adapts the Recurrent All-Pairs Field Transforms (RAFT) optical flow network to PIV particle images. Three stages: (i) shared feature encoder at 1/8 or 1/1 resolution, (ii) full all-pairs 4D correlation volume with 4-level pooling pyramid, (iii) iterative refinement via convolutional gated recurrent unit (Conv-GRU) with 12–16 update steps.</li>
+      <li><b>Two encoder variants:</b> RAFT256-PIV (256×256 input, 3× downsampling, larger displacement range) and RAFT32-PIV (32×32 interrogation windows, no spatial downsampling, higher accuracy in high-seeding conditions).</li>
+      <li><b>Supervised training:</b> exponentially weighted sequence loss over all GRU iterations (γ = 0.8 weight), Adam optimizer, l<sub>1</sub> loss on displacement fields; 300 epochs, learning rate decay scheduler.</li>
+      <li><b>Evaluation metric:</b> Average Endpoint Error (AEE) — Euclidean distance between estimated and ground-truth optical flow, averaged over all pixels.</li>
+      <li><b>Ablation study:</b> systematically tested the effect of iterative flow updates, Conv-GRU vs. plain convolution vs. ConvLSTM, lookup radius, and correlation pyramid levels to identify key architectural drivers.</li>
+      <li><b>Baselines:</b> eight algorithms including classical cross-correlation (WIDIM), energy-based Horn–Schunck optical flow, FlowNetS-based PIV-NetS, and LiteFlowNet-based PIV-LiteFlowNet / UnLiteFlowNet-PIV variants.</li>
+      <li><b>PascalPIV benchmark:</b> state-of-the-art multigrid cross-correlation code used as the experimental-data gold standard against which RAFT-PIV is compared without post-processing.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig1.png" target="_blank">
+        <img src="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig1.png" alt="Fig.1 PIV experimental set-up and workflow" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> PIV experimental set-up and general workflow — illustrates the contrast between classical window cross-correlation (sparse field) and RAFT-PIV per-pixel dense prediction.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig2.png" target="_blank">
+        <img src="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig2.png" alt="Fig.2 RAFT-PIV architecture and dataset comparison" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> RAFT-PIV architecture diagram (feature encoder, correlation volume, Conv-GRU update loop) and comparison of Problem Class I vs. II particle image conditions.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig3.png" target="_blank">
+        <img src="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig3.png" alt="Fig.3 Problem Class II cylinder test case" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Problem Class II — cylinder test case. Optical flow predictions (left) and absolute errors vs. ground truth (right); RAFT-PIV outperforms competing networks on the von Kármán vortex street.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig4.png" target="_blank">
+        <img src="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig4.png" alt="Fig.4 Problem Class III transitional boundary layer" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Problem Class III — transitional boundary layer. Ground-truth displacement field and velocity profiles at three flow regimes; RAFT32-PIV resolves fine turbulent fluctuations that cross-correlation averages out.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig5.png" target="_blank">
+        <img src="assets/deep-recurrent-optical-flow-learning-for-particle-image-velocimetry-data__s42256-021-00369-0/fig5.png" alt="Fig.5 Problem Class III turbulent wavy channel flow" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Problem Class III — turbulent wavy channel flow. Horizontal and vertical flow components across methods; RAFT-PIV matches PascalPIV without any post-processing step.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 main-text tables (Table 1: AEE on Problem Class I; Table 2: AEE on Problem Class II); Supplementary contains 6 tables (ablation, sensitivity, full training/test split) and Figs. 1–16.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal prediction, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Self-supervised RAFT-PIV using physics consistency as the loss signal</h3>
+      <p><span class="lab paper">Extending this paper</span>RAFT-PIV is entirely supervised: it requires synthetic particle images with DNS ground-truth displacement fields. The paper explicitly calls for self-supervised extensions, but leaves them open. A direct extension: replace the l<sub>1</sub> supervised loss with a <strong>physics-consistency loss</strong> — requiring the estimated velocity field to satisfy continuity (divergence-free for incompressible flow) and the Navier–Stokes momentum equation as soft constraints applied directly to the Conv-GRU's iterative estimates. This would allow RAFT-PIV to train on raw experimental images without DNS ground truth, unlocking the vast stock of unlabeled PIV recordings accumulated over decades in aeronautics and biomedical labs.</p>
+      <p><span class="lab mine">Added value to my research</span>The physics-consistency loss concept maps directly onto my <strong>physics-informed graph learning</strong> agenda: just as RAFT-PIV would embed Navier–Stokes as a network constraint, my spatiotemporal GNN models can embed conservation laws (mass balance, flow conservation) as soft penalty terms — producing prediction outputs that are physically interpretable and less reliant on labeled training data. This is especially relevant for spatiotemporal urban flow prediction (traffic, pedestrian flows) where ground truth is sparse.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Self-supervised learning of hologram reconstruction using physics consistency — <a href="https://doi.org/10.1038/s42256-023-00704-7" target="_blank">10.1038/s42256-023-00704-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Transfer RAFT-PIV's recurrent refinement to turbulence-surrogate modeling in CFD</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper focuses on PIV post-processing (measurement), but the core contribution — iterative optical flow refinement with a Conv-GRU and all-pairs correlation — is a general spatiotemporal displacement learner. A natural extension: repurpose RAFT-PIV as a <strong>turbulence surrogate</strong> that predicts future flow fields from current velocity snapshots, bypassing expensive DNS time-stepping. The iterative refinement loop would now refine a temporal prediction rather than a spatial correlation, and the all-pairs volume would encode inter-frame correlations across a short history window.</p>
+      <p><span class="lab mine">Added value to my research</span>The architecture of iterative spatial field refinement — feature encoder + correlation volume + recurrent updater — is a transferable blueprint for my <strong>spatiotemporal kernel density estimation</strong> work: replacing handcrafted bandwidth selection with a learned recurrent process that refines density estimates over multiple resolution passes, adapting to local data density in geographic space analogously to how RAFT32-PIV adapts to particle density.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing computational fluid dynamics with machine learning — <a href="https://doi.org/10.1038/s43588-022-00264-7" target="_blank">10.1038/s43588-022-00264-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Multi-agent reinforcement learning for adaptive PIV interrogation-window placement</h3>
+      <p><span class="lab paper">Extending this paper</span>RAFT-PIV uses fixed interrogation windows (either 256×256 or 32×32 uniformly across the image). The paper shows that different conditions favor different window sizes — high-displacement regions need larger windows, turbulent fine scales need smaller ones. An extension: frame adaptive window placement as a <strong>multi-agent decision process</strong> where each spatial region independently selects its interrogation strategy (window size, number of GRU iterations) based on local image features, trained via reinforcement learning with AEE reduction as the reward. This would give RAFT-PIV spatially adaptive compute allocation, mirroring how classical multigrid PIV adaptively refines interrogation windows.</p>
+      <p><span class="lab mine">Added value to my research</span>Adaptive spatial resource allocation is central to my <strong>2SFCA/R2SFCA service-area delineation</strong> work: just as multi-agent RL assigns compute resources to spatial regions of highest uncertainty, I can treat catchment radius selection in R2SFCA as a spatially adaptive policy — allocating smaller/larger catchments depending on local supply-demand imbalance, learned from accessibility data rather than fixed by analyst judgment.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Automating turbulence modelling by multi-agent reinforcement learning — <a href="https://doi.org/10.1038/s42256-020-00272-0" target="_blank">10.1038/s42256-020-00272-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply RAFT-PIV's satellite-to-pixel displacement learning to geospatial motion estimation</h3>
+      <p><span class="lab paper">Extending this paper</span>RAFT-PIV's optical flow formulation is domain-agnostic: it learns pixel-level displacement between two sequential images. The paper evaluates it on particle images from controlled lab flows, but the architecture requires no domain-specific modification. A direct extension: apply RAFT-PIV (or a variant with geographic attention) to <strong>multi-temporal satellite imagery</strong> to estimate urban land-surface displacement, crop-field motion, or glacier velocity — treating satellite image pairs exactly as PIV image pairs. The DNS-generated ground truth role would be filled by GPS or InSAR-validated reference displacements.</p>
+      <p><span class="lab mine">Added value to my research</span>My data pipeline relies on <strong>multi-source remote sensing</strong> for urban analysis. A RAFT-PIV-inspired displacement learner applied to bi-temporal urban satellite imagery could track fine-scale changes in built-up density, green cover, or informal settlement growth — producing dense spatiotemporal change maps that feed into my GeoAI models for health geography and urban agglomeration analysis without requiring labeled change-detection datasets.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting human mobility flows in cities using deep learning on satellite imagery — <a href="https://doi.org/10.1038/s41467-025-65373-z" target="_blank">10.1038/s41467-025-65373-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Bayesian RAFT-PIV: uncertainty quantification for measurement-critical engineering</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly identifies <strong>principled uncertainty quantification</strong> as a key open problem, noting that a Bayesian extension to RAFT-PIV would yield posterior distributions over displacement fields rather than point estimates. A concrete extension: replace the deterministic Conv-GRU hidden state with a <strong>stochastic latent variable</strong> (variational or Monte Carlo dropout variant), propagating uncertainty through the iterative refinement loop so each pixel carries a calibrated confidence interval. The iterative structure of RAFT-PIV is actually well-suited to sequential Bayesian updates — each GRU step is a natural Bayesian refinement step. This would transform RAFT-PIV from a measurement tool into a <strong>measurement-with-uncertainty tool</strong>, critical for safety-relevant applications such as cardiovascular flow assessment in ventricular assist devices.</p>
+      <p><span class="lab mine">Added value to my research</span>Uncertainty quantification over spatial prediction fields is a gap in my <strong>explainable GeoAI</strong> toolkit. Adapting RAFT-PIV's Bayesian extension concept to spatiotemporal urban prediction — for instance, wrapping my physics-informed graph networks in a variational framework — would give spatially resolved confidence maps over accessibility predictions, health outcome hotspots, or EV demand forecasts. This directly addresses the reproducibility and FAIR-data gap in applied GeoAI: users could distinguish high-confidence predictions from extrapolated ones using the same Monte Carlo approach the paper proposes for PIV.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Physics-based machine learning for subcellular segmentation in living cells — <a href="https://doi.org/10.1038/s42256-021-00420-0" target="_blank">10.1038/s42256-021-00420-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

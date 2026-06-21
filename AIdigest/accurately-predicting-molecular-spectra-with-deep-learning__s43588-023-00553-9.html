@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accurately predicting molecular spectra with deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Accurately predicting molecular spectra with deep learning (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Molecular Spectroscopy</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Quantum Chemistry</span>
+    </div>
+    <h1>Accurately predicting molecular spectra with deep learning</h1>
+    <div class="meta">
+      <span class="authors">Conrard Giresse Tetsassi Feugmo</span>
+      <span><b>Published</b> 2023-11-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00553-9" target="_blank">10.1038/s43588-023-00553-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00553-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>DetaNet</strong>, a deep learning model reported in an accompanying article (Zou et al., <em>Nat. Comput. Sci.</em> 2023), predicts organic molecular spectra — including infrared, Raman, and NMR — with <strong>accuracy comparable to high-level quantum chemistry methods</strong> while being far more computationally efficient. This News &amp; Views piece argues that DetaNet's architecture, combined with its integration into a <strong>self-driving lab feedback loop</strong>, positions deep learning as a practical, real-time replacement for expensive density-functional-theory and coupled-cluster calculations in automated molecular synthesis workflows.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the quantum chemistry bottleneck.</b> DFT and CCSD-level spectral predictions are too slow for high-throughput pipelines; DetaNet matches their accuracy at a fraction of the cost, opening the door to on-the-fly spectral characterization.</li>
+      <li><b>Enables self-driving labs.</b> The paper positions DetaNet as the analytical intelligence layer in a closed-loop automated synthesis workflow — synthesize, acquire in-situ spectra, compare with DL predictions, adjust — reducing reliance on human interpretation.</li>
+      <li><b>Covers multiple modalities in one framework.</b> Predicting IR, Raman, and NMR simultaneously from 3D molecular structure means a single model can replace several specialist quantum-chemical calculations.</li>
+      <li><b>Lowers the barrier to substance discovery.</b> Fast, accurate spectral prediction accelerates the identification of novel organic compounds in drug discovery, materials science, and catalysis by enabling pre-screening before synthesis.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Broad methodological advance:</b> the DetaNet approach is not restricted to one compound class or spectrum type — its multi-modal, 3D-structure-aware design is a general contribution to computational chemistry tooling.</li>
+      <li><b>Bridges AI and experimental science:</b> the self-driving lab framing demonstrates an immediate, practical route to deploying deep learning in real experimental pipelines — aligning with the journal's emphasis on computation enabling discovery.</li>
+      <li><b>Timely synthesis of a fast-moving field:</b> as a News &amp; Views commentary it contextualizes the DetaNet paper within the trajectory of ML-accelerated quantum chemistry, providing the broad readership with an authoritative map of the space.</li>
+      <li><b>Clarity of benchmark:</b> the accuracy claim is made against concrete quantum-chemical benchmarks (DFT, coupled-cluster), lending the advance a crisp, verifiable framing that suits Nature Computational Science's standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary subject</dt><dd>This article is a <strong>News &amp; Views</strong> commentary on Zou et al. (<em>Nat. Comput. Sci.</em>, <a href="https://doi.org/10.1038/s43588-023-00550-y" target="_blank">10.1038/s43588-023-00550-y</a>), which introduced the DetaNet model. Data details below refer to the underlying DetaNet work as described in this commentary.</dd>
+      <dt>Molecule type</dt><dd>Organic molecules containing <strong>C, H, N, O</strong> atoms (the organic-molecule subspace targeted by DetaNet for IR, Raman, and NMR spectra prediction).</dd>
+      <dt>Spectrum types</dt><dd>Infrared (IR), Raman, and NMR spectra — three modalities simultaneously predicted from a single 3D molecular structure representation.</dd>
+      <dt>Computational reference</dt><dd>Quantum-chemistry benchmarks against which DetaNet's accuracy is measured: <strong>density functional theory (DFT)</strong> and <strong>coupled-cluster (CCSD)</strong> calculations, which are the gold-standard but computationally expensive methods in computational chemistry.</dd>
+      <dt>Prior ML baselines</dt><dd>References cite prior methods by Han, Ketkaew &amp; Luber (<em>J. Phys. Chem. A</em> 2022, <a href="https://doi.org/10.1021/acs.jpca.1c10417" target="_blank">10.1021/acs.jpca.1c10417</a>) and McGill et al. (<em>J. Chem. Inf. Model.</em> 2021, <a href="https://doi.org/10.1021/acs.jcim.1c00055" target="_blank">10.1021/acs.jcim.1c00055</a>) as earlier ML spectral predictors.</dd>
+      <dt>Self-driving lab context</dt><dd>References to Abolhasani &amp; Kumacheva (<em>Nat. Synth.</em> 2023) and Delgado-Licona &amp; Abolhasani (<em>Adv. Intell. Syst.</em> 2023) establish the self-driving lab pipeline in which DetaNet is conceptually integrated.</dd>
+      <dt>Data availability</dt><dd>No separate dataset is released in this commentary; the underlying DetaNet model and training data are described in the primary Zou et al. paper.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Reference</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>DetaNet training corpus (Zou et al.)</td><td>Model training &amp; benchmarking for IR, Raman, NMR prediction</td><td>Organic molecules (C, H, N, O); exact count not stated in this commentary</td><td><a href="https://doi.org/10.1038/s43588-023-00550-y" target="_blank">10.1038/s43588-023-00550-y</a></td></tr>
+        <tr><td>DFT / CCSD calculations</td><td>Accuracy benchmark (gold standard)</td><td>Standard quantum chemistry; not a released dataset</td><td>Standard computational chemistry tooling</td></tr>
+        <tr><td>Prior ML spectral predictors</td><td>Baseline comparison</td><td>Han et al. 2022; McGill et al. 2021</td><td><a href="https://doi.org/10.1021/acs.jpca.1c10417" target="_blank">J. Phys. Chem. A</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: This is a News &amp; Views commentary; it does not independently release a dataset. Specific molecular counts and dataset splits are in the primary DetaNet article (Zou et al., 2023). Numbers above reflect what is stated in this commentary only.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>DetaNet architecture (described):</b> a deep neural network that takes a <strong>3D molecular structure</strong> as input and jointly predicts multiple spectral outputs (IR, Raman, NMR), bypassing the need to explicitly solve the electronic Schrödinger equation.</li>
+      <li><b>Benchmark against quantum chemistry:</b> DetaNet's spectral predictions are evaluated against DFT- and CCSD-computed spectra to establish accuracy parity — the core claim of the commentary.</li>
+      <li><b>Self-driving lab integration:</b> the commentary proposes a <strong>closed feedback loop</strong>: automated synthesis → in-situ spectral acquisition → DetaNet prediction → comparison → decision on next synthetic step — illustrated conceptually in Fig. 1.</li>
+      <li><b>Multi-modal prediction:</b> a single model architecture handles all three spectrum types simultaneously, suggesting shared learned representations of molecular electronic structure.</li>
+      <li><b>Efficiency gain framing:</b> the key metric is the compute cost reduction vs. conventional quantum chemistry — enabling real-time or near-real-time spectral characterization in automated pipelines.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/accurately-predicting-molecular-spectra-with-deep-learning__s43588-023-00553-9/fig1.png" target="_blank">
+        <img src="assets/accurately-predicting-molecular-spectra-with-deep-learning__s43588-023-00553-9/fig1.png" alt="Fig. 1: Conceptual integration of DetaNet within a self-driving lab workflow" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Conceptual integration of DetaNet within a self-driving lab workflow — illustrates the closed-loop pipeline from automated molecular synthesis and in-situ data acquisition through DetaNet spectral analysis to feedback-driven decision-making and iterative optimization.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). This is a single-figure News &amp; Views commentary.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, physics-informed graph learning, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Extend DetaNet's 3D-structure encoder into a geospatial feature encoder for spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>DetaNet's key innovation is encoding <strong>3D atomic configuration</strong> — positions, bond geometry, and atom type — into a latent space that predicts observable spectral signatures. The same encoder-predictor paradigm could be directly extended to predict additional property distributions (e.g., reaction yields, solubility gradients across compound libraries) by attaching multi-task prediction heads trained on different target spectra, without retraining the shared backbone. The commentary already hints at this by describing IR, Raman, and NMR sharing one model.</p>
+      <p><span class="lab mine">Added value to my research</span>The DetaNet architecture's philosophy — learning a shared <strong>latent representation of a complex 3D structure</strong> that simultaneously predicts multiple distinct observable outputs — is directly analogous to my work on spatiotemporal kernel density estimation and multi-source geospatial feature fusion. Just as DetaNet encodes molecular geometry into spectra, a spatial encoder could compress multi-source signals (remote sensing, GPS, POI density) into a unified latent field that simultaneously predicts health outcomes, accessibility scores, and socioeconomic indicators — a <strong>geospatial multi-task prediction</strong> model.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep contrastive learning of molecular conformation for efficient property prediction — <a href="https://doi.org/10.1038/s43588-023-00560-w" target="_blank">10.1038/s43588-023-00560-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace the implicit DFT baseline with a multi-task coupled-cluster surrogate for active learning</h3>
+      <p><span class="lab paper">Extending this paper</span>The commentary frames DetaNet as a substitute for DFT/CCSD calculations but uses these only as static benchmarks. A direct extension: embed DetaNet inside an <strong>active learning loop</strong> where the model flags high-uncertainty molecules, triggers DFT/CCSD oracle calls for those molecules only, and retrains — progressively shrinking the gap between DL prediction and quantum accuracy while minimizing expensive quantum calculations. This would convert the commentary's conceptual self-driving lab loop into a concrete uncertainty-guided spectral annotation pipeline.</p>
+      <p><span class="lab mine">Added value to my research</span>This active-learning-over-expensive-oracle pattern maps cleanly onto my <strong>explainable machine learning for spatial prediction</strong> work: wherever ground-truth labels require expensive data collection (e.g., field survey accessibility measurements, clinical records), an uncertainty-driven active sampling strategy selects only the most informative locations to label — a <strong>spatial active learning</strong> framework for GeoAI that mirrors the molecular active-learning loop described here.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning — <a href="https://doi.org/10.1038/s43588-024-00747-9" target="_blank">10.1038/s43588-024-00747-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Encode domain physics as constraints in the DetaNet loss to improve generalization</h3>
+      <p><span class="lab paper">Extending this paper</span>DetaNet is trained to match quantum-chemistry spectra empirically, but it does not explicitly encode <strong>physical symmetries</strong> such as rotational/translational invariance, conservation of oscillator strength, or selection rules governing IR vs. Raman activity. Extending the paper: augment the loss function with physics-derived regularizers (e.g., sum-rule constraints on integrated spectral intensities), producing a <strong>physics-informed version of DetaNet</strong> that extrapolates more reliably to molecular families outside the training distribution.</p>
+      <p><span class="lab mine">Added value to my research</span>My agenda on <strong>physics-informed graph learning</strong> for spatiotemporal systems parallels this exactly: baking known spatial conservation laws (e.g., population flow conservation, entropy constraints in accessibility) into GNN training makes the model more robust when extrapolating to unstudied regions or time periods — a physics-informed spatial predictor in the same spirit as a physics-informed spectral predictor.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Overcoming the barrier of orbital-free density functional theory for molecular systems using deep learning — <a href="https://doi.org/10.1038/s43588-024-00605-8" target="_blank">10.1038/s43588-024-00605-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Transfer DetaNet's pretrained molecular representations to generative drug/material design</h3>
+      <p><span class="lab paper">Extending this paper</span>DetaNet learns rich internal representations of organic molecular geometry that accurately predict observable spectra. These representations could be inverted: condition a generative model on a <strong>target spectrum</strong> (e.g., a desired IR fingerprint corresponding to a known functional group pattern) and use DetaNet's encoder in reverse to navigate molecular structure space toward candidates matching that spectral target. This extends the paper's self-driving lab loop from structure-to-spectrum to a full <strong>inverse design</strong> cycle.</p>
+      <p><span class="lab mine">Added value to my research</span>The inverse-design paradigm — given desired outputs, search input configurations — translates to <strong>facility-location optimization</strong> in my urban accessibility work: given a target accessibility distribution (the equivalent of a desired spectrum), back-propagate through a learned spatial model to identify optimal POI placement configurations. DetaNet's inversion strategy provides a blueprint for how a learned forward model can power an inverse spatial optimizer.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use contrastive pretraining on molecular spectra to build a general-purpose molecular foundation model</h3>
+      <p><span class="lab paper">Extending this paper</span>The commentary positions DetaNet as a task-specific spectral predictor. A broader extension: use the model's multi-spectral supervision signal (IR + Raman + NMR jointly) as a <strong>rich self-supervised pretraining objective</strong> for a molecular foundation model — analogous to how vision models use multiple augmentation views in contrastive learning. A model pretrained on diverse spectral targets would then fine-tune efficiently to downstream tasks (toxicity, binding affinity, yield) with few labels, unifying spectral prediction and property prediction under one foundation.</p>
+      <p><span class="lab mine">Added value to my research</span>This connects directly to my work on <strong>fine-tuning geospatial foundation models</strong>: the DetaNet multi-task spectral signal parallels using multi-source remote-sensing bands as rich pretraining supervision for a geospatial foundation model. Just as predicting IR + Raman + NMR simultaneously creates a richer representation than any single task, predicting multiple spatial indicators simultaneously (population density, land use, road network features) creates more transferable geospatial embeddings — informing my approach to geospatial multi-task pretraining.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

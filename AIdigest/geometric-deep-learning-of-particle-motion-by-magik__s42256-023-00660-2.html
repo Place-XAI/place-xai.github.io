@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometric deep learning of particle motion by MAGIK — AI Digest</title>
+<meta name="description" content="AI Digest: Geometric deep learning of particle motion by MAGIK (Nature Machine Intelligence, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Graph Neural Networks</span>
+      <span class="tag">Particle Tracking</span>
+      <span class="tag">Biological Imaging</span>
+    </div>
+    <h1>Geometric deep learning of particle motion by MAGIK</h1>
+    <div class="meta">
+      <span class="authors">Bahare Fatemi &middot; Jonathan Halcrow &middot; Khuloud Jaqaman</span>
+      <span><b>Published</b> 2023-05-23</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-023-00660-2" target="_blank">10.1038/s42256-023-00660-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-023-00660-2" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MAGIK is a <strong>geometric deep learning framework</strong> built on graph neural networks (GNNs) that simultaneously <strong>reconstructs particle trajectories</strong> and <strong>characterizes local and global motion properties</strong> from spatiotemporal connection graphs derived from microscopy images &mdash; without requiring explicit tracking for motion analysis. By casting particle tracking as an <strong>edge-classification task</strong>, local motion as a <strong>node-level regression</strong>, and global dynamics as a <strong>graph-level classification</strong>, MAGIK handles diverse and challenging biological scenarios including dense, heterogeneous motion and cell division events within a single unified model.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Unifies tracking and dynamics in one model.</b> Previous pipelines required separate algorithms for localization, linking, and motion analysis; MAGIK performs all three via a single multi-task GNN trained end-to-end, eliminating error propagation between stages.</li>
+      <li><b>Handles the hardest microscopy regimes.</b> Dense, heterogeneously moving objects &mdash; including merging, splitting, and cell division &mdash; are precisely where classical trackers fail; the spatiotemporal graph formulation addresses these cases directly.</li>
+      <li><b>Motion characterization without explicit tracking.</b> By inferring node- and graph-level dynamics directly from the connection graph, MAGIK sidesteps trajectory errors entirely, opening a paradigm for trajectory-free biophysical inference.</li>
+      <li><b>Self-attention provides interpretability.</b> The adaptive attention mechanism reveals which spatiotemporal connections most influence an object&rsquo;s dynamic classification, yielding mechanistic insight alongside quantitative predictions.</li>
+      <li><b>Platform-level transferability.</b> The framework is agnostic to particle type, imaging modality, and scale &mdash; applicable from single molecules and organelles to whole cells across multiple microscopy techniques.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel GNN formulation for a canonical scientific problem:</b> particle tracking and motion characterization are long-standing bottlenecks in cell biology; recasting them as graph-level ML tasks is a conceptual advance, not an incremental improvement to existing trackers.</li>
+      <li><b>Multi-task learning on a single graph architecture:</b> the paper demonstrates that a unified GNN can handle edge-, node-, and graph-level tasks simultaneously &mdash; a machine intelligence contribution with implications beyond biology.</li>
+      <li><b>Demonstrated impact on biological discovery:</b> benchmarks span real and simulated experiments covering cell and molecular scales, giving NMI&rsquo;s readership both AI methodology and immediate life-science application.</li>
+      <li><b>Future-facing and platform-like:</b> the commentary explicitly identifies learnable sparse graphs, hypergraphs, and temporal GNNs as natural next steps, positioning MAGIK as a research platform rather than a single result.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd>This is a <strong>News &amp; Views</strong> (Brief Communication) discussing the MAGIK method paper by Pineda et al. (<em>Nat. Mach. Intell.</em> 5, 71&ndash;82, 2023, DOI: <a href="https://doi.org/10.1038/s42256-022-00595-0" target="_blank">10.1038/s42256-022-00595-0</a>). Experimental data details reside in that primary research article.</dd>
+      <dt>Benchmark data</dt><dd>MAGIK was evaluated on <strong>real and simulated microscopy datasets</strong> covering diverse biological scenarios (cell tracking at multiple modalities, organelle and single-molecule tracking, cell division detection). Exact dataset sizes are in Pineda et al., not in this commentary.</dd>
+      <dt>Imaging modalities</dt><dd>Multiple fluorescence microscopy techniques validated in Pineda et al. (modality list in that paper). The framework is imaging-modality agnostic as long as objects can be detected and represented as spatial coordinates.</dd>
+      <dt>Simulation data</dt><dd>Synthetic particle motion sequences used to benchmark tracking accuracy under controlled object density and motion heterogeneity; exact parameter ranges described in Pineda et al.</dd>
+      <dt>Software</dt><dd>MAGIK is implemented in the <strong>DeepTrack 2.0</strong> open-source Python library for deep-learning-based microscopy analysis.</dd>
+      <dt>Data availability</dt><dd>Data and code availability statements reside in the primary research article (Pineda et al.). This News &amp; Views does not provide a separate data statement.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Source</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Real microscopy datasets (Pineda et al. 2023)</td><td>Benchmark for trajectory reconstruction and motion characterization</td><td>Multiple modalities, multiple cell types; exact counts in primary paper</td><td><a href="https://doi.org/10.1038/s42256-022-00595-0" target="_blank">Primary paper</a></td></tr>
+        <tr><td>Simulated particle sequences</td><td>Controlled benchmark: tracking vs. density and motion heterogeneity</td><td>Various density and motion-regime conditions; parameters in Pineda et al.</td><td>Via DeepTrack 2.0</td></tr>
+        <tr><td>DeepTrack 2.0</td><td>Software platform hosting MAGIK</td><td>Open-source Python library for DL-based microscopy image analysis</td><td><a href="https://github.com/DeepTrackAI/DeepTrack2" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: as a News &amp; Views, this article contains no original datasets. Specific image counts and sample sizes are in Pineda et al. (2023). No numbers are fabricated here.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Spatiotemporal graph construction:</b> detected objects in each microscopy frame become nodes; edges connect spatiotemporally proximate objects across frames, encoding the prior that nearby objects in space&ndash;time are likely the same particle.</li>
+      <li><b>Message-passing GNN:</b> node representations are iteratively updated as a function of their local graph neighbourhood, aggregating spatial position, temporal context, and feature information into a rich per-object embedding.</li>
+      <li><b>Adaptive self-attention:</b> an interpretable attention layer re-weights edges globally, revealing which spatiotemporal connections most influence each object&rsquo;s predictions &mdash; a built-in explainability mechanism.</li>
+      <li><b>Multi-task heads:</b>
+        <ul>
+          <li><em>Edge-level (tracking):</em> binary edge classification to link the same object across frames, yielding reconstructed trajectories.</li>
+          <li><em>Node-level (local dynamics):</em> per-node regression to infer local motion properties (e.g., diffusion coefficient, instantaneous velocity) without explicit trajectory reconstruction.</li>
+          <li><em>Graph-level (global dynamics):</em> whole-graph regression or classification to characterize the collective motion state of the imaged particle population.</li>
+        </ul>
+      </li>
+      <li><b>Benchmarking:</b> trajectory accuracy evaluated against ground-truth simulations and expert-annotated real data; motion-property inference tested against known physical parameters in simulated scenarios with known ground truth.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/geometric-deep-learning-of-particle-motion-by-magik__s42256-023-00660-2/fig1.png" target="_blank">
+        <img src="assets/geometric-deep-learning-of-particle-motion-by-magik__s42256-023-00660-2/fig1.png" alt="Fig.1 MAGIK pipeline from images to particle tracks or motion properties" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> MAGIK pipeline: (a) image series with detected objects; (b) spatiotemporal graph input; (c) message-passing; (d) self-attention; (e&ndash;f) edge-, node-, and graph-level task outputs for tracking, local motion, and global motion characterization.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables in this Brief Communication (Tables&nbsp;=&nbsp;0). Detailed quantitative benchmarks are in Pineda et al. (Nat. Mach. Intell. 5, 71&ndash;82, 2023).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper&rsquo;s extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how MAGIK could be extended (drawing on our corpus), then concrete added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, 2SFCA/R2SFCA accessibility, spatiotemporal KDE, physics-informed graph learning, explainable ML).</p>
+
+    <div class="idea">
+      <h3>&#9312; Replace MAGIK&rsquo;s fixed-radius graph with a learned sparse graph for denser scenes</h3>
+      <p><span class="lab paper">Extending this paper</span>MAGIK connects all object pairs within a fixed spatiotemporal radius &mdash; a heuristic whose edge count grows quadratically with particle density, introducing noise from spurious long-range edges. The commentary itself identifies learnable sparse graphs (Ref.&nbsp;8, Fatemi et al. NeurIPS&nbsp;2021) as a direct next step. Concretely: replace the radius graph with a differentiable edge-selection module that learns which spatiotemporal connections are task-relevant, trained jointly with the multi-task GNN heads. This would improve scalability to ultra-dense live-cell movies and let the model discover that biological interactions follow proximity hierarchies not captured by a uniform radius threshold.</p>
+      <p><span class="lab mine">Added value to my research</span>The learned-sparsification idea maps to my <strong>spatiotemporal kernel density estimation</strong> pipeline for GPS and mobile-phone trajectory data: instead of a fixed bandwidth, I could learn which event pairs contribute to density estimates, turning bandwidth selection into a data-driven, graph-structured problem. This has direct application to fine-scale mobility modeling for public-health surveillance and telehealth access analysis.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Physics-based machine learning for subcellular segmentation in living cells &mdash; <a href="https://doi.org/10.1038/s42256-021-00420-0" target="_blank">10.1038/s42256-021-00420-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Add an anomalous-diffusion classification head to MAGIK&rsquo;s multi-task architecture</h3>
+      <p><span class="lab paper">Extending this paper</span>MAGIK predicts <em>magnitudes</em> of motion (diffusion coefficient, velocity, confinement radius) but does not classify the underlying <strong>diffusion regime</strong> (Brownian, subdiffusive, superdiffusive, directed). A direct extension: append a classification head that jointly predicts the anomalous diffusion exponent &alpha; and model label, sharing the same GNN backbone with the existing tracking and regression heads. The key challenge is out-of-distribution generalization &mdash; models trained on one biological system may fail on unseen motion types &mdash; making robust anomalous-diffusion inference a necessary companion capability.</p>
+      <p><span class="lab mine">Added value to my research</span>The diffusion-regime classification concept transfers to <strong>human mobility analysis</strong>: just as particles exhibit subdiffusive (confined) vs. superdiffusive (directed) motion, urban mobility shows distinct regimes (commute confinement, long-range travel, random exploration). A GNN classifying mobility regime from trajectory graphs could parameterize richer <strong>SIR epidemic models</strong> where effective contact rates depend on mobility state, directly linking particle physics methods to my public-health modeling agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Effectively detecting anomalous diffusion via deep learning &mdash; <a href="https://doi.org/10.1038/s43588-024-00705-5" target="_blank">10.1038/s43588-024-00705-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Use MAGIK&rsquo;s graph-level task paradigm to classify collective urban-system states</h3>
+      <p><span class="lab paper">Extending this paper</span>MAGIK&rsquo;s graph-level task classifies the <em>collective dynamics</em> of an entire particle population from a single graph observation &mdash; e.g., whether cells are undergoing directed migration vs. random diffusion. This &ldquo;collective state from graph&rdquo; concept is powerful: a natural extension would train MAGIK on temporal windows spanning multiple cellular states (mitosis, apoptosis, motility transitions) to detect phase transitions in live-cell movies automatically, replacing expensive hand-labelling of biological events. Self-attention would simultaneously highlight which sub-populations drive each collective state change.</p>
+      <p><span class="lab mine">Added value to my research</span>Graph-level classification maps to my <strong>urban network community detection</strong> work: a city&rsquo;s job-housing or transit network encoded as a spatiotemporal graph could be classified into &ldquo;balanced&rdquo; vs. &ldquo;imbalanced&rdquo; accessibility regimes by a MAGIK-style graph-level head. This provides a <strong>data-driven global-state label</strong> for urban systems &mdash; analogous to diffusion phase detection &mdash; replacing modularity-based or entropy-based regime indicators with a learned, transferable classifier.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reliable deep learning in anomalous diffusion against out-of-distribution dynamics &mdash; <a href="https://doi.org/10.1038/s43588-024-00703-7" target="_blank">10.1038/s43588-024-00703-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Extend MAGIK to continuous-time dynamic graphs for online, streaming microscopy analysis</h3>
+      <p><span class="lab paper">Extending this paper</span>MAGIK encodes time as a node/edge feature within a <em>static</em> snapshot graph &mdash; all frames are merged into one graph at once &mdash; which prevents real-time tracking as new frames arrive and limits long-range temporal memory. The commentary explicitly flags temporal GNNs (Ref.&nbsp;10, Kazemi et al.) as a promising extension. Concretely: replace the static graph with a continuous-time dynamic graph where each new frame updates node embeddings through a temporal message-passing operator (e.g., a neural ODE or temporal attention). This would enable online particle tracking and capture long-range temporal patterns such as a cell pausing before switching to directed migration.</p>
+      <p><span class="lab mine">Added value to my research</span>A temporal GNN built on MAGIK&rsquo;s foundations feeds directly into my <strong>physics-informed graph learning</strong> agenda: encoding a city&rsquo;s POI-access network as a dynamic graph would allow a temporal GNN to model how spatial accessibility evolves throughout the day (morning peak, midday, evening), enabling a <strong>streaming 2SFCA</strong> where supply and demand signals update continuously from real-time mobility data rather than static daily snapshots &mdash; critical for telehealth and urgent-care access monitoring.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep recurrent optical flow learning for particle image velocimetry data &mdash; <a href="https://doi.org/10.1038/s42256-021-00369-0" target="_blank">10.1038/s42256-021-00369-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Transfer MAGIK&rsquo;s built-in attention interpretability to explainable GeoAI for healthcare access</h3>
+      <p><span class="lab paper">Extending this paper</span>MAGIK&rsquo;s self-attention layer is described as &ldquo;adaptive and interpretable&rdquo; &mdash; it exposes which spatiotemporal connections most drive each object&rsquo;s dynamic classification, providing a form of graph explainability that is architecturally embedded rather than post-hoc. A direct extension: systematically validate these attention scores against ground-truth causal links in simulated data (does high attention reliably identify the true trajectory edge?), then develop a <strong>calibrated attention-based XAI framework</strong> for GNN-based biological systems that is auditable against known biophysical priors &mdash; addressing a critical gap in trustworthy AI for science.</p>
+      <p><span class="lab mine">Added value to my research</span>My current <strong>explainable ML for spatial prediction</strong> work uses SHAP or MGWR/GWR for post-hoc feature attribution. Encoding healthcare access prediction as a node-level task on a facility&ndash;population graph &mdash; with built-in attention revealing which road/transit links or demographic features drive access scores &mdash; would deliver a <strong>spatially explicit XAI tool</strong> grounded in graph structure. Unlike model-agnostic perturbation methods, attention-based attribution preserves spatial topology, making explanations directly interpretable by urban planners and health policy makers.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein&ndash;ligand affinities &mdash; <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

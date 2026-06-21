@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting emergence of crystals from amorphous precursors with deep learning potentials — AI Digest</title>
+<meta name="description" content="AI Digest: Predicting emergence of crystals from amorphous precursors with deep learning potentials (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#x2190; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Crystal structure prediction</span>
+      <span class="tag">Deep learning potentials</span>
+      <span class="tag">Amorphous materials</span>
+      <span class="tag">GNN interatomic potential</span>
+    </div>
+    <h1>Predicting emergence of crystals from amorphous precursors with deep learning potentials</h1>
+    <div class="meta">
+      <span class="authors">Muratahan Aykol &middot; Amil Merchant &middot; Simon Batzner &middot; Jennifer N. Wei &middot; Ekin Dogus Cubuk</span>
+      <span><b>Published</b> 2024-12-18</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00752-y" target="_blank">10.1038/s43588-024-00752-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00752-y" target="_blank">nature.com &#x2197;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A computational framework called <strong>a<sup>2</sup>c</strong> (amorphous-to-crystal) uses <strong>universal deep learning interatomic potentials</strong> to predict, with high accuracy, which crystal polymorphs nucleate from amorphous precursors &mdash; a problem previously beyond the reach of molecular modeling or ab initio methods. By sampling tens of thousands of local structural motifs in an amorphous configuration and relaxing periodic subcells under a graph-neural-network force field, a<sup>2</sup>c identifies the correct crystallization products across <strong>12 diverse inorganic material systems</strong>, including oxides, nitrides, carbides, fluorides, chalcogenides and metal alloys, and achieves up to a <strong>~6-fold improvement in selectivity</strong> over random structure search.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x2605;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks a long-standing barrier in materials science.</b> Predicting the crystallization product of an amorphous precursor &mdash; governed by nucleation kinetics, not thermodynamics &mdash; has been inaccessible to both ab initio molecular dynamics (too slow) and classical crystal structure prediction (ignores amorphous starting state). a<sup>2</sup>c bridges this gap.</li>
+      <li><b>Universality across chemical space.</b> A single GNN potential trained on ~7.4 million DFT calculations generalizes across the entire periodic table, enabling polymorph predictions in oxides, nitrides, carbides, fluorides, chlorides, chalcogenides, and metallic glasses without system-specific tuning.</li>
+      <li><b>Atomic-level explainability.</b> The method does not just output a structure &mdash; it reveals <em>which local motifs</em> in the amorphous phase seed each polymorph, giving mechanistic insight aligned with classical nucleation theory and Ostwald's rule of stages.</li>
+      <li><b>Resolves outstanding experimental mysteries.</b> a<sup>2</sup>c solved the crystal structure of BiBO<sub>3</sub> polymorph (II) &mdash; previously synthesized but structurally unsolved &mdash; and reconciled the decomposition pathway of metallic glass Fe<sub>80</sub>B<sub>20</sub>.</li>
+      <li><b>Computationally practical at scale.</b> The entire workflow (melt-quench MD + subcell relaxation) runs on a single GPU (P100 or A100), making it applicable to high-throughput materials discovery without supercomputer access.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological innovation with broad impact:</b> a<sup>2</sup>c introduces a new computational paradigm that reframes crystal structure prediction from global energy minimization to amorphous-basin-guided local motif search &mdash; a conceptual advance with transferable implications across chemistry, geology, and astrophysics.</li>
+      <li><b>Validated universality:</b> agreement with experimental polymorphs across 12 diverse chemical systems (spanning oxides to metallic glasses) demonstrates a general principle rather than a system-specific trick, matching the journal's preference for widely applicable findings.</li>
+      <li><b>Advances the GNN/deep-learning-potential frontier:</b> contributes to the rapidly growing space of universal machine learning interatomic potentials (GNoME, CHGNet, M3GNet, NequIP) by demonstrating a new nontrivial application domain where existing ab initio approaches fail.</li>
+      <li><b>Open data and reproducible code:</b> amorphous structures, subcells, DFT-relaxed targets and the a<sup>2</sup>c workflow are released via Zenodo and GitHub (google-deepmind/materials_discovery; jax-md/jax-md), fully aligned with Nature's reproducibility standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x26C1;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training dataset</dt><dd><strong>~7.4 million DFT calculations</strong> spanning a wide range of chemical spaces, composed of ab initio random-search-generated structures and substitutionally generated structures from the <strong>GNoME project</strong> (Merchant et al., <em>Nature</em> 624, 2023). Includes first, second, and twentieth steps of each DFT relaxation trajectory.</dd>
+      <dt>Benchmark</dt><dd><strong>MatBench Discovery</strong> (Riebesell et al., arXiv:2308.14920, 2023) &mdash; the GNoME NequIP potential reaches a test error of <strong>0.04 eV per atom</strong> on this standard crystal stability benchmark.</dd>
+      <dt>Validation systems</dt><dd><strong>12 inorganic material systems</strong> studied: SiO<sub>2</sub>, TiO<sub>2</sub>, GeTe, BiBO<sub>3</sub>, VO<sub>2</sub>, Al<sub>2</sub>O<sub>3</sub>, Mn<sub>2</sub>C, Fe<sub>80</sub>B<sub>20</sub>, BN, MgF<sub>2</sub>, YbFeO<sub>3</sub>, InCl<sub>3</sub>. Subcell counts per system: 10<sup>3</sup>&ndash;10<sup>4</sup> (n<sub>grid</sub>=10) to 10<sup>5</sup>&ndash;10<sup>7</sup> (n<sub>grid</sub>=20).</dd>
+      <dt>Amorphous validation</dt><dd>Tested against experimental radial distribution functions; achieves <strong>38 meV per atom</strong> DFT error across thousands of amorphous structures spanning nearly all binary chemical systems.</dd>
+      <dt>Released data</dt><dd>Amorphous structures, a<sup>2</sup>c subcells, subcell indices, force-field-relaxed and DFT-relaxed final structures at <a href="https://doi.org/10.5281/zenodo.14201313" target="_blank">Zenodo (10.5281/zenodo.14201313)</a> and <a href="https://github.com/google-deepmind/materials_discovery" target="_blank">github.com/google-deepmind/materials_discovery</a>.</dd>
+      <dt>Code</dt><dd>End-to-end Python a<sup>2</sup>c workflow via <strong>JAX-MD</strong> at <a href="https://doi.org/10.5281/zenodo.14160081" target="_blank">Zenodo (10.5281/zenodo.14160081)</a> and <a href="https://github.com/jax-md/jax-md" target="_blank">github.com/jax-md/jax-md</a>.</dd>
+      <dt>Time window</dt><dd>GNoME training data published 2023; experimental validation references span 1973&ndash;2023.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>GNoME DFT training set</td><td>Training universal NequIP interatomic potential</td><td>~7.4 million DFT calculations, periodic-table-spanning</td><td><a href="https://github.com/google-deepmind/materials_discovery" target="_blank">GitHub</a></td></tr>
+        <tr><td>MatBench Discovery</td><td>Model benchmarking (crystal stability prediction)</td><td>Standard ML benchmark; 0.04 eV/atom test error</td><td><a href="https://arxiv.org/abs/2308.14920" target="_blank">arXiv</a></td></tr>
+        <tr><td>a<sup>2</sup>c supplementary data (Zenodo)</td><td>Amorphous structures, subcells, DFT-relaxed targets for 12 systems</td><td>12 inorganic systems; up to ~10<sup>7</sup> subcells per system</td><td><a href="https://doi.org/10.5281/zenodo.14201313" target="_blank">Zenodo</a></td></tr>
+        <tr><td>JAX-MD (Zenodo + GitHub)</td><td>MQMD + subcell relaxation workflow code</td><td>Open-source Python library; single-GPU (P100/A100) runtime</td><td><a href="https://doi.org/10.5281/zenodo.14160081" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Pymatgen + Materials Project (MP2020)</td><td>Structure matching, space group analysis, DFT validation settings</td><td>Open-source; MP2020 DFT parameters for validation</td><td><a href="https://pymatgen.org" target="_blank">pymatgen.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this work uses computed (DFT) rather than observational datasets. The GNoME training set size (~7.4M calculations) is stated explicitly in the Methods; the 12 validation systems are listed by name in Fig. 1d and Extended Data Table 1.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x2699;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Melt-and-quench molecular dynamics (MQMD):</b> generate representative amorphous configurations by (1) randomly placing ~100 atoms in a cubic box at ~15% volumetric expansion over the stable phase, (2) briefly relaxing with soft-sphere repulsion to remove overlaps, then (3) running three-stage NVT MD (equilibrate melt at T<sub>high</sub>, quench to T<sub>low</sub>, equilibrate at T<sub>low</sub>) using the NequIP GNN force field with a Nos&eacute;&ndash;Hoover thermostat and 2 fs timestep.</li>
+      <li><b>Subcell extraction and periodic relaxation (a<sup>2</sup>c core step):</b> exhaustively enumerate all orthorhombic parallelepipeds (subcells) on an n<sub>grid</sub>=10 (default) point grid from the amorphous supercell (~1.7&times;10<sup>5</sup> total); apply stoichiometry and atom-count filters to reduce to 10<sup>3</sup>&ndash;10<sup>4</sup> subcells; relax all degrees of freedom (atomic positions, cell shape, cell size) using the FIRE algorithm for &ge;150 steps.</li>
+      <li><b>Universal NequIP GNN interatomic potential (GNoME):</b> E(3)-equivariant GNN with 3 message-passing layers, l<sub>max</sub>=2 irreps (multiplicities 64/32/16 for l=0,1,2), 2-layer radial MLP with 64 neurons over 8 Bessel functions, 5 &Aring; cutoff, ~2.4M parameters, trained on ~7.4M DFT calculations with Huber loss using Adam optimizer.</li>
+      <li><b>Comparison with random structure search (RSS):</b> generate ~10,000 random configurations per system with bond-distance constraints via the AIRSS package, relax with the same GNN force field, compute "acceleration factor" (a<sup>2</sup>c precision / RSS precision) &mdash; found to range from ~1.2&times; to ~6&times; across 7 benchmarked systems.</li>
+      <li><b>Structure analysis and matching:</b> crystal matching via pymatgen StructureMatcher and SpacegroupAnalyzer; structure visualization via VESTA; experimental validation via comparison with diffraction patterns and radial distribution functions.</li>
+      <li><b>DFT validation:</b> MP2020 Materials Project DFT settings used to validate exact a<sup>2</sup>c-identified relaxation paths from initial subcell to final target structure, confirming computational accuracy.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#x25A6;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/predicting-emergence-of-crystals-from-amorphous-precursors-with-deep-learning-potentials__s43588-024-00752-y/fig1.png" target="_blank">
+        <img src="assets/predicting-emergence-of-crystals-from-amorphous-precursors-with-deep-learning-potentials__s43588-024-00752-y/fig1.png" alt="Fig.1 Predicting crystallization products of amorphous precursors" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Computational pipeline: (a) energy landscape with amorphous basin, (b&ndash;c) MQMD workflow and subcell extraction + periodic relaxation, (d) predicted crystal structures for 12 inorganic systems each matching experimental polymorphs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-emergence-of-crystals-from-amorphous-precursors-with-deep-learning-potentials__s43588-024-00752-y/fig2.png" target="_blank">
+        <img src="assets/predicting-emergence-of-crystals-from-amorphous-precursors-with-deep-learning-potentials__s43588-024-00752-y/fig2.png" alt="Fig.2 Benchmarking a2c vs random structure search" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Benchmarking a<sup>2</sup>c vs. random structure search (RSS) across 7 systems &mdash; showing the acceleration factor (1.2&times; to 6&times;) in identifying the correct crystallization product.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (0 tables in main text); Extended Data Table 1 reports MD temperature settings and subcell statistics for all 12 studied systems. Supplementary Information contains Figs. 1&ndash;12 and Notes 1&ndash;8.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#x2726;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, physics-informed graph learning, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>&#9312; Replacing the static GNoME potential with an active-learning-updated interatomic potential</h3>
+      <p><span class="lab paper">Extending this paper</span>The a<sup>2</sup>c framework relies on a <strong>static universal potential</strong> trained on GNoME data, which achieves 0.04 eV/atom on MatBench Discovery but may degrade for chemical spaces underrepresented in training (e.g., ternary nitrides, multi-component chalcogenides). A direct extension would embed an <strong>uncertainty-driven active learning loop</strong>: when a subcell relaxation trajectory enters a high-uncertainty region of configuration space (detected via ensemble disagreement or Bayesian uncertainty), trigger targeted DFT single-point calculations and retrain on-the-fly. This would make a<sup>2</sup>c self-improving for unexplored chemical systems without full retraining from scratch, extending the paper's applicability beyond the 12 validated systems.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors the coverage challenge in geospatial foundation models: models pretrained on dense urban regions perform poorly in data-sparse rural or developing-country contexts. An analogous <strong>uncertainty-driven active data collection loop</strong> &mdash; where model uncertainty over underrepresented geographic regions triggers targeted survey augmentation &mdash; would directly improve my spatiotemporal prediction models for healthcare accessibility in underserved areas, aligning with my telehealth and digital divide research.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials &mdash; <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Transferring the "local motif seeds global order" principle to urban structure prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>The central a<sup>2</sup>c insight is that <strong>global crystalline order emerges from local structural motifs sampled in the amorphous phase</strong> &mdash; no global optimization is needed, only local subcell relaxation. An extension of the paper would test whether this holds for non-periodic targets: metallic glass decomposition into multiple competing compositions (as shown for Fe<sub>80</sub>B<sub>20</sub>), organic molecular crystals, or hybrid perovskites. The subcell enumeration on an orthogonal grid could be replaced by an <strong>equivariant GNN that learns which local motif types most reliably seed each polymorph</strong>, enabling a predictive map from amorphous composition to nucleation product without exhaustive subcell enumeration.</p>
+      <p><span class="lab mine">Added value to my research</span>The conceptual transfer to urban analytics is direct: emergent urban functional zones (analogs to crystal polymorphs) arise from <strong>local land-use and mobility configurations</strong> (analogs to local structural motifs). My physics-informed graph learning work can adopt this paradigm &mdash; building GNN models that predict emergent urban patterns (healthy-neighborhood clusters, job-housing structure) from local neighborhood features alone, rather than requiring city-wide optimization, enabling scalable urban analytics without global census data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table &mdash; <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Building a multi-potential ensemble for consensus-based crystallization prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>a<sup>2</sup>c currently uses a <strong>single NequIP/GNoME potential</strong>. A natural extension is to run the same MQMD + subcell relaxation workflow with an <strong>ensemble of foundation machine learning interatomic potentials</strong> (GNoME, CHGNet, M3GNet, MACE) and take a consensus vote on the predicted lowest-energy crystallization product. Cross-potential agreement would strongly indicate reliable predictions; disagreement would flag uncertain cases for experimental follow-up. This "Platonic representation" approach &mdash; checking whether architecturally diverse potentials converge on the same basins &mdash; would dramatically increase confidence in a<sup>2</sup>c predictions for novel materials systems not well covered by any single training set.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-model ensemble consensus is directly applicable to my <strong>explainable ML ensemble methods for spatial prediction</strong>: rather than selecting one best spatial model (MGWR, XGBoost, GNN), I can use cross-model disagreement as a spatially resolved uncertainty map, identifying geographic regions where additional data collection is most needed &mdash; precisely analogous to how potential disagreement in a<sup>2</sup>c flags chemically uncertain predictions needing DFT validation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Platonic representation of foundation machine learning interatomic potentials &mdash; <a href="https://doi.org/10.1038/s42256-026-01235-7" target="_blank">10.1038/s42256-026-01235-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Coupling a<sup>2</sup>c with crystal stability scoring to enable synthesis-first materials discovery</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper benchmarks a<sup>2</sup>c's <em>selectivity</em> (does it find the correct crystallization product?) but does not address <em>stability</em> (is that product thermodynamically viable for applications?). A direct extension would connect a<sup>2</sup>c in a two-stage pipeline: (1) use a<sup>2</sup>c to generate kinetically accessible polymorph candidates from the amorphous precursor, then (2) pass those candidates through a <strong>ML crystal stability evaluator</strong> (e.g., via MatBench Discovery-style hull-distance scoring) to rank them by both kinetic accessibility and thermodynamic stability. This closes the loop from amorphous precursor to synthesizable, application-ready material in a fully computational pipeline.</p>
+      <p><span class="lab mine">Added value to my research</span>This two-stage generate-then-score pattern maps directly onto my <strong>EV charging station placement and public facility optimization</strong> research: first generate candidate facility configurations (analogous to a<sup>2</sup>c subcell enumeration), then apply ML-based accessibility-equity-efficiency scoring to filter to the Pareto-optimal set. The a<sup>2</sup>c paper demonstrates that a constrained generate-then-score pipeline dramatically outperforms global random search &mdash; a generalizable lesson for spatial facility-location optimization.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating the prediction of stable materials with machine learning &mdash; <a href="https://doi.org/10.1038/s43588-023-00536-w" target="_blank">10.1038/s43588-023-00536-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Scaling a<sup>2</sup>c to spatially heterogeneous nanomaterials via heterogeneous graph architectures</h3>
+      <p><span class="lab paper">Extending this paper</span>a<sup>2</sup>c as presented targets <strong>bulk crystallization from homogeneous amorphous precursors</strong>. However, many technologically important crystallizations occur at surfaces, grain boundaries, or in spatially heterogeneous nanoparticle cores &mdash; where interfacial energy dominates over bulk thermodynamics. The paper itself notes this limitation for a-TiO<sub>2</sub> thin films where brookite appears due to surface effects. An extension would incorporate a <strong>physics-infused heterogeneous graph</strong> with separate node types for bulk vs. surface vs. defect atomic environments, each with type-conditioned message passing, enabling a<sup>2</sup>c-style motif search in nano-confined or surface-dominated geometries.</p>
+      <p><span class="lab mine">Added value to my research</span>The heterogeneous-graph extension maps cleanly to my <strong>multi-source data fusion and spatiotemporal graph learning</strong> agenda: just as an a<sup>2</sup>c heterogeneous graph fuses bulk and surface atomic environments with distinct node semantics, my urban GNN models must fuse semantically distinct node types (residential zones, hospitals, transit hubs, population grids) with different physical roles. The NequIP-derived principle of type-conditioned equivariant message passing provides an architectural template for GeoAI graph networks that respect the semantic heterogeneity of urban spatial systems.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep learning accelerates discovery of complex nanomaterials &mdash; <a href="https://doi.org/10.1038/s43588-025-00918-2" target="_blank">10.1038/s43588-025-00918-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

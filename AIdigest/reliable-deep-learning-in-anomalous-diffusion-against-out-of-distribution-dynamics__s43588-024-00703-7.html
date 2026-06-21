@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reliable deep learning in anomalous diffusion against out-of-distribution dynamics — AI Digest</title>
+<meta name="description" content="AI Digest: Reliable deep learning in anomalous diffusion against out-of-distribution dynamics (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Anomalous Diffusion</span>
+      <span class="tag">Out-of-Distribution Detection</span>
+      <span class="tag">Single-Particle Tracking</span>
+      <span class="tag">Bayesian Deep Learning</span>
+    </div>
+    <h1>Reliable deep learning in anomalous diffusion against out-of-distribution dynamics</h1>
+    <div class="meta">
+      <span class="authors">Xiaochen Feng · Hao Sha · Yongbing Zhang · Yaoquan Su · Shuai Liu · Yuan Jiang · Shangguo Hou · Sanyang Han · Xiangyang Ji</span>
+      <span><b>Published</b> 2024-10-11</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00703-7" target="_blank">10.1038/s43588-024-00703-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00703-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Deep-learning classifiers trained on established anomalous diffusion models (ATTM, CTRW, FBM, LW, SBM) routinely <strong>misidentify unknown dynamics</strong> as one of the known classes. This paper introduces a general evaluation framework and a baseline method — combining Mixup-based data augmentation, outlier-exposure regularization, and last-layer Laplace-approximation Bayesian inference — that <strong>simultaneously detects out-of-distribution (OOD) dynamics and maintains accurate in-distribution recognition</strong>. Applied to real single-particle tracking data of nicotinic acetylcholine receptors, fluorescent beads, and endocytosed silver nanoparticles, the method reliably flags unknown dynamics and <strong>prevents misinterpretation of molecular-level observations</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes a critical blind spot in biophysics AI.</b> Current deep-learning tools for single-particle tracking assume all test trajectories come from a known set of models — an unrealistic closed-world assumption. This is the first systematic framework exposing and addressing that assumption.</li>
+      <li><b>Prevents scientific misinterpretation.</b> Without OOD detection, networks force unknown dynamics (e.g., two-state motion of acetylcholine receptors) into familiar categories, potentially leading biologists to draw incorrect conclusions about molecular behavior.</li>
+      <li><b>Benchmarks six competing OOD strategies across ten ID–OOD dataset pairs</b>, providing the community with a reproducible reference and baseline — analogous to the AnDi Challenge for normal recognition.</li>
+      <li><b>Validated on three real experimental systems</b> spanning 2D membrane dynamics, viscoelastic polymer solutions, and 3D active intracellular transport, covering a broad swath of biophysical contexts.</li>
+      <li><b>Framework is data-agnostic and extensible.</b> The Mixup augmentation and post-hoc Laplace approximation can be layered on any pre-trained trajectory classifier, making adoption low-friction for existing tools.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Addresses a methodological gap with broad cross-disciplinary impact:</b> anomalous diffusion recognition is relevant to physics, chemistry, biology, materials science, and finance — fitting the journal's mandate for computational methods that span disciplines.</li>
+      <li><b>Introduces a community benchmark:</b> the ten-dataset evaluation framework and publicly released code (Code Ocean) constitute infrastructure, not just an analysis — consistent with the journal's emphasis on reproducible computational resources.</li>
+      <li><b>Combines principled Bayesian uncertainty theory with practical engineering:</b> the last-layer Laplace approximation is theoretically grounded yet computationally lightweight, exemplifying the journal's interest in principled-yet-scalable methods.</li>
+      <li><b>Connects simulation to real experimental data:</b> the bridge from simulated AnDi Challenge trajectories to live SPT microscopy data demonstrates translation from theory to practice, a recurring theme in Nature Computational Science papers.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Simulated trajectories</dt><dd>Generated with the <strong>andi-datasets</strong> package from the AnDi Challenge (2020). Training: 30,000 samples per category (N+1 categories after augmentation); validation: 3,000 trajectories per category. All trajectories: dimension m = 2, length w = 50 points, SNR ∈ {1, 2, 10}. Ten ID–OOD dataset combinations benchmarked.</dd>
+      <dt>Experimental system 1</dt><dd>Single-particle tracking (SPT) data of <strong>nicotinic acetylcholine (nAch) receptors</strong> in plasma membranes, taken from the public dataset of Maizón et al., available at <a href="https://github.com/hectorbm/DL_anomalous_diffusion" target="_blank">github.com/hectorbm/DL_anomalous_diffusion</a>. Number of trajectories not explicitly stated; OOD detection is demonstrated at the trajectory level.</dd>
+      <dt>Experimental system 2</dt><dd>SPT of <strong>fluorescent beads</strong> (BangsLab FSDG002, FSSY002) in dextran solution (500 kDa, ~430 mg/ml in water; ~2 pM bead concentration). Acquired via the authors' home-built active-feedback SPT system. Exact trajectory count not stated in the paper.</dd>
+      <dt>Experimental system 3</dt><dd>3D SPT of <strong>silver nanoparticles</strong> (Xfnano 103716) undergoing active endocytosis in HeLa cells. One continuous long trajectory was divided into <strong>320 non-overlapping 50-point segments</strong> for analysis; 305 were identified as ID, 12 as OOD.</dd>
+      <dt>Code &amp; data availability</dt><dd>All reproduction code and data are openly available on Code Ocean at <a href="https://doi.org/10.24433/CO.6518632.v1" target="_blank">10.24433/CO.6518632.v1</a>.</dd>
+      <dt>Time window</dt><dd>Simulated data generated fresh for this study; experimental data collected (dextran beads, silver NPs) using the authors' own SPT microscopy system. Exact collection dates not stated.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>AnDi Challenge andi-datasets (simulated)</td><td>Training and benchmark ID/OOD trajectory sets; ground-truth anomalous exponents and model labels</td><td>30,000 train + 3,000 val per category; 10 ID–OOD combinations; 5 ID models (ATTM, CTRW, FBM, LW, SBM) + 5 OOD models (DBM, TSM, CBM, SINAI, OU)</td><td><a href="https://github.com/AnDiChallenge/ANDI_datasets" target="_blank">AnDi GitHub</a></td></tr>
+        <tr><td>nAch receptor SPT (Maizón et al.)</td><td>Real-world OOD test — membrane receptor dynamics (TSM behavior)</td><td>Public dataset; exact N not reported in this paper</td><td><a href="https://github.com/hectorbm/DL_anomalous_diffusion" target="_blank">hectorbm/DL_anomalous_diffusion</a></td></tr>
+        <tr><td>Fluorescent bead SPT in dextran</td><td>Real-world sub-diffusive FBM test and OOD benchmark</td><td>Home-built SPT; ~2 pM beads in 430 mg/ml dextran; exact N not reported</td><td>Available on Code Ocean</td></tr>
+        <tr><td>Silver nanoparticle endocytosis SPT</td><td>Real-world 3D active-transport OOD detection</td><td>320 trajectory segments (50 pts each) from 1 HeLa cell experiment</td><td>Available on Code Ocean: <a href="https://doi.org/10.24433/CO.6518632.v1" target="_blank">10.24433/CO.6518632.v1</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: volumes for experimental SPT datasets 1 and 2 are not explicitly stated as counts in the paper's main text; stated figures are taken verbatim from the article. The 320 segments figure for the silver nanoparticle experiment is explicitly stated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>CNN–Transformer backbone:</b> a convolutional-transformer architecture processes raw 2D/3D trajectory coordinates; 1D convolution (ResNet-style) extracts local features, six transformer encoders capture long-range temporal correlations; two linear heads perform simultaneous model classification and anomalous exponent regression (multitask learning).</li>
+      <li><b>Mixup-based data augmentation for outlier generation:</b> two types of synthetic outliers are created by linearly interpolating pairs of in-distribution trajectories (<code>X̃₁(t) = λX_i(t) + (1−λ)X_j(t)</code>) or by splicing segments from two trajectories, broadening the source distribution without requiring real OOD data.</li>
+      <li><b>Outlier-exposure training regularization:</b> a multi-component loss (regression MSE + cross-entropy + outlier-exposure loss + L2-norm regularization) trains the network to push synthetic outliers toward a low-confidence "OOD" class while maintaining ID classification accuracy.</li>
+      <li><b>Last-layer Laplace approximation (LLLA) for Bayesian confidence scoring:</b> post-hoc Bayesian inference is applied only to the final classification layer, converting a MAP-trained classifier into a Bayesian neural network (BNN) without retraining. Confidence score S<sub>BNN</sub> and detector G<sub>BNN</sub> threshold OOD vs. ID at inference time.</li>
+      <li><b>Distance-based detector G<sub>dis</sub> (hypersphere):</b> for OOD dynamics that G<sub>BNN</sub> fails to separate (OU, CTRW, LW), intermediate-layer feature vectors are enclosed in a Support Vector Data Description (SVDD) hypersphere; out-of-hypersphere distance flags OOD dynamics in feature space.</li>
+      <li><b>Evaluation metrics:</b> AUROC and FPR95 for OOD detection; F₁-score and MAE for ID classification and anomalous exponent regression.</li>
+      <li><b>Z-score normalization</b> applied to all input trajectories to decouple diffusion coefficient from diffusion model/exponent recognition.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig1.png" target="_blank">
+        <img src="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig1.png" alt="Fig.1 OOD dynamics detection framework overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the OOD dynamics detection framework: (a) closed-world assumption in conventional deep learning for anomalous diffusion; (b) ID vs. OOD dynamics illustration; (c) Mixup-based training augmentation procedure; (d) LLLA-based BNN confidence scoring for OOD detection at inference.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig2.png" target="_blank">
+        <img src="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig2.png" alt="Fig.2 Benchmark results and real SPT data validation" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Benchmark results across 10 ID–OOD dataset combinations (AUROC/FPR95); ID recognition performance; SPT schematics and OOD detection on nAch receptor and fluorescent bead data with confusion matrices.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig3.png" target="_blank">
+        <img src="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig3.png" alt="Fig.3 Performance vs. trajectory length and SNR" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> OOD detection enhancement: F₁ and MAE as functions of trajectory length and SNR; AUROC and FPR95 curves across conditions; LDA and t-SNE visualizations of feature-space separability for difficult OOD dynamics (OU, CTRW, LW).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig4.png" target="_blank">
+        <img src="assets/reliable-deep-learning-in-anomalous-diffusion-against-out-of-distribution-dynamics__s43588-024-00703-7/fig4.png" alt="Fig.4 OOD detection analysis and silver nanoparticle endocytosis" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Predicted vs. ground-truth anomalous exponent distributions for OOD models; MAE across OOD classes; confidence score box plots (n = 150 simulations per box); silver nanoparticle 3D trajectory analysis with OOD detection intervals and final ID trajectory distribution.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no tables in the main text (tables_count = 0); Supplementary Information contains Tables 1–5 and Supplementary Figs. 1–11.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, accessibility modeling).</p>
+
+    <div class="idea">
+      <h3>① Transfer the OOD detection framework to spatiotemporal trajectory classification in urban mobility</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper's entire pipeline — CNN-transformer backbone, Mixup-based outlier generation, outlier-exposure regularization, and post-hoc Bayesian confidence scoring — was designed for molecular trajectories but is <strong>trajectory-agnostic</strong>. A direct and meaningful extension is to apply it to <strong>GPS mobility trajectories</strong> of urban agents: train on known movement "diffusion types" (e.g., commuting, random exploration, directed transit) and let the OOD detector flag anomalous individual behaviors (accident, protest, disease outbreak), which are by definition OOD relative to normal mobility patterns. The paper's LLLA confidence scoring is particularly attractive because it requires no retraining of the backbone — it can be layered on any existing mobility classifier.</p>
+      <p><span class="lab mine">Added value to my research</span>My research uses GPS trajectories and mobile phone records to infer spatiotemporal behavior. An OOD detector trained on normal commuting patterns and calibrated with LLLA could serve as an <strong>anomalous-event early warning system</strong> in urban contexts — flagging trajectory segments that deviate from modeled mobility dynamics before they are assigned to a wrong class. This connects directly to my spatiotemporal kernel density estimation work and complements explainable ML for spatial prediction by flagging samples where the model's confidence should not be trusted.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Effectively detecting anomalous diffusion via deep learning — <a href="https://doi.org/10.1038/s43588-024-00705-5" target="_blank">10.1038/s43588-024-00705-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace MAP-trained fixed classifiers with online Bayesian updating for streaming SPT data</h3>
+      <p><span class="lab paper">Extending this paper</span>The current framework is a <strong>batch pipeline</strong>: train once on simulated data, then deploy. In live SPT microscopy experiments, new trajectory segments arrive continuously and the underlying cellular environment may shift (e.g., a drug is added mid-experiment). Extending the paper: replace the static LLLA with a <strong>continual or online Bayesian update scheme</strong> where the posterior over the last-layer weights is updated sequentially as new trajectory segments arrive — making the confidence threshold γ adaptive to non-stationary dynamics. The distance-based G<sub>dis</sub> hypersphere already hints at this direction (hypersphere shrinks/expands as new data arrive). This addresses the paper's own stated limitation of handling "trajectories of varying lengths" and single-observable detection over time.</p>
+      <p><span class="lab mine">Added value to my research</span>Online Bayesian updating is exactly the mechanism my research needs for <strong>streaming geospatial data</strong> (real-time sensor feeds, live mobile phone records). The principle of maintaining a running posterior over model parameters — updating confidence without full retraining — maps onto real-time accessibility monitoring: as new POI opening/closure events arrive, the accessibility model's uncertainty should update continuously rather than requiring batch retraining.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep Bayesian active learning using in-memory computing hardware — <a href="https://doi.org/10.1038/s43588-024-00744-y" target="_blank">10.1038/s43588-024-00744-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Encode known diffusion physics as structural priors in the transformer to shrink the OOD space</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper treats the CNN-transformer as a generic sequence model — physics only enters through the simulated training data. A deeper extension: <strong>encode the MSD power-law relationship (MSD ∝ t<sup>α</sup>) and ergodicity-breaking constraints as inductive biases</strong> in the transformer's attention mask or as physics-informed loss terms, analogous to physics-informed neural networks (PINNs). This would shrink the effective hypothesis space to physically plausible trajectories, making OOD detection more sensitive for near-boundary dynamics (CTRW/LW, which the paper finds hardest to separate from ID). The benchmark's t-SNE visualizations (Fig. 3g–i) suggest that physically grounded feature spaces already cluster better — a physics-prior could enforce this explicitly.</p>
+      <p><span class="lab mine">Added value to my research</span>Physics-informed graph learning is a core theme of my research agenda. The principle here — encoding domain conservation laws as constraints in a neural architecture — transfers directly to my <strong>spatiotemporal diffusion models for disease spread</strong> (SIR dynamics encoded in graph attention), where out-of-distribution epidemic trajectories (novel pathogens, super-spreader events) must be flagged rather than misclassified.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Extend the benchmark to multi-scale and multi-modal OOD: combining trajectory length, noise level, and measurement modality</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's benchmark fixes dimension (m = 2), length (w = 50), and SNR at a few values. Real SPT experiments are far messier: <strong>heterogeneous trajectory lengths, multiple imaging modalities</strong> (TIRF vs. confocal vs. light-sheet), and varying photon budgets all produce different effective noise profiles. Extending the paper's evaluation framework to a <strong>multi-axis OOD stress test</strong> (length × SNR × modality × experimental condition) would make the benchmark directly actionable for experimentalists choosing an acquisition strategy. Fig. 3's trajectory-length curves are a starting point, but the paper's own discussion acknowledges that "shorter ID trajectories are prone to incorrect OOD detection."</p>
+      <p><span class="lab mine">Added value to my research</span>My research fuses data from heterogeneous sources — mobile phone records (coarse spatial resolution, high temporal density), GPS trajectories (fine spatial, sparse temporal), and social media (irregular, low coverage). The multi-source OOD benchmark concept maps directly onto <strong>multi-source data fusion reliability</strong>: an OOD detector calibrated on one data modality should flag when a fused record's effective signal quality falls below a trust threshold, preventing unreliable inferences from low-quality inputs entering my geospatial ML pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Navigating molecular OOD-ness — <a href="https://doi.org/10.1038/s42256-026-01251-7" target="_blank">10.1038/s42256-026-01251-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use OOD-detected segments as active discovery signals for formulating new diffusion models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Discussion makes an underexplored but profound suggestion: <em>"the detected samples can serve as valuable empirical evidence for mathematicians and physicists in formulating novel dynamics."</em> A direct extension: build an <strong>active discovery loop</strong> around the OOD detector — systematically collect trajectories flagged as OOD from diverse biological systems, cluster them in the G<sub>dis</sub> feature space to identify recurring unknown dynamics, and feed these clusters to a symbolic regression or equation-learning algorithm to propose new stochastic differential equation candidates. The paper already shows (Fig. 4h,i) that OOD detection resolves temporally distinct regimes in the endocytosis trajectory that prior work left uncharacterized.</p>
+      <p><span class="lab mine">Added value to my research</span>This "anomaly-as-discovery" paradigm resonates with my agent-based modeling work: in ABM validation, trajectories that deviate from model predictions are usually discarded as noise, but they may encode emergent behaviors (crowd shockwaves, super-spreading events) that the underlying model fails to represent. An OOD-detection-guided <strong>anomaly curation pipeline</strong> could systematically harvest these instances as training data for next-generation ABMs, closing the loop between observation, model failure, and model revision.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Network-driven anomalous transport is a fundamental component of brain microvascular dysfunction — <a href="https://doi.org/10.1038/s41467-021-27534-8" target="_blank">10.1038/s41467-021-27534-8</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhancing deep learning-based field reconstruction with a differentiable learning framework — AI Digest</title>
+<meta name="description" content="AI Digest: Enhancing deep learning-based field reconstruction with a differentiable learning framework (Nature Machine Intelligence, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Field Reconstruction</span>
+      <span class="tag">Sensor Placement</span>
+      <span class="tag">Differentiable Programming</span>
+      <span class="tag">Physics Simulation</span>
+    </div>
+    <h1>Enhancing deep learning-based field reconstruction with a differentiable learning framework</h1>
+    <div class="meta">
+      <span class="authors">Liu, Xu · Peng, Wei · Zhang, Xiaoya · Zhao, Xiaoyu · Zhou, Weien · Yao, Wen · Chen, Xiaoqian</span>
+      <span><b>Published</b> 2025-07-22</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-025-01063-1" target="_blank">10.1038/s42256-025-01063-1</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-025-01063-1" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Jointly optimizing neural network weights <em>and</em> sensor positions — through a single <strong>bilevel differentiable learning framework (DSPO)</strong> — consistently and substantially outperforms static sensor-placement strategies across six benchmark physics fields (laminar wake, turbulent channel flow, aerofoil, Darcy flow, flat-plate boundary layer, sea surface temperature). A <strong>radial-basis-function finite-difference differentiable operator</strong> bridges the non-differentiability gap between discrete grid indices and continuous placement coordinates, enabling gradient-based co-optimization. The framework is <strong>architecture-agnostic</strong>: it boosts MLP, CNN, FNO, GCN, PODNN, and Senseiver alike, often elevating lightweight models to state-of-the-art accuracy, reducing dependence on large training datasets, and improving robustness under noise.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Solves a long-standing chicken-and-egg problem.</b> Prior work either fixed sensor positions before training or trained the network without regard to where sensors should go. DSPO is the first systematic bilevel co-optimization framework that handles both variables jointly and end-to-end.</li>
+      <li><b>Architecture-agnostic uplift.</b> The framework wraps around any NN type without modifying its interior — MLP gains the most dramatic improvement; even SOTA FNO and GCN benefit. This means real-world practitioners need not replace their production models.</li>
+      <li><b>Practical cost savings.</b> By finding better sensor locations, fewer sensors and fewer training snapshots are needed to reach a target accuracy, directly translating to reduced experimental and computational budgets.</li>
+      <li><b>Robustness to noise.</b> DSPO is evaluated under five signal-to-noise ratio levels and consistently outperforms static placement — a critical requirement for real physical measurement systems.</li>
+      <li><b>Handles irregular grids and real-world complexity.</b> The RBF-FD operator generalizes to unstructured meshes and real NOAA ocean-temperature data, demonstrating viability beyond curated benchmark setups.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>General paradigm, not domain solution:</b> the bilevel-differentiable framework applies across fluid dynamics, subsurface flow, climate, and beyond — matching NMI's appetite for transferable ML advances.</li>
+      <li><b>Addresses a fundamental ML limitation:</b> the non-differentiability of sensor-index operations is a widely recognized but rarely solved bottleneck; the RBF-FD operator is a principled, general resolution.</li>
+      <li><b>Rigorous multi-architecture, multi-scenario comparison:</b> six models × six datasets × multiple noise/data-size conditions constitutes a comprehensive empirical study, the depth NMI expects of landmark papers.</li>
+      <li><b>Open code and data:</b> Zenodo-archived datasets and a CodeOcean executable capsule meet reproducibility standards increasingly demanded by high-impact journals.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Laminar cylinder wake</dt><dd>2D unsteady flow past a cylinder; direct numerical simulation (DNS) of Navier–Stokes; <strong>5,000 snapshots</strong>, grid <strong>192 × 112</strong>. Target: vorticity field.</dd>
+      <dt>Turbulent channel flow</dt><dd>3D incompressible channel flow at Re = 180; grid <strong>256 × 96 × 256</strong>; 2D slice extracted (128 × 48); <strong>10,000 velocity snapshots</strong>. Target: stream-wise velocity.</dd>
+      <dt>Flow over aerofoil</dt><dd>2D incompressible flow over NACA0012; Reynolds-averaged Navier–Stokes (RANS); <strong>1,000 snapshots</strong>, grid <strong>256 × 256</strong>; attack angles α ∈ [−10°, 10°], inlet velocity v<sub>in</sub> ∈ [−50, 50] m/s.</dd>
+      <dt>Darcy flow</dt><dd>2D steady-state elliptic PDE on [0,1]<sup>2</sup>; randomly sampled diffusion coefficients; grid <strong>128 × 128</strong>; tested at five SNR levels with Gaussian white noise.</dd>
+      <dt>Flat-plate boundary layer</dt><dd>Real turbulent experiment (details in Supplementary); used to validate DSPO on real measurement noise.</dd>
+      <dt>Sea surface temperature</dt><dd><strong>NOAA</strong> SST field; real-world irregularly distributed observations; validates generalizability to geophysical domains.</dd>
+      <dt>Repository</dt><dd>All six datasets archived at <a href="https://zenodo.org/records/15259970" target="_blank">zenodo.org/records/15259970</a>. Code at <a href="https://doi.org/10.5281/zenodo.15259928" target="_blank">zenodo.org (code)</a> and <a href="https://doi.org/10.24433/CO.4342598.v2" target="_blank">CodeOcean capsule</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Laminar cylinder wake (DNS)</td><td>Periodic field benchmark</td><td>5,000 snapshots, 192×112 grid</td><td><a href="https://zenodo.org/records/15259970" target="_blank">Zenodo 15259970</a></td></tr>
+        <tr><td>Turbulent channel flow (DNS)</td><td>Acyclic chaotic benchmark</td><td>10,000 snapshots, 128×48 slice</td><td><a href="https://zenodo.org/records/15259970" target="_blank">Zenodo 15259970</a></td></tr>
+        <tr><td>NACA0012 aerofoil (RANS)</td><td>Irregular / real-condition benchmark</td><td>1,000 snapshots, 256×256 grid</td><td><a href="https://zenodo.org/records/15259970" target="_blank">Zenodo 15259970</a></td></tr>
+        <tr><td>Darcy flow (PDE-generated)</td><td>Noise-robustness benchmark</td><td>128×128 grid, 5 SNR levels</td><td><a href="https://zenodo.org/records/15259970" target="_blank">Zenodo 15259970</a></td></tr>
+        <tr><td>NOAA Sea Surface Temperature</td><td>Real-world geophysical validation</td><td>Irregular grid, SST field</td><td><a href="https://zenodo.org/records/15259970" target="_blank">Zenodo 15259970</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact snapshot counts for the flat-plate boundary layer are not stated in the main article — readers should consult the Supplementary Information for those details.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Bilevel optimization formulation:</b> outer loop minimizes validation reconstruction error over sensor positions <em>x</em><sub>s</sub>; inner loop minimizes training loss over network parameters θ. The alternating minimization strategy keeps the two problems decoupled and tractable.</li>
+      <li><b>Differentiable RBF-FD operator (G):</b> a meshless radial-basis-function finite-difference operator computes sensor observations and their spatial derivatives at <em>arbitrary continuous positions</em>, making the objective function differentiable with respect to placement without adding trainable parameters.</li>
+      <li><b>Gradient-based sensor placement update:</b> automatic differentiation + chain rule threads the loss gradient through G back to x<sub>s</sub>; the Adam optimizer then updates placement continuously during the reverse process.</li>
+      <li><b>Six baseline architectures tested:</b> MLP, CNN (Voronoi/MLP-embedding), Fourier Neural Operator (FNO), Graph Convolutional Network (GCN), POD-NN (PODNN), and Senseiver (cross-attention) — covering all major paradigms in field reconstruction.</li>
+      <li><b>Compared against eight static SPO strategies:</b> random (RS), uniform (US), condition-number (CNS), determinant-based (DS), enhanced-clustering (ECS), correlation-clustering (CCS), and the differentiable bilinear walk (DWI).</li>
+      <li><b>Evaluation metric:</b> relative root mean square error (r.r.m.s.e.) ε = ‖q − q̂‖₂ / ‖q‖₂; supplemented with peak signal-to-noise ratio and energy spectra for turbulent flow cases.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig1.png" target="_blank">
+        <img src="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig1.png" alt="Fig. 1 Overview of DSPO framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the DSPO bilevel framework: (a) forward/reverse alternating processes, (b) differentiable RBF-FD operator, (c) six baseline NN architectures validated.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig2.png" target="_blank">
+        <img src="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig2.png" alt="Fig. 2 Laminar cylinder wake results" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Laminar cylinder wake: r.r.m.s.e. vs. sensor count for DSPO, RS, and US across all architectures; representative vorticity predictions and error maps under n<sub>s</sub>=4.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig3.png" target="_blank">
+        <img src="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig3.png" alt="Fig. 3 Turbulent channel flow results" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Turbulent channel flow: error vs. sensor count; DSPO vs. static SPO baselines; GCN and Senseiver velocity field predictions at n<sub>s</sub>=256.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig4.png" target="_blank">
+        <img src="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig4.png" alt="Fig. 4 Aerofoil results vs. training data" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> NACA0012 aerofoil: reconstruction error vs. number of training snapshots; DSPO enables CNN with 100 snapshots to match static-placement CNN at 500 snapshots.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig5.png" target="_blank">
+        <img src="assets/enhancing-deep-learning-based-field-reconstruction-with-a-differentiable-learning-framewor__s42256-025-01063-1/fig5.png" alt="Fig. 5 Darcy flow noise robustness" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Darcy flow noise robustness: r.r.m.s.e. at five SNR levels for DSPO vs. all SPO baselines; MLP and FNO prediction maps under varying noise.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <strong>1 main-text table</strong> (Table 1) summarizing DSPO performance across all six canonical applications with MLP as representative baseline. Six supplementary tables and four supplementary figures provide additional comparisons.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, spatial accessibility, explainable &amp; physics-informed graph learning, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>① Extend DSPO's sensor co-optimization to geospatial monitoring-station placement</h3>
+      <p><span class="lab paper">Extending this paper</span>DSPO currently operates on structured/unstructured physics grids (Cartesian, aerofoil meshes). The paper explicitly mentions NOAA sea surface temperature as a real-world irregular case, but the framework stops at atmospheric/ocean fields. A direct extension would port DSPO to <strong>geospatial observation networks</strong>: treating air-quality, seismic, or flood-sensor placement as the outer-loop variable, and a spatiotemporal field prediction model (e.g., a physics-constrained graph operator) as the inner loop. The RBF-FD operator already handles irregular 2D coordinates, so the mathematical infrastructure is in place — the missing piece is the geoscientific field model and multi-resolution grid integration. This would make the bilevel framework a genuine tool for environmental sensor-network design.</p>
+      <p><span class="lab mine">Added value to my research</span>For my GeoAI work on spatiotemporal prediction from sparse sensor/mobile-phone records, DSPO's gradient-driven sensor co-optimization offers a principled replacement for ad hoc station selection. Specifically, the differentiable operator could be adapted to optimize the spatial sampling of health exposure fields (air quality, urban heat) that underpin my health geography work — enabling joint learning of prediction model and measurement design for fine-grained health risk mapping.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Enhancing computational fluid dynamics with machine learning — <a href="https://doi.org/10.1038/s43588-022-00264-7" target="_blank">10.1038/s43588-022-00264-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Incorporate physics-informed PDE priors into DSPO's inner-loop loss to reduce training data requirements</h3>
+      <p><span class="lab paper">Extending this paper</span>DSPO's inner loop minimizes a pure data-fitting loss. For turbulent flow cases, the paper reports needing 10,000 snapshots for the channel flow — expensive to generate. An extension: add a <strong>soft physics residual</strong> (Navier–Stokes, Darcy elliptic PDE, or continuity equations) to the inner-loop objective, turning the framework into a physics-informed neural network (PINN) + SPO hybrid. This would reduce the snapshot requirement (the paper already shows DSPO halves the data needed compared to static placement; physics priors could shrink it further) and improve extrapolation to unseen flow conditions. The deep neural operator literature (neural operators mapping PDE families) suggests this combination is computationally feasible.</p>
+      <p><span class="lab mine">Added value to my research</span>This directly aligns with my physics-informed graph learning agenda: if the inner-loop neural model encodes spatial interaction priors (e.g., spatial autocorrelation, conservation-of-flow), the co-optimized sensor placement would naturally cluster near spatial discontinuities or hotspots — exactly the behavior needed for optimal allocation of healthcare facility sensors or mobility-demand observation points in my 2SFCA accessibility models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep neural operator for free boundary problems — <a href="https://doi.org/10.1038/s42256-026-01233-9" target="_blank">10.1038/s42256-026-01233-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Lift DSPO to 3D volumetric reconstruction for urban digital twins and subsurface environmental fields</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper explicitly acknowledges its current limitation to "continuous flat surface" sensing and flags 3D volumetric reconstruction as future work. The RBF-FD operator generalizes straightforwardly from 2D to 3D coordinates (the weighted-stencil formulation in Eq. 6–9 is dimension-agnostic). An extension would apply DSPO to <strong>3D urban airflow fields</strong> (relevant to urban canyon ventilation and pollutant dispersion) or <strong>3D groundwater pressure fields</strong> (the Darcy benchmark already points in this direction). The bilevel framework would then co-optimize the vertical placement of distributed sensors in a city-scale CFD domain, with immediate implications for smart-city environmental monitoring.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban analytics in my research increasingly involves 3D exposure modeling (vertical air quality gradients, building-scale heat islands). A 3D DSPO framework would provide a principled tool for co-designing the sensor networks and the spatiotemporal prediction model simultaneously — bridging my remote-sensing data fusion work with active measurement design, and supporting higher-resolution healthy-city assessments beyond the 2D street-network level.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Automating turbulence modelling by multi-agent reinforcement learning — <a href="https://doi.org/10.1038/s42256-020-00272-0" target="_blank">10.1038/s42256-020-00272-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply the bilevel differentiable paradigm to optimal placement of healthcare facilities and EV-charging stations</h3>
+      <p><span class="lab paper">Extending this paper</span>DSPO's bilevel structure — minimize facility/sensor placement in the outer loop given model parameters optimal for the current placement — is formally identical to the <strong>facility-location problem</strong> in spatial planning: choose service point locations to minimize accessibility cost (2SFCA supply deficit), subject to a demand-response model (travel behavior) in the inner loop. The differentiable operator that makes continuous position gradients flow through the model is analogous to a differentiable accessibility kernel. This framing would let DSPO's gradient-based solver replace the combinatorial branch-and-bound or greedy heuristics currently used in facility-location optimization, potentially scaling to large urban regions and dynamic demand.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct methodological transplant into my EV-charging and primary-care accessibility optimization work. My current efficiency-vs-equity models use fixed-candidate-site integer programs; reformulating them as bilevel differentiable programs — with demand-model as inner loop and facility coordinates as continuous outer variables — would unlock gradient-based global search and make the equity–efficiency Pareto front tractable at metropolitan scale, particularly for the healthcare facility siting and charging-station placement problems I actively work on.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Self-supervised learning of hologram reconstruction using physics consistency — <a href="https://doi.org/10.1038/s42256-023-00704-7" target="_blank">10.1038/s42256-023-00704-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Couple DSPO with explainable ML to audit which sensor locations the gradient optimizer deems most informative</h3>
+      <p><span class="lab paper">Extending this paper</span>DSPO's reverse process produces a final optimized sensor configuration after convergence, but the paper does not provide interpretable explanations of <em>why</em> certain positions are preferred — beyond noting that sensors cluster near wake regions. An extension: apply <strong>Shapley-value attribution or gradient saliency maps</strong> to DSPO's outer-loop objective, attributing the accuracy gain to individual sensor positions and their interaction effects. This would transform DSPO from a black-box optimizer into an interpretable scientific tool that reveals which spatial features (vortex shedding, shear layers, pressure gradients) drive information gain — providing physical insight alongside predictive accuracy.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainability is central to my GeoAI research. Combining DSPO's differentiable placement with spatial SHAP or MGWR-style local attribution would yield a geospatially interpretable sensor-design tool: for a health-monitoring sensor network, I could identify which spatial contexts (urban density, distance from transit, socio-economic strata) most reduce prediction uncertainty — directly informing equitable deployment of sparse health-monitoring infrastructure and bridging my work on explainable ML for spatial prediction with active measurement design.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and accurate neural-field reconstruction using resistive memory — <a href="https://doi.org/10.1038/s41586-026-10646-w" target="_blank">10.1038/s41586-026-10646-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

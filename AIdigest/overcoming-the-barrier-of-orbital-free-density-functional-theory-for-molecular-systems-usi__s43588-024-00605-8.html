@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overcoming the barrier of orbital-free density functional theory for molecular systems using deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Overcoming the barrier of orbital-free density functional theory for molecular systems using deep learning (Nature Computational Science, 2024)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&larr; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Quantum Chemistry</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Molecular Simulation</span>
+    </div>
+    <h1>Overcoming the barrier of orbital-free density functional theory for molecular systems using deep learning</h1>
+    <div class="meta">
+      <span class="authors">He Zhang &middot; Siyuan Liu &middot; Jiacheng You &middot; Chang Liu &middot; Shuxin Zheng &middot; Ziheng Lu &middot; Tong Wang &middot; Nanning Zheng &middot; Bin Shao</span>
+      <span><b>Published</b> 2024-03-11</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-024-00605-8" target="_blank">10.1038/s43588-024-00605-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-024-00605-8" target="_blank">nature.com &nearr;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>M-OFDFT is the first orbital-free DFT (OFDFT) approach that achieves <strong>chemical accuracy on diverse molecular systems</strong> including proteins, by learning the kinetic energy density functional (KEDF) with a non-local Graphormer-based deep learning model. It attains <strong>O(N<sup>1.46</sup>) empirical complexity</strong> compared to O(N<sup>2.49</sup>) for Kohn&ndash;Sham DFT, delivering up to a <strong>27.4-fold speed-up</strong> on protein-scale systems (738 atoms). Crucially, M-OFDFT <strong>extrapolates accurately to molecules 10&times; larger</strong> than its training set &mdash; a capability that neural network potentials lack &mdash; making it a practical tool for large-scale quantum chemistry of proteins and drug-like molecules.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks an 80-year barrier in quantum chemistry.</b> OFDFT has existed since Thomas and Fermi (1927) but remained inapplicable to molecules because no one could accurately approximate the kinetic energy density functional. M-OFDFT is the first method to solve this with practical accuracy on real organic molecules and proteins.</li>
+      <li><b>Unlocks protein-scale quantum chemistry at a fraction of the cost.</b> A 738-atom protein that takes 12.3 hours with Kohn&ndash;Sham DFT takes only 0.45 hours with M-OFDFT &mdash; a 27.4-fold speed-up &mdash; while maintaining chemical accuracy (&lt;1&nbsp;kcal&nbsp;mol<sup>&minus;1</sup>).</li>
+      <li><b>Extrapolation, not interpolation.</b> Unlike neural network potentials (NNPs), whose per-atom error grows monotonically with system size, M-OFDFT's per-atom error stays flat or even decreases on molecules up to 10&times; larger than training data. This qualitative advantage stems from learning the energy <em>functional</em> rather than the end-to-end energy map.</li>
+      <li><b>Fine-tuning efficiency.</b> After pretraining on small peptides, fine-tuning on just 500 chignolin structures reduces energy error by 35.4% over training from scratch &mdash; a data-efficient recipe for large-scale biomolecular quantum chemistry.</li>
+      <li><b>Fully open and reproducible.</b> All molecular structure datasets (MD17, QM9, QMugs, chignolin from D.E. Shaw) are publicly accessible; model checkpoints and full code are deposited on Zenodo and figshare.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Advances the frontier of computational science itself:</b> the paper directly shifts the accuracy&ndash;efficiency Pareto frontier in quantum chemistry &mdash; a core computational challenge &mdash; rather than applying existing methods to a new application domain.</li>
+      <li><b>Method novelty on multiple fronts:</b> atomic-basis density representation, local-frame geometric invariance, gradient-labeled training from SCF intermediates, and enhancement modules for vast gradient range are all original technical contributions.</li>
+      <li><b>Rigorous cross-domain benchmarking:</b> tests span MD17 (conformational space), QM9 (chemical space), QMugs (large drug-like molecules), and chignolin (a real protein) &mdash; covering the full range from small organics to biomolecular systems.</li>
+      <li><b>Solves a problem that has resisted decades of analytical effort:</b> classical KEDFs for molecules have been an open problem since the 1920s; deep learning provides a new path where theory has stalled.</li>
+      <li><b>Open code + data + checkpoints:</b> the full scientific artifact is reproducible, consistent with Nature Computational Science's emphasis on transparent computational research.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Ethanol (MD17)</dt><dd>100,000 non-equilibrium ethanol structures drawn from the <strong>MD17 dataset</strong>; split 8:1:1 (train/val/test). Test evaluation for energy and force MAE: 10,000 structures. Source: <a href="http://www.sgdml.org/#datasets" target="_blank">sgdml.org</a>.</dd>
+      <dt>QM9</dt><dd>~134,000 equilibrium geometries of small organic molecules (up to 9 heavy atoms; H, C, N, O, F) from the <strong>QM9 dataset</strong>; the C<sub>7</sub>H<sub>10</sub>O<sub>2</sub> isomer benchmark uses 6,905 isomers (619 in the test set). Source: <a href="https://doi.org/10.6084/m9.figshare.978904" target="_blank">figshare</a>.</dd>
+      <dt>QMugs</dt><dd>&gt;665,000 biologically and pharmacologically relevant molecules from the <strong>ChEMBL database</strong>, ~2 million conformers total; average 30.6 heavy atoms, maximum 100 heavy atoms. Training uses molecules with &le;15 heavy atoms combined with QM9; extrapolation tested on 50 molecules per bin up to 101 heavy atoms (n&nbsp;=&nbsp;808 total in time-cost experiment). Source: <a href="https://doi.org/10.3929/ethz-b-000482129" target="_blank">ETH Zurich repository</a>.</dd>
+      <dt>Chignolin (protein)</dt><dd>1,000 structures of the <strong>chignolin</strong> protein (10 residues, 168 atoms after neutralization), sampled from D.E. Shaw molecular dynamics simulations. Training uses polypeptide fragments (2&ndash;5 residues) extracted from those structures. Fine-tuning dataset: 500 chignolin structures. Source: <a href="https://www.deshawresearch.com/downloads/download_trajectory_science2011.cgi" target="_blank">D.E. Shaw Research</a>.</dd>
+      <dt>Protein benchmarks</dt><dd>BBL-H142W (PDB ID 2WXC, 709 atoms, 2,676 electrons) and Protein B K5I/K39V mutant (PDB ID 1PRB, 738 atoms, 2,750 electrons) &mdash; evaluation-only for speed-up benchmarking; no new training data generated from these.</dd>
+      <dt>Computed labels</dt><dd>Kohn&ndash;Sham DFT calculations at the PBE/6-31G(2df,p) level run with <strong>PySCF</strong> on a cluster of 700 CPU servers (Intel Xeon Platinum 8272CL, 256&nbsp;GiB each). Multiple (density, kinetic energy, gradient) training triples extracted per SCF iteration per molecule.</dd>
+      <dt>Evaluation data / code</dt><dd>Example evaluation data and trained model checkpoints: <a href="https://doi.org/10.6084/m9.figshare.c.6877432" target="_blank">figshare collection</a>. Full code: <a href="https://doi.org/10.5281/zenodo.10616893" target="_blank">Zenodo</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MD17 (ethanol subset)</td><td>Conformational-space training &amp; test</td><td>100,000 non-equilibrium structures</td><td><a href="http://www.sgdml.org/#datasets" target="_blank">sgdml.org</a></td></tr>
+        <tr><td>QM9</td><td>Chemical-space training &amp; isomer benchmark</td><td>~134,000 molecules; &le;9 heavy atoms</td><td><a href="https://doi.org/10.6084/m9.figshare.978904" target="_blank">figshare</a></td></tr>
+        <tr><td>QMugs</td><td>Extrapolation to drug-like molecules</td><td>&gt;665,000 molecules; avg 30.6 heavy atoms</td><td><a href="https://doi.org/10.3929/ethz-b-000482129" target="_blank">ETH Zurich</a></td></tr>
+        <tr><td>Chignolin MD trajectories (D.E. Shaw)</td><td>Protein-scale extrapolation &amp; fine-tuning</td><td>1,000 structures; 168 atoms</td><td><a href="https://www.deshawresearch.com/downloads/download_trajectory_science2011.cgi" target="_blank">D.E. Shaw Research</a></td></tr>
+        <tr><td>Protein B / BBL-H142W (PDB)</td><td>Speed-up benchmark (evaluation only)</td><td>2 proteins; 709&ndash;738 atoms</td><td><a href="https://www.rcsb.org" target="_blank">RCSB PDB</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all molecular structure data are freely accessible from public sources listed above. Computed DFT labels (kinetic energies and gradients) are generated by the authors using PySCF and are available via the figshare collection. All dataset split sizes and counts are stated precisely in the Methods section of the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Atomic-basis density representation:</b> electron density is expanded as a linear combination of even-tempered atomic-basis functions (tempering ratio &beta;&nbsp;=&nbsp;2.5) centered on each atom, yielding ~10N coefficients per molecule. This is 1,000&times; more compact than a grid (~10<sup>4</sup>N points) while preserving all non-local information needed for accurate KEDF approximation.</li>
+      <li><b>Graphormer-based KEDF model:</b> the kinetic energy density functional T<sub>S</sub>[&rho;] is approximated by a Graphormer (a transformer variant) that uses multi-head attention to capture non-local density interactions across the entire molecule; the model sums per-atom scalar outputs to produce the total kinetic energy.</li>
+      <li><b>Gradient-labeled training from SCF intermediates:</b> each KSDFT self-consistent field run yields multiple training triples (density coefficients, kinetic energy value, projected gradient with respect to coefficients), one per SCF iteration &mdash; a novel data generation strategy that stabilizes density optimization at inference.</li>
+      <li><b>Local-frame geometric invariance (SE(3)):</b> per-atom coordinate frames are determined by nearest heavy-atom positions, making density coefficient features invariant to molecular rotation and equivariant within local chemical environments. This reduces coefficient and gradient variance by over 60% for most hydrogen basis functions.</li>
+      <li><b>Enhancement modules for vast gradient range:</b> three stacked modules address the intrinsically large gradient magnitude of T<sub>S</sub> &mdash; (1) dimension-wise rescaling by atom type, (2) natural reparameterization via the overlap matrix W to equalize coefficient sensitivity, and (3) an atomic reference module (linear in coefficients) that offsets the large mean gradient.</li>
+      <li><b>Density optimization at inference:</b> given a new molecule, M-OFDFT minimizes the full electronic energy as a function of density coefficients via gradient descent. On-manifold initialization (ProjMINAO, using a learned projection model) avoids out-of-distribution instability; no per-step projection is required at runtime.</li>
+      <li><b>Classical KEDF baselines:</b> Thomas&ndash;Fermi (TF), TF+1/9vW, TF+vW, and APBE implemented in the same PySCF+PyTorch pipeline for controlled comparison on all benchmarks.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig1.png" target="_blank">
+        <img src="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig1.png" alt="Fig.1 Overview of M-OFDFT architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of M-OFDFT: contrasts KSDFT (N orbital functions) with OFDFT (one density), shows the Graphormer KEDF model with atomic-basis coefficient input and non-local attention, and illustrates the density optimization procedure.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig2.png" target="_blank">
+        <img src="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig2.png" alt="Fig.2 M-OFDFT vs classical OFDFT accuracy" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Accuracy vs classical OFDFT: relative energy MAE and force MAE (ethanol 10,000 test structures; QM9 C<sub>7</sub>H<sub>10</sub>O<sub>2</sub> 619 isomers), density shell-structure visualization, and potential energy surface over torsion and bond-length coordinates.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig3.png" target="_blank">
+        <img src="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig3.png" alt="Fig.3 Extrapolation performance to larger molecules and proteins" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Extrapolation performance: M-OFDFT vs M-NNP / M-NNP-Den on QMugs (up to 101 heavy atoms, 50 molecules per bin) and chignolin protein (168 atoms, up to 1,000 test structures), including fine-tuning experiments showing 35.4% error reduction over training from scratch.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig4.png" target="_blank">
+        <img src="assets/overcoming-the-barrier-of-orbital-free-density-functional-theory-for-molecular-systems-usi__s43588-024-00605-8/fig4.png" alt="Fig.4 Empirical time complexity comparison" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Empirical time complexity: M-OFDFT O(N<sup>1.46</sup>) vs KSDFT O(N<sup>2.49</sup>) on n&nbsp;=&nbsp;808 QMugs molecules; M-OFDFT is faster in absolute time across all scales tested, with up to 6.7&times; speed-up in the QMugs range.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (tables_in_main_text = 0). Supplementary Information contains 9 supplementary tables (ablation studies, dataset statistics, comparisons with ET and Equiformer NNP architectures) and 19 supplementary figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, spatiotemporal analysis, explainable &amp; physics-informed graph learning, fine-tuning geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>&#9312; Transfer M-OFDFT's functional-learning paradigm to physics-informed spatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span> M-OFDFT's central insight is that learning the <em>functional</em> (density &rarr; kinetic energy) instead of the end-to-end mapping (structure &rarr; energy) fundamentally improves extrapolation to larger systems. The paper demonstrates this on molecular systems; an extension would test whether the same formulation generalizes across domains where a physical objective function is known but hard to compute &mdash; for example, learning an elastic interaction functional for crystal strain, or a heat-diffusion functional for urban temperature maps &mdash; to verify whether the extrapolation advantage is universal to all physics-informed functional approximation.</p>
+      <p><span class="lab mine">Added value to my research</span> This maps onto my physics-informed graph learning agenda for spatial accessibility. Instead of training a GNN to predict a healthcare access score end-to-end (analogous to M-NNP), I could train it to approximate the <em>access functional</em> &mdash; the operator mapping population-facility flow fields to accessibility &mdash; and let gradient descent find the spatial optimum. This would improve transferability of my 2SFCA/R2SFCA models across cities of different sizes and density regimes, just as M-OFDFT transfers from small peptides to full proteins without per-city re-training.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep-learning density functional theory Hamiltonian for efficient ab initio electronic-structure calculation &mdash; <a href="https://doi.org/10.1038/s43588-022-00265-6" target="_blank">10.1038/s43588-022-00265-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Apply M-OFDFT's pretrain-then-fine-tune recipe to data-scarce geospatial foundation models</h3>
+      <p><span class="lab paper">Extending this paper</span> M-OFDFT demonstrates that pretraining on small-scale molecules and fine-tuning on just 500 large-scale structures reduces error by 35.4% over training from scratch, because the pretrained model has internalized the physical mechanism at accessible scale. A concrete extension of this paper: systematically study how pretraining corpus size, chemical diversity (training only on drug-like molecules vs. broad QM9), and fine-tuning dataset composition jointly determine transfer efficiency &mdash; producing a quantitative data-efficient fine-tuning recipe for expensive quantum chemistry methods such as coupled-cluster on large drug candidates.</p>
+      <p><span class="lab mine">Added value to my research</span> My agenda of fine-tuning geospatial foundation models (GeoFMs) faces the exact same data-scarcity challenge at large spatial scale: abundant mobility and POI data for large cities, very sparse data for small towns and rural areas. M-OFDFT's strategy &mdash; pretrain on accessible scale, then small-data fine-tune &mdash; is a transferable blueprint. I can adopt it to fine-tune GeoFMs on underrepresented geographies (rural primary-care access, telehealth availability), reducing reliance on large labeled datasets and improving equity of spatial health-access prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning &mdash; <a href="https://doi.org/10.1038/s43588-024-00747-9" target="_blank">10.1038/s43588-024-00747-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Adapt M-OFDFT's local-frame invariance to spatially non-stationary GNN design</h3>
+      <p><span class="lab paper">Extending this paper</span> The local-frame approach ensures that chemically identical substructures (e.g., a methyl group) contribute similarly to kinetic energy regardless of their orientation within the molecule, by defining per-atom frames from nearest-neighbor geometry. This reduces coefficient and gradient variance by over 60% for most hydrogen basis functions and directly stabilizes training. An extension: generalize local frames to chiral environments (stereocentres where identical substructures must break symmetry), and study whether learned local frames &mdash; rather than geometry-derived fixed ones &mdash; further improve data efficiency on diverse chemical libraries beyond H/C/N/O/F.</p>
+      <p><span class="lab mine">Added value to my research</span> The local-frame concept has a direct analog in GeoAI: in geographically weighted regression (GWR/MGWR), spatial non-stationarity is captured by local bandwidth, but there is no principled way to define the local feature frame. M-OFDFT suggests defining per-location frames anchored by neighboring spatial entities (nearest POI cluster, road junction, or census-block centroid), reducing orientation-dependent variance in spatial features. This would be a novel design for spatially-aware deep learning that could improve MGWR-initialized GNN training on urban health and accessibility tasks.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep contrastive learning of molecular conformation for efficient property prediction &mdash; <a href="https://doi.org/10.1038/s43588-023-00560-w" target="_blank">10.1038/s43588-023-00560-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Use M-OFDFT's atomic-basis compression as a template for multi-resolution spatial feature encoding</h3>
+      <p><span class="lab paper">Extending this paper</span> The atomic-basis representation reduces the KEDF model input from ~10<sup>4</sup>N grid points to ~10N coefficients while preserving all physically relevant non-local interactions &mdash; a ~1,000&times; compression achieved by aligning basis functions with the underlying physics (electron density concentrates around nuclei). An extension of the paper: study whether <em>learned</em> basis functions (replacing the fixed even-tempered basis) can further improve accuracy without sacrificing compression, and test on larger periodic material systems where the current even-tempered basis may be suboptimal.</p>
+      <p><span class="lab mine">Added value to my research</span> Multi-source data fusion in my work (mobile phone GPS, remote sensing rasters, social media, POI grids) faces a dimensionality problem similar to grid-based KEDF: raw spatial grids are high-dimensional but largely redundant. M-OFDFT's compression principle &mdash; represent a continuous spatial field with basis coefficients anchored at meaningful entities (facility locations, neighborhood centers) rather than uniform grid cells &mdash; is a principled alternative to ad hoc spatial pooling. This would directly benefit my spatiotemporal kernel density estimation work, providing a compact yet expressive city-scale representation for agent-based models and SIR epidemic dynamics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular deep learning at the edge of chemical space &mdash; <a href="https://doi.org/10.1038/s42256-026-01216-w" target="_blank">10.1038/s42256-026-01216-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Use M-OFDFT's SCF-intermediate gradient data as a paradigm for trajectory-based physics-constrained training</h3>
+      <p><span class="lab paper">Extending this paper</span> One of M-OFDFT's key innovations is generating multiple (density, kinetic energy, gradient) training triples from each SCF run, turning a single KSDFT calculation into an entire training trajectory of labeled intermediates. The paper shows gradient labeling is essential not just for energy accuracy but for stable density optimization at inference. An extension: apply the same strategy to learning exchange-correlation (XC) functionals or dispersion corrections, where gradient information from existing DFT trajectories is latent but unused, potentially enabling a similarly large improvement in XC functional accuracy with no additional computational cost.</p>
+      <p><span class="lab mine">Added value to my research</span> My agent-based models, Monte Carlo urban simulations, and SIR epidemic runs also generate sequences of intermediate system states that are typically discarded after the final output is obtained. Inspired by M-OFDFT's SCF-intermediate strategy, I could extract labeled (state, gradient-of-objective) pairs from those simulation trajectories to train surrogate spatial GNN models that enforce convergence-to-equilibrium constraints. This physics-constrained training scheme would improve the stability and generalizability of my spatiotemporal models for urban mobility and epidemic dynamics &mdash; especially in data-scarce outbreak scenarios.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A predictive machine learning force-field framework for liquid electrolyte development &mdash; <a href="https://doi.org/10.1038/s42256-025-01009-7" target="_blank">10.1038/s42256-025-01009-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

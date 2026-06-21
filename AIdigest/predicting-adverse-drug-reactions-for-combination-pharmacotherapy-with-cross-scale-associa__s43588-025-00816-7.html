@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting adverse drug reactions for combination pharmacotherapy with cross-scale associative learning — AI Digest</title>
+<meta name="description" content="AI Digest: Predicting adverse drug reactions for combination pharmacotherapy with cross-scale associative learning via attention modules (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Drug safety</span>
+      <span class="tag">Knowledge graph</span>
+      <span class="tag">Interpretable AI</span>
+      <span class="tag">Precision medicine</span>
+    </div>
+    <h1>Predicting adverse drug reactions for combination pharmacotherapy with cross-scale associative learning via attention modules</h1>
+    <div class="meta">
+      <span class="authors">Boyang Li &middot; Yifan Qi &middot; Bo Li &middot; Xiaoqiong Li</span>
+      <span><b>Published</b> 2025-06-30</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00816-7" target="_blank">10.1038/s43588-025-00816-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00816-7" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>OrganADR is an associative learning-enhanced deep learning model that predicts <strong>adverse drug reactions (ADRs) at the organ level</strong> for emerging combination pharmacotherapies. By fusing molecular-level drug features, biomedical knowledge-graph information and an <strong>organ-level ADR association matrix</strong> through GNN, GCN and attention modules, it achieves <strong>state-of-the-art performance across 15 organs</strong> (ROC-AUC 85.93% on task 2), while providing interpretable insights into the key protein&#8211;protein interaction networks that mechanistically underpin each ADR &mdash; a tool directly applicable to clinical precision medicine and drug safety management.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Addresses a critical clinical gap.</b> 3.6&#8211;15.6% of hospital admissions worldwide are related to ADRs; accurate prediction for <em>emerging</em> drug combinations (cold-start) &mdash; where no clinical records yet exist &mdash; is an unresolved challenge with direct patient-safety implications.</li>
+      <li><b>Introduces organ-level perspective.</b> Existing models treat each ADR independently; OrganADR explicitly models the <strong>co-occurrence associations of ADRs across 15 organs</strong> via a symmetrically normalised association matrix, capturing biological reality (e.g., immune-related events co-affecting intestine, liver, and nervous system).</li>
+      <li><b>Multi-scale, interpretable architecture.</b> The model integrates molecular fingerprints, biomedical KG paths, and organ-level ADR co-occurrences into a single end-to-end framework with three interpretable outputs: organ-level predictions, key protein identification, and key PPI network extraction.</li>
+      <li><b>Rigorous cold-start evaluation.</b> Tested on two independent datasets (Dataset D and Dataset R) across two tasks, three KGs and 15 organs &mdash; demonstrating robustness, not just benchmark overfitting.</li>
+      <li><b>Open science.</b> Code (GitHub + Zenodo), preprocessed datasets (Zenodo) and source data are all publicly available, enabling reproducible clinical pharmacovigilance research.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE COMPUTATIONAL SCIENCE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Novel computational framework, not incremental modelling:</b> OrganADR introduces an associative-learning paradigm for multilabel biomedical prediction with a clear architectural novelty (GNN + GCN + attention + organ-level matrix) that advances the field beyond prior GNN&#8211;KG-based DDI methods.</li>
+      <li><b>Cross-scale information integration:</b> bridging molecular, organ, and network scales in one end-to-end model directly aligns with Nature Computational Science&rsquo;s mandate for methods that span biological levels.</li>
+      <li><b>Causal validation, not just ablation:</b> the paper includes a rigorous causal analysis linking organ-level ADR information to measurable performance gain, raising the scientific standard above typical ablation studies.</li>
+      <li><b>Broad translational impact:</b> applicable to drug development, multimorbidity management and personalised clinical recommendations &mdash; the computational contribution has direct societal relevance beyond ML benchmarks.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &mdash; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>ADR database</dt><dd><strong>TWOSIDES</strong> &mdash; the most comprehensive pairwise drug&#8211;ADR database, containing drug pair combinations with recorded ADRs; forms the primary source of positive samples. URL: <a href="https://tatonettilab.org/resources/tatonetti-stm.html" target="_blank">tatonettilab.org</a>.</dd>
+      <dt>Drug information</dt><dd><strong>DrugBank</strong> (latest release) &mdash; provides 2D structure data files (SDF) for molecular fingerprint computation, and auxiliary annotation of drug synergies and other interactions. URL: <a href="https://go.drugbank.com/releases/latest" target="_blank">go.drugbank.com</a>.</dd>
+      <dt>Biomedical KGs</dt><dd><strong>Hetionet</strong> (GitHub) and <strong>PrimeKG</strong> (Harvard Dataverse) &mdash; two heterogeneous biomedical knowledge graphs encoding drug&#8211;protein, protein&#8211;protein, disease&#8211;gene and other relationships. A fused <strong>CombinedKG</strong> is also constructed.</dd>
+      <dt>ADR taxonomy</dt><dd><strong>ADReCS</strong> &mdash; used to map ADR symptoms from TWOSIDES to 15 organ/system categories following the MedDRA hierarchy. URL: <a href="https://bioinf.xmu.edu.cn/ADReCS/download.jsp" target="_blank">bioinf.xmu.edu.cn</a>.</dd>
+      <dt>Drug scope</dt><dd><strong>639 small-molecule drugs</strong> appearing simultaneously in TWOSIDES, Hetionet, PrimeKG and DrugBank (with accessible 2D SDF). These yield <strong>203,841 unique drug combinations</strong> annotated across 15 organs.</dd>
+      <dt>ADR-positive pairs</dt><dd><strong>50,259 combinations</strong> (from TWOSIDES + ADReCS), out of 203,841 total. Split 8:1:1 into disjoint drug subsets for train/val/test under cold-start constraints.</dd>
+      <dt>Organs covered</dt><dd>15 organ/system categories following ADReCS/MedDRA (e.g., cardiac, hepatic, gastrointestinal, nervous, endocrine, immune, renal, musculoskeletal, respiratory, skin, blood, eye, reproductive, urinary, vascular).</dd>
+      <dt>Preprocessed data</dt><dd>Available on <strong>Zenodo</strong> (<a href="https://zenodo.org/records/15129153" target="_blank">zenodo.org/records/15129153</a>). Code at <a href="https://github.com/BoyangLi-BIT/OrganADR" target="_blank">GitHub</a> and <a href="https://zenodo.org/records/15129131" target="_blank">Zenodo</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>TWOSIDES</td><td>Primary ADR labels for drug pairs</td><td>Comprehensive pairwise DDI-ADR database; 50,259 positive combinations extracted</td><td><a href="https://tatonettilab.org/resources/tatonetti-stm.html" target="_blank">tatonettilab.org</a></td></tr>
+        <tr><td>DrugBank (latest)</td><td>Molecular structure (SDF) + DDI annotation</td><td>639 drugs with 2D SDF; 28,087 synergy + 29,336 ADR + 29,546 other DDI pairs</td><td><a href="https://go.drugbank.com/releases/latest" target="_blank">go.drugbank.com</a></td></tr>
+        <tr><td>Hetionet</td><td>Biomedical KG (prior knowledge)</td><td>Heterogeneous graph: drug, gene, disease, pathway nodes and typed edges</td><td><a href="https://github.com/hetio/hetionet" target="_blank">github.com/hetio</a></td></tr>
+        <tr><td>PrimeKG</td><td>Biomedical KG (prior knowledge)</td><td>Harvard Dataverse; multi-relational biomedical KG with broader entity coverage</td><td><a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IXA7BM" target="_blank">dataverse.harvard.edu</a></td></tr>
+        <tr><td>ADReCS</td><td>Organ-level ADR taxonomy mapping</td><td>Maps ADR symptom terms to 15 MedDRA-aligned organ/system categories</td><td><a href="https://bioinf.xmu.edu.cn/ADReCS/download.jsp" target="_blank">bioinf.xmu.edu.cn</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: dataset statistics (639 drugs, 203,841 combinations, 50,259 positives) are stated explicitly in the article. Exact train/val/test split sizes vary by random seed; statistics reported in Supplementary Table 2.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Molecular feature encoding:</b> each drug is encoded as a 1,024-dimensional vector by concatenating RDKit Descriptor (with trainable self-attention), MACCS Fingerprint (with trainable self-attention), RDKit path-based fingerprint, and Morgan fingerprint (radius=2).</li>
+      <li><b>Flow-based GNN on biomedical KG:</b> propagates drug features through the KG via a 3-hop flow GNN with drug-dependent attention weights on each relation type, identifying key protein paths linking drug pairs.</li>
+      <li><b>Organ-level ADR association matrix:</b> a 15&#215;15 symmetrically normalised conditional-probability matrix computed from training-set co-occurrences of ADRs across organ pairs; used as the GCN adjacency to explicitly model ADR correlations.</li>
+      <li><b>GCN module:</b> latent organ-level labels (from a linear multiclassifier on drug-pair embeddings) are fed into a GCN with the association matrix as edge weights; the GCN updates label embeddings to propagate organ-level information.</li>
+      <li><b>Attention fusion module:</b> combines molecular-level embeddings (GNN output) and organ-level embeddings (GCN output) via element-wise attention scoring, producing a concatenated representation for final multilabel prediction.</li>
+      <li><b>Cold-start evaluation:</b> drugs split 8:1:1 into disjoint subsets; task 1 &mdash; both drugs unseen in training; task 2 &mdash; one emerging, one existing. Evaluated by ROC-AUC, PR-AUC, accuracy, precision, recall, F1, and Hamming loss.</li>
+      <li><b>Interpretability:</b> drug-dependent attention weights on KG paths identify key PPI networks; organ-level association matrix provides organ-perspective reasoning; ablation and causal analysis confirm the contribution of each module.</li>
+      <li><b>Baselines:</b> compared against EmerGNN, HIN-DDI, KG-DDI, CSMDDI (deep learning) and RandomForest, KNeighbors, DecisionTree, GaussianNB (classical ML). OrganADR surpasses all on both tasks across three KGs.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig1.png" target="_blank">
+        <img src="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig1.png" alt="Fig.1 Problem formulation: ADR prediction at organ level" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Problem formulation &mdash; OrganADR takes two drugs, a KG and the ADR association matrix as input and predicts ADRs across 15 organs, also identifying key proteins and PPI networks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig2.png" target="_blank">
+        <img src="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig2.png" alt="Fig.2 Architecture of OrganADR" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Architecture of OrganADR &mdash; six modules: molecular feature, KG, ADR association matrix, GNN, GCN, and attention, showing how cross-scale information is fused.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig3.png" target="_blank">
+        <img src="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig3.png" alt="Fig.3 Construction of ADR-related datasets at the organ level" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Dataset construction &mdash; 639 drugs, 203,841 combinations, annotation breakdown across TWOSIDES, ADReCS and DrugBank, and the two dataset variants (D and R).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig4.png" target="_blank">
+        <img src="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig4.png" alt="Fig.4 Information at the organ level facilitates ADR prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Organ-level information boosts performance &mdash; ablation showing OrganADR-W outperforms OrganADR-O, with causal case studies for hydrocortisone+pentamidine and diclofenac+azathioprine.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig5.png" target="_blank">
+        <img src="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig5.png" alt="Fig.5 Identification of key PPIs using OrganADR" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Key PPI identification &mdash; case studies for hydrocortisone+cisapride (11 organs, key proteins DRD2/CYP3A4) and nortriptyline+cisapride (7 organs, MRPS family proteins).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig6.png" target="_blank">
+        <img src="assets/predicting-adverse-drug-reactions-for-combination-pharmacotherapy-with-cross-scale-associa__s43588-025-00816-7/fig6.png" alt="Fig.6 Comparison of OrganADR with baseline models" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Comparison with 8 baselines &mdash; violin plots (task 1 ROC-AUC 71.14%, task 2 ROC-AUC 85.93%, F1 78.71%), per-organ and per-KG ROC-AUC curves.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0 in main text); Extended Data Fig. 1 and Supplementary Tables 1&#8211;35 (organ definitions, KG statistics, hyperparameter settings, per-organ performance) are in supplementary material.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&mdash; this paper&rsquo;s extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &mdash; GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>&#9312; Replace the static ADR association matrix with a learned, drug-pair-adaptive graph structure</h3>
+      <p><span class="lab paper">Extending this paper</span>OrganADR&rsquo;s organ-level association matrix M is precomputed from the training set and then frozen &mdash; a static population-level prior that cannot adapt when a specific drug pair produces unusual cross-organ ADR co-occurrence patterns not seen in training. A direct extension is to make M <strong>jointly learnable</strong> via differentiable graph structure learning (e.g., attention-based adjacency conditioned on the drug-pair embedding), so that the association matrix becomes a function of the specific pair being evaluated rather than a fixed constant. This would also allow OrganADR to generalise to new organs or clinical taxonomies expanding beyond the current 15.</p>
+      <p><span class="lab mine">Added value to my research</span>Dynamic graph structure learning is the analogue in my spatial accessibility work of the bandwidth-selection problem in MGWR: the spatial interaction matrix (who visits which facility) is typically fixed or cross-validated, but it could instead be jointly learned from observed mobility flows. The same differentiable-adjacency mechanism could let me build a <strong>demand-adaptive, learnable spatial interaction graph</strong> for 2SFCA-type models where the gravity decay function is conditioned on local context (deprivation, transport mode, time of day) rather than globally assumed.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Network-based prediction of drug combinations &mdash; <a href="https://doi.org/10.1038/s41467-019-09186-x" target="_blank">10.1038/s41467-019-09186-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Lift the KG-membership bottleneck with foundation-model molecular representations</h3>
+      <p><span class="lab paper">Extending this paper</span>OrganADR currently relies on RDKit-computed fingerprints that require 2D SDF files, limiting the model to 639 drugs present in all four databases simultaneously. The paper explicitly acknowledges this as its main limitation, citing future directions involving <strong>large language models in molecular representation</strong>. Extending it: replace or augment fingerprint encoders with pretrained chemical language model embeddings (e.g., ChemBERTa, MolBERT, or similar) so that the model can handle drugs absent from the KG. The GCN and attention modules remain intact, receiving richer initial drug embeddings, directly tackling broader cold-start coverage.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors the geospatial foundation-model angle in my agenda: just as OrganADR&rsquo;s drug-representation bottleneck can be lifted by pretrained molecular LLMs, my spatial prediction models can move beyond hand-crafted POI/demographic features by substituting <strong>pretrained geospatial foundation model (GFM) embeddings</strong> of place &mdash; enabling accessibility models that generalise to cities or regions outside the training distribution, a direct application of fine-tuning GFMs for health geography.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models &mdash; <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Add a spatial epidemiology layer: mapping organ-level ADR risk onto patient populations</h3>
+      <p><span class="lab paper">Extending this paper</span>OrganADR produces ADR probabilities for a <em>drug pair</em> but abstracts away the <em>patient</em> &mdash; their age, comorbidities, geographic access to monitoring, or socioeconomic context. A powerful extension is to couple OrganADR&rsquo;s predictions with population-level pharmacovigilance data (e.g., national dispensing records) to model <em>which communities</em> face elevated ADR exposure based on their local prescribing patterns and care-access constraints, making the model actionable for public health surveillance rather than only individual drug approval workflows.</p>
+      <p><span class="lab mine">Added value to my research</span>This extension sits at the intersection of my health geography work and real-world evidence. My 2SFCA spatial accessibility framework could quantify <strong>geographic disparities in access to ADR monitoring and pharmacovigilance</strong> &mdash; which patients, by virtue of living far from pharmacists or GPs, are least likely to have an ADR caught early. OrganADR&rsquo;s predictions combined with my spatial accessibility scores would generate a <em>geographically targeted drug safety alert</em>: high predicted organ-ADR risk + low local monitoring access = priority intervention zone.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Patterns of medication use across society from national primary care dispensing data &mdash; <a href="https://doi.org/10.1038/s44360-026-00134-w" target="_blank">10.1038/s44360-026-00134-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Use identified PPI networks as physics-informed structural priors in graph learning</h3>
+      <p><span class="lab paper">Extending this paper</span>OrganADR identifies key PPI networks (e.g., CYP3A4-centred binding/upregulation paths for hydrocortisone+cisapride) but treats them purely qualitatively &mdash; they illustrate mechanism but do not feed back into training. A direct extension: use the <strong>attention-weighted PPI paths as structural priors</strong> in a physics-informed GNN, so that known biological constraints (protein essentiality, pathway conservation, enzyme inhibition hierarchies) act as soft regularisers during training. This would improve data efficiency in the low-data regime of emerging drug combinations with few historical ADRs.</p>
+      <p><span class="lab mine">Added value to my research</span>Physics-informed graph learning is a central theme of my research agenda. The exact design pattern &mdash; taking domain-known structural constraints and encoding them as soft losses or graph priors in a GNN &mdash; applies directly to my <strong>spatiotemporal health prediction work</strong>: spatial autocorrelation, Tobler&rsquo;s first law, and population gravity could be encoded as physics-like priors in graph-based disease spread models, improving prediction in data-sparse regions. OrganADR demonstrates the pattern concretely in the biomedical domain, providing a methodological blueprint.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein&#8211;ligand affinities &mdash; <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Embed OrganADR within a calibrated, explainable clinical decision-support workflow</h3>
+      <p><span class="lab paper">Extending this paper</span>OrganADR demonstrates interpretability at the research level (attention weights, PPI networks, causal analyses) but stops short of a clinical deployment framework: how does a clinician query it, how does it integrate with an electronic medical record system, and what confidence level is required before surfacing an ADR alert? Extending the paper: pair OrganADR&rsquo;s predictions with <strong>calibrated uncertainty estimates</strong> (conformal prediction or Bayesian dropout) and embed the output in a human-in-the-loop workflow that presents organ-level ADR risk scores alongside the identified PPI mechanism, enabling evidence-graded decisions rather than binary alerts.</p>
+      <p><span class="lab mine">Added value to my research</span>Explainable machine learning for spatial prediction is a core method in my work. The challenge in OrganADR &mdash; communicating a complex multi-organ prediction to a clinical user &mdash; mirrors my challenge of communicating a MGWR or GNN-derived spatial health risk to a policy-maker. Both require <strong>post-hoc attribution maps, confidence intervals, and decision-context framing</strong>. The uncertainty-quantification and explainability pipeline for geospatial health prediction (SHAP values on spatial features, prediction intervals from conformal methods) is directly transferable to this clinical context &mdash; and vice versa, OrganADR&rsquo;s in-model attention explainability is a richer approach I can import for spatial GNNs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Safety of a large language model-based clinical decision support system in African primary healthcare &mdash; <a href="https://doi.org/10.1038/s44360-026-00082-5" target="_blank">10.1038/s44360-026-00082-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modeling context-dependent RNA splicing by deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Modeling context-dependent RNA splicing by deep learning (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">RNA splicing</span>
+      <span class="tag">Deep learning</span>
+      <span class="tag">Isoform prediction</span>
+      <span class="tag">RNA-binding proteins</span>
+    </div>
+    <h1>Modeling context-dependent RNA splicing by deep learning</h1>
+    <div class="meta">
+      <span class="authors">Chengxuan Chen · Leng Han</span>
+      <span><b>Published</b> 2026-05-19</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-00987-x" target="_blank">10.1038/s43588-026-00987-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-00987-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The HELIX framework predicts <strong>full-length transcript isoform usage</strong> across diverse biological contexts by combining <strong>sequence features</strong> with <strong>RNA-binding protein (RBP) expression</strong>. At the splice-site level, sequence and RBP signals are integrated to infer context-dependent splice-site usage; a <strong>bidirectional LSTM</strong> then aggregates these site-level signals into transcript-level isoform abundance — enabling context-sensitive, not just sequence-only, splicing prediction.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Moves splicing models beyond pure sequence.</b> Most existing tools (e.g., SpliceAI, Pangolin) predict splice-site strength from DNA sequence alone. HELIX incorporates <strong>RBP expression as a context variable</strong>, making predictions tissue- and condition-specific.</li>
+      <li><b>Full isoform, not just site, prediction.</b> By operating at the <strong>transcript level</strong> with a bidirectional LSTM, the framework predicts relative <em>isoform abundance</em> — a step closer to what RNA-seq actually measures — rather than treating each splice site in isolation.</li>
+      <li><b>Bridges genomic variation and functional impact.</b> Context-dependent splicing is central to disease: mutations that disrupt RBP binding alter isoform ratios. HELIX provides a principled framework for assessing such variant effects across cell types.</li>
+      <li><b>Scalable computational strategy.</b> The two-stage hierarchy (site-level signal → transcript-level LSTM) is modular and extensible, allowing new context variables (e.g., epigenomic marks, RNA structure) to be plugged in without redesigning the whole model.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological novelty:</b> a two-level hierarchical deep learning architecture integrating heterogeneous biological inputs (sequence + protein expression) to solve a well-defined prediction task — the kind of principled ML contribution NCS prioritizes.</li>
+      <li><b>Broad biological relevance:</b> alternative splicing affects the majority of human genes; context-dependent prediction has implications across development, disease genetics, and pharmacogenomics.</li>
+      <li><b>Companion research article:</b> the News &amp; Views format is tied to the primary HELIX article (doi:10.1038/s43588-026-00988-w) published in the same issue, amplifying impact by providing independent expert commentary.</li>
+      <li><b>Interpretable framing:</b> the decomposition into site-level context signals + isoform-level aggregation makes the model architecture understandable to a broad computational biology readership, not just ML specialists.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary model</dt><dd>This article is a <strong>News &amp; Views commentary</strong> on the companion HELIX paper (doi:10.1038/s43588-026-00988-w). Primary data and benchmarks are reported in that research article; specific dataset sizes and accessions are not restated here.</dd>
+      <dt>Sequence features</dt><dd>Genomic DNA sequence features around splice sites — the same input modality used by prior tools such as SpliceAI (Jaganathan et al., <em>Cell</em> 2019, doi:10.1016/j.cell.2018.12.015) and Pangolin (Zhang et al., <em>Nat. Methods</em> 2019, doi:10.1038/s41592-019-0351-9). The reference list cites these as prior art; exact genome build and exon count are in the companion paper.</dd>
+      <dt>RNA-binding protein expression</dt><dd>RBP expression profiles used as <strong>context vectors</strong> to make predictions tissue- or condition-specific. The specific RBP expression compendium (e.g., GTEx, ENCODE, or a custom panel) is referenced in the companion HELIX paper rather than this commentary.</dd>
+      <dt>Reference literature</dt><dd>10 cited references spanning RNA splicing reviews (Lee &amp; Rio, <em>Annu. Rev. Biochem.</em> 2015; Fu &amp; Ares, <em>Nat. Rev. Genet.</em> 2014; Capitanchik et al., <em>Nat. Rev. Genet.</em> 2025), cancer splicing (Bradley &amp; Anczukow, <em>Nat. Rev. Cancer</em> 2023), and prior deep-learning splicing models.</dd>
+      <dt>Data availability</dt><dd>Not stated in this commentary; see companion research article doi:10.1038/s43588-026-00988-w for full data/code availability statements.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Genomic sequence (splice-site windows)</td><td>Primary input features for HELIX site-level model</td><td>Human genome; exact build in companion paper</td><td>Companion paper doi:10.1038/s43588-026-00988-w</td></tr>
+        <tr><td>RBP expression profiles</td><td>Context variable enabling tissue-specific predictions</td><td>Unspecified in this commentary; likely GTEx / ENCODE</td><td>Companion paper doi:10.1038/s43588-026-00988-w</td></tr>
+        <tr><td>Prior splicing DL benchmarks</td><td>Performance comparison (SpliceAI, Pangolin)</td><td>Previously published test sets</td><td><a href="https://doi.org/10.1016/j.cell.2018.12.015" target="_blank">Jaganathan et al. 2019</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: as a News &amp; Views article, this piece does not report original data. All dataset details (sample counts, accession numbers, tissue coverage) reside in the companion research article. Numbers here reflect what is explicitly stated in this commentary.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Two-stage hierarchical architecture:</b> (1) a <strong>splice-site-level model</strong> integrates sequence features and RBP expression to produce context-dependent splice-site signals; (2) a <strong>bidirectional LSTM</strong> aggregates these site-level signals across the transcript to predict relative isoform abundance.</li>
+      <li><b>Context injection via RBP expression:</b> instead of predicting a fixed "spliceability" score per site, HELIX conditions predictions on the expression vector of RNA-binding proteins — capturing regulatory factors that shift splice-site selection across tissues and perturbation states.</li>
+      <li><b>Transcript-level isoform modeling:</b> the LSTM reads splice-site signals in both directions along the pre-mRNA, enabling long-range dependencies (e.g., exon-skipping interactions) to influence final isoform ratio predictions.</li>
+      <li><b>Comparison baseline:</b> positioned against sequence-only deep learning splicing models (SpliceAI, Pangolin) that do not model biological context, establishing the incremental value of RBP-conditioned context.</li>
+      <li><b>Method positioning:</b> the HELIX design is modular — additional context types (epigenomic tracks, RNA secondary structure, m6A modification) could replace or augment the RBP expression vector without altering the LSTM backbone.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/modeling-context-dependent-rna-splicing-by-deep-learning__s43588-026-00987-x/fig1.png" target="_blank">
+        <img src="assets/modeling-context-dependent-rna-splicing-by-deep-learning__s43588-026-00987-x/fig1.png" alt="Fig.1 The HELIX framework for predicting context-dependent transcript isoform usage" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The HELIX framework — splice-site-level signals from sequence + RBP expression are aggregated by a bidirectional LSTM to predict relative isoform abundance.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables reported (Tables = 0). This is a 1-figure News &amp; Views commentary; detailed benchmarking tables are in the companion research article.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal prediction, explainable ML, physics-informed graph learning, multi-source data fusion for public health).</p>
+
+    <div class="idea">
+      <h3>① Replace the RBP expression vector with a foundation-model embedding of the regulatory context</h3>
+      <p><span class="lab paper">Extending this paper</span>HELIX represents biological context as an expression vector of individual RBPs. But RBP measurements are sparse and noisy across tissues. A direct extension: substitute the RBP expression vector with a <strong>dense embedding from a transcription/chromatin foundation model</strong> (e.g., the Borzoi-style model of Linder et al.) pre-trained on thousands of genomic tracks. The frozen embedding would encode a richer, lower-noise context signal — improving HELIX's generalization to rare cell types where RBP panels are unmeasured.</p>
+      <p><span class="lab mine">Added value to my research</span>The same substitution principle applies in my work: replacing hand-crafted feature vectors (e.g., POI counts or census indicators) with <strong>embeddings from geospatial foundation models</strong> (e.g., SatCLIP, GeoCLIP) as context vectors in spatiotemporal prediction tasks — a direct methodological parallel that reinforces my fine-tuning-of-foundation-models agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model of transcription across human cell types — <a href="https://doi.org/10.1038/s41586-024-08391-z" target="_blank">10.1038/s41586-024-08391-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Add explainability: attribute isoform shifts to specific RBPs and sequence motifs</h3>
+      <p><span class="lab paper">Extending this paper</span>HELIX predicts context-dependent isoform usage but does not decompose <em>which</em> RBPs or sequence motifs drive the context-shift. Extending it: apply <strong>gradient-based attribution or SHAP</strong> at the splice-site-level sub-model to rank the contribution of each RBP to the change in splice-site signal between contexts (e.g., healthy vs. tumor). This would convert HELIX from a black-box predictor into an <em>interpretable regulatory map</em>, directly exposing the RBP–splice-site interaction grammar.</p>
+      <p><span class="lab mine">Added value to my research</span>This mirrors my explainable ML agenda: I use SHAP to decompose spatial predictions into feature attributions. Adapting the same approach to <strong>sequence-level context attribution</strong> — attributing a spatial accessibility prediction to its most influential covariates — strengthens the interpretability toolkit I deploy across domains. The conceptual bridge between "which RBP shifts splicing" and "which neighborhood covariate shifts health access" is methodologically identical.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A software framework for end-to-end genomic sequence analysis with deep learning — <a href="https://doi.org/10.1038/s43588-023-00557-5" target="_blank">10.1038/s43588-023-00557-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Encode genomic regulatory grammar as a structured prior in HELIX's LSTM</h3>
+      <p><span class="lab paper">Extending this paper</span>HELIX's bidirectional LSTM treats the sequence of splice-site signals as an unconstrained sequence. But regulatory syntax has known structure: certain exon–intron architectures are physically constrained (e.g., first-exon definition rules, U1/U2 snRNP pairing logic). Extending HELIX: inject <strong>known splicing grammar rules as soft constraints</strong> into the LSTM's training objective — a physics-informed approach that regularizes the model toward biologically feasible isoform architectures, improving both accuracy and generalization to novel gene structures.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the sequence-biology analogue of my physics-informed graph learning: encoding conservation laws or structural priors as soft loss terms. The engineering pattern (grammar-constrained LSTM loss) is transferable to <strong>spatiotemporal network models</strong> where flow conservation or gravity-law constraints can be encoded alongside learned parameters — bridging biological and geographic regularity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Regulatory grammar in human promoters uncovered by MPRA-based deep learning — <a href="https://doi.org/10.1038/s41586-025-10093-z" target="_blank">10.1038/s41586-025-10093-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Scale HELIX to multi-omic context: co-train on chromatin, methylation, and RBP simultaneously</h3>
+      <p><span class="lab paper">Extending this paper</span>HELIX's context vector is currently restricted to RBP expression. Yet splicing is known to be co-regulated by chromatin accessibility, DNA methylation, and co-transcriptional dynamics. Extending it: build a <strong>multi-omic context encoder</strong> that fuses RBP expression, ATAC-seq peaks, and bisulfite methylation into a single latent context representation fed to the HELIX splice-site model — enabling isoform predictions conditioned on the full epigenomic state, not just the protein-expression layer.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-source data fusion is a core theme of my work (mobile phone + remote sensing + social media + census). The challenge of <strong>aligning heterogeneous signals onto a shared latent space</strong> — solved here for multi-omic data — maps directly to my problem of fusing remote sensing bands with street-level features and administrative records for spatiotemporal health modeling. HELIX's multi-omic extension is a blueprint for cross-domain sensor fusion.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiomics and deep learning dissect regulatory syntax in human development — <a href="https://doi.org/10.1038/s41586-026-10326-9" target="_blank">10.1038/s41586-026-10326-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Generalize HELIX to design synthetic exon sequences with controlled isoform ratios</h3>
+      <p><span class="lab paper">Extending this paper</span>HELIX is currently a <em>discriminative</em> model: given a sequence and RBP context, predict isoform usage. A generative extension: invert the model to <strong>design exon sequences</strong> that achieve a target isoform ratio under a specified RBP context — a therapeutic design tool for splice-switching antisense oligonucleotides or exon-editing strategies. The bidirectional LSTM's internal representations could seed a conditional generative model trained on the same sequence–RBP–isoform triplets.</p>
+      <p><span class="lab mine">Added value to my research</span>The discriminative-to-generative inversion is methodologically parallel to converting a spatial accessibility <em>predictor</em> into a <em>facility placement designer</em>: given a target accessibility distribution, design the POI configuration that achieves it. This design-by-inversion paradigm, demonstrated here in genomics, can sharpen my GeoAI optimization of EV charging stations and primary care sites — both are cases of designing configurations to meet a target outcome distribution.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Semantic design of functional de novo genes from a genomic language model — <a href="https://doi.org/10.1038/s41586-025-09749-7" target="_blank">10.1038/s41586-025-09749-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

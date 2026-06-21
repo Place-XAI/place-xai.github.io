@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fully analogue reinforcement learning with memristors — AI Digest</title>
+<meta name="description" content="AI Digest: Fully analogue reinforcement learning with memristors (Nature Machine Intelligence, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">&#8592; Back to AI Digest list</a>
+    <span>Place-XAI &middot; Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Neuromorphic computing</span>
+      <span class="tag">Reinforcement learning</span>
+      <span class="tag">In-memory computing</span>
+      <span class="tag">Edge AI</span>
+    </div>
+    <h1>Fully analogue reinforcement learning with memristors</h1>
+    <div class="meta">
+      <span class="authors">Yue Zhang &middot; Xiaojuan Qi &middot; Zhongrui Wang</span>
+      <span><b>Published</b> 2025-12-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-025-01157-w" target="_blank">10.1038/s42256-025-01157-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-025-01157-w" target="_blank">nature.com &#8599;</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Portner et al. demonstrate the first <strong>fully analogue, on-chip reinforcement learning</strong> system: an actor&#8211;critic network implemented entirely in hafnium-oxide memristor crossbar arrays performs <strong>storage, inference, error computation, and weight updates</strong> without any digital multiply&#8211;accumulate units or external memory traffic. An analogue temporal-difference (TD) voltage is the sole learning driver; the system solves T-maze navigation with only 27 physical devices and a continuous Morris water-maze task with approximately 1,000 synapses, pointing toward autonomous edge devices that literally <strong>learn inside their own hardware</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9733;</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Closes the digital gap in neuromorphic RL.</b> Prior memristor-based RL always offloaded training to conventional digital CPUs; this work is the first to keep every computation &#8212; including the TD error and weight update &#8212; inside the analogue hardware, eliminating the memory-wall bottleneck.</li>
+      <li><b>Ohm's and Kirchhoff's laws do the algebra.</b> Weighted summation is performed physically via current accumulation across the crossbar; no data travel outside the array, and power is consumed only where conductance changes occur.</li>
+      <li><b>Self-correcting noise tolerance.</b> Because the TD error is recomputed at each step from the new (possibly imperfect) conductance, residual stochastic programming errors are automatically fed back with opposite sign, making the system robust to device variability.</li>
+      <li><b>Proof-of-principle at neuroscience benchmarks.</b> The T-maze and Morris water-maze tasks are classical behavioural neuroscience assays, bridging hardware engineering directly to biological learning theory.</li>
+      <li><b>Pathway to sustainable edge AI.</b> By eliminating global gradient broadcast and external memory traffic, the approach could enable autonomous drones, biomedical implants, and exploratory robots to learn from a small battery for months.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm shift, not incremental improvement:</b> fully analogue on-chip RL represents a qualitative step beyond prior hybrid digital&#8211;analogue systems &#8212; a category-creating result that fits NMI's preference for fundamental advances.</li>
+      <li><b>Bridges neuroscience, physics, and AI:</b> temporal-difference learning, Ohm's/Kirchhoff's laws, and actor&#8211;critic theory are unified in a single hardware substrate, exemplifying NMI's multi-disciplinary scope.</li>
+      <li><b>Addresses a pressing societal challenge:</b> energy consumption of AI training (AlphaGo Zero's megawatt-hour cost is cited directly) is a recognized crisis; the paper proposes a physics-first remedy.</li>
+      <li><b>Expert News &amp; Views commentary:</b> this article is a commissioned perspective on the companion research paper by Portner et al. (<a href="https://doi.org/10.1038/s42256-025-01149-w" target="_blank">doi:10.1038/s42256-025-01149-w</a>), reflecting NMI's practice of pairing landmark papers with invited expert analysis.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9795;</span><h2>Core Data &#8212; Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Hardware platform</dt><dd>Hafnium oxide (HfO<sub>x</sub>) memristor crossbar arrays &#8212; resistive RAM (RRAM) devices whose conductance is tuned by electrical pulses. Each device simultaneously acts as memory, compute unit, and synapse.</dd>
+      <dt>Actor&#8211;critic network</dt><dd>T-maze task: <strong>27 physical memristors</strong> store actor and critic weights, augmented by a calibrated software twin for remaining connections. Morris water-maze: approximately <strong>1,000 synapses</strong> in a fully analogue simulation.</dd>
+      <dt>Benchmark tasks</dt><dd><strong>Discrete T-maze</strong> (Wenk 1998, <em>Curr. Prot. Neurosci.</em>) &#8212; agent learns shortest path in approximately 50 episodes. <strong>Continuous Morris water-maze</strong> (D'Hooge &amp; De Deyn 2001, <em>Brain Res. Rev.</em>) &#8212; agent locates hidden platform within a few hundred trials.</dd>
+      <dt>Learning rule</dt><dd>Analogue temporal-difference (TD) error &#8212; a voltage generated by a miniature voltage-divider (two critic memristors in series with a fixed reference memristor); translated into programming pulses that directly adjust target conductances.</dd>
+      <dt>Key references cited</dt><dd>Silver et al. (AlphaGo, <em>Nature</em> 529, 2016); Wang et al. (<em>Nat. Electron.</em> 2, 2019); Bianchi et al. (<em>Nat. Commun.</em> 14, 2023); Lin et al. (<em>Nat. Mach. Intell.</em> 5, 2023); Fr&#233;maux et al. (<em>PLoS Comput. Biol.</em> 9, 2013).</dd>
+      <dt>Data availability</dt><dd>This is a News &amp; Views commentary; no primary experimental dataset is released independently. All empirical results derive from the companion research article (Portner et al., doi:&#8239;<a href="https://doi.org/10.1038/s42256-025-01149-w" target="_blank">10.1038/s42256-025-01149-w</a>). No data availability statement in this article.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>HfO<sub>x</sub> RRAM crossbar array</td><td>Analogue weight storage + in-memory compute</td><td>27 devices (T-maze); ~1,000 synapses (water-maze)</td><td>Portner et al. (2025) hardware platform</td></tr>
+        <tr><td>T-maze benchmark</td><td>Discrete navigation task for actor&#8211;critic evaluation</td><td>~50 learning episodes to convergence</td><td>Wenk, 1998 (<em>Curr. Prot. Neurosci.</em>)</td></tr>
+        <tr><td>Morris water-maze benchmark</td><td>Continuous spatial navigation task</td><td>Hundreds of trials to convergence</td><td>D'Hooge &amp; De Deyn, 2001 (<em>Brain Res. Rev.</em>)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this article is a News &amp; Views piece summarising Portner et al. (doi:10.1038/s42256-025-01149-w); exact device counts and trial numbers are as stated verbatim in the text and refer to the companion paper's experimental conditions.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9881;</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>In-memory computation via crossbar arrays:</b> memristor conductances store weight matrices; applying row voltages produces column currents representing weighted sums via Ohm's + Kirchhoff's laws &#8212; no external memory transfer.</li>
+      <li><b>Actor&#8211;critic architecture on hardware:</b> two sets of physical conductances represent actor (policy) weights and critic (value-function) weights, mapped onto the same crossbar substrate.</li>
+      <li><b>Analogue temporal-difference (TD) error generation:</b> a voltage-divider sub-circuit (two critic memristors + fixed reference) computes the scalar TD error as an analogue voltage at each timestep.</li>
+      <li><b>Pulse-based weight update:</b> the TD error voltage is translated into a number of programming pulses that directly adjust target conductances &#8212; no digital gradient computation required.</li>
+      <li><b>Self-correcting noise handling:</b> stochastic programming errors are automatically compensated because the TD error is recomputed from the current (imperfect) conductance state at every step, feeding back residual error with opposite sign.</li>
+      <li><b>Calibrated software twin:</b> for the T-maze experiment, a portion of connections is handled by a software model calibrated to physical device characteristics &#8212; a hybrid step toward fully physical operation flagged as a remaining limitation.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">&#9638;</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/fully-analogue-reinforcement-learning-with-memristors__s42256-025-01157-w/fig1.png" target="_blank">
+        <img src="assets/fully-analogue-reinforcement-learning-with-memristors__s42256-025-01157-w/fig1.png" alt="Fig. 1: On-chip in-memory reinforcement learning on analogue memristors" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> On-chip in-memory reinforcement learning on analogue memristors. An analogue memristor array holds tunable conductances as actor and critic weights; the array receives environmental state, performs actions, obtains a reward, computes the TD error entirely in hardware, and updates both weight sets without leaving the chip.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). This is a 2-page News &amp; Views article; all supplementary experimental data are in the companion Portner et al. research article.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">&#10022;</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">&#8212; this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> &#8212; GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis, facility-location optimization).</p>
+
+    <div class="idea">
+      <h3>&#9312; Scale the analogue TD rule from crossbar to physical graph neural networks for spatial optimization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's analogue TD loop operates on a flat weight matrix (crossbar) and is validated on simple navigation benchmarks (T-maze, water-maze). A direct extension: map the actor&#8211;critic architecture onto a <strong>physical graph neural network substrate</strong> where edges correspond to memristor pairs and nodes to spatial locations &#8212; enabling the TD signal to propagate along graph topology rather than a dense crossbar. This would let the analogue hardware learn directly on graph-structured state spaces (road networks, transit graphs) without digital preprocessing. The corpus work on resistive-memory liquid-state machines already encodes temporal spatio-structural information in RRAM; combining both could yield a hardware-native graph RL solver.</p>
+      <p><span class="lab mine">Added value to my research</span>My physics-informed graph learning targets spatiotemporal systems (road networks, facility access graphs). If the analogue TD rule propagates natively on a memristor graph, it becomes possible to run <strong>on-chip facility-location optimization</strong> &#8212; where each node is a candidate service site and the critic evaluates accessibility scores directly in analogue hardware, bypassing the digital simulation bottleneck in my 2SFCA scaling work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Resistive memory-based zero-shot liquid state machine for multimodal event data learning &#8212; <a href="https://doi.org/10.1038/s43588-024-00751-z" target="_blank">10.1038/s43588-024-00751-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9313; Replace the analogue TD error with an in-memory Bayesian uncertainty signal for active spatial data collection</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's learning signal is a scalar TD voltage. A meaningful extension: replace or augment it with a <strong>Bayesian uncertainty estimate computed in analogue hardware</strong> &#8212; leveraging the inherent stochasticity of memristor conductance variations as a natural Monte Carlo ensemble rather than noise to suppress. Deep Bayesian active learning using in-memory computing hardware (doi:10.1038/s43588-024-00744-y) already shows that in-memory hardware can output calibrated uncertainty; combining that with the analogue TD loop would enable an RL agent that explores more in regions of high predictive uncertainty and less where the actor&#8211;critic is confident.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatial data-collection work (mobile phone, GPS trajectories, social media), the key question is <em>where</em> to deploy sensors or agents next. A hardware-native Bayesian RL agent could drive <strong>active spatiotemporal sampling</strong> &#8212; selecting next measurement locations by trading off uncertainty reduction against travel cost, directly paralleling 2SFCA service-area delineation where we must decide which zones need more data.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep Bayesian active learning using in-memory computing hardware &#8212; <a href="https://doi.org/10.1038/s43588-024-00744-y" target="_blank">10.1038/s43588-024-00744-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9314; Import physical backpropagation advances to eliminate the remaining digital dependency</h3>
+      <p><span class="lab paper">Extending this paper</span>The article explicitly flags its key limitation: some architectural modules still depend on digital circuitry (the calibrated software twin). Training of physical neural networks (doi:10.1038/s41586-025-09384-2) develops a general framework for training analogue physical systems without digital gradient flow, showing that complex networks can learn through local physical perturbations alone. Extending the memristor RL paper: substitute the calibrated software twin with <strong>perturbation-based physical training</strong>, achieving a truly zero-digital actor&#8211;critic loop. This directly addresses the limitation the authors flag and could allow the system to scale to the ~1,000-synapse water-maze regime entirely on physical hardware without any digital modules.</p>
+      <p><span class="lab mine">Added value to my research</span>My agent-based modeling work (Monte Carlo simulations of urban mobility) currently runs entirely on CPU clusters. If physical training can replace digital gradient computation, it opens a path to <strong>hardware-accelerated agent-based spatial simulation</strong> &#8212; memristive crossbars as massively parallel Monte Carlo engines for spatiotemporal dynamics modeling.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training of physical neural networks &#8212; <a href="https://doi.org/10.1038/s41586-025-09384-2" target="_blank">10.1038/s41586-025-09384-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9315; Transfer the analogue actor&#8211;critic principle to CMOS-compatible synaptic transistors for scalable urban RL</h3>
+      <p><span class="lab paper">Extending this paper</span>HfO<sub>x</sub> memristors are not yet manufacturable at standard CMOS scale. Synaptic and neural behaviours in a standard silicon transistor (doi:10.1038/s41586-025-08742-4) demonstrates that standard silicon transistors can exhibit synaptic plasticity (long-term potentiation/depression) without exotic materials. Extending the memristor RL paper: reformulate the voltage-divider TD circuit using <strong>CMOS-compatible synaptic transistors</strong>, retaining the self-correcting analogue update rule on a platform compatible with existing foundry processes. This would lower the barrier to deploying analogue RL in real-world large-scale systems dramatically.</p>
+      <p><span class="lab mine">Added value to my research</span>Large-scale urban optimization &#8212; EV charging placement, facility-location under equity constraints &#8212; requires running thousands of RL rollouts. A CMOS-compatible analogue RL chip could serve as a <strong>co-processor for spatiotemporal optimization</strong>, accelerating the inner-loop policy evaluation that dominates compute time in my GeoAI facility-siting pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Synaptic and neural behaviours in a standard silicon transistor &#8212; <a href="https://doi.org/10.1038/s41586-025-08742-4" target="_blank">10.1038/s41586-025-08742-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>&#9316; Leverage reward-magnitude insights to calibrate analogue TD voltage for geospatial reward design</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper treats reward as a given scalar and does not study how reward magnitude interacts with analogue TD computation. Reward magnitude determines reinforcement learning efficiency (doi:10.1126/science.aeb0813) shows that reward scale systematically governs learning speed and efficiency across biological and artificial agents. Extending the memristor RL paper: systematically vary the voltage amplitude of the reward signal and measure its effect on convergence speed and memristor programming noise &#8212; translating the reward-magnitude principle into an <strong>analogue voltage-scale calibration protocol</strong> that optimizes hardware learning efficiency without changing device architecture.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatial RL applications (agent-based models for healthcare access or EV routing), reward shaping is typically done by trial and error. If reward magnitude has a principled effect on analogue hardware convergence, it provides a <strong>physics-grounded reward-design heuristic</strong> for my spatiotemporal agent models &#8212; linking the scale of a spatial utility function (e.g., accessibility improvement per episode) to hardware learning rate without hyperparameter search.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reward magnitude determines reinforcement learning efficiency &#8212; <a href="https://doi.org/10.1126/science.aeb0813" target="_blank">10.1126/science.aeb0813</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest &middot; generated by Claude from public metadata, abstract, and reference data &middot; Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

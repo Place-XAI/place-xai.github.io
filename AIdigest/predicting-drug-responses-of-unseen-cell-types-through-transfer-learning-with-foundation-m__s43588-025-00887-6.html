@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting drug responses of unseen cell types through transfer learning with foundation models — AI Digest</title>
+<meta name="description" content="AI Digest: Predicting drug responses of unseen cell types through transfer learning with foundation models (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Single-cell genomics</span>
+      <span class="tag">Drug repurposing</span>
+      <span class="tag">Foundation models</span>
+      <span class="tag">Transfer learning</span>
+    </div>
+    <h1>Predicting drug responses of unseen cell types through transfer learning with foundation models</h1>
+    <div class="meta">
+      <span class="authors">Wang, Yixuan · Liu, Xinyuan · Fan, Yimin · Xie, Binghui · Cheng, James · Wong, Kam Chung · Cheung, Peter · King, Irwin · Li, Yu</span>
+      <span><b>Published</b> 2025-10-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00887-6" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>CRISP (Cell-type-specific drug perturbatIon responses predictor) is a foundation-model-powered transfer learning framework that predicts drug-induced transcriptional responses in <strong>previously unseen cell types</strong> at single-cell resolution. By combining single-cell foundation models (scGPT, Geneformer, scFoundation) with cell-type-specific contrastive learning, CRISP achieves a <strong>24.5% improvement</strong> in Pearson correlation over state-of-the-art baselines across unseen-cell-type benchmarks. Zero-shot application to chronic myeloid leukemia (K562 cells) accurately predicts sorafenib's anti-tumor mechanisms — including CXCR4 pathway inhibition — without any prior exposure to CML data, aligning with completed clinical trials and opening a cost-effective pathway for <strong>in silico drug repurposing</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Addresses a fundamental gap in drug development.</b> Predicting how drugs affect <em>new, previously unmeasured cell types</em> — including rare or disease-emergent populations — is critical but prohibitively expensive with wet-lab experiments. CRISP enables in silico screening at scale.</li>
+      <li><b>Bridges single-cell foundation models and perturbation prediction.</b> Prior methods that naively plug scFMs into autoencoder pipelines yield negligible gains; CRISP's cell-type-specific architecture (contrastive learning + classifier) unlocks the latent biological information in these large pre-trained models.</li>
+      <li><b>Generalizes across platforms and patients without retraining.</b> Zero-shot transfer from NeurIPS PBMC data to PBMC-bench (7 sequencing platforms) and cross-tissue transfer to cancer cell lines demonstrate cross-platform robustness that existing tools lack.</li>
+      <li><b>Validates independently discoverable biology.</b> Sorafenib's predicted CXCR4 inhibition in CML — obtained from solid-tumor training data alone — is supported by a completed Phase II clinical trial and literature, providing a stringent, leak-free validation of the approach.</li>
+      <li><b>Substantially more computationally efficient.</b> CRISP achieves state-of-the-art performance with 25x faster training than CellOT, enabling large-scale drug screening across hundreds of compounds (188 drugs in SciPlex3 against K562 cells).</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological advance at the intersection of AI and biology:</b> CRISP is not an incremental model improvement but a new paradigm integrating pre-trained foundation models with cell-type-specific learning — matching the journal's mandate for principled computational innovation.</li>
+      <li><b>Broad translational relevance:</b> Drug repurposing at single-cell resolution touches oncology, immunology and personalized medicine simultaneously, reaching a diverse readership.</li>
+      <li><b>Rigorous, multi-scenario evaluation:</b> Eight distinct out-of-distribution scenarios — from unseen cell types to unseen patients and platforms — demonstrate robustness far beyond toy benchmarks, meeting the journal's standard for thorough validation.</li>
+      <li><b>Open and reproducible:</b> Code on GitHub (<a href="https://github.com/ml4bio/CRISP" target="_blank">ml4bio/CRISP</a>) and Zenodo (DOI <a href="https://doi.org/10.5281/zenodo.16713259" target="_blank">10.5281/zenodo.16713259</a>), with all datasets publicly available via GEO and NeurIPS competition repositories, satisfying FAIR data standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>NeurIPS dataset</dt><dd>240,059 PBMC cells; 18,211 genes; 147 treatment conditions (144 drugs at 1 µM + 2 positive controls + DMSO); 6 cell types (CD4+ T, CD8+ T, NK, T-regulatory, B cells, myeloid). Access: <a href="https://www.kaggle.com/competitions/open-problems-single-cell-perturbations" target="_blank">NeurIPS 2023 competition</a>.</dd>
+      <dt>SciPlex3 dataset</dt><dd>581,777 cells; 58,347 genes; 187 drug treatments; 3 cancer cell lines (A549 lung adenocarcinoma, MCF7 breast adenocarcinoma, K562 CML). GEO access code <code>GSM4150378</code>.</dd>
+      <dt>GBM dataset</dt><dd>155,377 cells; 60,725 genes; 6 drug treatments; glioblastoma tissue from 9 different patients. GEO access code <code>GSE148842</code>.</dd>
+      <dt>PC9 dataset</dt><dd>Non-small cell lung cancer (NSCLC) transcriptomics; 2 sub-datasets (GSE134839, GSE149383); crizotinib- and erlotinib-treated; 4,000 highly variable genes after filtering.</dd>
+      <dt>PBMC-bench dataset</dt><dd>31,021 PBMC cells (unperturbed); 33,694 genes; 9 cell types; 7 sequencing platforms (Drop-seq, inDrops, Seq-Well, 10x Chromium v2/v2A/v2B/v3, CEL-Seq2, Smart-Seq2). CC-BY 4.0 license. GEO access code <code>GSE149383</code> (PC9 sub-dataset separately).</dd>
+      <dt>Drug annotation DBs</dt><dd>DrugBank, PubChem, LINCS data portal, and SciPlex3 annotation file used for mechanism-of-action (MOA) information on investigated drugs.</dd>
+      <dt>scFM pre-training</dt><dd>scGPT (blood, cancer, human variants), Geneformer, and scFoundation used as frozen encoders; pre-trained on Human Cell Atlas-scale data (not fine-tuned in CRISP).</dd>
+      <dt>Code / reproducibility</dt><dd>GitHub: <a href="https://github.com/ml4bio/CRISP" target="_blank">github.com/ml4bio/CRISP</a>; Zenodo: <a href="https://doi.org/10.5281/zenodo.16713259" target="_blank">10.5281/zenodo.16713259</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>NeurIPS 2023 single-cell perturbation</td><td>Main benchmark — unseen cell-type evaluation</td><td>240,059 cells · 18,211 genes · 6 cell types · 144 drugs</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM4150378" target="_blank">GEO / NeurIPS competition</a></td></tr>
+        <tr><td>SciPlex3</td><td>Cancer cell-line benchmark; unseen cell + drug evaluation; drug screening</td><td>581,777 cells · 3 cancer lines · 187 drugs</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM4150378" target="_blank">GEO GSM4150378</a></td></tr>
+        <tr><td>GBM dataset</td><td>Cross-patient generalization in glioblastoma</td><td>155,377 cells · 9 patients · 6 drug treatments · 60,725 genes</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE148842" target="_blank">GEO GSE148842</a></td></tr>
+        <tr><td>PC9 dataset</td><td>Cross-tissue (NSCLC) zero-shot evaluation</td><td>NSCLC samples · 4,000 HVGs · 2 drug treatments</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149383" target="_blank">GEO GSE149383</a></td></tr>
+        <tr><td>PBMC-bench</td><td>Cross-platform zero-shot benchmark</td><td>31,021 PBMC cells · 7 seq. platforms · 9 cell types · 33,694 genes</td><td>Public (CC-BY 4.0)</td></tr>
+        <tr><td>DrugBank / PubChem / LINCS</td><td>Drug MOA and target annotation</td><td>All drugs in SciPlex3 + NeurIPS</td><td><a href="https://go.drugbank.com" target="_blank">DrugBank</a> · <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank">PubChem</a> · <a href="https://lincsportal.ccs.miami.edu" target="_blank">LINCS</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: exact cell counts are taken verbatim from the article's Methods section. The NeurIPS dataset is publicly available via the competition repository; SciPlex3 and GBM are available via NCBI GEO with the accession codes listed above.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>scFM-assisted paired control encoder:</b> uses frozen scGPT (or Geneformer / scFoundation) to embed control-state cells into dense pre-embeddings; a synthetic paired control embedding is constructed by averaging scFM embeddings of unperturbed cells sharing the same cell-type covariate as each perturbed sample, then encoded through a VAE encoder.</li>
+      <li><b>Drug treatment encoding:</b> drug SMILES strings are encoded via RDKit (201-dim molecular fingerprint); a dosage-specific encoder scales the drug embedding; both are concatenated with the control latent vector for perturbation decoding.</li>
+      <li><b>Cell-type-specific prediction module:</b> the decoder (MLP) is regularized by (a) cross-entropy cell-type classification loss and (b) cosine-distance contrastive learning — a negative cell of a different cell type is sampled per training step — forcing the latent space to be cell-type-discriminative without explicit one-hot labels.</li>
+      <li><b>Loss function:</b> VAE evidence lower bound = DE-gene-focused MSE (top 50 DE genes by |log FC|, coefficient 0.75) + MMD distribution matching + KL divergence + cell-type regularization (classification + contrastive). MMD coefficient is 0.1 for NeurIPS, 1e-4 for SciPlex3/GBM.</li>
+      <li><b>Zero-shot inference:</b> at test time, CRISP only requires control-state gene expression + treatment condition — no feature alignment, no ground-truth post-perturbation data, no cell-type label required for new platforms or patients.</li>
+      <li><b>Evaluation metrics:</b> Pearson correlation of log(FC) on top-50 DE genes (Pr&Delta;), R² score, Sinkhorn distance (single-cell resolution via GeomLoss), and directional accuracy of fold-change sign for top-50 DE genes.</li>
+      <li><b>Functional validation (GSEA):</b> GSEApy using Hallmark and C2-Canonical Pathway gene sets; GSEA run with 1,000 phenotype-based permutations and two-sided signal-to-noise statistic; FDR q-values reported.</li>
+      <li><b>Baselines compared:</b> scGen, CellOT, Biolord, chemCPA, CPA, and chemCPA-FM (chemCPA with same scFM as CRISP).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig1.png" target="_blank">
+        <img src="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig1.png" alt="Fig.1 Overview of CRISP" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of CRISP — the framework architecture showing scFM-assisted paired control encoder, drug encoder, and cell-type-specific perturbation decoder.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig2.png" target="_blank">
+        <img src="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig2.png" alt="Fig.2 Performance of CRISP across unseen cell types" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Performance across unseen cell types — CRISP achieves 41% Pr&Delta; improvement on NeurIPS; directional accuracy for top-50 DE genes across 6 held-out cell types.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig3.png" target="_blank">
+        <img src="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig3.png" alt="Fig.3 scFM adaptation and zero-shot prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> scFM adaptation and zero-shot prediction — UMAP of cell embeddings from different scFMs; ablation study showing contribution of FM-PC, contrastive learning, and MMD loss.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig4.png" target="_blank">
+        <img src="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig4.png" alt="Fig.4 Zero-shot cross-batch prediction on PBMC-bench" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Cross-platform zero-shot prediction — directional accuracy on NK cells and multi-cell-type evaluation across 7 sequencing platforms in PBMC-bench.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig5.png" target="_blank">
+        <img src="assets/predicting-drug-responses-of-unseen-cell-types-through-transfer-learning-with-foundation-m__s43588-025-00887-6/fig5.png" alt="Fig.5 MOA analysis and drug repurposing" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> MOA analysis and drug repurposing — GSEA enrichment landscape of predicted drug × cell space; sorafenib-CML zero-shot prediction with CXCR4 and P53 pathway findings.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Supplementary contains Figs. 1–8, Table 1 (hyperparameter sensitivity), Algorithm 1 (training), and Notes 1–2.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed ML, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Replace the frozen scFM backbone with a multimodal biological foundation model</h3>
+      <p><span class="lab paper">Extending this paper</span>CRISP currently uses frozen single-modality scFMs (scGPT, Geneformer) trained on unperturbed transcriptomics. A direct extension: replace the frozen encoder with a <strong>multimodal foundation model</strong> co-trained on scRNA-seq, chromatin accessibility (scATAC-seq), and protein interaction data. The corpus paper "Towards multimodal foundation models in molecular cell biology" (Nature, 2025) outlines exactly this paradigm — embedding chemical perturbations, epigenomics and transcriptomics in a shared latent space. Plugging such a model into CRISP's FM-PC encoder could substantially improve unseen-cell-type generalization by providing richer cross-modal cellular context beyond gene expression alone, particularly for rare or disease-emergent cell populations where scRNA coverage is sparse.</p>
+      <p><span class="lab mine">Added value to my research</span>The multimodal embedding strategy directly parallels my work on <strong>multi-source data fusion</strong> (mobile phone, remote sensing, social media for urban analytics). Just as CRISP fuses scFM embeddings with molecular encodings, I can fuse spatiotemporal GPS trajectories with POI semantic embeddings and remote sensing indices in a shared latent space — yielding richer context representations for spatial prediction models that mirror CRISP's "control + treatment" architecture as "baseline mobility + intervention" in urban policy evaluation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Towards multimodal foundation models in molecular cell biology — <a href="https://doi.org/10.1038/s41586-025-08710-y" target="_blank">10.1038/s41586-025-08710-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Extend CRISP's cell-atlas transfer to a generalizable perturbation operator via optimal transport</h3>
+      <p><span class="lab paper">Extending this paper</span>CRISP's zero-shot predictions transfer NeurIPS PBMC knowledge to 7 sequencing platforms and cross-tissue cancer lines, but direction accuracy on unseen platforms (Smart-Seq2, CEL-Seq2) remains modest (~0.5). The recently published "Conditional Monge Gap" framework (NMI, 2026) in the corpus introduces a theoretically grounded optimal transport formulation that conditions transport maps on cell-type covariates — directly complementing CRISP's cell-type-aware training strategy. Replacing CRISP's MMD matching loss with a conditional Monge Gap objective could yield tighter distribution alignment across sequencing platforms while preserving cell-type specificity, potentially closing the cross-platform accuracy gap without additional data collection.</p>
+      <p><span class="lab mine">Added value to my research</span>The conditional optimal transport framing translates to <strong>spatiotemporal distribution alignment</strong> in my geospatial ML work: aligning mobility data from different cities (different "platforms") while conditioning on local urban morphology ("cell type") mirrors CRISP's problem exactly. This opens a principled approach for my cross-city transferability challenge in 2SFCA accessibility models, where learned distance-decay functions must transfer across diverse spatial contexts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Conditional Monge Gap enables generalizable single-cell perturbation modelling — <a href="https://doi.org/10.1038/s42256-026-01242-8" target="_blank">10.1038/s42256-026-01242-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Build a unified cell atlas foundation model as the CRISP backbone for genome-wide search</h3>
+      <p><span class="lab paper">Extending this paper</span>CRISP benchmarks three scFMs (scGPT, Geneformer, scFoundation) with modest differences in performance, suggesting the field has not yet converged on an optimal encoder. The corpus paper "A cell atlas foundation model for scalable search of similar human cells" (Nature, 2024) proposes a unified foundation model trained on hundreds of millions of cells for similarity-based retrieval — a qualitatively different paradigm that could power CRISP's paired control encoder. Incorporating such a retrieval-augmented encoder into CRISP's FM-PC module — using k-nearest-neighbor control cells from a full Human Cell Atlas index rather than within-dataset averaging — would make CRISP's synthetic paired control embedding richer and would naturally extend to zero-shot scenarios where zero within-dataset controls exist for the target cell type.</p>
+      <p><span class="lab mine">Added value to my research</span>This retrieval-augmented encoding strategy maps onto my interest in <strong>fine-tuning geospatial foundation models</strong>: rather than training from scratch, retrieve spatially similar regions from a large urban atlas and use them as "paired controls" for predicting the effect of an urban intervention (new transit line, rezoning). The analogy is direct — both CRISP and a geospatial retrieval-augmented model transfer knowledge from observed contexts to unseen target contexts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A cell atlas foundation model for scalable search of similar human cells — <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Encode drug molecular structure with a genomic language model for structural drug repurposing</h3>
+      <p><span class="lab paper">Extending this paper</span>CRISP currently encodes drug molecules via RDKit SMILES fingerprints (201-dimensional molecular descriptors), an approach the Discussion section explicitly identifies as a limitation — richer drug encoding is needed. The corpus paper "A foundation model of transcription across human cell types" (Nature, 2025) demonstrates that sequence-level pre-trained models capture gene-regulatory logic that cheminformatics tools miss. An extension of CRISP: replace the RDKit encoder with a <strong>molecular sequence language model</strong> pre-trained on drug-target interaction data (e.g., ChemBERTa or MolFormer), enabling CRISP to generalize to structurally novel compounds beyond the training distribution. Combined with drug-drug interaction information (currently absent), this would make CRISP's drug repurposing pipeline applicable to combination therapies — the next frontier the Discussion identifies.</p>
+      <p><span class="lab mine">Added value to my research</span>In my <strong>explainable machine learning for spatial prediction</strong> work, representing "interventions" (policy changes, infrastructure additions) as rich semantic embeddings rather than one-hot codes or simple numeric descriptors is an analogous challenge. The CRISP paradigm of using pre-trained encoders for both the "cell" (place) and the "drug" (policy) is directly applicable to predicting how a specific urban policy change will shift spatial health outcomes in a new city, using a spatial foundation model as the place encoder.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model of transcription across human cell types — <a href="https://doi.org/10.1038/s41586-024-08391-z" target="_blank">10.1038/s41586-024-08391-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply CRISP's training-data-composition analysis to understand generalization failure modes</h3>
+      <p><span class="lab paper">Extending this paper</span>CRISP's performance degrades for T-regulatory cells (only 4.7% of training data) and on Smart-Seq2 (small sample size), but the paper does not systematically analyze how training data composition drives these failures. The corpus paper "Training data composition determines machine learning generalization and biological rule discovery" (NMI, 2025) provides a framework for analyzing how positive/negative class ratios and diversity of training examples determine OOD generalization. Applying this framework to CRISP's training splits — systematically varying cell-type class balance, drug diversity, and sequencing-platform representation — would turn CRISP's empirical observations into prescriptive guidelines for assembling scRNA-seq perturbation datasets that maximize zero-shot transfer, directly informing which future experimental data to prioritize for atlas expansion.</p>
+      <p><span class="lab mine">Added value to my research</span>The training-data-composition framework resonates with my work on <strong>spatial data imbalance in health geography</strong>: rare populations (rural communities, minority neighborhoods) are systematically under-represented in health datasets, just as T-regulatory cells are under-represented in scRNA-seq atlases. Adopting CRISP's cell-type-specific contrastive re-weighting strategy for <strong>spatially imbalanced health accessibility models</strong> — up-weighting geographically marginal zones in R2SFCA training — is a concrete methodological transfer that could improve healthcare facility access predictions in data-sparse regions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training data composition determines machine learning generalization and biological rule discovery — <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

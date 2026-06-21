@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three types of incremental learning — AI Digest</title>
+<meta name="description" content="AI Digest: Three types of incremental learning (Nature Machine Intelligence, 2022)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Continual learning</span>
+      <span class="tag">Catastrophic forgetting</span>
+      <span class="tag">Benchmark framework</span>
+    </div>
+    <h1>Three types of incremental learning</h1>
+    <div class="meta">
+      <span class="authors">Gido M. van de Ven · Tinne Tuytelaars · Andreas S. Tolias</span>
+      <span><b>Published</b> 2022-12-05</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-022-00568-3" target="_blank">10.1038/s42256-022-00568-3</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-022-00568-3" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Continual learning is <strong>not one problem but three</strong>: task-incremental, domain-incremental, and class-incremental learning differ fundamentally in what information the algorithm receives at test time and in their difficulty. A comprehensive empirical comparison on Split MNIST and Split CIFAR-100 shows <strong>replay-based strategies are the only approach that performs well across all three scenarios</strong>, while parameter-regularization methods fail almost completely in the hardest setting (class-incremental). This taxonomy gives the field a shared framework for designing unambiguous benchmarks and comparing algorithms on equal footing.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Ends the apples-to-oranges problem.</b> Dozens of continual-learning papers claimed state-of-the-art on the same datasets but were actually solving different problems. The three-scenario taxonomy makes those comparisons honest.</li>
+      <li><b>Reveals hidden difficulty gradients.</b> Task-IL is not "solved" — using separate networks per task is actually a strong baseline; class-IL is dramatically harder than commonly acknowledged.</li>
+      <li><b>Explains why popular methods fail.</b> The paper shows mathematically why parameter-regularization cannot bridge class-incremental learning: retaining past weights is not enough when the algorithm must also distinguish classes never seen together.</li>
+      <li><b>Generalizes beyond the academic setting.</b> The formal framework extends to task-free streams, gradual context shifts, and mixed scenarios — covering realistic non-stationary conditions, not just split-dataset toy protocols.</li>
+      <li><b>Open, reproducible benchmark.</b> MIT-licensed code at <a href="https://github.com/GMvandeVen/continual-learning" target="_blank">github.com/GMvandeVen/continual-learning</a> allows any algorithm to be slotted into all three scenarios and compared on equal footing.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Conceptual contribution, not just an algorithm:</b> proposes a taxonomy that restructures an entire subfield — precisely the high-impact, field-defining role Nature MI prizes.</li>
+      <li><b>Broad empirical scope:</b> 13 representative algorithms tested across 3 scenarios × 2 protocols, constituting one of the most systematic comparisons in the field at time of publication.</li>
+      <li><b>Links to natural intelligence:</b> the three scenarios are motivated by how biological systems handle incremental experience — directly relevant to NMI's mission of bridging AI and neuroscience.</li>
+      <li><b>Community infrastructure:</b> the open codebase, formal definitions, and scenario-specific benchmarks constitute platform-level contributions, not just a single result.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>MNIST dataset</dt><dd><strong>MNIST</strong> (LeCun et al., 1998) — 70,000 greyscale 28×28 images of handwritten digits 0–9. Standard split: 60,000 training / 10,000 test. Used as <em>Split MNIST</em>: divided into 5 contexts of 2 digits each (~6,000 train / ~1,000 test images per digit). Freely available at <a href="http://yann.lecun.com/exdb/mnist/" target="_blank">yann.lecun.com/exdb/mnist/</a>.</dd>
+      <dt>CIFAR-10 &amp; CIFAR-100</dt><dd><strong>CIFAR-10 / CIFAR-100</strong> (Krizhevsky &amp; Hinton, 2009) — 32×32 RGB colour images. CIFAR-10 (10 classes, 60,000 images) used to pre-train the convolutional backbone; CIFAR-100 (100 classes, 50,000 train / 10,000 test at 500/100 per class) used as <em>Split CIFAR-100</em>: divided into 10 contexts of 10 classes each. Freely available at <a href="https://www.cs.toronto.edu/~kriz/cifar.html" target="_blank">cs.toronto.edu/~kriz/cifar.html</a>.</dd>
+      <dt>Experimental volume</dt><dd>13 algorithms × 3 scenarios × 2 protocols × 5 random seeds (repetitions) = hundreds of experimental runs. Memory buffer size varied (Extended Data Fig. 1) to study sensitivity.</dd>
+      <dt>Code availability</dt><dd>MIT-licensed PyTorch code: <a href="https://github.com/GMvandeVen/continual-learning" target="_blank">github.com/GMvandeVen/continual-learning</a>. Fully documented and reproducible.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MNIST</td><td>Split MNIST benchmark (5 contexts, 2 digits each)</td><td>60,000 train / 10,000 test; 28×28 greyscale</td><td><a href="http://yann.lecun.com/exdb/mnist/" target="_blank">LeCun (1998)</a></td></tr>
+        <tr><td>CIFAR-100</td><td>Split CIFAR-100 benchmark (10 contexts, 10 classes each)</td><td>50,000 train / 10,000 test; 32×32 RGB</td><td><a href="https://www.cs.toronto.edu/~kriz/cifar.html" target="_blank">Krizhevsky (2009)</a></td></tr>
+        <tr><td>CIFAR-10</td><td>Pre-training the shared convolutional backbone (100 epochs)</td><td>60,000 images; 10 classes; non-overlapping with CIFAR-100</td><td><a href="https://www.cs.toronto.edu/~kriz/cifar.html" target="_blank">Krizhevsky (2009)</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all datasets are freely available public benchmarks. No proprietary or private data was used. Numbers are taken verbatim from the article's Methods and Data Availability sections.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Formal scenario taxonomy:</b> three scenarios defined by how the mapping to be learned relates to the context space — task-IL (f: X×C→Y), domain-IL (f: X→Y), class-IL (f: X→C×Y) — and by whether context identity is provided or must be inferred at test time.</li>
+      <li><b>Five continual-learning strategy families compared:</b> (1) context-specific components (XdG, Separate Networks); (2) parameter regularization (EWC, SI); (3) functional regularization (LwF, FROMP); (4) replay from buffer or generative model (DGR, BI-R, ER, A-GEM); (5) template-based classification (iCaRL, Generative Classifier).</li>
+      <li><b>Controlled architecture protocol:</b> same base network (2-layer FC for Split MNIST; pre-trained conv + 2-layer FC for Split CIFAR-100) and same training hyper-parameters (ADAM, identical iterations) across all methods — isolating strategy differences from architectural advantages.</li>
+      <li><b>Output-layer treatment:</b> multi-headed (per-context output units) for task-IL; single-headed for domain-IL and class-IL — ensuring the output space correctly matches each scenario's definition.</li>
+      <li><b>Baselines:</b> "None" (sequential training without any anti-forgetting mechanism) as lower bound; "Joint" (simultaneous training on all data) as upper bound.</li>
+      <li><b>Generalization of the framework:</b> extension to task-free streams (no sharp context boundaries), gradual context transitions, and mixed/hybrid scenarios via a probabilistic formulation of the data stream.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/three-types-of-incremental-learning__s42256-022-00568-3/fig1.png" target="_blank">
+        <img src="assets/three-types-of-incremental-learning__s42256-022-00568-3/fig1.png" alt="Fig.1 Decision tree for the three continual learning scenarios" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Decision tree for the three scenarios — distinguishes task-IL, domain-IL, and class-IL based on whether context identity is known or must be inferred at test time.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/three-types-of-incremental-learning__s42256-022-00568-3/fig2.png" target="_blank">
+        <img src="assets/three-types-of-incremental-learning__s42256-022-00568-3/fig2.png" alt="Fig.2 Split MNIST according to the three scenarios" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Split MNIST under each scenario — illustrates concretely how the same dataset yields three different problems with different expected algorithm outputs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/three-types-of-incremental-learning__s42256-022-00568-3/fig3.png" target="_blank">
+        <img src="assets/three-types-of-incremental-learning__s42256-022-00568-3/fig3.png" alt="Fig.3 Schematic illustrations of five continual learning strategies" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Schematic of five strategy families — context-specific components, parameter regularization, functional regularization, replay, and template-based classification.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 3 tables in the main text — Table 1 (scenario overview), Table 2 (results on Split MNIST), Table 3 (results on Split CIFAR-100). Extended Data contains 1 additional figure (buffer-size sensitivity).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal modeling, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Apply the three-scenario framework to geospatial AI models trained on non-stationary urban data</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's three scenarios were validated only on image classification benchmarks (MNIST, CIFAR). A direct extension is to instantiate all three scenarios on <strong>non-stationary geospatial data streams</strong>: task-IL (learn to predict accessibility in a new city while retaining knowledge of previous cities), domain-IL (adapt to a new year's POI distribution without forgetting the spatial structure), class-IL (add new facility types incrementally to a healthcare accessibility model). This would test which continual-learning strategies transfer from computer vision to spatial prediction tasks — a gap the paper explicitly acknowledges but does not fill.</p>
+      <p><span class="lab mine">Added value to my research</span>My geospatial foundation model fine-tuning work sits squarely in domain-IL and task-IL territory: when I fine-tune a pre-trained GeoAI model on a new city's health access data, I am doing domain-incremental learning. This paper's benchmark protocol tells me exactly how to evaluate whether the fine-tuned model catastrophically forgets spatial patterns from earlier cities — and replay with a spatial memory buffer is the evidence-backed strategy to try first.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Continual learning of context-dependent processing in neural networks — <a href="https://doi.org/10.1038/s42256-019-0080-x" target="_blank">10.1038/s42256-019-0080-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Class-incremental learning as a model for expanding healthcare facility classification</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that class-IL is the hardest scenario and that only replay and template-based methods survive it. An extension: design a <strong>class-IL benchmark for medical service types</strong> where the algorithm incrementally learns to classify primary care, mental health, emergency, and telehealth facilities as new service categories are introduced over time. This would test whether the paper's conclusions (replay dominance, regularization failure) hold when the "classes" are spatial facility types rather than pixel categories.</p>
+      <p><span class="lab mine">Added value to my research</span>In my spatial accessibility work with 2SFCA/R2SFCA, the set of healthcare facility types that must be modeled is not fixed: telehealth clinics, urgent care centers, and mobile health units are added over time. The paper prescribes replay or template-based classification (e.g., a prototype per facility type in feature space) as the correct strategy for this incremental facility typing — directly applicable to keeping my accessibility models current without periodic full retraining.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Engineering flexible machine learning systems by traversing functionally invariant paths — <a href="https://doi.org/10.1038/s42256-024-00902-x" target="_blank">10.1038/s42256-024-00902-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Integrate the paper's scenario taxonomy with transfer learning on distribution-shifted spatial data</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's domain-IL scenario (same task, shifting input distribution) maps directly onto <strong>distribution shift in spatial prediction</strong> — a model trained on urban areas tested on suburban or rural geographies. Extending the paper: apply the five strategy families to domain-IL with real distribution shift (e.g., training on high-density census tracts, then incrementally learning low-density rural tracts), measuring which continual-learning approach best preserves the mapping f: X→Y under spatial distribution shift. The paper's formal generalization section already hints at this but provides no empirical evidence.</p>
+      <p><span class="lab mine">Added value to my research</span>My MGWR/GWR models are explicitly designed for spatial non-stationarity, but they are re-estimated from scratch for each new area or time period. Treating spatial non-stationarity as domain-IL means I can ask: which of the paper's five strategy families best preserves MGWR coefficient surfaces when data from new regions arrive? This reframes my "retrain vs. transfer" dilemma as a benchmark with a known answer — functional regularization or replay — rather than ad hoc practice.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep transfer operator learning for partial differential equations under conditional shift — <a href="https://doi.org/10.1038/s42256-022-00569-2" target="_blank">10.1038/s42256-022-00569-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Build a mixed-scenario benchmark for urban change monitoring with temporal and spatial context shifts</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper introduces but does not empirically evaluate <strong>mixed/hybrid scenarios</strong> where multiple context dimensions shift simultaneously. A key extension: construct a benchmark where both the <em>spatial context</em> (city) and the <em>temporal context</em> (year) change, requiring a model to solve a combination of domain-IL and class-IL at once. The paper's probabilistic formulation (multidimensional context space C) already supports this, but no experiments are provided. This would establish whether the strategy rankings (replay first, regularization last) hold for multi-dimensional non-stationarity.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal kernel density estimation and mobile-phone trajectory analyses deal with simultaneous shifts in space and time — exactly the mixed-scenario setting. The paper's framework gives me a principled way to decompose that non-stationarity: which axis is domain-IL (same spatial outcome, changing input distribution over time) and which is task-IL (different city, different task)? This decomposition guides model design and replay strategy selection for my urban change monitoring pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Increasing generality in machine learning through procedural content generation — <a href="https://doi.org/10.1038/s42256-020-0208-z" target="_blank">10.1038/s42256-020-0208-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use the paper's "Separate Networks" baseline as the upper-bound design for privacy-preserving federated GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's strongest baseline for task-IL is <strong>Separate Networks</strong> — one sub-network per context — which outperforms almost all anti-forgetting methods at equivalent parameter budgets. This is structurally identical to <em>federated learning</em> with non-IID client data, where each client trains on its own context. Extending the paper: recast Separate Networks as a federated baseline and measure how much knowledge sharing (via aggregated parameters or a shared backbone) is needed before a federated algorithm beats the isolated-network lower bound in all three scenarios.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-source data fusion (mobile phone, social media, remote sensing) across cities is the core data challenge in my research. If separate city models are already competitive (as this paper implies), then my federated GeoAI approach must demonstrate concrete positive transfer — not just privacy preservation — to justify the communication overhead. The paper provides the exact benchmark protocol (per-scenario accuracy vs. Separate Networks) to make that case rigorously.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Training data composition determines machine learning generalization and biological rule discovery — <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

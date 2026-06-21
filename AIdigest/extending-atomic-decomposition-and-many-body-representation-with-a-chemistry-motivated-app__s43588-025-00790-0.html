@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extending atomic decomposition and many-body representation with a chemistry-motivated approach to machine learning potentials — AI Digest</title>
+<meta name="description" content="AI Digest: Extending atomic decomposition and many-body representation with a chemistry-motivated approach to machine learning potentials (Nature Computational Science, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Machine Learning Potentials</span>
+      <span class="tag">Molecular Dynamics</span>
+      <span class="tag">Neural Networks</span>
+      <span class="tag">Computational Chemistry</span>
+    </div>
+    <h1>Extending atomic decomposition and many-body representation with a chemistry-motivated approach to machine learning potentials</h1>
+    <div class="meta">
+      <span class="authors">Qi Yu · Ruitao Ma · Chen Qu · Riccardo Conte · Apurba Nandi · Priyanka Pandey · Paul L. Houston · Dong H. Zhang · Joel M. Bowman</span>
+      <span><b>Published</b> 2025-04-14</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-025-00790-0" target="_blank">10.1038/s43588-025-00790-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-025-00790-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>MB-PIPNet is a new machine learning potential framework that decomposes total potential energy into <strong>chemically meaningful monomer energies</strong> — not arbitrary atomic local energies — using one-body and two-body permutationally invariant polynomial (PIP) descriptors as inputs to feed-forward neural networks. Applied to liquid water (256 molecules, 75,874 training configurations), water trimer, methane–water clusters, and liquid CO<sub>2</sub>, MB-PIPNet <strong>achieves CCSD(T)-level accuracy while reaching the speed of conventional force fields on a single CPU core</strong> — a balance that has not previously been demonstrated for atomistic MLPs such as DeePMD. The monomeric representation also unlocks <strong>direct, interpretable per-molecule energy decomposition</strong>, a capability absent in all standard atom-centered architectures.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Bridges accuracy and efficiency.</b> Existing high-accuracy MLPs (MB-pol, q-AQUA) are too slow for large-scale MD; fast force fields sacrifice accuracy. MB-PIPNet achieves both in a single framework, enabling first-principles-quality simulations at force-field cost.</li>
+      <li><b>Restores chemical interpretability.</b> Atom-centered NNs assign arbitrary local energies to atoms — physically undefined and hard to interpret. MB-PIPNet's monomer energies map onto the well-understood concept of molecular orbital energy vs. atomic orbital energy, allowing chemically meaningful energy decomposition.</li>
+      <li><b>Favorable computational scaling.</b> Cost scales with <em>number of molecules</em> rather than atoms, and the use of PIPs (vs. heavy message-passing operations) keeps the prefactor low — outperforming DeePMD several-fold on a single CPU core and matching TTM3-F polarizable force field performance at large system sizes.</li>
+      <li><b>Broad transferability.</b> Demonstrated across gas-phase clusters, liquid water, mixed methane–water systems, and liquid CO<sub>2</sub>; backed by a PIP library covering more than 100 different molecular systems.</li>
+      <li><b>Open science.</b> All training data, source code, and examples are publicly released on figshare (<a href="https://doi.org/10.6084/m9.figshare.28510238.v1" target="_blank">figshare</a>) and Zenodo/GitHub (<a href="https://doi.org/10.5281/zenodo.14954863" target="_blank">zenodo</a>), making the framework immediately reproducible.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological advance with broad impact:</b> MB-PIPNet is not a domain-specific improvement but a general MLP architecture change with implications for computational chemistry, materials science, and biology — precisely Nature Computational Science's scope.</li>
+      <li><b>Resolves a long-standing tension:</b> the accuracy-vs-speed dichotomy in MLPs has persisted for two decades. The paper demonstrates, for the first time, that both can be achieved simultaneously at force-field-level cost, a claim backed by rigorous benchmarks.</li>
+      <li><b>Chemical interpretability as scientific contribution:</b> the paper connects the ML framework to first-principles chemistry concepts (molecular orbital energies, many-body expansion), elevating interpretability from a desideratum to a design principle.</li>
+      <li><b>Reproducible and extensible:</b> open data + code, clearly described training protocols, and a demonstrated PIP library that already covers more than 100 molecular systems make this a durable community resource, not just a one-off demonstration.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Water trimer dataset</dt><dd>51,006 configurations total (45,332 from prior q-AQUA/q-AQUA-pol three-body PES development + 5,674 additional DMC-guided structures). Energies at CCSD(T)-level via the <strong>q-AQUA-pol potential</strong>. Split: 45,812 training / 5,194 test. Energy range: [0, 15] eV.</dd>
+      <dt>Liquid water – DFT dataset</dt><dd>1,593 configurations; each contains <strong>64 water molecules</strong> in a periodic box. Energies at the <strong>revPBE0-D3 level of DFT</strong>. Source: Cheng et al. (ref. 46).</dd>
+      <dt>Liquid water – MB-pol dataset</dt><dd>85,322 configurations (75,874 training / 9,448 test) from MD simulations of a periodic box of <strong>256 water molecules</strong> at various temperatures and 1 atm pressure. Energies from the <strong>MB-pol force field</strong> (ref. 48/49).</dd>
+      <dt>Methane–water clusters</dt><dd>21,570 CH<sub>4</sub>(H<sub>2</sub>O)<sub>2</sub> trimer structures; 90/10 training/test split (19,342 / 2,228). Energies from a previously developed many-body potential (ref. 56).</dd>
+      <dt>Liquid CO<sub>2</sub> dataset</dt><dd>3,800 configurations (2,687 training / 313 test) of 64 CO<sub>2</sub> molecules; MD simulations at T = 220–300 K, P = 100 bar. Energies at <strong>BLYP-D3 level</strong> (ref. 57).</dd>
+      <dt>MD validation</dt><dd>Classical MD simulations of 256 water molecules using i-PI 2.0; NVT ensemble, Langevin thermostat; 3 independent 1 ns trajectories per temperature (time step 0.5 fs). Experimental benchmarks: X-ray OO RDF (Skinner et al. refs 72–73), OOO angular distribution (Soper &amp; Benmore ref. 74), self-diffusion coefficients (Mills ref. 68; Holz et al. ref. 69).</dd>
+      <dt>Data availability</dt><dd>All training/test data: <a href="https://doi.org/10.6084/m9.figshare.28510238.v1" target="_blank">figshare 10.6084/m9.figshare.28510238.v1</a>. Code: <a href="https://doi.org/10.5281/zenodo.14954863" target="_blank">Zenodo</a> and <a href="https://github.com/qiyuchem/MB-PIPNet" target="_blank">GitHub</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>q-AQUA-pol potential (water trimer)</td><td>Reference energies for trimer training</td><td>51,006 configurations, CCSD(T)-level</td><td>DOI in paper (ref. 42)</td></tr>
+        <tr><td>revPBE0-D3 liquid water (Cheng et al.)</td><td>DFT-level liquid water training set</td><td>1,593 configs, 64 molecules/box</td><td>ref. 46</td></tr>
+        <tr><td>MB-pol liquid water MD (ref. 48/49)</td><td>High-accuracy liquid water training set</td><td>85,322 configs, 256 molecules/box</td><td>ref. 48</td></tr>
+        <tr><td>CH<sub>4</sub>(H<sub>2</sub>O)<sub>2</sub> many-body PES</td><td>Methane–water cluster training set</td><td>21,570 configs</td><td>ref. 56</td></tr>
+        <tr><td>BLYP-D3 liquid CO<sub>2</sub> (ref. 57)</td><td>CO<sub>2</sub> condensed-phase training set</td><td>3,800 configs, 64 molecules/box, T=220–300 K</td><td>ref. 57</td></tr>
+        <tr><td>figshare repository</td><td>All generated training/test data</td><td>Water trimer, CH<sub>4</sub>–water, liquid water datasets</td><td><a href="https://doi.org/10.6084/m9.figshare.28510238.v1" target="_blank">figshare</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: all dataset sizes are stated explicitly in the paper's Methods section and are reported verbatim above. The number of atoms per configuration varies by system (trimer: 9 atoms; liquid water configs: 768 atoms for 256-molecule box).</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Monomer-centered energy decomposition:</b> total potential energy E<sub>total</sub> = &sum; E<sub>i</sub> over N monomers. Each E<sub>i</sub> is the "perturbed monomer energy," analogous to molecular orbital energy — physically interpretable and distinct from arbitrary atomic local energies.</li>
+      <li><b>Permutationally invariant polynomial (PIP) descriptors:</b> one-body PIPs (sixth-order) encode the monomer's own geometry (G<sup>(self)</sup>); two-body PIPs (fourth-order) encode intermolecular environment within a cut-off R<sub>c</sub> (G<sup>(env)</sup>) using a smooth switching function. Together these form 188-dimensional inputs for water models.</li>
+      <li><b>Feed-forward neural network:</b> two hidden layers per monomer; neuron structures [30, 60] for water trimer, [15, 30] for liquid water, [10, 20] for CH<sub>4</sub>–water, [10, 30] for CO<sub>2</sub>. Training via Levenberg–Marquardt algorithm until learning rate &lt; 10<sup>−5</sup>.</li>
+      <li><b>Cut-off and scaling:</b> monomeric environment cut-off R<sub>c</sub> = 9.0 Å (or 6 Å in speed tests); computational cost scales linearly with <em>molecule count</em> rather than atom count, improving prefactor significantly over atom-centered methods.</li>
+      <li><b>Validation suite:</b> (i) energy/force RMSE on held-out test sets; (ii) harmonic normal-mode analysis; (iii) diffusion Monte Carlo (DMC) for anharmonic zero-point energy; (iv) classical MD simulations (NVT, 256 water molecules, 1 ns) benchmarked against experimental OO RDF, OOO angular distribution, and self-diffusion coefficient D(T).</li>
+      <li><b>Benchmarking:</b> compared against BPNN, EANN, REANN, NequIP, MACE, DeePMD, TTM3-F (polarizable FF), q-TIP4P/F (non-polarizable FF) and q-AQUA many-body expansion.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/extending-atomic-decomposition-and-many-body-representation-with-a-chemistry-motivated-app__s43588-025-00790-0/fig1.png" target="_blank">
+        <img src="assets/extending-atomic-decomposition-and-many-body-representation-with-a-chemistry-motivated-app__s43588-025-00790-0/fig1.png" alt="Fig.1 Schematic of the MB-PIPNet architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic of MB-PIPNet architecture: monomer coordinates → one-body PIP self-descriptors (G<sup>self</sup>) + two-body PIP environment descriptors (G<sup>env</sup>) → NN → monomer energy E<sub>i</sub>; total energy is their sum.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/extending-atomic-decomposition-and-many-body-representation-with-a-chemistry-motivated-app__s43588-025-00790-0/fig2.png" target="_blank">
+        <img src="assets/extending-atomic-decomposition-and-many-body-representation-with-a-chemistry-motivated-app__s43588-025-00790-0/fig2.png" alt="Fig.2 Potential energy predictions and MD simulation results of liquid water" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Liquid water validation: (a) energy–energy correlation with MB-pol reference; (b) scatter of monomer energies for 256 molecules vs. Partridge–Schwenke and q-AQUA; (c) OO radial distribution function at 298 K vs. experiment; (d) OOO triplet angular distribution vs. experiment.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/extending-atomic-decomposition-and-many-body-representation-with-a-chemistry-motivated-app__s43588-025-00790-0/fig3.png" target="_blank">
+        <img src="assets/extending-atomic-decomposition-and-many-body-representation-with-a-chemistry-motivated-app__s43588-025-00790-0/fig3.png" alt="Fig.3 Computational cost of MB-PIPNet model" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Computational cost (single CPU core) vs. number of water molecules: MB-PIPNet with R<sub>c</sub> = 9 Å and 6 Å compared with DeePMD, REANN, TTM3-F, and q-TIP4P/F — showing force-field-level speed.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables in main text: 3 — Table 1: harmonic vibrational frequencies of water trimer vs. CCSD(T)-F12a benchmark; Table 2: energy/force RMSE comparison of MB-PIPNet vs. BPNN, EANN, REANN, NequIP, MACE on liquid water; Table 3: self-diffusion coefficient D(T) vs. experiment across multiple temperatures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable &amp; physics-informed ML, accessibility modeling, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Incorporate message-passing to handle long-range interactions the paper explicitly identifies as a limitation</h3>
+      <p><span class="lab paper">Extending this paper</span>The Discussion explicitly flags the absence of long-range electrostatics (Ewald summation) as a limitation of the current cut-off-based environment descriptor G<sup>(env)</sup>. A natural extension: graft a <strong>graph message-passing layer</strong> onto the MB-PIPNet monomer nodes so that each monomer's descriptor incorporates iterated neighbor messages beyond R<sub>c</sub>, without sacrificing the PIP-enforced permutational invariance. This would let MB-PIPNet handle charged or polar condensed phases (e.g., ionic liquids, protein–water interfaces) while retaining its chemistry-interpretable energy decomposition. The corpus paper on uncertainty-driven active learning for interatomic potentials (Vandermause et al.) offers a complementary strategy: use uncertainty signals from the current two-body descriptors to identify which long-range configurations are underrepresented and trigger targeted data collection.</p>
+      <p><span class="lab mine">Added value to my research</span>For my spatiotemporal graph learning work, MB-PIPNet's design principle — <strong>node-level (monomer) representations with short-range edges, lacking explicit long-range connectivity</strong> — is an exact analogy to spatial graphs where local neighborhood interactions are well captured but inter-community flows (long-range) are missed. The message-passing extension proposed here maps onto extending my physics-informed GNN models with multi-hop propagation: just as MB-PIPNet needs a message-passing layer for charged systems, spatial models for health-access or epidemic diffusion need explicit long-range graph paths. The parallelism helps motivate bandwidth-adaptive graph convolution designs.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Transfer the monomer-energy interpretability principle to spatially decomposed prediction models</h3>
+      <p><span class="lab paper">Extending this paper</span>MB-PIPNet's key insight is that decomposing E<sub>total</sub> into <em>chemically meaningful</em> monomer sub-energies (not arbitrary atomic units) produces a model that is simultaneously more accurate and more interpretable. The paper benchmarks this through monomer energy scatter plots (Fig. 2b) where the physical meaning of each molecule's contribution is traceable. Extending this: apply the same <strong>fragment-based decomposition principle to reactive systems</strong> — where reactive and non-reactive zones could use different descriptors (atomistic for the reactive core, MB-PIPNet for the solvent shell), as the Discussion proposes for CO<sub>2</sub> + water → carbonic acid. The corpus paper on a universal graph deep learning interatomic potential (M3GNet) provides a complementary architecture that spans the periodic table, which could serve as the atomistic "reactive core" layer in such a hybrid.</p>
+      <p><span class="lab mine">Added value to my research</span>This fragment-decomposition philosophy directly informs my work on <strong>explainable ML for spatial prediction</strong>: just as MB-PIPNet makes "which monomer contributes how much energy?" answerable, a spatial model can be designed to decompose predictions into meaningful geographic zones (neighborhood units, administrative regions, or functionally defined catchment areas for 2SFCA). This motivates architectures where local sub-model outputs are physically constrained and aggregated — directly applicable to spatially heterogeneous health-outcome prediction across census tracts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table — <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Use the paper's data-efficiency results to design active learning strategies for sparse geospatial datasets</h3>
+      <p><span class="lab paper">Extending this paper</span>A striking finding is that MB-PIPNet trained on only 2,687 BLYP-D3 liquid CO<sub>2</sub> configurations achieves RMSE of 0.26 meV/atom — exceptional data efficiency compared with standard atomistic MLPs. The paper attributes this to the physicality of the monomer descriptor reducing the effective dimensionality of the learning problem. Extending this: quantify the <strong>active-learning efficiency curve</strong> — how many configurations are actually needed as a function of system complexity — and link it to the uncertainty in PIP descriptor space. The corpus paper "Data as the next challenge in atomistic machine learning" directly addresses this question, identifying data quality and coverage as the bottleneck for next-generation MLPs.</p>
+      <p><span class="lab mine">Added value to my research</span>For my <strong>multi-source data fusion</strong> work (mobile phone records, social media, remote sensing), data sparsity is a perennial challenge — some cities have rich sensor coverage, others almost none. MB-PIPNet's demonstration that physics-motivated descriptors reduce the training data required is a direct methodological analogy: <strong>embedding domain priors</strong> (spatial autocorrelation structure, network topology constraints) into feature engineering reduces the labeled data burden. This informs how I structure FAIR-compliant training sets for geospatial foundation model fine-tuning.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Data as the next challenge in atomistic machine learning — <a href="https://doi.org/10.1038/s43588-024-00636-1" target="_blank">10.1038/s43588-024-00636-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Leverage the paper's multi-task molecular-system generalization for cross-domain transfer learning</h3>
+      <p><span class="lab paper">Extending this paper</span>MB-PIPNet is demonstrated on four distinct molecular systems with the <em>same architectural template</em> (PIP descriptors, two-layer NN, Levenberg–Marquardt training), varying only the polynomial order and network width. This suggests a natural <strong>multi-task extension</strong>: train a shared backbone on multiple molecular systems simultaneously, with system-specific output heads, so that training data from liquid water constrains the representation for methane–water mixtures via shared PIP invariances. The corpus paper "Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning" demonstrates exactly this strategy at the electronic-structure level, providing a blueprint for MB-PIPNet's extension.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-task transfer is a cornerstone of my agenda for <strong>fine-tuning geospatial foundation models</strong>: a model pre-trained on global urban mobility data should transfer efficiently to city-specific health-access prediction with minimal labeled data. MB-PIPNet's demonstration that shared structural invariances (permutation symmetry) enable cross-system generalization maps onto shared spatial invariances (isotropy, scale-freeness) enabling cross-city model transfer. This architectural parallel motivates a <strong>symmetry-aware pre-training</strong> approach for GeoAI.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Approaching coupled-cluster accuracy for molecular electronic structures with multi-task learning — <a href="https://doi.org/10.1038/s43588-024-00747-9" target="_blank">10.1038/s43588-024-00747-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Extend the paper's many-body hierarchy to spatiotemporal interaction modeling</h3>
+      <p><span class="lab paper">Extending this paper</span>MB-PIPNet's theoretical core is that two-body PIP descriptors are <em>sufficient</em> to represent three-body and higher-order interactions (verified by the water trimer DMC benchmark). This is a non-trivial finding: it says that pairwise environmental features carry enough information to reconstruct collective effects. A direct extension: test the <strong>minimum-order hypothesis</strong> more rigorously across a wider range of molecular systems and interaction types (hydrogen bonding, dispersion, charge transfer) to establish when two-body sufficiency breaks down and a three-body PIP layer becomes necessary. The corpus paper on the unified deep learning framework for many-body quantum chemistry via Green's functions (Zhu et al.) provides a complementary formalism for rigorously capturing many-body correlations that could serve as an exact reference for this stress test.</p>
+      <p><span class="lab mine">Added value to my research</span>The "pairwise sufficiency for higher-order effects" principle has a direct spatiotemporal analogy: in my <strong>spatiotemporal kernel density estimation</strong> and epidemic SIR modeling, do pairwise spatial interaction kernels (two-point correlations: origin-destination flows, contact matrices) suffice to predict higher-order outbreak clusters? MB-PIPNet's finding suggests that if the right basis functions are chosen (analogous to PIPs), pairwise features may be sufficient — reducing the combinatorial complexity of multi-body spatial interaction models. This is a testable hypothesis in my mobility-flow-based disease transmission work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unified deep learning framework for many-body quantum chemistry via Green's functions — <a href="https://doi.org/10.1038/s43588-025-00810-z" target="_blank">10.1038/s43588-025-00810-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

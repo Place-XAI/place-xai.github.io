@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stop explaining black box ML models for high-stakes decisions — AI Digest</title>
+<meta name="description" content="AI Digest: Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead (Nature Machine Intelligence, 2019)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Interpretable ML</span>
+      <span class="tag">Algorithmic fairness</span>
+      <span class="tag">High-stakes decisions</span>
+      <span class="tag">XAI critique</span>
+    </div>
+    <h1>Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead</h1>
+    <div class="meta">
+      <span class="authors">Cynthia Rudin</span>
+      <span><b>Published</b> 2019-05-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-019-0048-x" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Post hoc "explainability" of black box models is <strong>not a substitute for inherent interpretability</strong>: explanations are always unfaithful to the original model, often misleading, and can perpetuate serious harm in criminal justice, healthcare and other high-stakes domains. The accuracy–interpretability trade-off is a <strong>myth</strong> for structured data: interpretable models such as rule lists, scoring systems and prototype networks routinely match black box accuracy. Society should demand <strong>inherently interpretable models</strong> — not post hoc explanations — for high-stakes decisions.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Reframes the dominant XAI paradigm.</b> The paper argues the entire field of "explainable ML" is solving the wrong problem — adding a second model to approximate a black box — when the goal should be building transparent models from the start.</li>
+      <li><b>Documents real-world harms of black boxes.</b> The COMPAS recidivism tool (130+ factors, widely used in US courts) is shown to be no more accurate than a 3-rule interpretable model, yet it introduces typographical-error unfairness, proprietary opacity and racial misattribution risks.</li>
+      <li><b>Establishes the Rashomon-set argument.</b> A large set of near-optimal models nearly always contains at least one interpretable member — providing a theoretical guarantee that interpretable accuracy is achievable, not exceptional.</li>
+      <li><b>Proposes concrete governance mandates.</b> Rudin advocates that regulators require organizations to demonstrate no interpretable model exists before deploying a black box — turning an ethical claim into an auditable burden of proof.</li>
+      <li><b>Demonstrates interpretability in computer vision.</b> Prototype networks ("This Looks Like That") achieve accuracy parity with black box deep nets while making every prediction a transparent comparison to learned prototypes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Paradigm-challenging perspective:</b> challenges a dominant assumption in a high-profile journal format — exactly the type of high-impact, opinion-shifting piece Nature Machine Intelligence solicits.</li>
+      <li><b>Broad societal relevance:</b> connects ML methodology directly to criminal justice, healthcare and environmental safety — fitting Nature's expectation of work with demonstrated public significance.</li>
+      <li><b>Cross-disciplinary reach:</b> spans computer science, criminology, statistics and public policy, matching the journal's cross-domain scope.</li>
+      <li><b>Policy actionability:</b> the explicit governance proposals (GDPR right-to-explanation critique, mandate proposals) make the perspective directly actionable for regulators and practitioners.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Nature of paper</dt><dd>This is a <strong>Perspective / commentary paper</strong>, not an empirical study. No primary data are collected or released by the author. Data availability is stated as not applicable.</dd>
+      <dt>Recidivism data</dt><dd><strong>Broward County, FL (ProPublica COMPAS dataset)</strong> — defendant records used by the CORELS and RiskSLIM interpretable models; specific sample size not stated in the article text but referenced via ProPublica (Larson et al., 2016). Used to demonstrate COMPAS vs. CORELS parity.</dd>
+      <dt>NYC electrical grid</dt><dd>New York City electrical infrastructure records — described qualitatively as including trouble tickets, cable accounting data dating to the 1890s, and manhole inspection data. No volume figures provided.</dd>
+      <dt>FICO credit data</dt><dd><strong>2018 FICO Explainable ML Challenge</strong> dataset — used to demonstrate that a globally interpretable additive model won the recognition prize with no accuracy loss vs. black boxes. Exact sample size not stated.</dd>
+      <dt>Image data</dt><dd>Natural image classification examples (bird species from the CUB-200 dataset, referenced via prototype network papers); used qualitatively for Fig. 2 (saliency) and Fig. 3 (prototype network).</dd>
+      <dt>Code/data availability</dt><dd>No original code or data released with this paper; CORELS (<a href="https://corels.eecs.harvard.edu/" target="_blank">corels.eecs.harvard.edu</a>) and RiskSLIM are publicly available separately. ProPublica COMPAS data is publicly available.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Case</th><th>Role in Paper</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ProPublica COMPAS (Broward County, FL)</td><td>Benchmark for CORELS vs. COMPAS accuracy comparison</td><td>Defendant records from Broward County; exact n not stated in article</td><td><a href="https://github.com/propublica/compas-analysis" target="_blank">ProPublica GitHub</a></td></tr>
+        <tr><td>FICO Explainable ML Challenge (2018)</td><td>Credit-scoring domain: demonstrates interpretable model won</td><td>FICO credit default dataset; size not stated</td><td><a href="https://community.fico.com/s/explainable-machine-learning-challenge" target="_blank">FICO community</a></td></tr>
+        <tr><td>CUB-200 bird classification (via prototype network)</td><td>Computer vision interpretability demonstration (Fig. 3)</td><td>~12,000 bird images, 200 species</td><td><a href="https://www.vision.caltech.edu/datasets/cub_200_2011/" target="_blank">Caltech CUB-200</a></td></tr>
+        <tr><td>NYC electrical grid records</td><td>Motivating case study for iterative interpretable ML</td><td>Multi-source, 1890s–present; no volume stated</td><td>Proprietary (ConEd)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: this paper uses existing published datasets as case studies — it does not introduce or release new data. Numbers and names are taken verbatim from the article; where exact sample sizes are not stated, this is noted honestly.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Conceptual / argumentation framework:</b> the paper is a structured perspective — no new empirical methods, but it systematically decomposes the XAI field into two categories (black-box explainability vs. inherent interpretability) and enumerates failure modes of post hoc explanations (unfaithfulness, incompleteness, complexity, gaming risk).</li>
+      <li><b>CORELS (Certifiably Optimal Rule Lists):</b> branch-and-bound search over rule lists with bit-vector acceleration and symmetry pruning — finds a globally optimal sparse if-then rule list (Table 1, 3-rule model) matching COMPAS accuracy on Broward County data.</li>
+      <li><b>RiskSLIM (Risk-Supersparse-Linear-Integer-Models):</b> specialized cutting-plane method for mixed-integer nonlinear programs — produces sparse integer-coefficient scoring systems (Table 3) optimally balancing logistic loss and model complexity.</li>
+      <li><b>Prototype networks ("This Looks Like That"):</b> deep learning architecture with an appended prototype layer that learns class-representative image patches during training; predictions are weighted sums of similarity to prototypes — inherently interpretable without post hoc explanation.</li>
+      <li><b>Rashomon-set theory:</b> formal argument that when a data set admits many near-optimal models (large Rashomon set), at least one is likely interpretable — providing a theoretical basis for the central thesis.</li>
+      <li><b>Comparative analysis:</b> qualitative and empirical comparison of COMPAS vs. CORELS (Table 2), and of accuracy–interpretability trade-off claims using the DARPA XAI figure (Fig. 1) as a foil.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/stop-explaining-black-box-machine-learning-models-for-high-stakes-decisions-and-use-interp__s42256-019-0048-x/fig1.png" target="_blank">
+        <img src="assets/stop-explaining-black-box-machine-learning-models-for-high-stakes-decisions-and-use-interp__s42256-019-0048-x/fig1.png" alt="Fig. 1: A fictional depiction of the accuracy-interpretability trade-off" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The DARPA XAI programme's "fictional" accuracy–interpretability trade-off diagram — Rudin uses it to debunk the myth that complexity is required for accuracy.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/stop-explaining-black-box-machine-learning-models-for-high-stakes-decisions-and-use-interp__s42256-019-0048-x/fig2.png" target="_blank">
+        <img src="assets/stop-explaining-black-box-machine-learning-models-for-high-stakes-decisions-and-use-interp__s42256-019-0048-x/fig2.png" alt="Fig. 2: Saliency does not explain anything except where the network is looking" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Saliency maps for a dog vs. a flute are nearly identical — illustrating that post hoc visual explanations provide no real mechanistic understanding.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/stop-explaining-black-box-machine-learning-models-for-high-stakes-decisions-and-use-interp__s42256-019-0048-x/fig3.png" target="_blank">
+        <img src="assets/stop-explaining-black-box-machine-learning-models-for-high-stakes-decisions-and-use-interp__s42256-019-0048-x/fig3.png" alt="Fig. 3: Prototype network for bird classification" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Prototype network ("This Looks Like That") — the test image on the left is matched to learned prototypical bird parts, making every prediction inherently interpretable.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 3 main-text tables — Table 1 (CORELS 3-rule recidivism model), Table 2 (qualitative COMPAS vs. CORELS comparison), Table 3 (RiskSLIM integer scoring system for recidivism). No supplementary figures are shown here.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, explainable ML for spatial prediction, 2SFCA/R2SFCA accessibility, physics-informed graph learning, spatiotemporal analysis).</p>
+
+    <div class="idea">
+      <h3>① Apply the Rashomon-set argument to spatial prediction models in GeoAI</h3>
+      <p><span class="lab paper">Extending this paper</span>Rudin's Rashomon-set argument — that large sets of near-equally-accurate models typically contain at least one interpretable member — is stated for tabular data but never tested spatially. A direct extension would be to empirically measure the Rashomon set for geospatial regression tasks (e.g., predicting healthcare accessibility or housing prices across census tracts) and ask whether it consistently contains sparse spatial models such as MGWR or geographically-weighted logistic regression. If so, the paper's thesis extends to spatial science: we should stop explaining black-box gradient-boosted spatial models and instead insist on interpretable GWR/MGWR solutions.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable ML pipeline for spatial prediction already uses SHAP on gradient-boosted trees. Rudin's argument suggests I should first test whether a sparse MGWR model achieves comparable accuracy — if it does, the SHAP layer is unnecessary and potentially misleading. Adopting a "Rashomon audit" step (enumerate near-optimal spatial models before accepting a black box) would strengthen my explainable GeoAI methodology and align it with emerging responsible-AI norms.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiple stakeholders drive diverse interpretability requirements for machine learning in healthcare — <a href="https://doi.org/10.1038/s42256-023-00698-2" target="_blank">10.1038/s42256-023-00698-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Replace SHAP post hoc attribution in healthcare accessibility models with inherently interpretable scoring systems</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's Table 3 shows a RiskSLIM integer scoring system matching complex ML accuracy for recidivism. The same approach could replace SHAP-attributed gradient-boosted models used to predict healthcare access disparities: reformulate the prediction task as a sparse integer score over a small set of features (distance-to-facility, insurance type, urban/rural classification) using RiskSLIM-style mixed-integer optimization, and verify via a CORELS-style accuracy audit that the interpretable model is within the Rashomon set of the best GBM. This extends the paper from criminal justice to health geography while remaining fully within its methodological framework.</p>
+      <p><span class="lab mine">Added value to my research</span>I study spatial accessibility of primary care and mental health facilities. If a 5-feature integer score explains access disparities as well as a 100-feature XGBoost, I gain a deployable decision-support tool that clinicians and health planners can understand directly — with no post hoc explainability layer. This directly advances my GeoAI-for-public-health agenda and removes the main critique that my ML models are opaque to policymakers.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Algorithmic fairness and bias mitigation for clinical machine learning with deep reinforcement learning — <a href="https://doi.org/10.1038/s42256-023-00697-3" target="_blank">10.1038/s42256-023-00697-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Audit the COMPAS-style problem for spatial equity: are recidivism risk-score geographies interpretably recoverable?</h3>
+      <p><span class="lab paper">Extending this paper</span>Rudin notes that COMPAS's 130+ factors introduce typographical-error unfairness and that a simple 3-rule CORELS model matches its accuracy. An important but unexplored extension is the spatial dimension: do parole/bail decisions (and their errors) cluster geographically, and if so, can a spatially-indexed CORELS model — with features like neighborhood poverty rate and spatial distance to services — match COMPAS accuracy while also eliminating geographic disparities? This would add a spatial equity test to Rudin's accuracy parity test.</p>
+      <p><span class="lab mine">Added value to my research</span>My research links spatial accessibility to public-health and policy outcomes. Extending Rudin's criminal-justice critique to spatial terms connects directly to my 2SFCA-based service-area equity work: the same logic (replace a complex proprietary model with a transparent spatial scoring system) applies to parole-decision geographies, environmental risk scores and telehealth eligibility algorithms — all high-stakes spatial decisions where SHAP is not sufficient.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> On responsible machine learning datasets emphasizing fairness, privacy and regulatory norms with examples in biometrics and healthcare — <a href="https://doi.org/10.1038/s42256-024-00874-y" target="_blank">10.1038/s42256-024-00874-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Embed prototype-network reasoning into geospatial foundation models for land-use classification</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 3 shows a prototype network for bird classification where each prediction is a "this patch looks like that prototype" comparison — inherently interpretable and competitive with black-box CNNs. The same architectural principle could be applied to remote-sensing image classification (urban land use, green-space detection, impervious surface mapping): instead of SHAP maps on a ResNet, learn spatially grounded prototypical patches so a planner can see exactly which training tile a prediction is compared to. This extends Rudin's Challenge 3 (computer vision interpretability) to geospatial foundation models.</p>
+      <p><span class="lab mine">Added value to my research</span>I fine-tune geospatial foundation models (e.g., SatMAE, DOFA) for urban analytics tasks. Appending a prototype layer to these models would transform them from opaque feature extractors into interpretable case-based reasoners, where each land-use prediction is traceable to a specific known reference tile — exactly what urban planners and regulators need for explainable AI-assisted zoning decisions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning with explainable trees — <a href="https://doi.org/10.1038/s42256-019-0142-0" target="_blank">10.1038/s42256-019-0142-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Operationalize Rudin's governance mandate as an interpretability compliance layer in spatiotemporal public-health ML pipelines</h3>
+      <p><span class="lab paper">Extending this paper</span>Rudin's strongest policy proposal is: require organizations to prove no interpretable model achieves equivalent accuracy before deploying a black box. This mandate has no standard operationalization. A concrete extension of the paper: define a formal "interpretability compliance test" — run CORELS/RiskSLIM/MGWR as baselines, measure their accuracy within the Rashomon bound of the best complex model, and only approve the black box if the gap exceeds a pre-specified threshold (e.g., &gt;2% AUC). Codifying this as a reusable audit pipeline would translate the perspective into a practical tool for AI governance.</p>
+      <p><span class="lab mine">Added value to my research</span>My reproducible, open-science GeoAI pipelines are well-positioned to implement such an audit layer. Adding an "interpretability compliance" module to my spatiotemporal disease-prediction and healthcare-access workflows would make them not just FAIR but also governance-ready — a competitive advantage for research grants and health-authority partnerships where GDPR-style right-to-explanation requirements apply. It would also ensure my own use of gradient-boosted spatial models is always justified against a transparent baseline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Morphological and molecular breast cancer profiling through explainable machine learning — <a href="https://doi.org/10.1038/s42256-021-00303-4" target="_blank">10.1038/s42256-021-00303-4</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

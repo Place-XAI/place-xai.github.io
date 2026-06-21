@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Large-scale transport simulation by deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: Large-scale transport simulation by deep learning (Nature Computational Science, 2021)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Quantum transport</span>
+      <span class="tag">Neural network potentials</span>
+      <span class="tag">Multiscale simulation</span>
+      <span class="tag">Electronic conductance</span>
+    </div>
+    <h1>Large-scale transport simulation by deep learning</h1>
+    <div class="meta">
+      <span class="authors">Jie Pan</span>
+      <span><b>Published</b> 2021-05-14</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-021-00080-5" target="_blank">10.1038/s43588-021-00080-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-021-00080-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A neural-network + non-equilibrium Green's function framework (<strong>NN-NEGF</strong>) extends quantum electronic transport simulation to <strong>experimentally realistic material sizes</strong>. By replacing the expensive first-principles step with a trained neural-network interatomic potential and a separate transport neural network, the method computed <strong>~200,000 electronic conductance values</strong> for potassium nanowires — a feat impossible with conventional NEGF — while faithfully reproducing experimental conductance histograms. This demonstrates that deep learning can breach the scale barrier that has long confined quantum transport modeling to simplified toy systems.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the scale wall of quantum transport.</b> The non-equilibrium Green's function (NEGF) method is regarded as a gold standard for electronic transport but is so computationally costly that it is limited to small, idealized structures. NN-NEGF shows for the first time that conductance can be computed at <em>experimentally realizable</em> nanowire sizes and in bulk (200,000 samples).</li>
+      <li><b>Two-tier deep-learning strategy generalizes the pipeline.</b> Training a neural-network potential for geometry generation and a separate transport NN for conductance prediction is a conceptually clean decomposition that can, in principle, be adapted to any material system where local structural descriptors govern transport.</li>
+      <li><b>Opens thermoelectric and nanoelectronic design to ML-accelerated screening.</b> Electronic transport governs energy conversion efficiency in thermoelectric devices; large-scale conductance prediction enables high-throughput screening that was previously out of reach.</li>
+      <li><b>Validates a physics-informed locality assumption.</b> The core insight — that electronic transport is primarily sensitive to <em>local</em> atomic environments (captured by the SOAP descriptor) — is a non-trivial physical claim that NN-NEGF supports experimentally, providing a theoretical foundation for further extensions.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Fundamental leap in computational reach:</b> extending a rigorous quantum framework to scales previously unreachable is a strong fit for a journal whose mandate is <em>computationally enabling</em> scientific discovery.</li>
+      <li><b>Methodology with broad transfer potential:</b> the NN-NEGF recipe is not material-specific — it is a general strategy applicable across nanoelectronics and materials science, matching the journal's preference for transferable computational advances.</li>
+      <li><b>Clean validation against experiment:</b> calculated conductance peak positions agree with experimental histograms, providing the "ground truth" anchor that elevates a methods paper to a scientific result.</li>
+      <li><b>Timely intersection of deep learning and quantum physics:</b> the Research Highlight format efficiently introduces a high-impact quantum-mechanics paper (Phys. Rev. Lett. 126, 177701, 2021) to the computational-science community, fulfilling the editorial curation role of Nature Computational Science.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary system</dt><dd><strong>Potassium (K) nanowires</strong> — chosen because experimental conductance histograms are available for direct comparison. The nanowires span experimentally realizable sizes (precise dimensions not specified in the Research Highlight).</dd>
+      <dt>Simulation volume</dt><dd>Approximately <strong>200,000 electronic conductance values</strong> computed for K nanowire structures, far exceeding what conventional NEGF can handle.</dd>
+      <dt>Structure generation</dt><dd>Material geometries produced by <strong>neural-network interatomic potential + molecular dynamics (MD)</strong>. Small-structure conductances calculated with first-principles NEGF serve as training targets for the transport NN.</dd>
+      <dt>Structural descriptor</dt><dd><strong>SOAP (Smooth Overlap of Atomic Positions)</strong> — local descriptor encoding the immediate atomic environment of each atom, used as input features to the transport neural network.</dd>
+      <dt>Reference method</dt><dd><strong>First-principles NEGF</strong> on small structures (precise training-set size not stated in the Research Highlight); serves as the expensive ground-truth oracle.</dd>
+      <dt>Experimental comparison</dt><dd>Conductance histograms from <strong>break-junction experiments</strong> on K nanowires (cited work: Phys. Rev. Lett. 126, 177701, 2021 by Bürkle et al.); peak positions match NN-NEGF predictions.</dd>
+      <dt>Data availability</dt><dd>This is a Research Highlight summarizing Bürkle et al. (2021); data/code availability follows the original paper. The Research Highlight does not independently report data availability statements.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Input</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>First-principles NEGF calculations (small K structures)</td><td>Training data for transport NN</td><td>Small-structure subset (exact N not stated)</td><td>Bürkle et al., Phys. Rev. Lett. 2021</td></tr>
+        <tr><td>NN-generated MD structures (K nanowires)</td><td>Geometry pool for large-scale conductance prediction</td><td>~200,000 structures at experimental scale</td><td>Computed by NN-MD in NN-NEGF pipeline</td></tr>
+        <tr><td>Break-junction conductance histograms</td><td>Experimental validation of NN-NEGF predictions</td><td>K nanowires, experimental scale</td><td>Cited experimental literature</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: Precise training-set sizes and MD trajectory lengths are reported in the primary paper (Bürkle et al., Phys. Rev. Lett. 126, 177701, 2021), not in this Research Highlight. Numbers stated here are taken verbatim from the Research Highlight text.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Neural-network interatomic potential (NN-IP):</b> a deep neural network trained to reproduce the potential energy surface of K atoms, enabling efficient molecular dynamics (MD) simulation of large nanowire structures that would be too expensive for density functional theory (DFT) alone.</li>
+      <li><b>First-principles NEGF on small structures:</b> for small geometry samples, exact conductance is computed using DFT-based NEGF, providing high-fidelity labels for training the transport NN.</li>
+      <li><b>Transport neural network:</b> a second NN is trained on (local atomic descriptor → conductance) pairs extracted from small-structure NEGF calculations. At inference time, it predicts conductance for large MD-generated structures without any further quantum calculations.</li>
+      <li><b>SOAP local descriptors:</b> the smooth overlap of atomic positions encodes the local chemical environment of each atom, operationalizing the locality assumption that electronic transport properties depend primarily on nearby atomic disorder and defects.</li>
+      <li><b>Conductance histogram construction:</b> ~200,000 predictions are aggregated into a conductance histogram, directly comparable to experimental break-junction measurements — closing the gap between simulation and experiment.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <p class="no-table">No figures are available in the scraped corpus for this Research Highlight (figures.json is empty). The original published article (page 306, Nat. Comput. Sci. 1, 2021) is behind a paywall and figure images were not captured. Tables: 0 in main text.</p>
+    <p class="no-table">The primary research paper highlighted here — Bürkle et al., <em>Phys. Rev. Lett.</em> <b>126</b>, 177701 (2021) — contains the detailed figures showing the NN-NEGF pipeline, training data, and conductance histogram comparisons.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML, physics-informed graph learning, spatial accessibility).</p>
+
+    <div class="idea">
+      <h3>① Replace the two-stage NN-NEGF pipeline with a unified graph neural network</h3>
+      <p><span class="lab paper">Extending this paper</span>The NN-NEGF framework uses two decoupled networks: one for atomic potentials (geometry generation) and another for transport (conductance prediction). This decoupling sacrifices end-to-end consistency — errors in the geometry network propagate uncorrected into the transport network. A direct extension of the paper: replace both stages with a single <strong>equivariant graph neural network</strong> that maps the atomic graph directly to conductance, trained jointly on geometry + transport labels. The "M3GNet" universal interatomic potential (corpus) already graphs the periodic table; appending a transport head to such a foundation model could unify the two NN-NEGF stages into one transferable operator.</p>
+      <p><span class="lab mine">Added value to my research</span>The same graph-based architecture is the backbone of my <strong>physics-informed graph learning</strong> agenda for urban systems. Seeing how equivariant graph layers encode local atomic symmetry in materials directly informs how to encode <em>spatial symmetry and isotropy</em> into graph layers for urban street networks — a principled design principle transferable across scales.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table — <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Learn the DFT Hamiltonian rather than the conductance directly, enabling deeper physical fidelity</h3>
+      <p><span class="lab paper">Extending this paper</span>NN-NEGF trains on conductance values as scalar labels, which discards structural information about <em>how</em> quantum interference arises from the electronic Hamiltonian. A conceptually deeper extension: train a deep-learning model to predict the DFT Hamiltonian matrix <strong>H</strong>(structure) directly — as demonstrated in the DeepH and DeepH-E3 papers (corpus) — and then feed that predicted Hamiltonian into NEGF. This restores the full Hamiltonian pathway, making conductance a <em>derived</em> rather than directly regressed quantity, which dramatically improves generalizability to unseen perturbations (disorder, defects, junctions).</p>
+      <p><span class="lab mine">Added value to my research</span>This teaches a methodological lesson for spatial modeling: instead of regressing outputs (accessibility scores, health outcomes) directly, predict the <strong>structural operator</strong> (the mobility kernel or spatial weight matrix) and derive outcomes from it. This is the physics-informed spirit applied to geospatial prediction — model the mechanism, not just the response.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep-learning density functional theory Hamiltonian for efficient ab initio electronic-structure calculation — <a href="https://doi.org/10.1038/s43588-022-00265-6" target="_blank">10.1038/s43588-022-00265-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend NN-NEGF to active learning to close the training-data bottleneck</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's NN-NEGF relies on a fixed corpus of expensive first-principles NEGF calculations for training. For new materials, this corpus must be rebuilt from scratch. A natural extension: couple the transport NN with an <strong>uncertainty-quantification (UQ) module</strong> so that, during the large-scale MD run, structures with high predicted uncertainty are automatically queued for NEGF re-calculation and added back to the training set — iteratively shrinking the first-principles burden while expanding material coverage. The corpus paper on uncertainty-driven active learning for interatomic potentials (Nat. Comput. Sci. 2023) provides exactly this UQ-driven loop, here applicable to the transport NN.</p>
+      <p><span class="lab mine">Added value to my research</span>Active learning with spatial uncertainty is equally useful for my GeoAI pipelines: when fine-tuning geospatial foundation models on sparse labeled health or mobility data, a UQ-driven active sampler would identify <em>which geographic areas</em> most reduce model uncertainty, targeting expensive ground-truth collection (field surveys, telehealth audits) most efficiently.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Lift the locality assumption by learning effective coarse-grained dynamics for multiscale transport</h3>
+      <p><span class="lab paper">Extending this paper</span>NN-NEGF's transport NN rests on a locality hypothesis: conductance depends only on the <em>local</em> SOAP environment. While valid for single-channel nanowires, this breaks down in devices where long-range quantum coherence, back-scattering from distant defects, or electrode geometry matter. A principled extension: instead of a local NN, learn the <strong>effective coarse-grained dynamics</strong> of the electron density matrix across length scales, as the "multiscale simulations by learning effective dynamics" corpus paper demonstrates for complex physical systems. This would make NN-NEGF applicable to multi-terminal devices and realistic field-effect transistors.</p>
+      <p><span class="lab mine">Added value to my research</span>The coarse-graining idea maps cleanly onto <strong>spatiotemporal kernel density estimation</strong> across urban scales: instead of modeling individual trips or facilities, learn the effective population-mobility kernel at successively coarser spatial resolutions, then reconstruct fine-scale patterns from the learned dynamics — a multiscale GeoAI approach to urban analytics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Multiscale simulations of complex systems by learning their effective dynamics — <a href="https://doi.org/10.1038/s42256-022-00464-w" target="_blank">10.1038/s42256-022-00464-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Use NN-NEGF as a template for a "NN-Green's-function" spatial accessibility operator</h3>
+      <p><span class="lab paper">Extending this paper</span>NN-NEGF's architecture — a neural network that approximates a Green's function operator connecting source to sink via a structured medium — is formally analogous to any problem where a propagator links supply (source) to demand (sink) through a constrained network. Extending the paper: the unified deep learning framework for many-body quantum chemistry via Green's functions (corpus) shows how to generalize Green's function approximators beyond single systems. Applying this to geographic demand-supply propagators (e.g., the 2SFCA distance-decay function as a spatial Green's function) would give a principled machine-learned accessibility operator grounded in the same mathematical structure.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the deepest transfer from this paper to my work: the 2SFCA/R2SFCA distance-decay function is exactly a <strong>spatial Green's function</strong> propagating demand from residents to supply at facilities through the street network. Formulating it as a learned Green's function — parameterized by the density field and learned from mobility data — would unify my accessibility, physics-informed graph, and multi-source data fusion agendas into a single operator-learning framework.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unified deep learning framework for many-body quantum chemistry via Green's functions — <a href="https://doi.org/10.1038/s43588-025-00810-z" target="_blank">10.1038/s43588-025-00810-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction of water stability of metal–organic frameworks using machine learning — AI Digest</title>
+<meta name="description" content="AI Digest: Prediction of water stability of metal–organic frameworks using machine learning (Nature Machine Intelligence, 2020)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Materials Informatics</span>
+      <span class="tag">Property Prediction</span>
+      <span class="tag">MOF Screening</span>
+    </div>
+    <h1>Prediction of water stability of metal–organic frameworks using machine learning</h1>
+    <div class="meta">
+      <span class="authors">Rohit Batra · Carmen Chen · Tania G. Evans · Krista S. Walton · Rampi Ramprasad</span>
+      <span><b>Published</b> 2020-11-09</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-020-00249-z" target="_blank">10.1038/s42256-020-00249-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-020-00249-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A machine learning classifier — trained on <strong>207 empirically measured MOF water stabilities</strong> (the Burtch dataset) — can instantly predict whether a metal–organic framework is water-stable without costly synthesis, achieving <strong>83% weighted accuracy for a two-class model</strong> (Random Forest) and <strong>71% for a three-class model</strong> (SVM). Chemical features derived solely from the MOF formula unit (metal-node properties, organic-ligand fingerprints, and molar ratios) are sufficient to screen candidates and to extract interpretable stability rules: <strong>large metal atomic radius (&gt;1.4 Å), low ionization potential (&lt;7.5 eV), and ligands with few six-member rings strongly associate with water stability</strong>. The workflow screened 88 new MOFs and is iteratively improvable as experimental data grow.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Removes the bottleneck of wet-lab synthesis.</b> Testing MOF water stability experimentally is time-intensive and costly; the ML model predicts it from a formula unit in milliseconds, making large-scale virtual screening practical for the first time.</li>
+      <li><b>Interpretable chemical rules, not just a black box.</b> Feature-importance analysis from the Random Forest yields quantitative stability thresholds that give chemists actionable design intuition beyond what prior empirical rules provided.</li>
+      <li><b>Addresses a key commercialization barrier.</b> Water instability is the primary reason most MOFs cannot be deployed in real gas-separation, storage, or catalysis processes; a fast pre-filter accelerates the path from laboratory curiosity to industrial material.</li>
+      <li><b>Generalizable strategy for any design criterion.</b> The chemical featurization and classification pipeline are explicitly general: the same workflow can be applied to any property (thermal stability, gas adsorption, etc.), making this a reusable template for data-driven materials discovery.</li>
+      <li><b>Open data and code for community extension.</b> All datasets, MOF features, and training code are deposited at <a href="https://doi.org/10.5281/zenodo.4014333" target="_blank">Zenodo (10.5281/zenodo.4014333)</a> under GNU GPL v3.0, enabling community benchmarking and iterative improvement.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>ML resolving a genuine scientific bottleneck:</b> the paper positions machine learning as a tool that solves a problem — rapid water-stability assessment — where neither experiment nor simulation previously delivered efficient, reliable answers.</li>
+      <li><b>Cross-disciplinary reach:</b> bridges computational chemistry, materials science, and ML methodology, squarely in NMI's remit of ML enabling scientific discovery across disciplines.</li>
+      <li><b>Methodological rigour and transparency:</b> careful class-imbalance handling via weighted accuracy, learning-curve analysis, and unbiased held-out validation on post-2014 MOFs demonstrate statistical best practices NMI expects.</li>
+      <li><b>Societal relevance to decarbonization:</b> water-stable MOFs are critical for energy-efficient gas separations and carbon capture, grounding an ML paper in a tangible climate-technology need.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary training data</dt><dd><strong>Burtch dataset</strong> (Burtch, Jasuja &amp; Walton, <em>Chem. Rev.</em> 114, 2014) — empirically measured water stabilities for <strong>207 MOFs</strong> across four classes: Stable (S, n=25), High Kinetic (HK, n=118), Low Kinetic (LK, n=42), Unstable (U, n=22). Comprises <strong>22 distinct metal nodes</strong> and <strong>128 distinct organic ligands</strong>.</dd>
+      <dt>Validation set</dt><dd><strong>10 MOFs</strong> synthesized and water-stability assessed after 2014 (post-Burtch); withheld entirely from model training for unbiased evaluation.</dd>
+      <dt>Screening set</dt><dd><strong>88 new MOFs</strong> collected from the literature for adsorption, separation, or catalytic capabilities; water stability previously unreported. Screened by the trained models.</dd>
+      <dt>MOF feature set</dt><dd>149-dimensional initial fingerprint: (1) metal-node chemical properties (atomic radius, ionization potential, electronegativity, etc.); (2) organic-ligand descriptors derived from canonical SMILES via <strong>RDKit</strong> — atomic-triplet motifs, QSPR descriptors, morphological descriptors (chain length, ring distances); (3) molar-ratio descriptors (metal:ligand, H<sub>2</sub>O/OH/O ratios). Reduced via RFE to <strong>37 features</strong> (two-class) and <strong>29 features</strong> (three-class).</dd>
+      <dt>Software</dt><dd>ML via <strong>scikit-learn</strong> (Python); ligand featurization via <strong>RDKit</strong> (<a href="http://www.rdkit.org/" target="_blank">rdkit.org</a>). Code deposited at <a href="https://doi.org/10.5281/zenodo.4014333" target="_blank">Zenodo</a>.</dd>
+      <dt>Availability</dt><dd>Fully open: all datasets, features, and training code at <a href="https://doi.org/10.5281/zenodo.4014333" target="_blank">10.5281/zenodo.4014333</a>; source data provided with the article; code under GNU GPL v3.0.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Burtch dataset (<em>Chem. Rev.</em> 2014)</td><td>ML training &amp; chemical insight mining</td><td>207 MOFs; 22 metal nodes; 128 ligands; 4 stability classes</td><td><a href="https://doi.org/10.5281/zenodo.4014333" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Post-2014 validation MOFs</td><td>Unbiased model evaluation (held-out)</td><td>10 MOFs with experimentally measured water stability</td><td>Literature (cited in article); <a href="https://doi.org/10.5281/zenodo.4014333" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Screening candidates</td><td>Virtual screening of unknown-stability MOFs</td><td>88 MOFs from adsorption / separation / catalysis literature</td><td><a href="https://doi.org/10.5281/zenodo.4014333" target="_blank">Zenodo</a></td></tr>
+        <tr><td>RDKit ligand descriptors</td><td>Organic-ligand featurization (QSPR, morphological)</td><td>149-dimensional initial feature vector per MOF</td><td><a href="http://www.rdkit.org/" target="_blank">rdkit.org</a> (open source)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: exact numbers (207 MOFs, 22 metal nodes, 128 ligands, 37/29 RFE features, per-class counts) are taken verbatim from the article text. The Burtch dataset is a comprehensive literature review published in 2014, not a newly collected experimental set.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Chemical fingerprinting from formula unit:</b> each MOF is represented as a vector of metal-node chemical properties, hierarchical organic-ligand descriptors (atomic triplets, RDKit QSPR, morphological features), and molar-ratio features — requiring only the activated formula unit, not crystal structure.</li>
+      <li><b>Recursive Feature Elimination (RFE) with linear SVM:</b> a fivefold cross-validated linear-kernel SVM iteratively prunes the 149-dimensional fingerprint, yielding 37 features for the two-class model and 29 for the three-class model; RFE improved test accuracy by 3–7 percentage points.</li>
+      <li><b>Classification algorithms — SVM, Random Forest, Gradient Boosting:</b> all three benchmarked; Random Forest (RF) selected for the two-class model (83% weighted accuracy); SVM with RBF kernel selected for the three-class model (71% weighted accuracy). Hyperparameters optimized by fivefold CV.</li>
+      <li><b>Class-imbalance handling:</b> class-weighted accuracy used as training objective, penalizing misclassification of minority classes (LK, U) to prevent the model from defaulting to the dominant HK class (n=118 of 207).</li>
+      <li><b>Learning-curve and confusion-matrix evaluation:</b> train/test sizes varied across 10 random splits; confusion matrices confirm that misclassifications occur primarily between neighboring stability classes (not S vs. U), consistent with physical expectations.</li>
+      <li><b>Feature-importance-driven chemical insight extraction:</b> MDI (mean decrease in impurity) from the RF two-class model identifies the most predictive descriptors; threshold-based rules are then verified on the Burtch dataset (e.g., 95% of MOFs with metal radius &gt;1.4 Å and low MQNS36 are stable).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig1.png" target="_blank">
+        <img src="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig1.png" alt="Fig.1 Workflow for building ML models of water stability in MOFs" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> End-to-end workflow: from MOF formula unit through fingerprinting, RFE, classification training, to water-stability screening and chemical-insight extraction.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig2.png" target="_blank">
+        <img src="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig2.png" alt="Fig.2 MOF water stability training data — Burtch dataset summary" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Burtch dataset summary — 207 MOFs across four stability classes with representative metal nodes and organic linkers; highlights class imbalance (HK=118, S=25, LK=42, U=22).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig3.png" target="_blank">
+        <img src="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig3.png" alt="Fig.3 Classification model learning curves and confusion matrices" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Model performance — learning curves and confusion matrices for the two-class (RF, 83% accuracy) and three-class (SVM, 71% accuracy) models; RFE-reduced features consistently outperform full 149-dimensional set.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig4.png" target="_blank">
+        <img src="assets/prediction-of-water-stability-of-metal-organic-frameworks-using-machine-learning__s42256-020-00249-z/fig4.png" alt="Fig.4 Mined chemical water-stability trends in MOFs" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Mined chemical rules — metal atomic radius &gt;1.4 Å and ionization potential &lt;7.5 eV, combined with ligand MQNS36 &lt;0.04 and MQNS30 &gt;0.01, capture up to 95% of stable MOFs in the Burtch dataset.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 3 in main text — Table 1 (MOF chemical descriptor types and counts, 149 features), Table 2 (model validation results on 10 post-2014 MOFs, 9/10 correct for two-class), Table 3 (top-5 screened water-stable MOF candidates rank-ordered by predicted stability probability).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, explainable ML for spatial prediction, spatiotemporal analysis, health and urban accessibility).</p>
+
+    <div class="idea">
+      <h3>① Replace formula-unit fingerprints with molecular graph embeddings to capture MOF topology</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's featurization uses weighted-average descriptors of individual metal nodes and ligands, deliberately ignoring crystal topology (pore geometry, connectivity) to remain applicable to any MOF with a known formula unit. A direct extension: replace or augment these tabular descriptors with <strong>molecular graph embeddings</strong> that represent each MOF as a graph of metal-cluster nodes connected by linker edges — trained via contrastive learning on large unlabeled MOF databases (e.g., Cambridge Structural Database) and then fine-tuned on the Burtch dataset's 207 stability labels. This would let the model distinguish polymorphs sharing the same formula unit, an explicit limitation the paper flags, and the pre-training on abundant unlabeled MOFs addresses the small-data challenge head-on.</p>
+      <p><span class="lab mine">Added value to my research</span>The contrastive graph pre-training strategy — learning representations from abundant unlabeled structural data before fine-tuning on scarce labeled outcomes — is directly transferable to my <strong>spatiotemporal prediction</strong> work. Just as the MOF graph encodes crystal topology, spatial graphs encode road-network or community-boundary topology. Pre-training GNNs on large unlabeled mobility or POI graphs, then fine-tuning on sparse health or accessibility labels, mirrors this MOF extension and strengthens my physics-informed graph-learning agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular contrastive learning of representations via graph neural networks — <a href="https://doi.org/10.1038/s42256-022-00447-x" target="_blank">10.1038/s42256-022-00447-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Adopt an active learning loop to expand the training dataset at maximum information gain</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's workflow is <strong>passive screening</strong>: train once on 207 fixed labels, then rank 88 unlabeled candidates. The obvious next step is an <strong>active learning loop</strong>: in each cycle, the current model flags the candidates whose experimental synthesis would most reduce predictive uncertainty (e.g., highest predicted-probability entropy or largest expected model change). These are synthesized first; new stability labels are added; and the model is retrained. This is especially impactful for the Burtch dataset's severe class imbalance — targeted acquisition of Unstable (n=22) examples would improve the model's weakest class much faster than passive data collection.</p>
+      <p><span class="lab mine">Added value to my research</span>Active learning for small labeled datasets is equally valuable in <strong>geospatial surveys</strong> where ground-truth measurements — real travel times to clinics, physical capacity audits of facilities — are expensive to collect. An active learner that selects which spatial units to field-verify next, based on where the accessibility model is most uncertain, could reduce survey costs while most rapidly improving R2SFCA catchment delineations. The MOF active-learning case is a crisp methodological analogue.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Traversing chemical space with active deep learning for low-data drug discovery — <a href="https://doi.org/10.1038/s43588-024-00697-2" target="_blank">10.1038/s43588-024-00697-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Benchmark MOF stability ML against community evaluation frameworks to establish reproducibility standards</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper validates on 10 post-2014 MOFs — an important but small held-out set that cannot characterize all generalization failure modes. A direct extension: subject the Burtch-trained models to <strong>community benchmark protocols</strong> for ML materials-stability prediction — time-aware splits (train on pre-2010 syntheses, test on post-2010), chemically clustered splits (train on seen metal families, test on held-out metal families), and calibrated uncertainty quantification. These protocols are now formalized for crystal stability prediction and are immediately applicable to MOF water stability, providing a richer characterization of where the paper's 83% accuracy holds and where it degrades.</p>
+      <p><span class="lab mine">Added value to my research</span>This reproducibility framing maps precisely to my interest in <strong>rigorous GeoAI evaluation</strong>. Just as the materials community needs chemically clustered generalization splits, spatial ML models need <strong>spatial-fold cross-validation</strong> (hold out geographically contiguous blocks, not random points) to avoid spatial-autocorrelation leakage. Adopting benchmark-mindset practices from materials informatics would strengthen reproducibility standards in my explainable ML spatial-prediction work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A framework to evaluate machine learning crystal stability predictions — <a href="https://doi.org/10.1038/s42256-025-01055-1" target="_blank">10.1038/s42256-025-01055-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Encode the mined stability rules as physics-informed constraints in a generative MOF design model</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper <em>extracts</em> chemical stability rules post hoc from the trained RF (atomic radius thresholds, ionization potential bounds, ligand topological features). A stronger extension: encode these rules as <strong>differentiable soft constraints</strong> inside a generative model that proposes entirely new MOF metal-linker combinations — a constrained inverse design approach. Instead of first generating candidates and then filtering with the classifier, the generative model would intrinsically avoid unstable chemical subspaces, combining the paper's interpretable insights with the generative design paradigm. The 207 Burtch stability labels provide compact but principled supervision for such a constrained generator.</p>
+      <p><span class="lab mine">Added value to my research</span>This physics-constraint-in-generation idea has a direct spatial analogue: empirically mined spatial laws (e.g., decay of accessibility with distance, density-scaling of service needs) can be encoded as soft regularizers in a GNN or spatial diffusion model, ensuring generated spatial configurations respect known geographic regularities. Just as the MOF generator respects chemical stability constraints, a GeoAI model for urban facility placement could be constrained to satisfy accessibility equity thresholds — a concrete application to my EV-charging or primary-care facility optimization work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning-aided generative molecular design — <a href="https://doi.org/10.1038/s42256-024-00843-5" target="_blank">10.1038/s42256-024-00843-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Extend classification to multi-property prediction with uncertainty-aware ensemble stacking</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper predicts water stability in isolation, yet industrial MOF deployment requires simultaneous assessment of multiple stability dimensions (thermal, chemical, mechanical). Extending it to <strong>multi-task classification</strong> — a shared featurization backbone with task-specific heads predicting water, thermal, and chemical stability jointly — would exploit cross-property correlations that may boost accuracy in each individual task, particularly for underrepresented classes. Adding <strong>uncertainty quantification</strong> via ensemble stacking or Bayesian layers would further flag predictions near decision boundaries, helping experimentalists distinguish high-confidence stable candidates from borderline cases where synthesis risk is higher.</p>
+      <p><span class="lab mine">Added value to my research</span>Multi-task prediction with shared spatial representations is central to my <strong>multi-source data fusion</strong> agenda: remote-sensing, mobile-phone, and social-media signals each can be task-specific branches sharing a common spatiotemporal backbone for predicting different health or urban outcomes simultaneously. Calibrated uncertainty quantification — critical in the MOF case due to sparse labels and class imbalance — is equally vital in GeoAI small-area estimation, where I need well-calibrated confidence intervals on health-outcome or accessibility predictions rather than point estimates alone.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep contrastive learning of molecular conformation for efficient property prediction — <a href="https://doi.org/10.1038/s43588-023-00560-w" target="_blank">10.1038/s43588-023-00560-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine-learning-accelerated simulations to enable automatic surface reconstruction — AI Digest</title>
+<meta name="description" content="AI Digest: Machine-learning-accelerated simulations to enable automatic surface reconstruction (Nature Computational Science, 2023)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">ML Interatomic Potentials</span>
+      <span class="tag">Active Learning</span>
+      <span class="tag">Surface Reconstruction</span>
+      <span class="tag">Monte Carlo Sampling</span>
+    </div>
+    <h1>Machine-learning-accelerated simulations to enable automatic surface reconstruction</h1>
+    <div class="meta">
+      <span class="authors">Xiaochen Du · James K. Damewood · Jaclyn R. Lunger · Reisel Millan · Bilge Yildiz · Lin Li · Rafael Gómez-Bombarelli</span>
+      <span><b>Published</b> 2023-12-07</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-023-00571-7" target="_blank">10.1038/s43588-023-00571-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-023-00571-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The AutoSurfRecon framework combines <strong>machine learning interatomic potentials</strong> trained via closed-loop active learning with a novel <strong>Virtual Surface Site Relaxation-Monte Carlo (VSSR-MC)</strong> algorithm to automatically predict surface phase diagrams of multicomponent materials. Training on fewer than <strong>5,000 DFT single-point calculations</strong>, the framework accurately recovers known reconstructions of GaN(0001), Si(111), and SrTiO<sub>3</sub>(001), and discovers <strong>previously unreported surface terminations</strong> — demonstrating that fully automated, composition-aware surface phase exploration is now computationally tractable.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Automates a key bottleneck in materials science.</b> Predicting surface structure has historically required expensive DFT calculations on human-selected candidate structures. AutoSurfRecon removes this human intuition dependency entirely, enabling principled exploration of the vast surface phase space.</li>
+      <li><b>Data efficiency via active learning.</b> The framework acquires only the DFT data points needed for accurate energy prediction — training a neural network force field to 0.10 eV/Å force MAE using fewer than 5,000 DFT calculations out of a practically infinite phase space.</li>
+      <li><b>Discovers new physics.</b> On SrTiO<sub>3</sub>(001), VSSR-MC identified two previously unreported double-layer TiO<sub>2</sub> terminations (2×2-B and 2×2-C) with energies equal to or lower than literature-reported structures — a result not accessible by human intuition alone.</li>
+      <li><b>Generalizable pipeline.</b> Virtual surface sites and a semigrand canonical ensemble handle variable composition without expensive grand canonical sampling in full Cartesian space, making the approach broadly applicable to multicomponent surfaces and challenging electrochemical environments.</li>
+      <li><b>Open science.</b> VSSR-MC code is on GitHub, trained models and DFT data are deposited on Zenodo, and Jupyter notebooks reproduce all analyses — maximizing reproducibility and community reuse.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Methodological advance at the field frontier:</b> the paper simultaneously advances ML force field training, sampling efficiency, and phase diagram construction in a single end-to-end pipeline — a trifecta of contributions meeting the bar for a high-impact methods paper in computational materials science.</li>
+      <li><b>Reproducible and open:</b> code, data and notebooks are all publicly archived, directly aligning with Nature Computational Science's strong emphasis on reproducibility and open science.</li>
+      <li><b>Broad applicability:</b> validated across three distinct material families (semiconductor GaN, elemental Si, perovskite oxide SrTiO<sub>3</sub>), with explicit discussion of extension to aqueous electrochemistry.</li>
+      <li><b>Computational efficiency narrative:</b> framing the contribution as "accelerated" computation — replacing days of human-guided DFT with seconds of ML inference while maintaining accuracy — directly addresses the journal's interest in scalable computational methods for science.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>DFT calculations</dt><dd><strong>6,500 DFT single-point calculations</strong> total on SrTiO<sub>3</sub>(001) surface slabs across 6 active learning iterations (approximately 1,500 in generation 1, ~800 each in generations 2–5, and ~1,500 in generation 6). The final training set after data splitting contains fewer than 5,000 structures; the remainder forms the test set.</dd>
+      <dt>DFT software</dt><dd><strong>VASP v.6.2.1</strong> with projector-augmented-wave method; Perdew-Burke-Ernzerhof GGA functional; spin-polarized; 520 eV kinetic energy cutoff; dipole corrections along z; convergence at 10<sup>-6</sup> eV. Each calculation ran approximately 0.5–1 hour on 30 Intel Xeon Platinum 8260 CPU cores.</dd>
+      <dt>Material structures</dt><dd>GaN(0001) 3×3 supercell (2 layers); Si(111) 3×3, 5×5, 7×7 supercells (4 layers with 9/25/49 atoms); SrTiO<sub>3</sub>(001) 2×2 supercell (3 TiO<sub>2</sub>/SrO layers). Initial bulk structures from the <strong>Materials Project</strong> database (entries mp-804, mp-149, mp-5229).</dd>
+      <dt>Classical potentials</dt><dd>Tersoff potential for GaN(0001); modified Stillinger-Weber (Stephenson-Radny-Smith) potential for Si(111) accessed via <strong>OpenKIM</strong>.</dd>
+      <dt>Neural network model</dt><dd><strong>PaiNN</strong> (equivariant polarizable atom interaction neural network) architecture. Ensemble of 3 models, 500 epochs each. 5.0 Å interaction cutoff; 128 feature dimensions; 20 radial basis functions; 3 convolutions; swish activation; Adam optimizer. Final force MAE: 0.10 eV/Å; energy MAE: 5.18 meV/atom on test set.</dd>
+      <dt>Software stack</dt><dd><strong>ASE</strong> (Atomic Simulation Environment) for structure manipulation and BFGS relaxation; <strong>pymatgen</strong> and <strong>CatKit</strong> for virtual adsorption site generation; <strong>LAMMPS</strong> for classical relaxation; <strong>VESTA v.3.5.8</strong> for visualization; internal HTVS library for workflow management.</dd>
+      <dt>Data availability</dt><dd>Trained models, DFT data and Jupyter notebooks: <a href="https://doi.org/10.5281/zenodo.7758174" target="_blank">Zenodo 10.5281/zenodo.7758174</a>. VSSR-MC code: <a href="https://github.com/learningmatter-mit/surface-sampling" target="_blank">github.com/learningmatter-mit/surface-sampling</a> and <a href="https://doi.org/10.5281/zenodo.10086398" target="_blank">Zenodo 10.5281/zenodo.10086398</a>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Software</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>VASP v.6.2.1 DFT</td><td>Ground-truth energy and force labels for NFF training</td><td>6,500 SrTiO<sub>3</sub>(001) slab single-point calculations; &lt;5,000 in training split</td><td>Results on <a href="https://doi.org/10.5281/zenodo.7758174" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Materials Project</td><td>Initial bulk crystal structures for all three surfaces</td><td>3 entries: mp-804 (GaN), mp-149 (Si), mp-5229 (SrTiO<sub>3</sub>)</td><td><a href="https://materialsproject.org" target="_blank">materialsproject.org</a></td></tr>
+        <tr><td>OpenKIM</td><td>Stillinger-Weber interatomic potential for Si(111) validation</td><td>SRS modified SW potential, 1 model</td><td><a href="https://openkim.org" target="_blank">openkim.org</a></td></tr>
+        <tr><td>PaiNN NFF ensemble</td><td>Fast, uncertainty-aware energy/force prediction driving VSSR-MC and AL</td><td>3-model ensemble; force MAE 0.10 eV/Å; energy MAE 5.18 meV/atom</td><td><a href="https://github.com/learningmatter-mit/surface-sampling" target="_blank">GitHub</a> / <a href="https://doi.org/10.5281/zenodo.7758174" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Zenodo data archive</td><td>Reproducibility: trained models, DFT data, Jupyter notebooks</td><td>All experimental data for GaN(0001), Si(111), SrTiO<sub>3</sub>(001)</td><td><a href="https://doi.org/10.5281/zenodo.7758174" target="_blank">10.5281/zenodo.7758174</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: the paper benchmarks on 3 material surfaces rather than a large multi-material dataset. The 6,500 DFT calculation count covers all AL iterations for SrTiO<sub>3</sub>(001); classical-potential experiments (GaN, Si) did not require DFT. All numbers are stated verbatim in the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Virtual Surface Site Relaxation-Monte Carlo (VSSR-MC):</b> Metropolis-Hastings Markov chain MC in the semigrand canonical ensemble. Adsorption sites are generated algorithmically from the pristine slab geometry using pymatgen. Each MC iteration: (1) selects a discrete action (add/replace/remove an adsorbate at a virtual site), (2) performs the identity change, (3) relaxes all atomic positions using the energy model (NFF or classical force field), and (4) evaluates the semigrand canonical acceptance criterion using the Boltzmann factor weighted by chemical potential changes. Temperature annealing drives convergence to low-energy structures.</li>
+      <li><b>Closed-loop active learning for NFF:</b> A PaiNN ensemble provides uncertainty estimates (predicted force standard deviation) as surrogates for force error. Two iterative AL strategies select new DFT evaluation targets: <em>adversarial attack</em> perturbs atomic coordinates to maximize force uncertainty in low-energy regions; <em>VSSR-MC with latent space clustering</em> runs VSSR-MC across chemical potential space, clusters NFF-embedding PCA projections via hierarchical agglomerative clustering (Ward's method), and selects the highest-uncertainty structure per cluster.</li>
+      <li><b>Ensemble uncertainty quantification:</b> Three independently trained PaiNN models form the ensemble. Force standard deviation across the ensemble estimates prediction error; validated to correlate strongly with actual force MAE across all AL generations (Fig. 4b, Extended Data Fig. 3).</li>
+      <li><b>Surface stability analysis and phase diagram construction:</b> Surface Gibbs free energy computed via DFT energies approximating Gibbs free energies, tracking excess Sr and O composition relative to stoichiometric Ti counts. The phase diagram assigns the minimum-energy termination at each (mu_Sr, mu_O) grid point, reproducing the known SrTiO<sub>3</sub>(001) phase sequence and revealing two new terminations.</li>
+      <li><b>Compute infrastructure:</b> Intel Xeon Platinum 8260 CPUs for DFT (0.5-1 hr/calculation, 30 cores); Nvidia V100 32 GB GPU for NFF training (up to 3 hr/model); Nvidia RTX 2080 Ti 11 GB GPU for VSSR-MC with NFF (~1 hr per 10,000 iterations at ~20,000 iterations/run for SrTiO<sub>3</sub>).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig1.png" target="_blank">
+        <img src="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig1.png" alt="Fig.1 AutoSurfRecon framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> AutoSurfRecon end-to-end framework: VSSR-MC sampling, active learning of NFF, and surface phase diagram construction starting from a pristine slab input.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig2.png" target="_blank">
+        <img src="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig2.png" alt="Fig.2 Active learning procedure for NFF" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Active learning workflow: adversarial attack and VSSR-MC with latent space clustering iteratively select DFT evaluation targets that maximize NFF force uncertainty.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig3.png" target="_blank">
+        <img src="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig3.png" alt="Fig.3 GaN(0001) contracted-monolayer surface reconstruction" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> GaN(0001) contracted-monolayer reconstruction with VSSR-MC and classical Tersoff potential: top view (rhombus pattern), side view (2.42 Å layer spacing), and MC run energy profile.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig4.png" target="_blank">
+        <img src="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig4.png" alt="Fig.4 Active learning NFF performance across generations" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> NFF active learning performance: force uncertainty vs. MAE correlation, PCA of AL-acquired structures across 6 generations, and model accuracy improvement with each iteration.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig5.png" target="_blank">
+        <img src="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig5.png" alt="Fig.5 SrTiO3(001) surface phase diagram" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> SrTiO<sub>3</sub>(001) computed surface phase diagram in (mu_Sr, mu_O) space, mapping transitions among double-layer TiO<sub>2</sub>, single-layer TiO<sub>2</sub>, and single-layer SrO terminations with experimental reference points.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig6.png" target="_blank">
+        <img src="assets/machine-learning-accelerated-simulations-to-enable-automatic-surface-reconstruction__s43588-023-00571-7/fig6.png" alt="Fig.6 DFT vs NFF energies of double-layer TiO2 terminations" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> DFT vs. NFF energy comparison for five double-layer TiO<sub>2</sub> terminations, revealing previously unreported 2×2-B and 2×2-C structures with energies equal to or below known literature surfaces.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text tables (Tables = 0). Extended Data contains 8 supplementary figures. Supplementary Data 1 is an XLS table comparing AutoSurfRecon to existing computational methods for surface reconstruction.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, explainable ML for spatial prediction, physics-informed graph learning, accessibility and urban health).</p>
+
+    <div class="idea">
+      <h3>① Transfer the active learning loop to geospatial prediction with expensive ground-truth labels</h3>
+      <p><span class="lab paper">Extending this paper</span>AutoSurfRecon's most portable innovation is its uncertainty-driven AL loop: a PaiNN ensemble quantifies prediction uncertainty, and only structures in high-uncertainty, thermodynamically accessible regions of phase space are forwarded for expensive DFT evaluation. The paper determines AL termination by visual inspection of accuracy plateau; a direct extension is to formalize an <strong>automated stopping criterion</strong> — halt when the 95th-percentile force s.d. across VSSR-MC samples falls below a threshold — and to enable cross-material transfer learning, so DFT data from GaN or Si informs the SrTiO<sub>3</sub> NFF, cutting the 6,500-calculation budget substantially. The paper's own discussion flags transfer to related materials as a natural future step.</p>
+      <p><span class="lab mine">Added value to my research</span>The ensemble uncertainty loop maps directly onto <strong>spatial prediction tasks where ground-truth labels are costly to acquire</strong> — for example, predicting healthcare facility capacity or mental health outcomes across census tracts where field surveys are expensive. Use a GWR/MGWR ensemble's local residual variance as an uncertainty surface, then selectively collect ground-truth data in highest-uncertainty spatial zones. This creates a principled active spatial sampling strategy grounded in AutoSurfRecon's AL design, reducing field survey budgets by targeting data acquisition where prediction error is highest.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Adapt VSSR-MC's virtual site sampling to combinatorial spatial facility location</h3>
+      <p><span class="lab paper">Extending this paper</span>VSSR-MC's key mechanism bifurcates into a discrete step (choose adsorbate identity at a virtual site) and a continuous step (relax all atomic positions), elegantly navigating a combinatorially large composition space without full enumeration. The semigrand canonical ensemble marginalizes over composition under fixed chemical potentials. An extension would apply VSSR-MC to <strong>multi-layer, larger supercells</strong> using a hierarchical sampling scheme — first reconstruct the top adsorption layer, then condition the second layer on the first — scaling to thicker reconstructions at electrode/electrolyte interfaces with applied electrical potential, as the authors explicitly plan.</p>
+      <p><span class="lab mine">Added value to my research</span>The discrete-then-continuous bifurcation maps directly onto <strong>spatial facility location with continuous demand surfaces</strong>: the discrete decision is which candidate location to activate (analogous to adsorbate identity), and the continuous relaxation corresponds to optimizing service catchment radii (R2SFCA step sizes). Generating candidate facility locations from urban geometry — analogous to virtual adsorption sites derived from slab symmetry — and running semigrand-style MC under budget constraints (chemical potential ~ cost) provides a principled Markov chain sampler for EV charging station or primary care clinic placement, replacing greedy heuristics with statistically valid exploration.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A universal graph deep learning interatomic potential for the periodic table — <a href="https://doi.org/10.1038/s43588-022-00349-3" target="_blank">10.1038/s43588-022-00349-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Apply the paper's latent space clustering as a geospatial stratification engine for multi-source data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>The latent space clustering AL step — projecting NFF embeddings onto PCA components and applying hierarchical agglomerative clustering to select maximally diverse, high-uncertainty DFT query candidates — is a general intelligent subsampling strategy. Fig. 4c shows that VSSR-MC structures form interpretable streaks in PCA space corresponding to surface-energy minima, and clustering identifies structurally distinct representatives. An extension would replace PCA with an <strong>equivariant graph-neural-network embedding</strong> preserving crystal symmetry, and substitute hierarchical agglomeration with <strong>coverage-maximizing coreset selection</strong>, yielding a geometry-aware and provably near-optimal subsampler for the DFT query budget.</p>
+      <p><span class="lab mine">Added value to my research</span>This clustering-as-subsampling design is directly applicable to <strong>multi-source data fusion in GeoAI</strong>: when integrating mobile phone records, social media check-ins, remote sensing pixels, and POI data for urban health analysis, the high-dimensional feature space contains structurally redundant observations. The PCA-plus-hierarchical-clustering pipeline from AutoSurfRecon provides an explainable, computationally cheap stratification that selects geospatially diverse, informationally distinct training samples — improving generalization of spatiotemporal kernel density models or MGWR fits without requiring full-dataset training, and with a natural uncertainty-guided extension.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Data as the next challenge in atomistic machine learning — <a href="https://doi.org/10.1038/s43588-024-00636-1" target="_blank">10.1038/s43588-024-00636-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Build a "spatial phase diagram" of neighborhood health states by analogy to the paper's thermodynamic formalism</h3>
+      <p><span class="lab paper">Extending this paper</span>AutoSurfRecon constructs a 2D surface phase diagram in (mu_Sr, mu_O) space: at each combination of chemical potentials, the lowest-energy surface termination defines the dominant phase. The paper explicitly plans to add an applied electrical potential axis (mu_e) for electrochemical systems, creating a 3D phase diagram over charged slabs. This requires integrating the NFF with continuum dielectric embedding to capture the effect of applied voltage on surface stability — a challenging but tractable extension given that VSSR-MC already handles composition changes in the canonical and semigrand canonical ensembles.</p>
+      <p><span class="lab mine">Added value to my research</span>The phase diagram formalism is a generative analogy for <strong>urban health geography</strong>: neighborhoods can be parameterized by two "potentials" — socioeconomic deprivation index and spatial accessibility score (2SFCA) — and the dominant "phase" is the observed health outcome category (thriving, at-risk, crisis). Constructing such a 2D diagram using MGWR and spatial entropy gives planners a phase-boundary map of where small policy interventions (analogous to small changes in mu_Sr) induce large health outcome transitions, identifying the most policy-sensitive neighborhoods and quantifying the minimum accessibility improvement needed to shift a zone to a better health phase.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating the prediction of stable materials with machine learning — <a href="https://doi.org/10.1038/s43588-023-00536-w" target="_blank">10.1038/s43588-023-00536-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Bootstrap AutoSurfRecon from a foundation interatomic potential for near-zero-shot surface prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>AutoSurfRecon's NFF is trained from scratch via 6 AL iterations consuming 6,500 DFT calculations per material system. The paper acknowledges that transfer learning from pre-trained NFFs reduces costs for new supercells of the same material. A bolder extension is to <strong>initialize AutoSurfRecon's AL from a universal foundation interatomic potential</strong> pre-trained across the periodic table, dramatically shrinking the initial DFT budget. The remaining AL iterations fine-tune specifically to the surface chemistry of interest, potentially achieving accurate surface phase diagrams with hundreds rather than thousands of DFT calculations — applicable immediately to the electrochemical surfaces the authors plan to tackle next.</p>
+      <p><span class="lab mine">Added value to my research</span>This "foundation model + targeted fine-tune" strategy directly parallels my agenda of <strong>fine-tuning geospatial foundation models</strong> for specific urban health prediction tasks. Just as a materials foundation potential encodes universal atomic interaction priors that fine-tune to a specific surface chemistry, a geospatial foundation model pre-trained on global satellite imagery or GPS trajectories encodes spatial context priors that fine-tune to a specific city's healthcare accessibility or mental health landscape. AutoSurfRecon's AL loop design — quantify uncertainty, selectively acquire expensive labels, retrain — provides a transferable blueprint for deciding when and what to fine-tune in a geospatial setting, reducing labeled data requirements and enabling rapid deployment in data-sparse regions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning interatomic potentials at the centennial crossroads of quantum mechanics — <a href="https://doi.org/10.1038/s43588-025-00930-6" target="_blank">10.1038/s43588-025-00930-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

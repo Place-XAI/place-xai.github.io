@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training data composition determines machine learning generalization and biological rule discovery — AI Digest</title>
+<meta name="description" content="AI Digest: Training data composition determines machine learning generalization and biological rule discovery (Nature Machine Intelligence, 2025)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Training data composition</span>
+      <span class="tag">OOD generalization</span>
+      <span class="tag">Explainability</span>
+      <span class="tag">Antibody–antigen binding</span>
+    </div>
+    <h1>Training data composition determines machine learning generalization and biological rule discovery</h1>
+    <div class="meta">
+      <span class="authors">Eugen Ursu · Aygul Minnegalieva · Puneet Rawat · Maria Chernigovskaya · Robi Tacutu · Geir Kjetil Sandve · Philippe A. Robert · Victor Greiff</span>
+      <span><b>Published</b> 2025-08-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-025-01089-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>The composition of the <strong>negative training class</strong> — not just positive examples — critically determines both the <strong>in-distribution accuracy</strong> and <strong>out-of-distribution (OOD) generalization</strong> of ML models for antibody–antigen binding prediction. Counterintuitively, models trained on <strong>harder negatives</strong> (sequences similar to positives in affinity space) achieve <em>lower</em> in-distribution accuracy but <em>superior</em> OOD generalization and recovery of biological binding rules. This finding, validated on both synthetic (Absolut!) and experimental HER2 datasets, generalizes as a principle across biological ML tasks: <strong>closer negative–positive boundaries in training foster more nuanced, transferable and biology-aware models.</strong></p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Challenges a default assumption in ML benchmarking.</b> Standard practice equates high in-distribution accuracy with model quality; this paper demonstrates that ID accuracy can be <em>negatively predictive</em> of real-world generalization — a critical warning for immunotherapeutic ML pipelines.</li>
+      <li><b>Connects negative sampling strategy to biological rule recovery.</b> Not only do negatives affect accuracy: they determine whether the model learns <em>genuine biological binding rules</em> (affinity-correlated logits, residue-level attribution) or superficial discriminative shortcuts.</li>
+      <li><b>Provides actionable guidance for dataset design.</b> The paper recommends collecting negative examples that are close in binding affinity to positives (e.g., weak binders, deep mutational scanning data), translating directly into experimental design criteria for therapeutic antibody discovery.</li>
+      <li><b>Broadly generalizable principle.</b> The authors extend the insight to small-molecule drug discovery and transcriptomics-based phenotyping, suggesting that "hard negatives improve OOD robustness" is a domain-agnostic principle in biological classification tasks.</li>
+      <li><b>Leverages synthetic data to isolate causal effects.</b> By using the Absolut! simulation framework (ground-truth binding energies for ~700k sequences over 10 antigens), the work uniquely controls for confounds impossible to eliminate in purely experimental datasets.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Principled ML methods insight, not an application paper:</b> the paper makes a methodological statement about dataset design that applies broadly across supervised ML tasks, matching NMI's emphasis on foundational ML contributions.</li>
+      <li><b>Cross-domain validation:</b> synthetic-to-experimental replication on an independently published HER2 dataset strengthens the claim's generality — a key NMI criterion.</li>
+      <li><b>Timely intersection of interpretability and generalization:</b> the dual focus on OOD robustness <em>and</em> explainability (DeepLIFT attributions vs. ground-truth energies) addresses two of the field's most prominent open problems simultaneously.</li>
+      <li><b>Directly impacts high-stakes immunotherapeutic design:</b> the journal routinely features work where ML design choices have biomedical consequences; this paper provides causal evidence connecting negative data selection to clinical-relevance-proxy metrics.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Synthetic dataset</dt><dd><strong>Absolut!</strong> framework (<a href="https://greifflab.org/Absolut/" target="_blank">greifflab.org/Absolut/</a>) — lattice-based 3D docking of CDRH3 sequences against antigen structures from the Protein Data Bank. Covers <strong>10 antigens</strong> (PDB IDs: 3VRL, 1NSN, 3RAJ, 5E94, 1H0D, 1WEJ, 1ADQ, 1FBI, 2YPV, 1OB1). Per antigen: avg. ~51,815 high-affinity binders (top 1%), ~205,069 weak binders (1–5%), ~391,499 non-binders (top 95%). Total CDRH3 sequences: approximately <strong>700,000</strong>. Sequences are 11-mer CDRH3s from mouse repertoires.</dd>
+      <dt>Experimental dataset</dt><dd><strong>Porebski dataset</strong> (HER2mllib library) — high-throughput ribosome display + next-generation sequencing screening of anti-HER2 scFv antibodies. After filtering for ≥12 replicates and clean sequences: <strong>24,790 CDRH3 sequences</strong> (length 21 aa), classified as binders (10%), weak binders (15%), non-binders (75%) using fluorescence intensity (intensity 8) thresholds. Available via Zenodo: <a href="https://doi.org/10.5281/zenodo.8241732" target="_blank">10.5281/zenodo.8241732</a>.</dd>
+      <dt>Training tasks</dt><dd>For each of the 10 antigens, 4 binary classification tasks varying in negative class definition: <code>vs non-binder</code> (bottom 95%), <code>vs weak</code> (1–5%), <code>vs 1</code> (top 1% binders to 1 other antigen), <code>vs 9</code> (top 1% binders to any of 9 other antigens). Each task: 30,000 training sequences (15k pos + 15k neg) and 10,000 testing sequences.</dd>
+      <dt>Processed data &amp; models</dt><dd>All processed datasets, attribution values and trained models deposited on Zenodo: <a href="https://doi.org/10.5281/zenodo.11191740" target="_blank">10.5281/zenodo.11191740</a>. Code on GitHub: <a href="https://github.com/csi-greifflab/negative-class-optimization" target="_blank">csi-greifflab/negative-class-optimization</a>.</dd>
+      <dt>Replication strategy</dt><dd>6 train–test splits per task; 4 random seed initializations per split; resulting in up to 81 technical replicates per OOD test scenario for robust estimation.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Absolut! synthetic database</td><td>Positive + negative antibody sequences with ground-truth binding energies</td><td>~700k sequences × 10 antigens; 11-mer CDRH3 from mouse repertoires</td><td><a href="https://greifflab.org/Absolut/" target="_blank">greifflab.org/Absolut</a></td></tr>
+        <tr><td>Porebski HER2mllib (experimental)</td><td>Independent validation; affinity-labelled CDRH3 sequences for HER2</td><td>24,790 sequences (length 21 aa); 3 classes (binder/weak/non-binder)</td><td><a href="https://doi.org/10.5281/zenodo.8241732" target="_blank">Zenodo 8241732</a></td></tr>
+        <tr><td>Processed results &amp; trained models</td><td>Reproduced results, attribution matrices, SN10/LR/transformer weights</td><td>All tasks across 10 antigens × 4 negative types × 9 replicates</td><td><a href="https://doi.org/10.5281/zenodo.11191740" target="_blank">Zenodo 11191740</a></td></tr>
+        <tr><td>Protein Data Bank (PDB)</td><td>Source 3D antigen structures for Absolut! lattice docking</td><td>10 specific structures (3VRL, 1NSN, 3RAJ, 5E94, 1H0D, 1WEJ, 1ADQ, 1FBI, 2YPV, 1OB1)</td><td><a href="https://www.rcsb.org" target="_blank">rcsb.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table">Note: the ~700k total sequences is an approximation derived from the per-category averages reported in the Methods; the exact count per antigen varies. Numbers are taken verbatim from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Binary classification framework:</b> supervised models trained on one-hot-encoded 11-mer CDRH3 sequences (220-dim input) over four qualitatively different negative class definitions, with balanced datasets (20k positive + 20k negative, 10k test each).</li>
+      <li><b>SN10 neural network:</b> small fully connected network (220 input → 10 hidden ReLU neurons → 1 sigmoid output), chosen for interpretability parity. Trained with Adam optimizer, binary cross-entropy, batch size 64, lr = 0.001, 50 epochs, stochastic weight averaging (after epoch 3).</li>
+      <li><b>Baselines:</b> logistic regression (LR) as an additive model; transformer encoder (4 heads, dim 24); protein language model embeddings (ESM2b 1,280-dim; AntiBERTa2 1,024-dim) fed into the SN10 architecture — neither improved over SN10.</li>
+      <li><b>Jensen–Shannon Distance (JSD):</b> quantifies positive–negative dissimilarity via position weight matrices (PWMs) of CDRH3 sequences, enabling correlation of sequence divergence with ID/OOD accuracy differences.</li>
+      <li><b>OOD evaluation:</b> models trained on one negative type are tested on all other negative-type test sets, producing a full cross-task generalization matrix (4×4 per antigen × 10 antigens).</li>
+      <li><b>DeepLIFT attribution:</b> per-residue feature importance scores computed using 10 shuffled baselines per sequence (Captum v0.5.0), then correlated against ground-truth per-amino-acid Miyazawa–Jernigan binding energies from Absolut!.</li>
+      <li><b>Affinity-partition sweep:</b> 26 negative datasets with progressively increasing affinity gap from positives, enabling a continuous analysis of how positive–negative separation affects ID and OOD performance simultaneously.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/training-data-composition-determines-machine-learning-generalization-and-biological-rule-d__s42256-025-01089-5/fig1.png" target="_blank">
+        <img src="assets/training-data-composition-determines-machine-learning-generalization-and-biological-rule-d__s42256-025-01089-5/fig1.png" alt="Fig.1 Training data composition overview" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Conceptual overview: how negative class selection affects ML performance, OOD generalization, and biological rule discovery in antibody–antigen binding prediction.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/training-data-composition-determines-machine-learning-generalization-and-biological-rule-d__s42256-025-01089-5/fig2.png" target="_blank">
+        <img src="assets/training-data-composition-determines-machine-learning-generalization-and-biological-rule-d__s42256-025-01089-5/fig2.png" alt="Fig.2 Classification performance vs negative dataset type" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> ID and OOD classification accuracy across 10 antigens and 4 negative dataset types; JSD–accuracy correlations; affinity-partition sweep results.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/training-data-composition-determines-machine-learning-generalization-and-biological-rule-d__s42256-025-01089-5/fig3.png" target="_blank">
+        <img src="assets/training-data-composition-determines-machine-learning-generalization-and-biological-rule-d__s42256-025-01089-5/fig3.png" alt="Fig.3 Binding rule discovery via explainability" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Biological rule recovery: correlation of model logits and DeepLIFT attributions with ground-truth per-sequence and per-residue Absolut! binding energies across negative types.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 main-text table (Table 1 — binary dataset composition and generation per task type). Extended Data contains 1 additional figure (affinity-partition sweep across all 10 antigens). Supplementary contains 10 figures, 5 tables, and 2 supplementary texts.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, explainable &amp; spatiotemporal ML, 2SFCA/R2SFCA accessibility, data composition &amp; reproducibility, spatiotemporal kernel density estimation).</p>
+
+    <div class="idea">
+      <h3>① Diagnose dataset composition bias in geospatial ML training sets the same way this paper diagnoses biological ML</h3>
+      <p><span class="lab paper">Extending this paper</span>This paper operationalizes "negative class similarity" as Jensen–Shannon Distance between position weight matrices of CDRH3 sequences — a principled, computable measure of how distinct training negatives are from positives. The paper stops at biological sequences, but the framework is fully general: any binary classification task with a continuous measure of feature proximity can be subjected to the same JSD-sweep / affinity-partition analysis. An immediate extension is to apply the same logic to <strong>spatial negative sampling</strong> in geospatial binary classifiers — e.g., presence-only species distribution models, facility-accessibility binary labels, or spatial anomaly detection — where the distribution of "negative" background locations is typically defined arbitrarily (random, spatially stratified, or absence-proxy) rather than by principled proximity to positive instances.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal accessibility and GeoAI pipelines routinely train binary or ordinal classifiers (e.g., accessible vs. inaccessible zones, high vs. low health-risk cells) where the negative set is defined by spatial sampling heuristics rather than theoretical grounding. Applying this paper's JSD-sweep to spatial negative definitions — using kernel density or distance-in-feature-space as the proximity metric — would reveal whether my models achieve only ID accuracy while failing OOD (e.g., across different cities, populations, or time periods). This directly addresses my FAIR/open-science reproducibility agenda: documenting negative-set construction as a first-class methodological choice.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A causal perspective on dataset bias in machine learning for medical imaging — <a href="https://doi.org/10.1038/s42256-024-00797-8" target="_blank">10.1038/s42256-024-00797-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Use OOD accuracy as a benchmark metric for explainability methods in geospatial prediction</h3>
+      <p><span class="lab paper">Extending this paper</span>A key finding is that OOD performance — not ID accuracy — is the reliable proxy for whether a model has learned genuine biological binding rules. The paper proposes OOD accuracy as an "orthogonal metric for benchmarking rule recovery methods." This suggests a general evaluation protocol: for any explainability method (SHAP, LIME, DeepLIFT, integrated gradients), compute its rule-discovery quality not against a held-in test set but against OOD test performance. Extending the paper: apply this OOD-as-explainability-benchmark framework to compare attribution methods across task types — does DeepLIFT systematically outperform SHAP at identifying binding-relevant residues when OOD accuracy is the criterion?</p>
+      <p><span class="lab mine">Added value to my research</span>In my explainable ML work for spatial prediction (e.g., MGWR-informed feature attribution for health geography), I currently validate explanations against holdout samples from the <em>same</em> spatial distribution — a form of ID evaluation. This paper's logic suggests I should instead validate feature attribution by testing whether models trained on attributions-selected features generalize to <em>spatially disjoint</em> test regions (OOD by geography). This would transform explainability from a qualitative interpretation step into a quantitative, OOD-validated signal quality metric for my GeoAI pipelines.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning characteristics of graph neural networks predicting protein–ligand affinities — <a href="https://doi.org/10.1038/s42256-023-00756-9" target="_blank">10.1038/s42256-023-00756-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Extend the affinity-partition sweep to continuous negative-difficulty gradients in healthcare accessibility datasets</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most mechanistically revealing experiment is the 26-partition affinity sweep (Fig. 2f), which continuously varies positive–negative separation and shows a smooth transition from OOD-favorable (hard negatives, low JSD) to ID-favorable (easy negatives, high JSD) regimes. This sweep reveals the Pareto-like trade-off between ID and OOD without requiring arbitrary category boundaries. Extending the paper: apply the same continuous-difficulty sweep to other biological classification problems where a continuous feature-space distance can be defined — e.g., protein–ligand binding affinity, genomic sequence edit distance, or structural RMSD — and test whether the crossover point between ID-favoring and OOD-favoring negative regimes is task-specific or universal.</p>
+      <p><span class="lab mine">Added value to my research</span>In healthcare facility accessibility modeling, the "negative" class — census tracts labeled as inaccessible — can range from barely-inaccessible (travel time slightly above threshold) to deeply inaccessible (very remote). Applying the partition-sweep logic means systematically constructing training sets where negatives vary from <em>hard</em> (near-threshold travel times) to <em>easy</em> (far-above-threshold), measuring how this affects R2SFCA model OOD generalization across cities. This would generate the first empirical accessibility–ML composition curve, enabling optimal negative-set design for spatial access models deployed across diverse urban contexts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> MISATO: machine learning dataset of protein–ligand complexes for structure-based drug discovery — <a href="https://doi.org/10.1038/s43588-024-00627-2" target="_blank">10.1038/s43588-024-00627-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Apply synthetic-data-enabled controlled study design to spatiotemporal simulation benchmarks</h3>
+      <p><span class="lab paper">Extending this paper</span>A key methodological strength of the paper is that synthetic Absolut! data provide <strong>ground-truth binding energies</strong>, which allow direct comparison between model explanations and true causal quantities — something impossible with real experimental data alone. The paper uses this to demonstrate that feature attribution methods can recover ground-truth per-residue energies when the negative class is properly chosen. Extending this: build a <em>synthetic spatiotemporal accessibility benchmark</em> analogous to Absolut! — generate synthetic urban environments with known accessibility ground truth, construct varied negative-set definitions (spatially random vs. near-threshold), and use the synthetic ground truth to validate whether SHAP-based spatial feature attributions recover true accessibility drivers.</p>
+      <p><span class="lab mine">Added value to my research</span>My research on explainable GeoAI suffers from the same fundamental problem as biology ML: real-world spatial data have no ground-truth causal mechanism to validate against. Building a synthetic spatial benchmark (e.g., via agent-based simulation or parameterized urban models) would let me run the same ground-truth attribution verification the authors do with Absolut! — testing whether my MGWR or spatiotemporal KDE methods correctly identify the simulated accessibility drivers. This would substantially strengthen the validation chain in my reproducibility-focused papers.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Unconstrained generation of synthetic antibody–antigen structures to guide machine learning methodology for antibody specificity prediction — <a href="https://doi.org/10.1038/s43588-022-00372-4" target="_blank">10.1038/s43588-022-00372-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Transfer the "hard-negative promotes OOD robustness" principle to multi-source data fusion for spatiotemporal models</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's conclusion — models trained on more similar positive–negative pairs learn more transferable rules — has a direct analog in multi-source data fusion: when training on a <em>mixture</em> of easy negatives (from a source domain with large distributional gap, e.g., a completely different city) and hard negatives (from a source domain with small gap, e.g., a nearby city), the resulting model's OOD performance will depend on the mixture composition. Extending the paper: formulate a "negative source mixing" experiment where the ratio of same-distribution to cross-distribution negative examples is varied, mapping out an ID–OOD trade-off surface over mixture proportions — extending the binary partition sweep to a 2D negative-composition simplex.</p>
+      <p><span class="lab mine">Added value to my research</span>My multi-source data fusion work (mobile phone, social media, remote sensing, POI) constructs training batches that mix records from multiple spatial contexts — which is precisely a "mixture of easy and hard negatives" in disguise. This paper's framework gives me a principled way to audit my fusion pipeline: compute the JSD-analog (e.g., feature distributional distance) for each data-source pair, predict which mixing ratios will yield the best OOD generalization across unseen cities or time periods, and verify this empirically. This would make my fusion strategy principled rather than empirically tuned, advancing my data-science and reproducibility research agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reliable deep learning in anomalous diffusion against out-of-distribution dynamics — <a href="https://doi.org/10.1038/s43588-024-00703-7" target="_blank">10.1038/s43588-024-00703-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>
