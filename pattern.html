@@ -11,7 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    .pd-wrap{max-width:var(--maxw);margin:0 auto;padding:22px 20px 60px}
+    .pd-wrap{max-width:var(--maxw);margin:0 auto;padding:98px 20px 60px}
+    .pd-bar{position:sticky;top:78px;z-index:5;background:var(--bg);padding:8px 0}
     .pd-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
     .pd-bar a.back{color:var(--text-soft);text-decoration:none;font-size:.92rem}
     .pd-bar a.back:hover{color:var(--text)}
@@ -22,12 +23,14 @@
     .pd-nav-btn:hover{border-color:var(--brand)}
     .pd-jump{width:64px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);
       padding:8px;font:inherit;text-align:center}
-    .pd-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:start}
-    @media(max-width:860px){.pd-grid{grid-template-columns:1fr;gap:18px}}
-    .pd-fig{margin:0}
-    .pd-fig img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
-      border:1px solid var(--border);border-radius:var(--radius);background:var(--border)}
-    .pd-fig figcaption{color:var(--text-muted);font-size:.82rem;margin-top:10px}
+    main{overflow-x:clip}
+    .pd-head{margin:2px 0 0}
+    .pd-detail{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;margin:24px 0 4px}
+    @media(max-width:760px){.pd-detail{grid-template-columns:1fr;gap:22px}}
+    .pd-fig{margin:26px 0 8px;width:100vw;margin-left:calc(50% - 50vw)}
+    .pd-fig img{display:block;width:100%;max-height:88vh;object-fit:contain;
+      background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .pd-fig figcaption{max-width:var(--maxw);margin:10px auto 0;padding:0 20px;color:var(--text-muted);font-size:.82rem}
     .pd-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--brand);font-family:var(--font-display);
       font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
     .pd-eyebrow .grp{color:var(--text-muted);border-left:1px solid var(--border);padding-left:8px}
@@ -93,21 +96,21 @@
       const i = idx(n), prev = ns[(i-1+ns.length)%ns.length], next = ns[(i+1)%ns.length];
       const pp = byN.get(prev), np = byN.get(next);
       view.innerHTML = `
-        <div class="pd-grid">
-          <figure class="pd-fig">
-            <a href="image/patterns/p${pad(n)}.jpg" target="_blank" rel="noopener">
-              <img src="image/patterns/p${pad(n)}.jpg" alt="${esc(p.title)}" width="1600" height="900" />
-            </a>
-            <figcaption>Generative-AI illustration · flat-vector rendering</figcaption>
-          </figure>
-          <div class="pd-body">
-            <span class="pd-eyebrow">Pattern ${p.n}<span class="grp">${esc(p.group)}</span></span>
-            <h1 class="pd-title"><span class="num">${p.n}.</span> ${esc(p.title)}</h1>
-            <p class="pd-summary">${esc(p.summary_en) || '<span class="pd-empty">Summary coming soon.</span>'}</p>
-            ${nums ? `<div class="pd-h">Key figures</div><ul class="pd-nums">${nums}</ul>` : ''}
-            ${refs ? `<div class="pd-h">References</div><ol class="pd-refs">${refs}</ol>` : ''}
-          </div>
+        <div class="pd-head">
+          <span class="pd-eyebrow">Pattern ${p.n}<span class="grp">${esc(p.group)}</span></span>
+          <h1 class="pd-title"><span class="num">${p.n}.</span> ${esc(p.title)}</h1>
+          <p class="pd-summary">${esc(p.summary_en) || '<span class="pd-empty">Summary coming soon.</span>'}</p>
         </div>
+        ${(nums || refs) ? `<div class="pd-detail">
+          ${nums ? `<div><div class="pd-h">Key figures</div><ul class="pd-nums">${nums}</ul></div>` : '<div></div>'}
+          ${refs ? `<div><div class="pd-h">References</div><ol class="pd-refs">${refs}</ol></div>` : ''}
+        </div>` : ''}
+        <figure class="pd-fig">
+          <a href="image/patterns/p${pad(n)}.jpg" target="_blank" rel="noopener">
+            <img src="image/patterns/p${pad(n)}.jpg" alt="${esc(p.title)}" width="1600" height="900" />
+          </a>
+          <figcaption>Generative-AI illustration · flat-vector rendering</figcaption>
+        </figure>
         <nav class="pd-foot">
           <a class="prev" href="#${prev}"><span class="lbl">‹ Pattern ${prev}</span><span class="nm">${esc(pp?pp.title:'')}</span></a>
           <a class="next" href="#${next}"><span class="lbl">Pattern ${next} ›</span><span class="nm">${esc(np?np.title:'')}</span></a>
