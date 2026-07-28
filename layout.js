@@ -18,6 +18,7 @@
       { label: 'Publications', href: 'publications.html' },
       { label: 'Datasets',     href: 'datasets.html' },
       { label: 'Open Courses', href: 'courses.html' },
+      { label: 'Pattern Language', href: 'pattern-language.html' },
     ]},
     { label: 'Products', children: [
       { label: 'FlowX',            href: 'flowx.html' },
@@ -89,7 +90,7 @@
         <div><strong>PLACE&nbsp;XAI</strong><p class="muted">Explainable AI for Places</p></div>
       </div>
       <div class="footer-col"><h5>Insights</h5><a href="news.html">News</a><a href="daily-digest.html">AI Digest</a><a href="events.html">Events</a></div>
-      <div class="footer-col"><h5>PlaceXAI</h5><a href="projects.html">Projects</a><a href="publications.html">Publications</a><a href="datasets.html">Datasets</a><a href="courses.html">Open Courses</a></div>
+      <div class="footer-col"><h5>PlaceXAI</h5><a href="projects.html">Projects</a><a href="publications.html">Publications</a><a href="datasets.html">Datasets</a><a href="courses.html">Open Courses</a><a href="pattern-language.html">Pattern Language</a></div>
       <div class="footer-col"><h5>Products</h5><a href="flowx.html">FlowX</a><a href="knime.html">KNIME GIS</a><a href="toolkit.html">PlaceXAI Toolkit</a></div>
       <div class="footer-col"><h5>Network</h5><a href="network.html">Core Team</a><a href="network.html#join">Join</a></div>
     </div>
