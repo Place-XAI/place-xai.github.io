@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pattern — A Pattern Language · Place XAI</title>
+  <meta name="description" content="A single pattern from Christopher Alexander's A Pattern Language, illustrated by generative AI — summary, key figures, and references." />
+  <link rel="icon" href="logos/psi.svg" />
+  <script>(function(){var t=localStorage.getItem('pxai-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .pd-wrap{max-width:var(--maxw);margin:0 auto;padding:22px 20px 60px}
+    .pd-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+    .pd-bar a.back{color:var(--text-soft);text-decoration:none;font-size:.92rem}
+    .pd-bar a.back:hover{color:var(--text)}
+    .pd-spacer{flex:1}
+    .pd-count{color:var(--text-muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+    .pd-nav-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);
+      width:40px;height:40px;font-size:1.1rem;cursor:pointer;transition:border-color .2s,background .2s}
+    .pd-nav-btn:hover{border-color:var(--brand)}
+    .pd-jump{width:64px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);
+      padding:8px;font:inherit;text-align:center}
+    .pd-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:start}
+    @media(max-width:860px){.pd-grid{grid-template-columns:1fr;gap:18px}}
+    .pd-fig{margin:0}
+    .pd-fig img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
+      border:1px solid var(--border);border-radius:var(--radius);background:var(--border)}
+    .pd-fig figcaption{color:var(--text-muted);font-size:.82rem;margin-top:10px}
+    .pd-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--brand);font-family:var(--font-display);
+      font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
+    .pd-eyebrow .grp{color:var(--text-muted);border-left:1px solid var(--border);padding-left:8px}
+    h1.pd-title{font-family:var(--font-display);font-size:1.9rem;line-height:1.15;margin:10px 0 14px}
+    h1.pd-title .num{color:var(--brand)}
+    .pd-summary{color:var(--text-soft);font-size:1.02rem;line-height:1.7;margin:0 0 22px}
+    .pd-h{font-family:var(--font-display);font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;
+      color:var(--text-muted);margin:22px 0 10px}
+    .pd-nums{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+    .pd-nums li{display:flex;gap:14px;align-items:baseline;border-bottom:1px solid var(--border);padding-bottom:9px}
+    .pd-nums .v{font-family:var(--font-display);font-weight:600;color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums}
+    .pd-nums .k{color:var(--text-soft);font-size:.92rem}
+    .pd-refs{list-style:decimal;padding-left:20px;margin:0;color:var(--text-soft);font-size:.88rem;line-height:1.6}
+    .pd-refs li{margin-bottom:8px}
+    .pd-refs i,.pd-refs em{color:var(--text)}
+    .pd-foot{display:flex;justify-content:space-between;gap:12px;margin-top:34px;border-top:1px solid var(--border);padding-top:18px}
+    .pd-foot a{display:flex;flex-direction:column;gap:2px;max-width:46%;text-decoration:none;color:var(--text-soft);
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;transition:border-color .2s,transform .2s}
+    .pd-foot a:hover{border-color:var(--brand);transform:translateY(-2px);color:var(--text)}
+    .pd-foot a.next{text-align:right;align-items:flex-end;margin-left:auto}
+    .pd-foot .lbl{font-size:.75rem;color:var(--text-muted)}
+    .pd-foot .nm{font-size:.9rem}
+    .pd-empty{color:var(--text-muted);padding:40px 0}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="pd-wrap">
+      <div class="pd-bar">
+        <a class="back" href="pattern-language.html">← All 253 patterns</a>
+        <span class="pd-spacer"></span>
+        <button class="pd-nav-btn" id="prevBtn" aria-label="Previous pattern">‹</button>
+        <input class="pd-jump" id="jump" type="number" min="1" max="253" aria-label="Go to pattern number" />
+        <span class="pd-count" id="count">/ 253</span>
+        <button class="pd-nav-btn" id="nextBtn" aria-label="Next pattern">›</button>
+      </div>
+      <div id="view"><p class="pd-empty">Loading…</p></div>
+    </div>
+  </main>
+  <script src="layout.js"></script><script src="main.js"></script>
+  <script>
+  (async () => {
+    const view = document.getElementById('view');
+    let DATA = [];
+    try { DATA = await (await fetch('pattern-data.json')).json(); }
+    catch (e) { view.innerHTML = '<p class="pd-empty">Could not load pattern data.</p>'; return; }
+    const byN = new Map(DATA.map(p => [p.n, p]));
+    const ns = DATA.map(p => p.n).sort((a,b)=>a-b);
+    const esc = s => (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const pad = n => String(n).padStart(3,'0');
+    let cur = clamp(parseInt(location.hash.replace('#',''),10) || ns[0]);
+
+    function clamp(n){ if(!byN.has(n)){ // snap to nearest existing
+        return ns.reduce((a,b)=> Math.abs(b-n)<Math.abs(a-n)?b:a, ns[0]); } return n; }
+    function idx(n){ return ns.indexOf(n); }
+
+    function render(n){
+      const p = byN.get(n); if(!p){ return; }
+      document.title = `${p.n}. ${p.title} — Place XAI`;
+      const nums = (p.numbers_en||[]).filter(x=>x && (x.v||x.k)).map(x =>
+        `<li><span class="v">${esc(x.v)}</span><span class="k">${esc(x.k)}</span></li>`).join('');
+      const refs = (p.references||[]).filter(Boolean).map(r => `<li>${r}</li>`).join(''); // refs may contain <i>
+      const i = idx(n), prev = ns[(i-1+ns.length)%ns.length], next = ns[(i+1)%ns.length];
+      const pp = byN.get(prev), np = byN.get(next);
+      view.innerHTML = `
+        <div class="pd-grid">
+          <figure class="pd-fig">
+            <a href="image/patterns/p${pad(n)}.jpg" target="_blank" rel="noopener">
+              <img src="image/patterns/p${pad(n)}.jpg" alt="${esc(p.title)}" width="1600" height="900" />
+            </a>
+            <figcaption>Generative-AI illustration · flat-vector rendering</figcaption>
+          </figure>
+          <div class="pd-body">
+            <span class="pd-eyebrow">Pattern ${p.n}<span class="grp">${esc(p.group)}</span></span>
+            <h1 class="pd-title"><span class="num">${p.n}.</span> ${esc(p.title)}</h1>
+            <p class="pd-summary">${esc(p.summary_en) || '<span class="pd-empty">Summary coming soon.</span>'}</p>
+            ${nums ? `<div class="pd-h">Key figures</div><ul class="pd-nums">${nums}</ul>` : ''}
+            ${refs ? `<div class="pd-h">References</div><ol class="pd-refs">${refs}</ol>` : ''}
+          </div>
+        </div>
+        <nav class="pd-foot">
+          <a class="prev" href="#${prev}"><span class="lbl">‹ Pattern ${prev}</span><span class="nm">${esc(pp?pp.title:'')}</span></a>
+          <a class="next" href="#${next}"><span class="lbl">Pattern ${next} ›</span><span class="nm">${esc(np?np.title:'')}</span></a>
+        </nav>`;
+      document.getElementById('count').textContent = `${i+1} / ${ns.length}`;
+      document.getElementById('jump').value = n;
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    function go(n){ n = clamp(n); if(n!==cur){ cur=n; if(location.hash!=='#'+n) location.hash = '#'+n; } render(cur); }
+    function step(d){ go(ns[(idx(cur)+d+ns.length)%ns.length]); }
+
+    window.addEventListener('hashchange', () => { const n = clamp(parseInt(location.hash.replace('#',''),10)||ns[0]); cur=n; render(cur); });
+    document.getElementById('prevBtn').onclick = () => step(-1);
+    document.getElementById('nextBtn').onclick = () => step(1);
+    document.getElementById('jump').addEventListener('change', e => { const v=parseInt(e.target.value,10); if(v) go(v); });
+    document.addEventListener('keydown', e => {
+      if(e.target.tagName==='INPUT') return;
+      if(e.key==='ArrowLeft') step(-1); else if(e.key==='ArrowRight') step(1);
+    });
+    // touch swipe
+    let x0=null;
+    view.addEventListener('touchstart', e => { x0 = e.changedTouches[0].clientX; }, {passive:true});
+    view.addEventListener('touchend', e => {
+      if(x0==null) return; const dx = e.changedTouches[0].clientX - x0; x0=null;
+      if(Math.abs(dx) > 60) step(dx < 0 ? 1 : -1);
+    }, {passive:true});
+
+    render(cur);
+  })();
+  </script>
+</body>
+</html>
