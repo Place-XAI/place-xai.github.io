@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A neural network model of free recall learns multiple memory strategies — AI Digest</title>
+<meta name="description" content="AI Digest: A neural network model of free recall learns multiple memory strategies (Nature Machine Intelligence, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Free recall</span>
+      <span class="tag">Recurrent neural networks</span>
+      <span class="tag">Index coding</span>
+      <span class="tag">Cognitive modelling</span>
+    </div>
+    <h1>A neural network model of free recall learns multiple memory strategies</h1>
+    <div class="meta">
+      <span class="authors">Moufan Li · Kristopher T. Jensen · Qiong Zhang · Qihong Lu · Marcelo G. Mattar</span>
+      <span><b>Published</b> 2026-07-20</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-026-01274-0" target="_blank">10.1038/s42256-026-01274-0</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-026-01274-0" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Neural networks trained to maximize free-recall performance do <strong>not converge on one memory mechanism</strong>: they spontaneously discover <strong>several distinct retrieval strategies</strong>, only some of which resemble classic <strong>temporal context models (TCM)</strong>. The best performers abandon temporal context entirely and instead learn a <strong>stimulus-invariant "index code"</strong> that tags each item by its <em>studied position</em>, building a stable scaffold for forward sequential retrieval — the computational signature of the <strong>memory palace</strong> (method of loci) used by human memory experts. This index code emerges preferentially when networks are pushed to recall <em>all</em> items rather than just the next few (high discount factor) and are <strong>denied recency</strong> (working memory flushed). Human-like recall curves are therefore <strong>degenerate evidence</strong> — the same behaviour can arise from multiple different computations.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the one-mechanism monopoly in memory theory.</b> For two decades, recency + forward-asymmetric contiguity were read as fingerprints of a single mechanism (temporal context drift). This paper shows those <em>same</em> behavioural signatures are produced by at least three separable computational solutions — a direct challenge to model identifiability in cognitive science.</li>
+      <li><b>Gives the "memory palace" a mechanistic account for the first time.</b> The method of loci has been empirically superior for millennia and validated by neuroimaging, but classic models never generated it. Here it <strong>falls out of optimization</strong> as a positional index code — mnemonic expertise becomes a normative, learnable strategy rather than a trick.</li>
+      <li><b>Identifies the training conditions that select a strategy.</b> Two controllable knobs — the reward <strong>discount factor</strong> (recall everything vs. the next few items) and the <strong>fraction of working memory flushed</strong> (recency availability) — determine which mechanism a network converges to. That converts "individual differences in memory" from a descriptive label into a manipulable objective-function question.</li>
+      <li><b>Behaviour alone cannot arbitrate mechanisms.</b> The paper is a general warning to any field fitting process models to summary curves: matching a conditional-recall-probability curve does not identify the underlying computation. Representational analysis (index vs. identity decoding) was required to tell the strategies apart.</li>
+      <li><b>Strategy predicts performance.</b> Index-code usage, forward asymmetry and temporal organization all correlate positively with recall accuracy in models, and the same behavioural correlations hold in 186 human participants — so the model's strategy axis is not an artifact of the simulator.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Normative explanation, not curve-fitting:</b> Nature Machine Intelligence favours work where an optimized learning system <em>discovers</em> a phenomenon rather than being hand-built to reproduce it — here the memory palace emerges from reward maximization alone.</li>
+      <li><b>Two-way traffic between AI and neuroscience:</b> an RL-trained recurrent network with episodic memory is used as a hypothesis generator for human cognition, and the resulting index code speaks back to architecture design (key–value memory). That bidirectionality is the journal's signature.</li>
+      <li><b>Overturns a dominant theory with a falsifiable alternative:</b> the paper does not merely add a model — it shows the field's canonical inference (behaviour ⇒ temporal context) is under-determined, and supplies the representational test that discriminates.</li>
+      <li><b>Model–human alignment on a public benchmark:</b> validation against the PEERS dataset (186 participants) prevents the work from being a self-contained simulation study.</li>
+      <li><b>Fully reproducible artifact:</b> open code (GitHub + Zenodo DOI), Python 3.10, hundreds of independently seeded models with hyperparameter sweeps — the reproducibility bar the journal now enforces for computational claims.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary "data"</dt><dd><strong>Simulated agents, not observational data.</strong> The main evidence base is a population of neural networks trained on a free-recall task; the empirical dataset serves as an external validation set rather than as training data.</dd>
+      <dt>Human dataset</dt><dd><strong>PEERS</strong> — the Penn Electrophysiology of Encoding and Retrieval Study (Kahana et al., <em>J. Exp. Psychol. LMC</em>, 2024), publicly downloadable as a single archive. Used for comparison with model behaviour. <strong>186 participants</strong> enter the behaviour–performance correlation analysis (Extended Data Fig. 5: forward asymmetry <em>r</em>(184)=0.15; temporal organization score <em>r</em>(184)=0.22; both <em>p</em>&lt;0.0001). <strong>Four</strong> individual participants are shown as exemplars matching each model strategy (Extended Data Fig. 3), selected manually by filtering on forward asymmetry and temporal organization score.</dd>
+      <dt>Model population</dt><dd><strong>100 networks</strong> trained under one identical condition (discount factor = 1.0, % working memory flushed = 0.9); <strong>83 retained</strong> after excluding models with free-recall performance below 40% (Extended Data Fig. 4). Across-model correlations with performance: forward asymmetry <em>r</em>(81)=0.71; temporal organization <em>r</em>(81)=0.46; variance explained by index <em>r</em>(81)=0.51; index cross-decoding accuracy <em>r</em>(81)=0.38 (all <em>p</em>&lt;0.0001).</dd>
+      <dt>Ablation seeds</dt><dd><strong>20 random seeds per setting</strong> for the key–value memory variant (Extended Data Fig. 1), the external/semantic context manipulations, and the semantic-amplitude sweep (Extended Data Fig. 6).</dd>
+      <dt>Decoding data</dt><dd>Item-identity and index decoders trained with <strong>cross-validation on 5,000 trials</strong>, one separate decoder per time step (Extended Data Fig. 2).</dd>
+      <dt>Stimulus structure</dt><dd>Semantic-input control uses two synthetic features per item — a 4-dimensional feature shared by every 16 items and a 16-dimensional feature shared by every 4 items, plus Gaussian noise, producing <strong>three levels of semantic similarity</strong>.</dd>
+      <dt>Time window</dt><dd>Not applicable — synthetic training runs; PEERS is a standing laboratory corpus. Article published 2026-07-20.</dd>
+      <dt>Availability</dt><dd>PEERS is public (link below). Code is open on GitHub with an archived Zenodo release (<a href="https://doi.org/10.5281/zenodo.20422489" target="_blank">10.5281/zenodo.20422489</a>); all simulations and analyses in <strong>Python 3.10</strong>. Funding: the authors declare no relevant funding.</dd>
+      <dt>Honest gaps</dt><dd>The scraped record contains the abstract, figure titles and Extended Data captions but <strong>not the Methods body</strong>. Therefore the <strong>list length, vocabulary size, hidden-state dimensionality, number of training trials/episodes, and the total count of strategies formally named</strong> are <em>not</em> stated here and are deliberately not invented. Verify these in the published Methods and Supplementary Information (Supplementary Figs. 1–5).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>PEERS (Penn Electrophysiology of Encoding and Retrieval Study)</td><td>Human free-recall benchmark for model–behaviour comparison</td><td>186 participants in the reported correlation analysis; 4 exemplar participants illustrated</td><td><a href="https://memory.psych.upenn.edu/files/PEERS.data.tgz" target="_blank">memory.psych.upenn.edu</a></td></tr>
+        <tr><td>Simulated RNN population (this study)</td><td>Primary evidence — strategy discovery &amp; representational analysis</td><td>100 models per condition (83 analysed); 20 seeds per ablation setting</td><td><a href="https://github.com/Veritaria/rnn-free-recall" target="_blank">github.com/Veritaria/rnn-free-recall</a></td></tr>
+        <tr><td>Archived code release</td><td>Reproducibility artifact (Python 3.10)</td><td>Full simulation + analysis pipeline</td><td><a href="https://doi.org/10.5281/zenodo.20422489" target="_blank">Zenodo 10.5281/zenodo.20422489</a></td></tr>
+        <tr><td>Synthetic semantic / context vectors</td><td>Controlled inputs testing what shifts strategy</td><td>2 features per item (4-D shared by 16 items; 16-D shared by 4 items); 3 similarity levels</td><td>Generated in-code (see repository)</td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: every number above is quoted from the article's own Data availability statement and Extended Data captions. Where the paper does not state a quantity, this page says so rather than estimating.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Task-optimized recurrent agent.</b> A <strong>GRU</strong>-based recurrent network coupled to an episodic memory store is trained end-to-end on a two-phase free-recall task (study phase → response phase), rather than being hand-specified to reproduce recall curves.</li>
+      <li><b>Reinforcement learning objective.</b> Recall is framed as sequential decision-making and optimized with policy-gradient/actor–critic RL (the A3C family, Mnih et al. 2016). The <strong>discount factor</strong> is the key normative knob: γ→1 rewards recalling the whole list, low γ rewards grabbing the next few items.</li>
+      <li><b>Recency ablation via working-memory flushing.</b> A controlled fraction of the recurrent state is wiped at the study/response boundary (<code>% WM flushed</code>, e.g. 0.9), removing the network's ability to exploit recency and forcing it to build a retrieval scaffold.</li>
+      <li><b>Behavioural fingerprinting.</b> Models and humans are scored on the same classic metrics — <strong>conditional recall probability (lag-CRP)</strong>, <strong>forward asymmetry</strong>, and <strong>temporal organization score</strong> — enabling like-for-like model/human comparison and strategy classification.</li>
+      <li><b>Representational decoding (the discriminative test).</b> Linear decoders trained with cross-validation on 5,000 trials recover <strong>item identity</strong> vs. <strong>item index (studied position)</strong> from hidden states at each time step; <strong>cross-decoding</strong> (train at one position, test at another) diagnoses whether the index code is <em>stimulus-invariant</em> — the property that defines the memory-palace solution.</li>
+      <li><b>Geometry analysis.</b> <strong>PCA trajectories</strong> of hidden states in study and response phases, plus state-similarity and key/value cosine-similarity matrices, expose the scaffold geometry rather than treating the network as a black box.</li>
+      <li><b>Architecture ablation.</b> A <strong>key–value memory</strong> variant is trained to test whether the strategy is architecture-specific; keys carry more <em>index</em> information and values more <em>identity</em> information — a clean functional dissociation, and the same memory-palace behaviour emerges.</li>
+      <li><b>Causal manipulations of the input.</b> Injecting a slowly drifting <strong>external temporal context</strong> pushes models back toward TCM-like strategies (Fig. 5), and enabling <strong>content-based (similarity) memory search</strong> discourages the memory palace (Fig. 6) — the paper does not merely observe the strategies, it shows what causes each.</li>
+      <li><b>Population statistics over seeds.</b> Every claim is made over ensembles (n = 20 or n = 83–100 models) with error bars and per-model dots, treating "which strategy a network learns" as a distribution rather than a single run.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig1.png" target="_blank">
+        <img src="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig1.png" alt="Fig.1 Task and model schematic" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Task and model schematic — the two-phase free-recall task and the RNN-plus-episodic-memory agent trained to solve it.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig2.png" target="_blank">
+        <img src="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig2.png" alt="Fig.2 Different strategies of free recall" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Different strategies of free recall — the core result: distinct lag-CRP signatures (memory palace, TCM-like forward, TCM-like backward) from one training objective.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig3.png" target="_blank">
+        <img src="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig3.png" alt="Fig.3 Model representations and factors influencing strategy" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Model representations and factors influencing strategy — index vs. identity coding, and how discount factor and working-memory flushing select the strategy.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig4.png" target="_blank">
+        <img src="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig4.png" alt="Fig.4 Performance and noise robustness of different strategies" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Performance and noise robustness — the index-code (memory palace) strategy is the top performer and degrades most gracefully under noise.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig5.png" target="_blank">
+        <img src="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig5.png" alt="Fig.5 External temporal context shifts models towards TCM-like strategies" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> External temporal context shifts models towards TCM-like strategies — a causal demonstration that the environment, not the architecture, picks the mechanism.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig6.png" target="_blank">
+        <img src="assets/a-neural-network-model-of-free-recall-learns-multiple-memory-strategies__s42256-026-01274-0/fig6.png" alt="Fig.6 Content-based memory search discourages the memory palace strategy" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Content-based memory search discourages the memory palace strategy — similarity-driven retrieval competes with positional scaffolding.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>no main-text table</b> (tables_count = 0). Supporting material comprises <b>6 main figures</b>, <b>6 Extended Data figures</b>, and Supplementary Figs. 1–5 plus a Reporting Summary and Peer Review File.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatiotemporal analysis, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatial entropy).</p>
+
+    <div class="idea">
+      <h3>① Give the index code a metric: from ordinal position to a geometric scaffold</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's winning solution is a <strong>stimulus-invariant index code</strong> over <em>ordinal</em> studied position — a 1-D ladder. But the human memory palace it is named after is explicitly <strong>2-D/3-D and spatial</strong>: loci sit in a room, with distances, adjacencies and landmarks. A direct extension: replace the ordinal index with a <strong>learned metric scaffold</strong> (a low-dimensional embedding with a distance function), and test whether recall accuracy, noise robustness (Fig. 4) and capacity improve when the scaffold has geometry rather than mere order. Concretely, re-run the Fig. 3 representational analysis asking whether the network's index subspace is <em>ring-like, line-like or manifold-like</em>, and whether models with richer scaffold geometry survive longer lists. This would test whether the paper's claim "index coding is optimal" is really "a <em>metric</em> scaffold is optimal, and ordinal index is its degenerate 1-D case".</p>
+      <p><span class="lab mine">Added value to my research</span>This is exactly the abstraction I need for <strong>spatiotemporal sequence representation</strong> in mobility work. My GPS-trajectory and mobile-phone analyses currently encode a person's day as an ordered sequence of stays; the index-vs-metric distinction says I should compare (a) a positional encoding of visit order against (b) a learned metric scaffold over activity space, and see which better supports next-location and re-visit prediction. It also reframes <strong>spatial entropy</strong>: an agent with a stable metric scaffold should show low entropy in <em>scaffold coordinates</em> even when raw location entropy is high — a cleaner measure of behavioural regularity than the raw-visit entropy I currently compute.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning produces an orthogonalized state machine in the hippocampus — <a href="https://doi.org/10.1038/s41586-024-08548-w" target="_blank">10.1038/s41586-024-08548-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② The degeneracy warning, imported into spatial model identifiability</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's deepest methodological result is <strong>behavioural degeneracy</strong>: recency plus forward-asymmetric contiguity — long treated as the fingerprint of temporal-context drift — are reproduced by at least three different computations, and only representational decoding separates them. The paper demonstrates this for one task. The natural extension is to make it a <strong>general identifiability protocol</strong>: for a given behavioural summary statistic, train a large population of task-optimized models, cluster them by internal representation rather than by fit, and report the <em>size of the mechanism equivalence class</em> that the statistic admits. That turns "my model fits the curve" into a quantified claim about how much the curve could possibly constrain.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct indictment of a habit in my own field. In <strong>2SFCA/R2SFCA</strong> work, a fitted <strong>distance-decay curve</strong> is routinely read as evidence for a behavioural mechanism (willingness to travel), and in <strong>MGWR</strong> a bandwidth surface is read as evidence for a scale of process. The paper says: multiple distinct generative processes can produce the same decay curve or the same bandwidth map. Practical import for my pipeline — before publishing a decay parameter as a behavioural finding, run the model-population test: simulate several competing mechanisms (capacity competition, information asymmetry, habitual anchoring) and check whether the fitted curve can distinguish them at all. If not, report the equivalence class honestly rather than the single interpretation.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Discovering cognitive strategies with tiny recurrent neural networks — <a href="https://doi.org/10.1038/s41586-025-09142-4" target="_blank">10.1038/s41586-025-09142-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Make the objective function a covariate: strategy as a function of who is recalling and why</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper identifies two knobs that select a strategy — the <strong>discount factor</strong> (recall all vs. the next few) and <strong>working-memory flushing</strong> (recency availability) — and shows strategy correlates with performance in both models and 186 PEERS participants. But it does not close the loop <strong>per individual</strong>. The strong extension: fit each human participant's own <em>(γ, WM-flush)</em> pair by finding the trained model whose behavioural fingerprint best matches theirs, then ask whether the recovered γ predicts <strong>independent</strong> traits — the corpus's own references link temporal discounting to executive function and exploration. That would convert "individual differences in memory" into an estimated objective-function parameter with external validity, and give a principled target for mnemonic training (train people into the high-γ, low-recency regime).</p>
+      <p><span class="lab mine">Added value to my research</span>This is a template I can lift wholesale for <strong>health-service-seeking behaviour</strong>. In telehealth and primary-care access work I treat heterogeneity as a nuisance to be absorbed by fixed effects or by MGWR's varying coefficients. Instead: build a small population of task-optimized agents choosing among care options under different objectives (short-horizon urgency vs. long-horizon continuity of care, with/without local memory of past providers), fit an <em>objective parameter</em> per neighbourhood or per subgroup, and map that parameter. A "discount factor map" of care-seeking would be a far more actionable policy object than a residual map — it says <em>why</em> a district under-uses preventive care, not just that it does.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Neural sampling from cognitive maps enables goal-directed imagination and planning — <a href="https://doi.org/10.1038/s42256-026-01254-4" target="_blank">10.1038/s42256-026-01254-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Index vs. identity as a general disentanglement axis — and a decoding protocol for spatial models</h3>
+      <p><span class="lab paper">Extending this paper</span>The key–value ablation (Extended Data Fig. 1) delivers a crisp dissociation: <strong>keys carry index, values carry identity</strong>. This is an unusually clean case of a network spontaneously factorizing "where in the sequence" from "what". The paper reports it as a side observation; it deserves to be the centrepiece. Extension: measure the factorization with an explicit disentanglement objective — sparsity/superposition analysis of the hidden state — and test whether <strong>enforcing</strong> the index/identity split (e.g. an orthogonality or sparsity penalty) makes the memory-palace strategy emerge more reliably, faster, and at longer list lengths. That would move the paper from "the good strategy sometimes appears" to "here is how to induce it", which matters for anyone building episodic memory into an agent.</p>
+      <p><span class="lab mine">Added value to my research</span>The <strong>where/what factorization</strong> is the central unsolved problem in my geospatial foundation-model fine-tuning. When I adapt a pretrained remote-sensing or mobility encoder, the embedding entangles <em>location identity</em> (this is Wuhan) with <em>spatial-structural role</em> (this is a dense mixed-use core), which is precisely why models transfer badly across cities. The paper's protocol gives me a concrete diagnostic — train separate linear decoders for place-identity and for structural-role, then run <strong>cross-decoding across cities</strong>; a truly transferable geospatial representation should show high cross-city role decoding and low identity leakage. That is a measurable transferability metric, not a vibe, and it plugs straight into my explainable-ML agenda.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A unifying framework from neural superposition to sparse interpretable codes — <a href="https://doi.org/10.1038/s42256-026-01259-z" target="_blank">10.1038/s42256-026-01259-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Put the scaffold back in space: route-based recall as a model of activity-space memory</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reaches for a spatial metaphor (memory palace) while its task is entirely non-spatial — items arrive in a list, and the environment supplies no structure to hang memories on. The most creative extension is to <strong>give the agent a real environment</strong>: let items be encountered while traversing a graph or a 2-D layout, so that a genuine external scaffold is available for free. Then ask the paper's own question — does the network still <em>invent</em> an internal index, or does it offload the scaffold to the world? Fig. 5 already shows that supplying external temporal context pulls models toward TCM; supplying external <em>spatial</em> context is the untested and more interesting case, and it would tell us when cognitive offloading beats internal indexing. Testing capacity limits (how long a list a scaffold supports) and interference across repeated environments would round it out.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the bridge to my <strong>activity-space and accessibility</strong> work. If human recall of visited places is scaffolded by route order rather than by Euclidean or network distance, then perceived accessibility is a function of <em>position in a habitual sequence</em>, not just travel time — a facility on the daily commute chain is cognitively "closer" than an equidistant facility off-chain. That is a testable amendment to my 2SFCA family: add a <strong>sequence-position term</strong> to the impedance function, estimated from mobile-phone or GPS trajectory chains, and check whether it improves prediction of realized primary-care and mental-health utilization over pure travel-time decay. It also reframes <strong>15-minute-neighbourhood</strong> evaluation: proximity that is off the habitual route may deliver far less real access than the map suggests.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient robot navigation inspired by honeybee learning flights — <a href="https://doi.org/10.1038/s41586-026-10461-3" target="_blank">10.1038/s41586-026-10461-3</a> · Contrasting social and non-social sources of predictability in human mobility — <a href="https://doi.org/10.1038/s41467-022-29592-y" target="_blank">10.1038/s41467-022-29592-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

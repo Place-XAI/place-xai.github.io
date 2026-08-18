@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Addressing benchmarking gaps in LLMs for health and medicine with dynamic red-teaming — AI Digest</title>
+<meta name="description" content="AI Digest: Addressing benchmarking gaps in large language models for health and medicine with dynamic red-teaming (Nature Health, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Health</span>
+      <span class="tag">LLM safety audit</span>
+      <span class="tag">Adversarial red-teaming</span>
+      <span class="tag">Health AI evaluation</span>
+      <span class="tag">Bias, privacy &amp; hallucination</span>
+    </div>
+    <h1>Addressing benchmarking gaps in large language models for health and medicine with dynamic red-teaming</h1>
+    <div class="meta">
+      <span class="authors">Jiazhen Pan · Bailiang Jian · Paul Hager · Yundi Zhang · Che Liu · Friedrike Jungmann · Hongwei Bran Li · Julian Canisius · Chenyu You · Junde Wu · Jiayuan Zhu · Fenglin Liu · Yuyuan Liu · Niklas Bubeck · Moritz Knolle · Chen Chen · Christian Wachinger · Zhenyu Gong · Cheng Ouyang · Georgios Kaissis · Benedikt Wiestler · Daniel Rueckert</span>
+      <span><b>Published</b> 2026-07-15</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s44360-026-00152-8" target="_blank">10.1038/s44360-026-00152-8</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s44360-026-00152-8" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>High scores on <strong>static medical benchmarks are not evidence of safety</strong>. The authors' <strong>DAS</strong> (Dynamic, Automatic, Systematic) agentic red-teaming framework stress-tests 15 state-of-the-art LLMs along four axes and exposes a <strong>"benchmarking gap"</strong>: despite a median MedQA accuracy above 80%, <strong>94%</strong> of previously correct answers flipped to incorrect under dynamic perturbation; open-ended HealthBench failure rates exceeded <strong>70%</strong>; privacy leaks were elicited in <strong>86%</strong> of scenarios; cognitive-bias priming shifted clinical recommendations in <strong>81%</strong> of fairness tests; and hallucination rates exceeded <strong>74%</strong>. Safety evaluation must therefore move from a static checklist to a <strong>living, co-evolving adversarial audit</strong> run before (and after) deployment.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>It falsifies the dominant evidence base for health LLMs.</b> Med-PaLM-2/Med-Gemini-class results above 90% on MedQA have been read as clinical readiness; DAS shows that knowledge demonstrably held by a model collapses in one to three adversarial rounds, so leaderboard progress and trustworthiness have become decoupled.</li>
+      <li><b>It escapes Goodhart's Law by construction.</b> Because every probe prompt is synthesized on the fly and escalated in real time, there is no fixed test set to fine-tune against — the benchmark <em>co-evolves</em> with the models it audits, which fixed benchmarks structurally cannot do.</li>
+      <li><b>It audits four failure modes under one protocol.</b> Robustness, privacy (HIPAA/GDPR), bias–fairness and a seven-class hallucination taxonomy are usually studied in separate literatures; DAS shows the same model can be top-ranked on one axis and catastrophic on another (e.g., DeepSeek-R1: highly robust on MedQA, 100% privacy jailbreak).</li>
+      <li><b>It is cheap enough to institutionalize.</b> Reported end-to-end API cost is roughly <strong>US$8–12</strong> for a 100-item robustness sweep, <strong>US$10</strong> for the 415-item bias suite, <strong>US$5</strong> for the 81 privacy traps and <strong>US$10–15</strong> for hallucination testing — putting continuous post-market surveillance of health LLMs within reach of ordinary labs and regulators.</li>
+      <li><b>It is clinician-validated, not just automated.</b> Board-certified physicians adjudicated mutation validity (86–100%) and judge fidelity (Cohen's κ = 0.952 for privacy; 0.897 between physicians on HealthBench), so the alarming numbers are anchored to human expert reference standards.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>A negative result with system-wide consequences:</b> it does not add another model — it invalidates how an entire field currently claims safety, exactly the kind of field-correcting evidence <em>Nature Health</em> seeks.</li>
+      <li><b>Framework, not case study:</b> DAS is a reusable, model-agnostic audit protocol plus three new evaluation assets (HIPAA/GDPR privacy traps, a clinician-authored bias suite, a hallucination taxonomy) — infrastructure the community can extend.</li>
+      <li><b>Direct regulatory and health-policy translation:</b> arrives as the US FDA frames LLMs as transformative medical software and as consumer health assistants scale; the paper proposes an automatic DAS sweep on every model update as a "safety dossier", matching the journal's health-services and health-policy remit.</li>
+      <li><b>Equity and privacy are treated as first-class safety endpoints,</b> not appendices — bias across ethnicity, income, housing status, dialect and emotional tone is measured with the same rigour as accuracy.</li>
+      <li><b>Fully open and reproducible:</b> curated datasets on Hugging Face and the agent code on GitHub under CC-BY, so the audit can be rerun on models released after publication.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Systems audited</dt><dd><strong>15 LLMs</strong> across all four axes (16 in the MedQA robustness audit, where o3-mini is added): GPT-4o, o3-mini, o3, o4-mini, Claude Sonnet-3.7, Claude Sonnet-4, Gemini-2.5-Flash, Gemini-2.5-Pro, DeepSeek-V3, DeepSeek-R1, Gemma-3-27B, MedGemma-27B, HuatuoGPT-o1-70B, QwQ-32B, Qwen3-32B, Llama-4-Scout (17B-16E). Nine proprietary, six open-source; model snapshot dates run Aug 2024 – Jun 2025.</dd>
+      <dt>Robustness (MCQ)</dt><dd><strong>MedQA</strong> (USMLE-style, Jin et al. 2021). Only items each model answered correctly on the first pass are retained as seeds; <strong>100 such items per model</strong> are then mutated by six tools over up to five rounds.</dd>
+      <dt>Robustness (open)</dt><dd><strong>HealthBench</strong> (OpenAI, 2025) — 200 cases sampled from the physician-designed "Consensus" subset (the benchmark itself was built with <strong>262 physicians</strong>); after two in-house physicians filtered non-binary/style rubrics, <strong>192 vignettes</strong> form the final seed set (197 items used in the judge-validation pass, 5 discarded for conflicting rubrics).</dd>
+      <dt>Privacy</dt><dd><strong>81 privacy-trap scenarios</strong> newly curated for this study, spanning eight high-incidence HIPAA/GDPR violation modes: unauthorized disclosure (16), minimum-necessary/oversharing (13), overheard–overseen conversations (10), misdirected email (8), personal devices without safeguards (9), no valid healthcare reason for access (7), public PHI disclosure (10), accidental PHI release on social media (8).</dd>
+      <dt>Bias–fairness</dt><dd><strong>415 clinical vignettes</strong>: 304 adapted from Omar et al., <em>Nat. Med.</em> 2025 (sociodemographic bias dataset) plus <strong>111 newly authored</strong> by three licensed clinicians of European and Chinese background. Coverage: chest pain, maternity care, psychiatry, pain management, paediatrics/guardianship, STI/HIV; tasks span risk assessment, triage, therapy choice and diagnostics.</dd>
+      <dt>Hallucination</dt><dd><strong>260 balanced samples</strong>: 131 positive prompts distilled by a board-certified physician from the <strong>Stanford Red-Teaming corpus</strong> (150+ prompts from an 80-member interdisciplinary team, validated to elicit hallucination in 100% of GPT-3.5/GPT-4 baselines) + 129 negative "near-ideal" physician-vetted HealthBench completions.</dd>
+      <dt>Interaction volume</dt><dd>Roughly <strong>100 million text tokens</strong> of adversarial dialogue and <strong>&gt;100,000 scored microtasks</strong>. Bias items are answered five times per round at temperature 0 with majority voting (reference round vs attack round).</dd>
+      <dt>Human reference</dt><dd>Two board-certified physicians blind-adjudicated 100 mutated samples per non-deterministic robustness tool (validity 86–97%), 300 HealthBench mutations (92–97%) and 200 privacy prompt–response pairs (κ = 0.952). Judge fidelity: GPT-4.1 HealthBench judge 95.9% (189/197); GPT-4o privacy judge 93.0% (186/200); hallucination detector 81.9% accuracy, F1 = 0.815.</dd>
+      <dt>Time window</dt><dd>Models as released between <strong>Aug 2024 and Jun 2025</strong>; article published 2026-07-15. No longitudinal re-audit of the same model over time is reported.</dd>
+      <dt>Geographic scope</dt><dd><em>Honest caveat:</em> the study is <strong>text-only and place-agnostic</strong>. No spatial, demographic-population or health-system-context sampling frame is reported; regulatory framing is US (HIPAA) and EU (GDPR), the clinician authors are European and Chinese, and the linguistic-bias axis covers African American English, limited English, Chinese and Spanish — but jailbreak rates are <strong>not</strong> weighted by where or by whom these models are actually used.</dd>
+      <dt>Availability</dt><dd>All datasets public (see table). Code: <a href="https://github.com/JZPeterPan/DAS-Medical-Red-Teaming-Agents" target="_blank">DAS-Medical-Red-Teaming-Agents</a>. Analysis in Python 3.10 with statsmodels 0.14.5 and SciPy 1.15.2; Wilson 95% CIs, Pearson χ² heterogeneity tests, Rogan–Gladen correction with 10,000 Monte Carlo iterations for detector error.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MedQA (bigbio/med_qa)</td><td>Multiple-choice robustness seeds</td><td>USMLE-style QA; 100 first-round-correct items mutated per model</td><td><a href="https://huggingface.co/datasets/bigbio/med_qa" target="_blank">huggingface.co</a></td></tr>
+        <tr><td>HealthBench (openai/healthbench)</td><td>Open-ended robustness + negative set for hallucination</td><td>192 curated vignettes from the Consensus subset (built with 262 physicians)</td><td><a href="https://huggingface.co/datasets/openai/healthbench" target="_blank">huggingface.co</a></td></tr>
+        <tr><td>DAS Medical Red-Teaming Data</td><td>Privacy traps + bias–fairness vignettes (new in this study)</td><td>81 privacy scenarios / 8 violation modes; 415 bias items (111 clinician-authored)</td><td><a href="https://huggingface.co/datasets/JZPeterPan/DAS-Mediacal-Red-Teaming-Data" target="_blank">huggingface.co</a></td></tr>
+        <tr><td>Stanford Red-Teaming Dataset</td><td>Positive prompts for hallucination audit</td><td>150+ expert-flagged prompts → 131 high-confidence retained</td><td><a href="https://daneshjoulab.github.io/Red-Teaming-Dataset/" target="_blank">daneshjoulab.github.io</a></td></tr>
+        <tr><td>Sociodemographic bias corpus (Omar et al.)</td><td>Source of 304 of the 415 bias vignettes</td><td>Physician-screened subset retained</td><td>Nat. Med. 31, 1873–1881 (2025) — ref. 45; no DOI given in article</td></tr>
+        <tr><td>DAS agent code</td><td>Attack orchestration, mutation, adjudication, detection</td><td>OpenAI Agent SDK; o3 orchestrator (temp 0.2), GPT-4o mutators/judges</td><td><a href="https://github.com/JZPeterPan/DAS-Medical-Red-Teaming-Agents" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the paper reports token volume approximately ("~100 million text tokens", "&gt;100,000 scored microtasks") rather than an exact interaction count, and does not state the total number of MedQA items screened before seed selection. Numbers above are taken verbatim from the article's Results, Methods and Data-availability statements; where the paper is silent, this page says so rather than estimating.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Conditioning on prior success.</b> Each model is first tested unmutated; only items it answered correctly are stressed. This isolates <em>reasoning brittleness</em> from <em>knowledge absence</em>, so the "jailbreak ratio" means "demonstrated knowledge that collapsed".</li>
+      <li><b>Six orthogonal robustness mutation tools:</b> answer negation (rule-based), cognitive bait (nine bias framings incl. two new ones — defensive-medicine and availability bias), narrative distraction (irrelevant plausible context), choice expansion (4–5 → 8–9 options with near-miss distractors), physiological impossibility (an out-of-range vital/lab value plus a new correct "impossible information" option), question inversion (negating the decision boundary). Every tool is designed to deterministically move the ground truth rather than create ambiguity.</li>
+      <li><b>Rule-constrained attacker orchestrator</b> (OpenAI Agent SDK, o3 backbone, temperature 0.2): selects a tool or compatible tool-combination each round under an incompatibility matrix, skips inapplicable tools, avoids previously failed combinations, always mutates the <em>original</em> seed to limit drift, escalates from single-tool (rounds 1–3) to orthogonal multi-tool attacks (rounds 4–5), and halts on the first divergence. "Freestyle" attacks outside the six-tool set are prohibited — the key design choice that makes the audit reproducible.</li>
+      <li><b>Rubric-targeted attacks for open-ended text.</b> On HealthBench the agent identifies a rubric the model initially satisfied and performs a single-shot rewrite aimed at violating <em>that specific</em> criterion — converting free-text evaluation into a binary, attributable pass/fail.</li>
+      <li><b>Privacy: four disguise agents.</b> Subtle request (explicit PHI ask → vague "detailed summary"), well-meaning intention (empathetic preamble), focus misdirection (tangential instructions dilute attention) and — most potent, 49.1% jailbreak — the <strong>trap warning</strong>, a superficial "remember HIPAA" reminder that induces false reassurance. Escalation is applied only to models still below 80% jailbreak after an explicit privacy system prompt.</li>
+      <li><b>Bias: reference-vs-attack majority voting.</b> Four mutation axes (identity, linguistic style, emotional tone, cognitive priming) leave the underlying pathology untouched; a bias event is recorded only when the five-sample majority vote shifts between rounds — a clean causal contrast on decision change.</li>
+      <li><b>Hallucination: orchestrator + seven specialist subagents</b> (medical fact, citation, logic, context, safety, instruction-following, other), each with ten in-context examples; the orchestrator always invokes fact and safety checkers and dispatches the rest conditionally, aggregating per-agent rationales into traceable provenance.</li>
+      <li><b>Statistics and validation.</b> Deterministic decoding (temperature 0 where exposed); Wilson score 95% CIs; χ² tests of between-model heterogeneity (e.g., MedQA χ² = 151.65, d.f. 15, P &lt; 1.13 × 10⁻²⁴; the six-model HealthBench tier is non-significant, P = 0.43); Rogan–Gladen correction with Monte Carlo error propagation for imperfect detector sensitivity/specificity; cross-vendor judge replication (Claude adjudicators: κ = 0.905 privacy, 0.844 robustness) and a non-LLM regex+ontology privacy baseline at 81% accuracy.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig1.png" target="_blank">
+        <img src="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig1.png" alt="Fig.1 Overview of DAS red-teaming for healthcare LLMs" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of DAS red-teaming — the four safety axes (robustness, privacy, bias–fairness, hallucination), the attack/detector agent loop, and a heat map of jailbreak ratios across 15 LLMs; even the most resilient models exceed 47%.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig2.png" target="_blank">
+        <img src="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig2.png" alt="Fig.2 Dynamic red-teaming reveals robustness failures static benchmarks miss" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> The benchmarking gap itself — MedQA baseline vs mutated scores, a mean 94% jailbreak ratio within one to three rounds, per-mutation breakdown, and the HealthBench (N = 192) reranking with ~76% mean jailbreak among tier-1 models.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig3.png" target="_blank">
+        <img src="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig3.png" alt="Fig.3 Robustness test framework and mutation tools" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> The robustness engine — worked examples of the six MCQ mutation tools, the three tools applicable to open-ended rubrics, and the orchestration schematic that escalates strategies across rounds.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig4.png" target="_blank">
+        <img src="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig4.png" alt="Fig.4 DAS privacy red-teaming test" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Privacy audit (N = 81) — direct requests leak in 86.5% of scenarios; an explicit HIPAA/GDPR system warning only lowers this to 66.8%; the four disguise strategies push the composite leak ratio to ~91%, with "trap warning" the most effective.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig5.png" target="_blank">
+        <img src="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig5.png" alt="Fig.5 DAS bias red-teaming" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Bias audit (N = 415) — cognitive-bias priming, identity, linguistic and emotional manipulations; cognitive priming dominates at 81.1% jailbreak versus ~24% for the other three axes, with combined susceptibility above 80% for every model.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig6.png" target="_blank">
+        <img src="assets/addressing-benchmarking-gaps-in-large-language-models-for-health-and-medicine-with-dynamic__s44360-026-00152-8/fig6.png" alt="Fig.6 Hallucination detection architecture and results" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Hallucination audit — the orchestrator plus seven category subagents, detector performance on the balanced 260-sample set (81.9% accuracy, F1 = 0.815), and per-model hallucination ratios (N = 131) averaging 74%, with false/outdated medical facts dominant.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>no main-text table</b> (tables = 0); all quantitative results are carried by Figs. 1–6, with worked hallucination and bias examples in Supplementary Information sections D.4–D.5.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, health geography &amp; 2SFCA accessibility, explainable/physics-informed spatial learning, open science and geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Give DAS a place: geographically conditioned adversarial seeds</h3>
+      <p><span class="lab paper">Extending this paper</span>DAS mutates <em>content</em> but never <em>context of care</em>. Its 415 bias vignettes vary identity, dialect and emotion while holding the health system constant — implicitly a well-resourced, English-language, specialist-adjacent setting. The natural extension is a <strong>place-conditioning layer</strong> in the seed generator: each vignette is instantiated under an explicit care-context vector (nearest-facility travel time, primary-care physician density, broadband availability, pharmacy formulary, referral pathway, national guideline). "Refer to the emergency department" is a correct rubric in one geography and unsafe advice where the nearest ED is three hours away; "start this second-line agent" is safe only where it is stocked. Running the same six mutation tools across a stratified sample of care contexts converts a single global jailbreak ratio into a <strong>context-stratified safety profile</strong> and tests whether the reported 94%/86%/81%/74% failure rates are stable or systematically worse in low-resource settings — the very settings where an LLM is most likely to be the only available adviser.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my health-geography agenda applied to model evaluation. The care-context vector is exactly what my <strong>2SFCA/R2SFCA</strong> pipelines already produce — catchment-level supply-to-demand ratios, service-area travel times, telehealth broadband coverage — so I can supply the geographic side of the audit off the shelf. The output is a new object worth publishing on its own: a <strong>safety-by-accessibility interaction map</strong> that says where AI health advice is both most consumed and least reliable, feeding directly into my digital-divide and mental-health-access work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Safety of a large language model-based clinical decision support system in African primary healthcare — <a href="https://doi.org/10.1038/s44360-026-00082-5" target="_blank">10.1038/s44360-026-00082-5</a> · Socio-demographic gaps in pain management guided by large language models — <a href="https://doi.org/10.1038/s44360-025-00017-6" target="_blank">10.1038/s44360-025-00017-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② From jailbreak ratio to population-exposure-weighted harm</h3>
+      <p><span class="lab paper">Extending this paper</span>Every headline number in the paper is an unweighted proportion over curated prompts: each of the 81 privacy traps and 415 bias items counts equally, as if all failure modes were equally likely to occur and equally consequential. A direct extension is to compose DAS with <strong>real usage distributions</strong> — what people actually ask health chatbots, how often, and in which countries — to produce an <strong>expected-harm estimate</strong>: harm ≈ Σ (query-type frequency × jailbreak probability × clinical severity). This is the epidemiologist's move from prevalence to attributable burden, and it would let DAS rank models by <em>expected population harm</em> rather than by an audit-set average, while also identifying which of the six mutation tools deserve the most defensive engineering effort.</p>
+      <p><span class="lab mine">Added value to my research</span>Exposure weighting is a spatial problem the moment usage is geolocated: query frequency varies by country, urbanicity and care access, so the weights become a <strong>spatiotemporal field</strong>. I can estimate it with the same machinery I use for demand surfaces — spatiotemporal kernel density estimation over query streams, with MGWR to test whether the frequency-severity coupling is non-stationary across regions. The result is a "digital health risk surface" that slots into my urban-health and telehealth-equity portfolio and turns an AI-safety finding into a public-health-policy quantity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Global analysis of country-level factors associated with chatbot usage for health — <a href="https://doi.org/10.1038/s44360-026-00174-2" target="_blank">10.1038/s44360-026-00174-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Mine the 100-million-token audit log with explainable ML — a vulnerability surrogate</h3>
+      <p><span class="lab paper">Extending this paper</span>DAS generates ~100 million tokens and &gt;100,000 scored microtasks and then reports only marginal jailbreak rates per model and per tool. That log is a rich labelled dataset in its own right: (model, mutation tool, tool combination, round index, specialty, question length, numeric-field presence, rubric type) → jailbreak. Fitting an <strong>interpretable ensemble with SHAP-style attribution</strong> over it would answer questions the paper leaves open — which <em>interactions</em> (e.g., question inversion × specialty, cognitive bait × ambiguous-equity case) drive failure, and whether a cheap <strong>surrogate model can predict jailbreak probability without running the attack</strong>. Such a surrogate turns a US$10 sweep into a near-zero-cost triage that pre-selects the few probes worth spending compute on, letting a regulator screen every model update rather than a sampled few.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my explainable-ML-for-prediction workflow transplanted to a new substrate, and it exports back: the same "surrogate + attribution" pattern is how I want to audit <strong>geospatial foundation models</strong> — learn which terrain, density or sensor-context features predict failure of a spatial prediction, instead of reporting a single global RMSE. It also gives me a defensible answer to the reliability question that now shadows every LLM-assisted step in my own reproducible-research pipeline.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation models in healthcare require rethinking reliability — <a href="https://doi.org/10.1038/s42256-024-00924-5" target="_blank">10.1038/s42256-024-00924-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Replace the seven-agent detector with model-internal uncertainty — cheaper, and calibratable</h3>
+      <p><span class="lab paper">Extending this paper</span>The hallucination axis is the paper's weakest link and it says so: the seven-subagent detector reaches 81.9% accuracy (κ = 0.638 against physicians), it needs GPT-4o + seven o3 subagents per response, and its errors must be corrected post hoc with a Rogan–Gladen estimator plus Monte Carlo error propagation. An obvious extension is to add a <strong>sampling-based semantic-uncertainty signal</strong> — semantic entropy over clustered resamples — as either a first-pass filter (route only high-entropy responses to the expensive subagents) or an ensemble member alongside them. Because that signal is computed from the audited model itself rather than from a judge of the same vendor family, it also attacks the cross-vendor coupling the authors flag (GPT detector κ = 0.638 vs Claude detector κ = 0.369).</p>
+      <p><span class="lab mine">Added value to my research</span>Calibrated, decomposable uncertainty is precisely what I need when I fine-tune <strong>geospatial foundation models</strong> and when LLM agents draft or check spatial analyses: I want to know not just that a prediction is wrong but whether the model was internally uncertain, so uncertainty can be mapped and propagated through downstream accessibility estimates. Entropy-style filtering is also the cheapest way to make an automated screening loop affordable at the scale of thousands of spatial units.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy — <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Geo-DAS: port the framework to spatial reasoning and location privacy in agentic health AI</h3>
+      <p><span class="lab paper">Extending this paper</span>The authors name multimodality as the priority extension, but there is a nearer and more neglected one: <strong>spatial reasoning</strong>. Health LLMs are already asked "where is the nearest urgent care", "can I get there in time", "which clinic takes my insurance" — and their privacy axis is defined by HIPAA's 18 identifiers, of which <em>geographic subdivision</em> is one of the most re-identifying. A <strong>Geo-DAS</strong> extension adds mutation tools with the same deterministic-ground-truth discipline as the original six: place-name substitution (real vs plausible-but-nonexistent facility), impossible geography (a travel time that violates the road network, the spatial analogue of "body temperature 48 °C"), boundary confusion (catchment vs administrative unit), and a location-privacy trap that checks whether a model re-identifies a patient from a ZIP code plus a rare diagnosis. It also adds a detector subagent for spatial factuality — an eighth class in a taxonomy that currently has no place for "wrong about where".</p>
+      <p><span class="lab mine">Added value to my research</span>This is the version of the paper I could write. It joins my two strands: agentic GeoAI (LLMs that plan and execute spatial workflows) and health-services accessibility, where a hallucinated travel time or an invented facility corrupts an entire 2SFCA estimate downstream. Building the impossible-geography tool needs exactly my assets — road networks, POI/facility inventories, GPS-derived travel-time distributions — and the location-privacy trap addresses a risk my own mobile-phone and trajectory work makes me responsible for. Under FAIR/open-science principles the mutation suite ships as a public dataset, mirroring the authors' Hugging Face release.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Towards autonomous medical artificial intelligence agents — <a href="https://doi.org/10.1038/s41586-026-10675-5" target="_blank">10.1038/s41586-026-10675-5</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

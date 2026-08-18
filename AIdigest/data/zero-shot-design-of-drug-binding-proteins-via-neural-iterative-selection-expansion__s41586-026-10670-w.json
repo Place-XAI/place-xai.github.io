@@ -1,0 +1,69 @@
+{
+  "id": "s41586-026-10670-w",
+  "slug": "zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w",
+  "html": "zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w.html",
+  "title": "Zero-shot design of drug-binding proteins via neural iterative selection−expansion",
+  "authors": ["Benjamin Fry", "Kaia Slaw", "Nicholas F. Polizzi"],
+  "journal": "Nature",
+  "journal_family": "Nature",
+  "published": "2026-06-24",
+  "year": 2026,
+  "doi": "10.1038/s41586-026-10670-w",
+  "url": "https://www.nature.com/articles/s41586-026-10670-w",
+
+  "categories": ["Protein design", "Geometric deep learning", "Computational drug discovery", "Computational biophysics"],
+  "keywords": ["zero-shot design", "small-molecule binding proteins", "graph neural network", "LASErMPNN", "NISE", "self-consistency", "co-structure prediction", "ligand pLDDT"],
+  "methods": ["heterograph message-passing neural network", "autoregressive sequence and side-chain dihedral decoding", "pretrained frozen ligand encoder", "iterative selection-expansion (coordinate ascent on a joint distribution)", "protein-ligand co-structure prediction (RoseTTAFold All-Atom, Boltz-2)", "self-consistency r.m.s.d. filtering", "confidence-based ranking (ligand pLDDT, P(bind))", "neural proofreading (low-temperature single-residue rescoring)", "rigid-body ligand docking (CARPdock) and COMBS/van der Mers placement", "fluorescence polarization binding assays", "X-ray crystallography", "time-resolved absorbance hydrolysis kinetics"],
+  "data_sources": ["Protein Data Bank protein-ligand co-crystal structures", "SPICE v2.0.1 quantum-chemistry dataset", "Cambridge Structural Database (CSD 1504071)", "PDB 6W70 / 4JNJ / 4L9K / 8TN6", "new PDB depositions 9NZE and 9NZG", "Zenodo processed training data (10.5281/ZENODO.17990180)", "Zenodo designs and analysis code (10.5281/ZENODO.18308430)"],
+  "data_scope": {
+    "training_data": "PDB protein-ligand co-crystal structures; exact count not stated in the main text; processed REDUCE-protonated training set released on Zenodo",
+    "ligand_encoder_pretraining": "SPICE v2.0.1 (drug-like molecules and peptides, quantum-chemistry atom properties), encoder frozen during sequence-design training",
+    "held_out_benchmarks": "streptavidin fold held out by sequence/structure/evolutionary similarity (up to 94% binding-site recovery in top-25 of 10,000 designs); PiB / PDB 8TN6 held out from LASErMPNN and RFAA (74% binding-site, 80% core recovery; native ranked 4th of 1,001)",
+    "scaffold_libraries": "40 AF2-validated four-helix bundles (exatecan); 50 Boltz-2-validated NTF2 backbones (apixaban, reused from prior published work for head-to-head comparison)",
+    "sampling_volume": "1,000 LASErMPNN sequences per selected structure per NISE round, top 3 structures carried forward; benchmark trajectory n = 1,500 designs per iteration (500 in round 1) over 35 rounds; 30,000 sequences from 10,000 CARPdock apixaban poses",
+    "experimental_tests": "exatecan: 4 NISE designs tested, 4 bound (100%), vs 16 COMBS-Rosetta designs with 3 monomeric binders; apixaban: 6 NISE designs tested, 5 bound (83%)",
+    "affinities": "EPIC Kd = 0.12 uM; EPIC(Q51N) 8.0 nM; EPIC(M97L) 7.4 nM; EPIC(Q51N/M97L) 1.2 nM; anti-design control EPIC(G104M) 57 uM; HSA 43 uM; APEX-apixaban Kd = 80 pM (95% CI 54-122 pM)",
+    "new_structures": "PDB 9NZE (exatecan-EPIC, 2.0 A) and 9NZG (exatecan-EPIC(Q51N), 2.2 A)",
+    "compute": "typical 14-iteration NISE trajectory approx. 5 h on four NVIDIA A6000 GPUs",
+    "functional_assay": ">99% of exatecan retained in the bioactive ring-closed form for at least 50 h in PBS pH 7.4 at 295 K, including with 500 uM human serum albumin",
+    "not_reported": "number of PDB training complexes, held-out test-set size, and any in vivo or pharmacokinetic data"
+  },
+
+  "core_conclusion": "Closing the loop between two reciprocal neural networks - a ligand-aware graph sequence designer (LASErMPNN) and a protein-ligand co-structure predictor (RFAA or Boltz-2) - enables zero-shot design of small-molecule binding proteins. The NISE algorithm climbs the joint distribution P(sequence, structure, ligand conformation) instead of following a physics-based energy function, yielding binders to exatecan (4/4, 100%) and apixaban (5/6, 83%) with affinities down to 1.2 nM and 80 pM, roughly 70-fold and 10,000-fold tighter than the previous best methods, and a designed binder that protects exatecan's labile lactone ring for over 50 hours.",
+  "why_it_matters": "Turns small-molecule binder design from a high-throughput screening problem into a computational one: 6 designs tested versus 9,024 for the prior method on identical backbones and target. Shows that the second neural network, not a Rosetta energy function, is what makes the loop optimize; delivers purely computational affinity maturation (neural proofreading, 100x gain), crystallographic confirmation at 2.0-2.2 A, a functional drug-stabilizing reagent, and fully open code, notebooks and data.",
+  "why_nature": "A long-standing barrier - zero-shot de novo small-molecule binder design - is broken rather than incrementally improved; the apixaban experiment is a strict head-to-head on previously published backbones so the gain cannot be attributed to a better starting point; the paper couples a probabilistic argument (coordinate ascent on a joint distribution) to architecture, wet-lab affinities, two crystal structures and a functional hydrolysis-protection assay; generality is demonstrated across two drugs, two folds and two interchangeable structure predictors; and there are immediate translational hooks (a cheap apixaban antidote candidate, an ADC-payload carrier) plus full open-source release.",
+
+  "research_themes": ["closed-loop-generative-design", "ligand-aware-graph-learning", "confidence-calibration", "counterfactual-explainability", "multi-objective-specificity", "zero-shot-generalization", "open-science-reproducibility"],
+
+  "added_value_to_my_research": [
+    "Learned selection-expansion controller -> principled search schedule and stopping rule for R2SFCA catchment design and EV-charging siting",
+    "Confidence calibration audit of pLDDT-style surrogates -> calibration-first explainable-ML protocol for spatial accessibility prediction",
+    "Neural proofreading as single-site counterfactual scan -> minimal-intervention explainability for facility add/remove/relocate in access networks",
+    "Positive/negative design gap objective -> efficiency-vs-equity trade-off recast as an explicit specificity gap for spatial interventions",
+    "Zero-shot generalization benchmarking and FAIR release -> unseen-region evaluation protocol for fine-tuned geospatial foundation models, plus a health-geography study of access to anticoagulant reversal"
+  ],
+
+  "related": [
+    {"doi": "10.1038/s42256-024-00843-5", "title": "Machine learning-aided generative molecular design", "journal": "Nature Machine Intelligence", "relation": "generative design loops and search-schedule control that could replace NISE's hand-tuned expansion", "in_corpus": true},
+    {"doi": "10.1038/s42256-023-00756-9", "title": "Learning characteristics of graph neural networks predicting protein-ligand affinities", "journal": "Nature Machine Intelligence", "relation": "what GNN affinity predictors actually learn - motivates auditing ligand pLDDT as a surrogate objective", "in_corpus": true},
+    {"doi": "10.1038/s43588-024-00627-2", "title": "MISATO: machine learning dataset of protein-ligand complexes for structure-based drug discovery", "journal": "Nature Computational Science", "relation": "benchmark data for calibrating design-time confidence metrics against measured affinity", "in_corpus": true},
+    {"doi": "10.1038/s43588-022-00274-5", "title": "Protein sequence design by deep learning", "journal": "Nature Computational Science", "relation": "direct methodological lineage of LASErMPNN's inverse-folding sequence design", "in_corpus": true},
+    {"doi": "10.1038/s41586-025-09697-2", "title": "Enzyme specificity prediction using cross-attention graph neural networks", "journal": "Nature", "relation": "ligand-aware graph models for specificity - basis for explicit negative design against near-isosteres", "in_corpus": true},
+    {"doi": "10.1038/s41586-025-09749-7", "title": "Semantic design of functional de novo genes from a genomic language model", "journal": "Nature", "relation": "parallel zero-shot generative biomolecular design and its generalization stress tests", "in_corpus": true},
+    {"doi": "10.1038/s43588-025-00777-x", "title": "Rapid traversal of vast chemical space using machine learning-guided docking screens", "journal": "Nature Computational Science", "relation": "screening-side counterpart: ML-guided search over chemical space versus designing the binder de novo", "in_corpus": true}
+  ],
+
+  "figures": [
+    {"file": "assets/zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w/fig1.png", "caption": "Self-consistency principle and the NISE loop; neural vs energy-based ISE over 35 rounds"},
+    {"file": "assets/zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w/fig2.png", "caption": "LASErMPNN heterograph architecture with pretrained ligand encoder; streptavidin and PiB held-out benchmarks"},
+    {"file": "assets/zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w/fig3.png", "caption": "Design of exatecan binders using NISE: structural refinement, binding curves and camptothecin-class specificity"},
+    {"file": "assets/zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w/fig4.png", "caption": "Neural proofreading (Q51N, M97L) and 2.0/2.2 A crystal structures of EPIC and EPIC(Q51N)"},
+    {"file": "assets/zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w/fig5.png", "caption": "EPIC protects exatecan's lactone ring from hydrolysis for over 50 hours, unlike human serum albumin"},
+    {"file": "assets/zero-shot-design-of-drug-binding-proteins-via-neural-iterative-selection-expansion__s41586-026-10670-w/fig6.png", "caption": "High-affinity apixaban binders on NTF2 folds; APEX binds at 80 pM and rejects exatecan"}
+  ],
+  "tables_in_main_text": 0,
+
+  "generated_by": "claude-opus",
+  "generated_at": "2026-06-16",
+  "language": "en"
+}

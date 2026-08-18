@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Towards principled knowledge editing methods for large language model reasoning — AI Digest</title>
+<meta name="description" content="AI Digest: Towards principled knowledge editing methods for large language model reasoning (Nature Machine Intelligence, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Knowledge editing</span>
+      <span class="tag">LLM reasoning</span>
+      <span class="tag">Mechanistic interpretability</span>
+      <span class="tag">Belief revision</span>
+    </div>
+    <h1>Towards principled knowledge editing methods for large language model reasoning</h1>
+    <div class="meta">
+      <span class="authors">Ningyu Zhang · Yunzhi Yao · Jiaxin Qin · Haoming Xu · Yuqi Zhu · Zeping Yu · Mengru Wang · Yuqi Tang · Jia-Chen Gu · Shumin Deng · Huajun Chen</span>
+      <span><b>Published</b> 2026-08-14</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-026-01276-y" target="_blank">10.1038/s42256-026-01276-y</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-026-01276-y" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Current knowledge editing treats a large language model as a <strong>modular store of independent facts</strong> — and that assumption is the root failure. Knowledge inside an LLM is an <strong>entangled, belief-dependent and context-sensitive system</strong>, so a locally "successful" edit can leave downstream multi-hop deductions, causal chains and free-form generation inconsistent with the edit. This Perspective argues that editing must become <strong>reasoning-consistent</strong>, and lays out three directions: <strong>(1) deductive-closure circuit editing</strong> for interdependent knowledge, <strong>(2) belief- and confidence-aware editing</strong> that conditions the update on what the model already (dis)believes, and <strong>(3) contextualized, expressive updates</strong> for complex knowledge forms — a pathway toward adaptive, self-evolving AI rather than one-fact-at-a-time patching.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Retraining is not a maintenance strategy.</b> Facts decay — a company moves, a guideline is revised, a policy changes. Knowledge editing promises surgical, cheap updates; if it silently breaks reasoning, then every "continuously updated" deployed model is quietly accumulating contradictions.</li>
+      <li><b>Names the failure mode precisely.</b> The paper's diagnosis is that <strong>edit success on the target fact ≠ consistency of its deductive closure</strong>. Fig. 3 makes it concrete: editing Tailscale Inc.'s headquarters from San Francisco to Toronto with MEMIT on Qwen-2.5-7B, then asking the edited model to write a paragraph about the company, exposes the gap between a patched weight and a coherent belief.</li>
+      <li><b>Reframes editing as belief revision, not memory overwrite.</b> Borrowing from the epistemological "web of belief" tradition, it argues the update must be conditioned on the model's <strong>confidence state</strong> — a model that is uncertain, confidently wrong, or confidently right should not receive the same edit.</li>
+      <li><b>Consequential for safety and governance.</b> The same machinery underlies detoxification, unlearning, privacy erasure and behaviour control. If edits do not propagate consistently, "we removed that knowledge" is an unverifiable claim.</li>
+      <li><b>Sets an agenda, with an evaluation implication.</b> Benchmarks that score edit success on the edited triple alone are measuring the easy half of the problem; the paper effectively calls for reasoning-consistency and long-form evaluation as the default.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Agenda-setting Perspective, not an incremental benchmark win.</b> Nature Machine Intelligence publishes Perspectives that reorganize how a fast-moving subfield states its own problem — here, moving knowledge editing from "did the fact change?" to "did the model's reasoning stay coherent?"</li>
+      <li><b>Mechanism-first framing.</b> It connects editing to the interpretability lineage (feed-forward key–value memories, knowledge neurons, knowledge circuits, superposition and sparse autoencoders) rather than treating the model as a black box to be patched — mechanism plus consequence is the journal's signature.</li>
+      <li><b>Cross-disciplinary reach.</b> It imports philosophy of belief (Quine & Ullian's <em>Web of Belief</em>, dispositional accounts of belief) and cognitive-science memory-systems theory into a machine-learning engineering problem.</li>
+      <li><b>Directly relevant to deployment and safety.</b> Continuous adaptation, unlearning, privacy and behaviour control are governance-facing topics with an audience beyond NLP.</li>
+      <li><b>Constructive, falsifiable directions.</b> The three proposed research programmes are specific enough to be attempted and disproved, which is what distinguishes a useful Perspective from a survey.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Article type</dt><dd><strong>Perspective / Review</strong> (article_type <code>ReviewPaper</code>). It reports <strong>no new primary dataset</strong> and no large-scale benchmark sweep. The <code>data_availability</code> and <code>code_availability</code> fields of the article metadata are <strong>empty</strong> — this is stated honestly rather than inferred.</dd>
+      <dt>Evidence base</dt><dd><strong>92 references</strong> spanning knowledge-editing methods, interpretability, uncertainty estimation, unlearning and sparse autoencoders. This reference list <em>is</em> the paper's data.</dd>
+      <dt>Empirical illustration</dt><dd>One concrete edited-model case study (Fig. 3): the headquarters of <strong>Tailscale Inc.</strong> edited from <strong>San Francisco → Toronto</strong> using <strong>MEMIT</strong> on <strong>Qwen-2.5-7B</strong>, followed by an open-ended generation probe. The article body is subscription-gated, so the exact prompt set and number of trials behind this figure could not be verified from the accessible text.</dd>
+      <dt>Models named</dt><dd>Qwen-2.5-7B (edited example), GPT-4 / GPT-family, Llama (incl. Llama-3.1-8B via Llama Scope), Gemma 2 (via Gemma Scope), DeepSeek-R1 (as the reasoning-LLM motivation). No exhaustive model list is claimed.</dd>
+      <dt>Editing methods discussed</dt><dd>ROME/MEMIT-style locate-then-edit, MEND-style hypernetwork editing, MALMEN, AlphaEdit (null-space constrained), WISE, GRACE, Transformer-Patcher, MELO, UltraEdit, CaKE (circuit-aware editing).</dd>
+      <dt>Benchmarks referenced</dt><dd><strong>MQuAKE</strong> (multi-hop editing), <strong>MLaKE</strong> (multilingual editing), LPME/long-form evaluation of model editing, hallucination-correction evaluation. Exact sample counts per benchmark are <em>not</em> restated in the accessible text — see the primary benchmark papers.</dd>
+      <dt>Tooling</dt><dd><strong>EasyEdit</strong>, the open knowledge-editing framework co-authored by this group, is the practical substrate for reproducing the discussed methods.</dd>
+      <dt>Time window</dt><dd>Literature coverage runs roughly <strong>2019–2026</strong> (Petroni et al. 2019 → ICLR 2026 / TMLR 2026 entries), i.e. the full lifespan of the knowledge-editing subfield.</dd>
+      <dt>Unknowns</dt><dd>No dataset volumes, no cities/samples/resolution — this is a conceptual paper. Any number not listed above is <strong>not</strong> stated in the material available to this digest and has deliberately not been invented.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Resource</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MQuAKE</td><td>Multi-hop benchmark exposing ripple/closure failure after edits</td><td>Multi-hop QA over edited facts (counts per the original paper)</td><td><a href="https://github.com/princeton-nlp/MQuAKE" target="_blank">github.com/princeton-nlp/MQuAKE</a></td></tr>
+        <tr><td>MLaKE</td><td>Multilingual editing benchmark — tests whether an edit crosses languages</td><td>Multilingual factual edits (COLING 2025)</td><td><a href="https://aclanthology.org/2025.coling-main.301/" target="_blank">ACL Anthology</a></td></tr>
+        <tr><td>EasyEdit</td><td>Reference implementation of the editing methods discussed</td><td>Open framework; supports ROME/MEMIT/MEND/WISE/GRACE and more</td><td><a href="https://github.com/zjunlp/EasyEdit" target="_blank">github.com/zjunlp/EasyEdit</a></td></tr>
+        <tr><td>Qwen-2.5-7B + MEMIT</td><td>Fig. 3 case study of a locally successful but globally incoherent edit</td><td>1 edit (Tailscale HQ: San Francisco → Toronto)</td><td><a href="https://huggingface.co/Qwen/Qwen2.5-7B" target="_blank">HuggingFace</a></td></tr>
+        <tr><td>Gemma Scope / Llama Scope (SAEs)</td><td>Sparse-autoencoder feature bases proposed as an editing substrate</td><td>Millions of features; Gemma 2 and Llama-3.1-8B</td><td><a href="https://huggingface.co/google/gemma-scope" target="_blank">Gemma Scope</a></td></tr>
+        <tr><td>Knowledge circuits / circuit tracing</td><td>Mechanistic account of how edited facts are actually used in reasoning</td><td>Attribution graphs over transformer computation</td><td><a href="https://transformer-circuits.pub/2025/attribution-graphs/methods.html" target="_blank">transformer-circuits.pub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: the full text is behind a subscription (Hybrid Access, not open). This digest is built from the abstract, the seven figure captions, the complete 92-item reference list and the article metadata. Resource links above point to the canonical public homes of the named artefacts and are provided for the reader's convenience, not quoted from the article.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Critical synthesis of the editing landscape.</b> Organizes existing techniques into families — parameter-modifying (locate-then-edit: ROME/MEMIT/AlphaEdit; meta-learned: MEND/MALMEN) versus parameter-preserving (external memory and adaptors: WISE, GRACE, Transformer-Patcher, MELO) — and audits their failure modes: ripple effects, catastrophic and gradual forgetting under sequential edits, and collapse from few edits.</li>
+      <li><b>Diagnostic case study.</b> A single edit propagated into free-form generation (Fig. 3) is used as an existence proof that edit-success metrics overstate real success.</li>
+      <li><b>Direction 1 — deductive closure circuit editing.</b> Treat entangled knowledge as a <strong>circuit</strong> rather than an isolated key–value slot: identify the knowledge circuit that carries the fact through multi-step deduction, and edit so that the <em>deductive closure</em> of the new fact is satisfied (Fig. 4), building on knowledge-circuit analysis and circuit-aware editing (CaKE).</li>
+      <li><b>Direction 2 — belief- and confidence-guided editing.</b> Condition the edit on the model's epistemic state (Fig. 5): estimate confidence/uncertainty (semantic uncertainty, self-consistency, calibration, "knowing what you don't know"), then apply <strong>reasoning-augmented belief revision</strong> (Fig. 6) so an update to a confidently held belief triggers revision of its dependents instead of a surface overwrite.</li>
+      <li><b>Direction 3 — expressive, contextualized updates.</b> Move beyond (subject, relation, object) triples to conceptual, rule-level and event-level knowledge with context conditions (Fig. 7), addressing under-editing and over-editing and connecting to steering vectors, concept-activation vectors, representation finetuning and sparse-autoencoder feature editing.</li>
+      <li><b>Conceptual grounding.</b> Imports the philosophical "web of belief" and dispositional accounts of belief, plus neuroscience memory-systems theory, to argue why a modular-store assumption is wrong in principle rather than merely underperforming in practice.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig1.png" target="_blank">
+        <img src="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig1.png" alt="Fig.1 Static knowledge repositories to dynamic knowledge connections" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Transition from static knowledge repositories to dynamic knowledge connections — the paper's central reframing.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig2.png" target="_blank">
+        <img src="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig2.png" alt="Fig.2 Knowledge as entangled, belief-dependent, context-sensitive system" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Knowledge as an entangled, belief-dependent and context-sensitive system; editing as both a continuous-update mechanism and a foundation for controllable AI.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig3.png" target="_blank">
+        <img src="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig3.png" alt="Fig.3 Tailscale headquarters edit with MEMIT on Qwen-2.5-7B" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Case study: Tailscale Inc. headquarters edited San Francisco → Toronto with MEMIT on Qwen-2.5-7B, then probed with open-ended generation — the failure demonstration.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig4.png" target="_blank">
+        <img src="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig4.png" alt="Fig.4 Editing entangled knowledge" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Editing entangled knowledge — the deductive-closure / circuit-editing direction.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig5.png" target="_blank">
+        <img src="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig5.png" alt="Fig.5 Confidence-guided knowledge editing" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Confidence-guided knowledge editing across different belief states of the LLM.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig6.png" target="_blank">
+        <img src="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig6.png" alt="Fig.6 Reasoning-augmented belief revision" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Reasoning-augmented belief revision for knowledge editing — dependents get revised, not just the target.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig7.png" target="_blank">
+        <img src="assets/towards-principled-knowledge-editing-methods-for-large-language-model-reasoning__s42256-026-01276-y/fig7.png" alt="Fig.7 Expressive and contextualized knowledge editing" loading="lazy"></a>
+        <figcaption><b>Fig. 7</b> Framework for expressive and contextualized editing — beyond triples to concepts, rules and events.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <strong>0</strong> in the main text (metadata <code>tables_count = 0</code>; the scraped <code>tables.json</code> is empty). Figures: 7.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, health-geography accessibility, explainable &amp; physics-informed spatial learning, geospatial foundation-model fine-tuning, open/FAIR reproducibility).</p>
+
+    <div class="idea">
+      <h3>① Give "deductive closure" a metric: a closure-consistency score built on semantic entropy</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper argues persuasively that an edit must satisfy the <strong>deductive closure</strong> of the new fact, but it stops at a qualitative diagnosis (Fig. 3, Fig. 4) — there is no scalar that says <em>how badly</em> closure was violated. A direct extension: after each edit, sample the model's answers over the automatically generated closure set (multi-hop consequences, inverse relations, temporal implicatures) and compute <strong>semantic entropy over meaning clusters</strong> rather than tokens. A correctly propagated edit should show <em>low</em> entropy on every closure item; a merely local weight patch shows the target collapsing to one answer while its dependents stay high-entropy or confidently contradictory. That turns the Perspective's central claim into a benchmark-ready number, and it composes with MQuAKE's multi-hop chains without needing new human annotation.</p>
+      <p><span class="lab mine">Added value to my research</span>The same closure-consistency machinery is exactly what my <strong>spatial-reasoning audits</strong> need. When I fine-tune a geospatial or urban-health model and update one fact — a clinic's new address, a redrawn service area, a revised catchment — I want an automatic check that the model's <em>derived</em> answers (which census tracts are now underserved, which 2SFCA catchment shifts, which travel-time isochrone changes) moved coherently. A geospatial closure set is even easier to generate than a linguistic one, because topological and metric relations (containment, adjacency, distance monotonicity) supply ground-truth entailments for free. This gives me a principled reproducibility test for updated GeoAI models instead of eyeballing a map.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Detecting hallucinations in large language models using semantic entropy — <a href="https://doi.org/10.1038/s41586-024-07421-0" target="_blank">10.1038/s41586-024-07421-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Edit in a sparse feature basis instead of raw weights — resolve the superposition that entangles knowledge</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper diagnoses entanglement and cites superposition and sparse autoencoders, but stops short of the obvious constructive move: <strong>perform the edit in a disentangled sparse code, not in MLP weight space</strong>. MEMIT-style updates write into a rank-limited subspace of a superposed representation, which is precisely why unrelated facts drift and why a few edits can collapse a model. Extending the Perspective: use a unifying superposition-to-sparse-code framework to lift the target fact into monosemantic features, apply a minimal, provably sparse intervention there, and project back — turning "edit locality" from a hope into a measurable property of the code (how many features moved, and were they the intended ones). This also makes over-editing and under-editing quantifiable in the same currency, addressing the paper's third direction directly.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a clean import into <strong>explainable ML for spatial prediction</strong>. My models routinely superpose correlated built-environment variables — density, POI mix, road connectivity, deprivation — so a SHAP or MGWR coefficient is attributing to an entangled composite, not a mechanism. Learning a sparse, near-monosemantic feature basis over a spatial encoder and then doing <em>interventional</em> tests in that basis ("suppress the transit-accessibility feature; what happens to predicted telehealth uptake?") gives me counterfactual spatial explanations rather than correlational attributions — and it is the natural companion to physics-informed graph learning, where I already want features that correspond to nameable processes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A unifying framework from neural superposition to sparse interpretable codes — <a href="https://doi.org/10.1038/s42256-026-01259-z" target="_blank">10.1038/s42256-026-01259-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Test whether reasoning-trained models make editing easier or catastrophically harder</h3>
+      <p><span class="lab paper">Extending this paper</span>The Perspective's motivation is that LLMs now <em>reason</em> — multistep deduction, causal inference — which is why reasoning-consistent editing matters. But it leaves a sharp empirical question open: does RL-induced reasoning ability make a model <strong>more</strong> repairable (the chain-of-thought re-derives consequences from the edited premise, so one edit propagates) or <strong>less</strong> (long reasoning traces amplify a stale intermediate belief, and self-consistency confidently launders the contradiction)? A concrete extension: run the same edit set through a base model and its RL-reasoning counterpart, and score closure consistency at increasing reasoning depth. If reasoning-trained models self-propagate edits, the right intervention shifts from weight surgery to <em>editing the premise the reasoning chain reads</em> — a materially different research programme from what the field currently pursues.</p>
+      <p><span class="lab mine">Added value to my research</span>This decides how I should update <strong>spatial-reasoning agents</strong> for policy work. If reasoning depth propagates edits, then my accessibility agents only need a small, curated, versioned "premise layer" of facility and policy facts, with the reasoning left untouched — cheap, auditable, and FAIR-friendly, since the premise layer is a citable dataset. If reasoning instead amplifies stale premises, then every regional-collaboration or job-housing scenario I run with an LLM in the loop needs an explicit staleness guard before I trust the output.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning — <a href="https://doi.org/10.1038/s41586-025-09422-z" target="_blank">10.1038/s41586-025-09422-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Reframe lifelong editing as a plasticity problem, not an interference problem</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper catalogues sequential-editing pathologies — gradual and catastrophic forgetting, model collapse after few edits, the need for regularization — but attributes them to <em>interference</em> between edits. There is a rival explanation worth testing: repeated gradient surgery drives units dormant and shrinks the effective rank of the network, i.e. a <strong>loss of plasticity</strong>, so the model degrades even for edits that never conflict. The extension is a controlled ablation: run long streams of provably non-overlapping edits, track effective rank, dead-unit fraction and gradient-norm decay alongside edit success. If plasticity loss dominates, continual-learning remedies (selective re-initialization, plasticity-preserving regularizers) belong in the editing toolbox — which is a different prescription from the null-space and memory-based fixes the paper surveys.</p>
+      <p><span class="lab mine">Added value to my research</span>Directly relevant to how I maintain <strong>continuously updated urban and health models</strong>. My spatiotemporal predictors are refreshed as new mobile-phone, POI and remote-sensing epochs arrive; if repeated incremental updates silently erode plasticity, model quality decays for reasons no accuracy metric on the current epoch will reveal. Adding effective-rank and dormant-unit diagnostics to my retraining pipeline gives me an early-warning signal, and it argues for periodic partial re-initialization as scheduled maintenance rather than as a failure response.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Loss of plasticity in deep continual learning — <a href="https://doi.org/10.1038/s41586-024-07711-7" target="_blank">10.1038/s41586-024-07711-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Externalize the deductive closure into a knowledge graph, and let the graph decide what to edit</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's hardest requirement — knowing the full set of dependent beliefs an edit should touch — is treated as something to be recovered from inside the model via circuit analysis. A complementary architecture: maintain an <strong>explicit external knowledge graph</strong> whose edges encode the dependency structure, compute the closure by graph traversal, and use it to (a) enumerate the exact consequences the edited model must satisfy and (b) decide which consequences deserve a parametric edit versus contextual retrieval at inference. This hybridizes the paper's third direction with retrieval, and turns the closure set from an unknown into a queryable, versionable object — an auditable answer to "what did this edit change?" that circuit tracing alone cannot yet give.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my most natural adoption path, because a <strong>spatial knowledge graph is something I can actually build</strong>: facilities, catchments, administrative units, transport links and their containment/adjacency relations already form a dependency graph, and it is versioned and citable in a way that satisfies open-science and FAIR requirements. Coupling it to an LLM gives me updates whose blast radius is computable in advance — change one clinic's capacity and the graph tells me which accessibility indicators, which tracts and which equity statistics must be recomputed. That is a defensible provenance story for public-health policy work, where "the model was updated" is not an acceptable audit trail.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Empowering biomedical evidence exploration and synthesis with deep knowledge graph research — <a href="https://doi.org/10.1038/s42256-026-01266-0" target="_blank">10.1038/s42256-026-01266-0</a> · A scalable and generic framework for city-wide traffic prediction with large language model — <a href="https://doi.org/10.1038/s41467-026-73610-2" target="_blank">10.1038/s41467-026-73610-2</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, figure captions, and the article's reference list · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. The full text is subscription-gated, so method details beyond the abstract, figure captions and references are not verified here. Figure copyright belongs to Springer Nature; shown for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

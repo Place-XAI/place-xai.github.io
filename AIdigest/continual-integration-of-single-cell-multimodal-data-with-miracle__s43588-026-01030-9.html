@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Continual integration of single-cell multimodal data with MIRACLE — AI Digest</title>
+<meta name="description" content="AI Digest: Continual integration of single-cell multimodal data with MIRACLE (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Continual learning</span>
+      <span class="tag">Multimodal integration</span>
+      <span class="tag">Single-cell atlas</span>
+      <span class="tag">Rehearsal memory</span>
+    </div>
+    <h1>Continual integration of single-cell multimodal data with MIRACLE</h1>
+    <div class="meta">
+      <span class="authors">Jiahao Zhou · Jing Wang · Shuofeng Hu · Tongtong Kan · Chao Feng · Xiaohan Qiang · Guohua Dong · Jinhui Shi · Runyan Liu · Xiaochen Bo · Le Ou-Yang · Xiaomin Ying · Zhen He</span>
+      <span><b>Published</b> 2026-07-31</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-01030-9" target="_blank">10.1038/s43588-026-01030-9</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-01030-9" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Single-cell atlases today are rebuilt from scratch every time new data arrive — a cost that grows without bound. <strong>MIRACLE</strong> replaces full reintegration with <strong>continual (online) learning</strong>: a multimodal VAE (MIDAS) extended with <strong>dynamic architecture adaptation</strong> for newly arriving modalities/features and a <strong>bounded rehearsal memory</strong> maintained by distribution-preserving reservoir sampling (DPRS) with <strong>ball-tree sampling (BTS)</strong>. The result is accuracy comparable to offline reintegration (scIB/scMIB) while <strong>per-update time and memory stay flat as batches accumulate</strong> — on the 2.3M-cell HLCA it ran <em>over an order of magnitude faster</em> than its offline counterpart. Applied to respiratory infections, continual integration refined a healthy PBMC atlas from <strong>13 to 23 cell types</strong> and exposed both shared and pathogen-specific immune signatures across COVID-19, influenza A and tuberculosis.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the O(all-data) update curve.</b> Every atlas project silently pays a quadratic-ish tax: each new dataset triggers reintegration of everything before it. MIRACLE makes the update cost <strong>independent of history length</strong> — per-integration time flat, memory footprint constant — which is what actually decides whether a living atlas is maintainable.</li>
+      <li><b>Solves catastrophic forgetting for omics, not just for benchmarks.</b> Existing online methods split into generalization-based (project new data onto a frozen reference; blind to unseen variation) and fine-tuning-based (adapt, then forget). MIRACLE's rehearsal memory is the missing middle, and the paper shows the failure modes concretely — totalVI and trVAE integrate well offline but their scArches-based online versions fail to mix batches.</li>
+      <li><b>Handles <em>mosaic</em> data, which is what real accumulation looks like.</b> New datasets do not arrive with the same assays: they add ATAC, drop ADT, change feature spaces. Dynamic architecture adaptation lets one model absorb ATAC+RNA+ADT combinations arriving in any order — a capability the surveyed online methods lack entirely.</li>
+      <li><b>Turns a model into a shareable, updatable artifact.</b> The host builds a reference model; users update it with their own data and reshare, or use it for label transfer. That is a <strong>collaboration protocol</strong>, not just an algorithm — knowledge accumulates in weights rather than in ever-larger data downloads.</li>
+      <li><b>Discovery, not only bookkeeping.</b> Label transfer with kNN + novelty detection flagged exactly the genuinely new query cell types (Cycling B and germinal-centre B in tonsil, progenitors in bone marrow), and the cross-disease application produced testable immunology (HERC1<sup>+</sup> T cells and PD-1/PD-L1 enrichment in flu A; elevated MAIT fractions in COVID-19, flu A and TB versus healthy).</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Method-as-infrastructure, the core remit of <em>Nature Computational Science</em>:</b> the contribution is a reusable computational framework with open code (GitHub + Zenodo) and processed data, not a single biological result.</li>
+      <li><b>A genuinely computational problem with biological payoff:</b> continual learning, memory-bounded sampling and mosaic architecture adaptation are ML contributions, yet they are validated on scIB/scMIB benchmarks against <strong>11 state-of-the-art integration methods</strong> and then used to generate immunological findings.</li>
+      <li><b>Scalability demonstrated where it hurts:</b> 523,369 cells / 42 batches (DHCM) and 2.3 million cells / 48 studies (HLCA) are exactly the regimes where "just reintegrate" stops being an answer.</li>
+      <li><b>Timeliness and public-health relevance:</b> the respiratory-infection application frames continual integration as a response capability — new pathogen data can extend an existing atlas rather than restart it.</li>
+      <li><b>Reproducibility posture:</b> every dataset is public with accession codes, ablations (offline / transfer / generalization variants) are explicit upper and lower benchmarks, and source data accompany each figure.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Scalability benchmarks</dt><dd><strong>DHCM</strong> — snRNA-seq of human dilated and hypertrophic cardiomyopathy, <strong>523,369 cells across 42 batches</strong> (Broad Single Cell Portal, <code>SCP1303</code>). <strong>HLCA</strong> — Human Lung Cell Atlas scRNA-seq, <strong>2.3 million cells from 48 studies</strong>, each study treated as one batch (CELLxGENE collection <code>6f6d381a-7701-4781-935c-db10d30de293</code>).</dd>
+      <dt>Multimodal PBMC set</dt><dd><strong>Ten human PBMC datasets</strong> spanning ATAC / RNA / ADT combinations: DOGMA-seq (4 batches, GSE166188), TEA-seq (5 batches, GSE158013), TEA Multiome (2 batches, GSE158013), 10x Multiome (4 batches), WNN CITE-seq (8 batches), DOGMA+CITE (GSE200417), ISSAAC-seq (E-MTAB-11264), NEAT-seq (2 batches, GSE178707), ASAP-seq (2 batches, GSE156473) and ASAP-CITE (2 batches, GSE156473). Subsets form the <strong>DOTEA mosaic dataset (8 batches, 4 omics combinations)</strong> and the PBMC reference atlas.</dd>
+      <dt>Cross-tissue data</dt><dd>Three human immune tissues, one batch each: <strong>tonsil</strong> (RNA, GSE165860), <strong>bone marrow BMMC</strong> (ASAP-seq, ATAC+ADT, GSE156477), <strong>spleen</strong> (RNA, GSE159929).</dd>
+      <dt>Respiratory infections</dt><dd>Healthy PBMC reference atlas: <strong>34 batches (ATAC+RNA+ADT)</strong>. Added sequentially — <strong>COVID-19</strong> CITE-seq across five severity levels, two largest batches per level = <strong>10 batches</strong> (E-MTAB-10026); <strong>influenza A</strong> whole-blood scRNA-seq, <strong>7 batches</strong> (adults, pregnant women, children; GSE243629, PBMC cell types retained only); <strong>tuberculosis</strong> CITE-seq memory T cells, 10 largest batches per infection type = <strong>20 batches</strong> (GSE158769). Donor counts in the MAIT analysis: n = 34 healthy, 10 COVID-19, 7 flu A, 20 TB.</dd>
+      <dt>Feature space</dt><dd>RNA: top 4,000 highly variable genes per batch, unified to <strong>4,000 final features</strong> (Seurat v4.1.0). ADT: all tags retained after CLR normalization. ATAC: Signac v1.6.0 + MACS2 peak calling, merged peaks, binarized fragment counts; peaks aligned to previous batches to bound feature growth during continual updates.</dd>
+      <dt>Rehearsal memory</dt><dd>Capacity measured in retained cells. Performance <strong>saturates at 20K cells</strong> on DHCM — about <strong>1/26 of the total sample</strong> — which is the paper's headline memory-efficiency claim.</dd>
+      <dt>Availability</dt><dd>All datasets public; per-batch protocols, accessions and filtered cell numbers in <strong>Supplementary Table 12</strong>. Processed data: <a href="https://doi.org/10.5281/zenodo.20746054" target="_blank">Zenodo 10.5281/zenodo.20746054</a>. Code: <a href="https://github.com/sc-miracle/miracle" target="_blank">github.com/sc-miracle/miracle</a> and <a href="https://doi.org/10.5281/zenodo.20744271" target="_blank">Zenodo 10.5281/zenodo.20744271</a>. Source data provided per figure.</dd>
+      <dt>Honest gaps</dt><dd>The paper reports speed-up qualitatively for HLCA ("over an order of magnitude faster") without a single headline wall-clock number in the main text; exact per-batch cell counts live in the supplement, not the main text; total cell count of the assembled PBMC/respiratory atlas is not stated as one figure. No numbers here are inferred beyond what the article states.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>DHCM (snRNA-seq)</td><td>Sampling + scalability benchmark</td><td>523,369 cells, 42 batches</td><td><a href="https://singlecell.broadinstitute.org/single_cell/study/SCP1303" target="_blank">Broad SCP1303</a></td></tr>
+        <tr><td>HLCA (Human Lung Cell Atlas)</td><td>Large-scale stress test, strong batch effects</td><td>2.3M cells, 48 studies</td><td><a href="https://cellxgene.cziscience.com/collections/6f6d381a-7701-4781-935c-db10d30de293" target="_blank">CELLxGENE</a></td></tr>
+        <tr><td>WNN CITE-seq PBMC</td><td>Bimodal continual integration (RNA+ADT)</td><td>8 batches, cell types removed per batch</td><td><a href="https://atlas.fredhutch.org/nygc/multimodal-pbmc" target="_blank">Fred Hutch atlas</a></td></tr>
+        <tr><td>DOGMA-seq / TEA-seq → DOTEA</td><td>Trimodal mosaic integration</td><td>8 batches, 4 omics combinations</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE166188" target="_blank">GSE166188</a> · <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE158013" target="_blank">GSE158013</a></td></tr>
+        <tr><td>10x Multiome / ISSAAC / NEAT / ASAP</td><td>Modality diversity for the PBMC atlas</td><td>1–4 batches each</td><td><a href="https://www.10xgenomics.com/resources/datasets/" target="_blank">10x Genomics</a> · <a href="https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-11264" target="_blank">E-MTAB-11264</a></td></tr>
+        <tr><td>Tonsil / BMMC / spleen</td><td>Cross-tissue atlas &amp; label transfer</td><td>1 batch each</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE165860" target="_blank">GSE165860</a> · <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE156477" target="_blank">GSE156477</a> · <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE159929" target="_blank">GSE159929</a></td></tr>
+        <tr><td>COVID-19 / flu A / TB PBMC</td><td>Cross-disease continual atlas expansion</td><td>10 / 7 / 20 batches</td><td><a href="https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-10026" target="_blank">E-MTAB-10026</a> · <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE243629" target="_blank">GSE243629</a> · <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE158769" target="_blank">GSE158769</a></td></tr>
+        <tr><td>Processed data + code</td><td>Reproduction</td><td>All experiments</td><td><a href="https://doi.org/10.5281/zenodo.20746054" target="_blank">Zenodo</a> · <a href="https://github.com/sc-miracle/miracle" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: accession codes above are transcribed from the article's Methods ("Datasets") and Data Availability statement. Where the article defers to Supplementary Tables 11–13 for per-batch counts, this page says so rather than estimating.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Base model — multimodal VAE (MIDAS):</b> a deep generative model that disentangles biological state from batch/technical factors and natively supports <strong>mosaic</strong> inputs (ATAC + RNA + ADT in arbitrary presence patterns). MIRACLE wraps it in a continual-learning loop: at each time <em>t</em>, model θ<sub>t−1</sub> is updated to θ<sub>t</sub> on new data plus rehearsal memory, and inference re-emits embeddings for <em>all</em> data seen so far.</li>
+      <li><b>Dynamic architecture adaptation:</b> when a new batch introduces an unseen modality or new features, the network is expanded rather than retrained — the mechanism that makes online <em>mosaic</em> integration possible at all.</li>
+      <li><b>Data rehearsal against catastrophic forgetting:</b> a bounded buffer of past cells is replayed with each update. Ablations make the effect legible: <strong>MIRACLE-offline</strong> (all data at once) is the no-forgetting upper benchmark, <strong>MIRACLE-transfer</strong> (no rehearsal) the forgetting-prone lower benchmark, and <strong>MIRACLE-generalization</strong> the frozen-reference projection baseline.</li>
+      <li><b>DPRS + ball-tree sampling (BTS):</b> distribution-preserving reservoir sampling caps memory at a fixed cell budget; BTS partitions the <em>embedding</em> space with a ball tree and draws from each partition, so rare populations survive downsampling. Benchmarked by <strong>maximum mean discrepancy (MMD)</strong> with a Gaussian kernel against simple random sampling, Sketch (Seurat v5) and scSampler over sampling ratios down to 1/32, with 10,000 reference cells and 50 repeats — BTS attains the lowest MMD mean <em>and</em> variance at SRS-level speed.</li>
+      <li><b>Evaluation:</b> <strong>scIB</strong> for unimodal/bimodal integration (batch correction vs. biological conservation), <strong>scMIB</strong> for mosaic/multimodal, plus continual-learning stability metrics over time, <strong>neighborhood overlap</strong> with the offline gold standard, and label-transfer <strong>micro/binary F1</strong>. Compared against <strong>11 state-of-the-art methods</strong> across horizontal, rectangular and mosaic families (Geneformer, PCA, SCALEX, trVAE, totalVI, Multigrate, scVAEIT and others), with scArches-style fine-tuning added to methods lacking native online support.</li>
+      <li><b>Label transfer with novelty detection:</b> a kNN classifier over the shared embedding assigns query labels and flags cells that match no reference neighborhood as <em>Unknown</em> — the mechanism that recovered genuinely new cross-tissue cell types.</li>
+      <li><b>Downstream biology:</b> third-party annotation with Seurat <code>FindTransferAnchors</code>/<code>TransferData</code>, Azimuth (RNA and ATAC applications), SingleR, plus marker dot plots, cytotoxicity/exhaustion scores, GSEA, two-sided Wilcoxon rank-sum tests and differential expression with FDR control.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig1.png" target="_blank">
+        <img src="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig1.png" alt="Fig.1 Overview of the MIRACLE framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Framework overview — the continual update loop (θ<sub>t−1</sub> → θ<sub>t</sub> with rehearsal memory R<sub>t</sub>), ball-tree sampling in embedding space, and the host/user model-sharing protocol.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig2.png" target="_blank">
+        <img src="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig2.png" alt="Fig.2 WNN bimodal evaluation" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> WNN bimodal dataset (8 CITE-seq batches) — stepwise UMAPs across time points, ablation against MIRACLE-offline/-transfer, and scIB versus 11 competing methods in online and offline settings.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig3.png" target="_blank">
+        <img src="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig3.png" alt="Fig.3 DOTEA trimodal mosaic integration" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> DOTEA trimodal mosaic integration — MIRACLE versus Multigrate and scVAEIT (and their online variants) under scMIB; competitors fail to remove batch effects as batches accumulate.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig4.png" target="_blank">
+        <img src="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig4.png" alt="Fig.4 Within- and cross-tissue atlas construction" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Within- and cross-tissue atlas construction — neighborhood overlap with the offline gold standard for newly added data, plus label-confusion comparisons across the three online strategies.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig5.png" target="_blank">
+        <img src="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig5.png" alt="Fig.5 Label transfer within and across tissues" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Label transfer — micro and binary F1 within/across tissues; cells flagged <em>Unknown</em> correspond precisely to new query cell types (cycling and germinal-centre B in tonsil, progenitors in bone marrow).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig6.png" target="_blank">
+        <img src="assets/continual-integration-of-single-cell-multimodal-data-with-miracle__s43588-026-01030-9/fig6.png" alt="Fig.6 Respiratory-infection continual atlas" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Respiratory-infection application — healthy PBMC atlas refined 13 → 23 cell types; HERC1<sup>+</sup> T cells and PD-1/PD-L1 enrichment in flu A; MAIT fractions elevated in COVID-19, flu A and TB versus healthy (Wilcoxon, P = 5.7×10⁻⁶ / 0.015 / 1.3×10⁻⁸).</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no table in the main text (Tables = 0). The evidence base sits in Extended Data Fig. 1 and in Supplementary Tables 1–13 (per-batch accessions and cell counts in Table 12; method inventory in Table 13) plus extensive Supplementary Figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, multi-source data fusion, open/FAIR science).</p>
+
+    <div class="idea">
+      <h3>① Stress-test the framework over long horizons: does MIRACLE lose plasticity?</h3>
+      <p><span class="lab paper">Extending this paper</span>MIRACLE is validated over horizons of tens of batches (42 for DHCM, 48 studies for HLCA, 34+10+7+20 in the respiratory application). But rehearsal-based continual learners are known to fail in a second, subtler way beyond forgetting: the network gradually loses the <em>ability to learn new things at all</em>, as effective rank and gradient diversity collapse. The paper's own metrics (scIB over time, neighborhood overlap) would not detect this — they measure retention, not remaining plasticity. A direct extension: run MIRACLE for hundreds of synthetic arrivals, track effective rank / dormant-unit fraction of the MIDAS encoder alongside scIB, and test whether continual backpropagation or shrink-and-perturb resets restore capacity. This also sharpens the paper's task taxonomy — arrivals here mix <em>domain-incremental</em> (new batch, same cell types) and <em>class-incremental</em> (new cell types, new tissues) shifts, and rehearsal budgets should arguably differ between the two.</p>
+      <p><span class="lab mine">Added value to my research</span>My spatiotemporal models face exactly this arrival structure: monthly mobile-phone and POI extracts are domain-incremental drift, while a new city or a new pandemic wave is class-incremental. A plasticity-audited continual GeoAI model would let an accessibility or urban-health predictor absorb each new month without the annual full retrain that currently gates my pipelines — and would tell me <em>when</em> a model has quietly stopped adapting rather than discovering that after a forecast fails.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Loss of plasticity in deep continual learning — <a href="https://doi.org/10.1038/s41586-024-07711-7" target="_blank">10.1038/s41586-024-07711-7</a> · Three types of incremental learning — <a href="https://doi.org/10.1038/s42256-022-00568-3" target="_blank">10.1038/s42256-022-00568-3</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Lift ball-tree sampling out of cell space into a general geometry-aware coreset</h3>
+      <p><span class="lab paper">Extending this paper</span>BTS is the paper's quiet workhorse: partition the learned embedding with a ball tree, sample within partitions, and the retained 20K cells (1/26 of DHCM) preserve the distribution better than random sampling, Sketch or scSampler at SRS-level speed. Yet it is presented purely empirically — no bound relating tree depth and partition radius to the resulting MMD, and no use of the <em>label</em> or rarity structure the atlas already knows. Extending the paper: derive an MMD bound as a function of ball radius and per-partition draw, then make the buffer <strong>importance-weighted</strong> — over-retain rare populations and cells near modality boundaries, which is where mosaic integration is most fragile. A second extension: since the ball tree lives in an embedding that keeps changing, quantify how stale buffer geometry becomes across updates and when the tree must be rebuilt.</p>
+      <p><span class="lab mine">Added value to my research</span>BTS is, structurally, a <strong>spatially stratified coreset</strong> — and geography has a native ball tree (great-circle distance). This gives me a principled replacement for the ad-hoc sampling I use when training spatial models on billions of GPS pings or grid cells: build the tree in a learned place-embedding space rather than raw coordinates, so the retained sample preserves the joint distribution of built environment, demography and mobility rather than just spatial spread. It also connects directly to spatiotemporal KDE — BTS partitions are essentially adaptive-bandwidth cells, and the MMD criterion offers an objective way to pick them.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A cell atlas foundation model for scalable search of similar human cells — <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Close the privacy gap in the "update-and-reshare" protocol</h3>
+      <p><span class="lab paper">Extending this paper</span>Figure 1c proposes something socially ambitious: a host publishes a model, users update it on their own data and reshare, knowledge compounds in weights. But the paper's own mechanism undercuts the privacy story — the shared model carries a <strong>rehearsal buffer of real cells</strong>, so resharing means redistributing patient-derived data, and nothing in the framework provides provenance, versioning or protection against a malicious update. Extending the paper: replace the raw buffer with generative rehearsal (the MIDAS decoder can synthesize replay samples), add differential-privacy accounting to the update step, and formalize the multi-host case as federated continual learning with a merge policy — plus a signed lineage record of which datasets shaped which weights. That would turn an appealing diagram into a deployable governance protocol for consortium atlases.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the blocker in nearly every health-geography collaboration I run: individual-level health records, mobile-phone traces and telehealth utilization cannot cross jurisdictional lines, so multi-region accessibility studies degrade into aggregated proxies. A generative-rehearsal continual model would let each health authority contribute model updates instead of data, and the lineage record answers the reviewer question I always get — which jurisdiction's data drove which coefficient. It also fits my FAIR/open-science line: sharing an auditable model is a publishable, citable artifact when the underlying data can never be.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Collaborative learning without sharing data — <a href="https://doi.org/10.1038/s42256-021-00364-5" target="_blank">10.1038/s42256-021-00364-5</a> · The Human Cell Atlas from a cell census to a unified foundation model — <a href="https://doi.org/10.1038/s41586-024-08338-4" target="_blank">10.1038/s41586-024-08338-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Mosaic integration as the general grammar of multi-source data fusion</h3>
+      <p><span class="lab paper">Extending this paper</span>The most transferable idea in the paper is not "single-cell" at all: it is that arriving datasets have <strong>ragged modality coverage</strong> — DOTEA's eight batches span four different omics combinations — and that a dynamically expanding VAE can absorb them without a common feature space. The paper demonstrates this but never characterizes its limits: how much modality overlap is needed before a newly arriving assay can be anchored, and what happens when a modality appears only in late batches with no overlap to the reference? A crisp extension is a <strong>modality-overlap phase diagram</strong> — sweep the shared-feature fraction and the arrival order, and map the region where mosaic integration succeeds versus collapses into modality-specific clusters. Pairing that with an explicitly partially-shared embedding (private plus shared latent subspaces) would also make explicit which biology is modality-specific rather than folding everything into one latent.</p>
+      <p><span class="lab mine">Added value to my research</span>My data landscape <em>is</em> mosaic: smart-card records for some cities, survey travel diaries for others, social-media geotags where platforms permit, remote sensing everywhere, mobile-phone records only under contract. I currently handle this by intersecting down to the lowest common denominator — which throws away most of the signal. Recasting urban data fusion as mosaic integration with a dynamically expanding encoder means a city with only remote sensing plus POIs can still be embedded in the same latent space as a city with full mobility data, and the phase diagram tells me the minimum overlap needed before adding a new sensor type is worth the effort.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncovering latent urban mobility patterns via smart-card and survey data fusion — <a href="https://doi.org/10.1038/s41467-026-73445-x" target="_blank">10.1038/s41467-026-73445-x</a> · Partially shared multi-modal embedding learns holistic representation of cell state — <a href="https://doi.org/10.1038/s43588-025-00948-w" target="_blank">10.1038/s43588-025-00948-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Give the "Unknown" flag a calibrated, explainable footing</h3>
+      <p><span class="lab paper">Extending this paper</span>MIRACLE's most scientifically consequential output is a <em>negative</em> one: the kNN novelty detector that labels a query cell "Unknown" and thereby claims a new cell type. In the paper this works impressively — the flagged cells were exactly the tonsil germinal-centre B and bone-marrow progenitor populations — but it rests on a distance threshold reported through F1, with no calibrated error control. Since MIRACLE keeps updating, the reference itself drifts, so a fixed threshold cannot hold a constant false-discovery rate over time. Extending the paper: wrap the detector in <strong>conformal prediction with a rehearsal-buffer calibration set</strong>, so "Unknown" comes with a guaranteed error level that survives model updates, and audit whether the flag reflects genuine biology or residual technical artifact — attributing each novelty call to the features and modalities driving it. The result would be a discovery pipeline that reports <em>this many new cell types at 5% FDR</em> rather than a per-figure F1.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps one-to-one onto transferring a trained accessibility or health-risk model to an unseen city: the honest question is not "what is the prediction" but "is this place outside the reference manifold, and by how much". A conformal, drift-aware novelty layer would let me report calibrated coverage for 2SFCA-style predictions in cities with no local calibration data — and pairing it with explainable ML (which features made this neighborhood out-of-distribution) turns an OOD warning into a data-collection recommendation. That combination of calibrated uncertainty plus feature attribution is exactly the standard I want for explainable spatial prediction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reliable deep learning in anomalous diffusion against out-of-distribution dynamics — <a href="https://doi.org/10.1038/s43588-024-00703-7" target="_blank">10.1038/s43588-024-00703-7</a> · Transfer learning reveals large discrepancies between air and land surface temperatures in cities — <a href="https://doi.org/10.1038/s41467-026-73716-7" target="_blank">10.1038/s41467-026-73716-7</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

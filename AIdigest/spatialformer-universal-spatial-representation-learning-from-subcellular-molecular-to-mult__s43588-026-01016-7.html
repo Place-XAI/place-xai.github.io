@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpatialFormer: universal spatial representation learning — AI Digest</title>
+<meta name="description" content="AI Digest: SpatialFormer — universal spatial representation learning from subcellular molecular to multicellular landscapes (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Spatial foundation model</span>
+      <span class="tag">Spatial transcriptomics</span>
+      <span class="tag">Multiscale representation learning</span>
+      <span class="tag">Cell–cell co-localization</span>
+    </div>
+    <h1>SpatialFormer: universal spatial representation learning from subcellular molecular to multicellular landscapes</h1>
+    <div class="meta">
+      <span class="authors">Jun Wang · Yuanhua Huang · Ole Winther</span>
+      <span><b>Published</b> 2026-07-30</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-01016-7" target="_blank">10.1038/s43588-026-01016-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-01016-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Existing single-cell foundation models treat expression as a bag of genes and largely discard <strong>where</strong> molecules and cells sit. SpatialFormer is a <strong>hybrid convolution + transformer</strong> encoder pretrained on <strong>700 million cell pairs</strong> drawn from <strong>17 million spatially resolved single cells across 71 Xenium slides</strong>, learning expression <em>and</em> subcellular gene spatial distribution jointly inside the cell's <strong>niche context</strong> via a <strong>pairwise training strategy</strong>. One pretrained representation then transfers across batch correction, cell-type annotation and cell–cell co-localization prediction, and — because co-localization is predicted rather than merely observed — the model supports <strong>in silico gene-pair perturbation</strong> that recovers immune cell–cell communication in pulmonary fibrosis, epithelial–myoepithelial co-localization and tumour-transition signals in breast cancer. The claim is that <em>space is a pretraining signal, not a post-hoc annotation</em>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Space enters the pretraining objective, not the analysis afterwards.</b> Geneformer/scGPT-style models tokenize ranked expression; SpatialFormer additionally encodes <strong>subcellular transcript geometry</strong> and the <strong>surrounding niche</strong>, so spatial structure is learned rather than appended as a coordinate column.</li>
+      <li><b>The pairwise objective makes relations first-class.</b> Training on <strong>cell pairs</strong> (700M of them) rather than isolated cells means the learned quantity is a <em>relation</em> — will these two cells co-localize? — which is exactly what downstream biology (communication, niche formation) cares about.</li>
+      <li><b>One representation, many tasks.</b> Batch correction, cell-type annotation, niche annotation and co-localization detection are served by the same encoder, with reported zero-shot transfer to held-out Xenium slides and few-shot transfer to a different chemistry (MERFISH/MERSCOPE) and a different resolution regime (Visium HD).</li>
+      <li><b>Perturbation turns a descriptive atlas into a testable hypothesis generator.</b> Ablating individual gene pairs and measuring the drop in predicted co-localization logit produces a ranked, FDR-controlled list of candidate interactions — recovering known ligand–receptor pairs and nominating novel ones (for example CXCL/CXCR3-axis and hyaluronan/CD44 biology in fibrotic granuloma).</li>
+      <li><b>Scale-bridging is the general lesson.</b> The same architecture spans <strong>subcellular (transcript coordinates) → cellular (expression) → multicellular (niche)</strong>. That is a template any spatial science can borrow, including urban and geographic analytics.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Method-as-contribution, which is Nature Computational Science's core remit:</b> the deliverable is an architecture, a pretraining corpus and released weights/code — not a single biological finding.</li>
+      <li><b>"Universal" claim backed by transfer evidence:</b> zero-shot on unseen Xenium tissues (lung, breast, colon) plus few-shot adaptation to MERFISH, which is the standard the journal expects before a model is called general.</li>
+      <li><b>Head-to-head benchmarking against the incumbents:</b> compared with Nicheformer, CellContrast and PCA baselines (and four single-cell foundation models in the annotation task) with explicit metrics — accuracy, recall, precision, specificity, F1, JSD — across radii from 10 to 120 µm.</li>
+      <li><b>Interpretability rather than a black box:</b> the perturbation framework converts learned attention over gene pairs into statistically tested, biologically checkable claims, satisfying the journal's preference for models that explain as well as predict.</li>
+      <li><b>Reproducibility infrastructure:</b> MIT-licensed GitHub plus Zenodo archive, HuggingFace-hosted processed pretraining corpus, per-figure source data, and named analysis scripts — the paper ships as usable infrastructure.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Pretraining corpus</dt><dd>The <strong>SpatialCC</strong> corpus: <strong>700 million cell pairs</strong> constructed from <strong>17 million spatially resolved single cells</strong> across <strong>71 Xenium slides</strong> (10x Genomics in-situ platform). Supplementary Table 1 breaks the corpus down by technique, species, condition (disease/healthy) and tissue type; the per-tissue composition is plotted in Fig. 1c. The processed corpus is released on HuggingFace as <code>xenium_5k_pandavid_dataset_v2</code> (<a href="https://doi.org/10.57967/hf/8988" target="_blank">10.57967/hf/8988</a>).</dd>
+      <dt>Spatial granularity</dt><dd><strong>Subcellular</strong> — individual transcript coordinates within each cell, from which gene co-occurrence / non-co-occurrence features are derived (Extended Data Fig. 1b). <strong>Niche</strong> patches of <strong>30 µm</strong> are used at pretraining; co-localization is then evaluated across radii of <strong>10–120 µm</strong>.</dd>
+      <dt>Evaluation — pulmonary fibrosis</dt><dd>Xenium PF dataset, GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE250346" target="_blank">GSE250346</a>; annotation benchmarked over <strong>39 cell types</strong> (sample THD0008). Matched scRNA-seq PF reference: GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE136831" target="_blank">GSE136831</a>. Perturbation analysis is restricted to <strong>macrophage–T-cell pairs within the granuloma</strong>.</dd>
+      <dt>Evaluation — cancer</dt><dd>10x <strong>Xenium human breast cancer</strong> preview sections (DCIS regions; epithelial–myoepithelial and tumour–transitional niches). <strong>Visium HD colorectal cancer</strong>, GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE280318" target="_blank">GSE280318</a>. <strong>MERFISH/MERSCOPE</strong> datasets (three, including the Vizgen FFPE human immuno-oncology set) used as an out-of-platform stress test.</dd>
+      <dt>Evaluation — batch correction</dt><dd>Processed <strong>COVID-19</strong> integration benchmark from the scArches reproducibility repo; <strong>Lung-Kim</strong> dataset via the Curated Cancer Cell Atlas (3CA).</dd>
+      <dt>Few-shot budget</dt><dd>MERFISH fine-tuning used sampled cells from the same slide scaled from <strong>10,000 to 100,000</strong>; few-shot results reported at a single radius of <strong>30 µm</strong>, matching pretraining.</dd>
+      <dt>Time window</dt><dd>Not stated as a study period. Constituent datasets span roughly <strong>2020–2025</strong> deposition dates; the article was published 2026-07-30.</dd>
+      <dt>Availability</dt><dd>All primary datasets are public (10x, GEO, 3CA, Vizgen, GitHub). Code MIT-licensed at <a href="https://github.com/TerminatorJ/Spatialformer" target="_blank">github.com/TerminatorJ/Spatialformer</a>, archived at <a href="https://doi.org/10.5281/zenodo.20476938" target="_blank">Zenodo</a>. Source data accompany Figs. 1–4 and Extended Data Figs. 2–5.</dd>
+      <dt>Honest gaps</dt><dd>The article is hybrid-access and the Methods body was <strong>not retrievable</strong> for this digest, so parameter count, embedding dimension, learning-rate schedule, exact panel sizes (gene-plex per slide), species split and compute budget are <strong>not reported here</strong> — they are stated in the paper's Methods and Supplementary Table 1. No effect sizes or benchmark deltas are quoted below because the numeric results text was unavailable; nothing has been inferred or invented.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>10x Genomics Xenium repository (SpatialCC)</td><td>Pretraining corpus</td><td>71 slides · 17M cells · 700M cell pairs</td><td><a href="https://www.10xgenomics.com/datasets" target="_blank">10xgenomics.com/datasets</a></td></tr>
+        <tr><td>Processed pretraining set (HuggingFace)</td><td>Released pretraining tensors</td><td><code>xenium_5k_pandavid_dataset_v2</code></td><td><a href="https://doi.org/10.57967/hf/8988" target="_blank">10.57967/hf/8988</a></td></tr>
+        <tr><td>Xenium pulmonary fibrosis (GSE250346)</td><td>Annotation, co-localization, perturbation</td><td>39 cell types; granuloma macrophage–T-cell pairs</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE250346" target="_blank">GEO GSE250346</a></td></tr>
+        <tr><td>Visium HD colorectal cancer (GSE280318)</td><td>Cross-resolution generalization</td><td>High-definition spatial CRC profiling</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE280318" target="_blank">GEO GSE280318</a></td></tr>
+        <tr><td>Xenium human breast cancer (preview)</td><td>Epithelial–myoepithelial &amp; tumour–transitional perturbation</td><td>DCIS-bearing sections</td><td><a href="https://www.10xgenomics.com/products/xenium-in-situ/preview-dataset-human-breast" target="_blank">10x preview dataset</a></td></tr>
+        <tr><td>scRNA-seq pulmonary fibrosis (GSE136831)</td><td>Non-spatial reference / label source</td><td>Single-cell PF atlas</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE136831" target="_blank">GEO GSE136831</a></td></tr>
+        <tr><td>COVID-19 integration benchmark</td><td>Batch correction evaluation</td><td>Processed scArches benchmark</td><td><a href="https://github.com/theislab/scarches-reproducibility" target="_blank">theislab/scarches-reproducibility</a></td></tr>
+        <tr><td>Lung-Kim (Curated Cancer Cell Atlas)</td><td>Batch correction evaluation</td><td>Metastatic lung adenocarcinoma scRNA-seq</td><td><a href="https://www.weizmann.ac.il/sites/3CA/lung" target="_blank">3CA lung</a></td></tr>
+        <tr><td>MERFISH / MERSCOPE (incl. Vizgen FFPE immuno-oncology)</td><td>Out-of-platform zero-/few-shot test</td><td>3 datasets: lung, breast, colon</td><td><a href="https://vizgen.com/resources/ffpe-human-immuno-oncology-dataset/" target="_blank">Vizgen resources</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: every number above is taken verbatim from the abstract, data-availability statement, Extended Data captions or Supplementary/Source-Data descriptions. Where the article does not state a figure (per-slide cell counts, panel plex, species proportions), this digest says so rather than estimating.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Hybrid CNN–transformer encoder.</b> Convolutional blocks capture local molecular texture; transformer blocks capture long-range dependencies among genes and neighbouring cells. The design lineage is explicitly the <em>Squeezeformer</em> conv-transformer hybrid (Kim et al., NeurIPS 2022), adapted from speech to spatial omics.</li>
+      <li><b>Pairwise training strategy.</b> The pretraining unit is a <strong>cell pair</strong>, not a cell: the model is asked whether two cells share a niche, so the learned embedding encodes relational/contextual structure directly. This is what makes co-localization a native prediction rather than a downstream clustering artefact.</li>
+      <li><b>Subcellular gene spatial features.</b> Transcript-level coordinates are turned into gene–gene <strong>co-occurrence vs non-co-occurrence</strong> descriptors, so two cells with identical bulk expression but different intracellular transcript geometry receive different representations (Extended Data Fig. 1b).</li>
+      <li><b>Graph pretraining of the gene vocabulary.</b> Global gene–gene interaction embeddings are generated with <strong>GraphSAGE</strong> over two-hop transcript neighbourhoods, supplying an informed initialization for gene tokens (Extended Data Fig. 1a).</li>
+      <li><b>Long-context and efficiency machinery.</b> The reference list points to <strong>ALiBi</strong> position biases for length extrapolation, <strong>FlashAttention-2</strong> for throughput, <strong>uncertainty-weighted multi-task loss</strong> (Kendall et al.) for balancing objectives, and <strong>LoRA</strong> for parameter-efficient fine-tuning.</li>
+      <li><b>Differential co-occurrence testing (DGCO).</b> Beyond differentially expressed genes, the paper defines <strong>differential gene-pair co-occurrence</strong> per cell type, ranked by co-occurrence strength with Benjamini–Hochberg FDR control (Supplementary Table 2), and shows gene <em>pairs</em> can out-discriminate single genes for cell-type separation.</li>
+      <li><b>In silico perturbation of gene pairs.</b> For each candidate pair, the change in predicted co-localization logit (the "deduction" <em>d</em>) is measured across all relevant cell pairs, tested with a one-tailed <em>t</em>-test and BH-adjusted; hits are cross-checked against a ligand–receptor database (NicheNet-style resources).</li>
+      <li><b>Transfer protocols.</b> <strong>Zero-shot</strong> evaluation on unseen Xenium tissues and platforms; <strong>few-shot</strong> fine-tuning with 10k–100k same-slide cells for MERFISH; coordinate-perturbation sensitivity analysis (<code>coordinate_perturbation.ipynb</code>) probes robustness to positional noise.</li>
+      <li><b>Benchmarking.</b> Against <strong>Nicheformer</strong>, <strong>CellContrast</strong>, PCA and four single-cell foundation models; metrics include accuracy, recall, precision, specificity, per-class F1 and <strong>Jensen–Shannon divergence</strong> between predicted and reference cell-type co-localization distributions; integration assessed with scIB-style benchmarks and BBKNN comparisons.</li>
+      <li><b>Ablation on pretraining scale.</b> Three checkpoints of increasing corpus breadth — a single lung slide, all lung slides, mixed-tissue slides — are compared, isolating how much of the performance is bought by data diversity rather than architecture (Fig. 3d,e).</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig1.png" target="_blank">
+        <img src="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig1.png" alt="Fig.1 Overview of the SpatialFormer architecture" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the SpatialFormer architecture — the conv+transformer encoder, the SpatialCC corpus composition by tissue type (1c), and the UMAP of learned cell embeddings with annotations (1e).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig2.png" target="_blank">
+        <img src="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig2.png" alt="Fig.2 Cell annotation predictions in pulmonary fibrosis tissue" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Cell annotation predictions in PF tissue — embeddings and predicted-vs-ground-truth labels for four foundation models (c–e), the analogous <em>niche</em> annotation (f–h), per-category F1 for cell types and niches (i, j), and macrophage prediction transfer across Xenium and Visium HD (k).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig3.png" target="_blank">
+        <img src="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig3.png" alt="Fig.3 SpatialFormer cell-cell co-localization performance" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Cell–cell co-localization performance — Circos plots of reference vs predicted co-localization (b, c), five metrics across radii 10–120 µm for three pretraining scales (d, e), and cross-method comparison by JSD against Nicheformer, PCA and CellContrast (f).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig4.png" target="_blank">
+        <img src="assets/spatialformer-universal-spatial-representation-learning-from-subcellular-molecular-to-mult__s43588-026-01016-7/fig4.png" alt="Fig.4 Perturbation analysis of cell-cell communication gene pairs in pulmonary fibrosis" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Perturbation analysis of CCC gene pairs in PF — ranked gene pairs by logit deduction within the granuloma, ligand–receptor overlap flags, and FDR-adjusted significance from one-tailed <em>t</em>-tests.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>no main-text table</b> (Tables = 0). Supporting material comprises Extended Data Figs. 1–5, Supplementary Figs. 1–12, and Supplementary Tables 1–3 (pretraining corpus census; DGCO gene pairs per cell type; perturbation statistics for macrophage–T-cell gene pairs). Source data are provided for Figs. 1–4 and Extended Data Figs. 2–5.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, multi-source data fusion, geospatial foundation-model fine-tuning).</p>
+
+    <div class="idea">
+      <h3>① Make the niche radius a learned, anisotropic field instead of a fixed 30 µm patch</h3>
+      <p><span class="lab paper">Extending this paper</span>SpatialFormer pretrains on <strong>30 µm patches</strong> and then <em>evaluates</em> across radii of 10–120 µm — an admission that the true interaction range is tissue-, cell-type- and mechanism-dependent (diffusion-limited paracrine signalling reaches farther than juxtacrine contact). The natural extension is to stop treating radius as a hyperparameter and let the model emit a <strong>per-cell-pair interaction kernel</strong>: predict, jointly with the co-localization logit, a distance-decay profile whose bandwidth is conditioned on cell-type identity and local density. Anisotropy matters too — alveolar septa, ductal architecture and fibrotic scars impose directional structure that an isotropic disc erases. Concretely: replace the fixed patch with a learned kernel head, supervise it with the multi-radius sweep the paper already computed (Fig. 3d and Extended Data Fig. 3 source data are exactly the training signal needed), and report whether the learned bandwidth recovers known signalling ranges. The pretraining-scale ablation (single slide → all lung → mixed tissue) would then have a second axis: does corpus diversity buy <em>range</em> generalization, not just accuracy?</p>
+      <p><span class="lab mine">Added value to my research</span>This is my <strong>2SFCA/R2SFCA catchment problem</strong> in a different substrate, and the isomorphism is close enough to be operational. A 30 µm niche is a fixed catchment radius; the 10–120 µm sweep is exactly the sensitivity analysis I run over 15/30/60-minute service areas; the "true radius varies by cell type" finding is the same objection that kills one-size-fits-all catchments for primary care versus specialist mental-health services. Porting the learned-kernel head gives me a <strong>demand-and-supply-conditioned distance decay</strong> — bandwidth predicted from local population density, transit availability and provider type rather than assumed Gaussian — which is precisely the piece of R2SFCA that has always been hand-tuned. The anisotropy point transfers verbatim: rivers, highways and administrative boundaries deform service areas the way tissue architecture deforms niches, and an anisotropic kernel is a cleaner fix than network-distance-only routing. It also connects to my MGWR work: a learned bandwidth field <em>is</em> a spatial-non-stationarity estimate, and comparing it against MGWR's cross-validated bandwidths would be a genuinely novel methodological bridge between GeoAI and classic spatial statistics.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> The Virtual Tissues foundation model resolves spatial proteomics across scales — <a href="https://doi.org/10.1038/s41586-026-10884-y" target="_blank">10.1038/s41586-026-10884-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Turn in silico gene-pair perturbation into a causal-identification protocol</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most striking move is ablating a gene pair and reading off the drop in predicted co-localization logit, then FDR-testing the deduction across macrophage–T-cell pairs. But this measures the model's <strong>sensitivity</strong>, not the tissue's <strong>causality</strong>: a pair can carry high logit weight because it is a marker of the cell types that happen to co-localize, which is confounding, not communication. The paper partially guards against this by flagging ligand–receptor overlap, yet the volcano plots still show many significant "other" pairs whose status is ambiguous. Three extensions would harden it. (a) <strong>Counterfactual balancing</strong>: perturb the pair while holding cell-type identity fixed, so the deduction isolates niche signal from identity signal. (b) <strong>Double perturbation</strong> to detect interaction/epistasis between pairs — does knocking out CXCL9–CXCR3 change the effect of hyaluronan–CD44, indicating a shared pathway? (c) <strong>External validation</strong> against actual perturbation data: an optimal-transport perturbation model can predict the expression state after a real knockdown, and the two predictions can be required to agree. That converts a saliency map into a falsifiable causal claim.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a directly importable template for my <strong>explainable ML for spatial prediction</strong> line, where I have the identical confound: SHAP or permutation importance on a spatial model tells me the model leans on green-space share or provider density, not that changing them would change health outcomes. The paper's three-part discipline — perturb, FDR-control across many units, then check against an external knowledge base of known mechanisms — is a protocol I can adopt wholesale for telehealth-uptake and mental-health-accessibility models: perturb broadband availability or clinic supply in a fitted model, test the deduction across all census tracts with BH correction, and validate hits against known policy interventions rather than accepting a ranked feature list. The double-perturbation idea is the more interesting import: spatial policy levers interact strongly (adding a clinic where no transit reaches it does nothing), and a pairwise-perturbation grid over levers would surface those complementarities in a way single-feature importance never can.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Conditional Monge Gap enables generalizable single-cell perturbation modelling — <a href="https://doi.org/10.1038/s42256-026-01242-8" target="_blank">10.1038/s42256-026-01242-8</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Stress-test "universal" against the platform and resolution gap it half-crosses</h3>
+      <p><span class="lab paper">Extending this paper</span>The title says <em>universal</em>, but the evidence is asymmetric: pretraining is <strong>entirely Xenium</strong> (71 slides), zero-shot transfer works on held-out Xenium tissues, and MERFISH/MERSCOPE required <strong>few-shot fine-tuning with 10k–100k cells</strong> to reach comparable performance. That gap is the paper's most informative negative result and deserves promotion from a caveat to an experiment. What exactly does the model fail to transfer — the gene vocabulary (different panels, different plex), the transcript-detection sensitivity, or the spatial statistics of segmentation? A clean extension: hold out an entire <em>platform</em> rather than a tissue, sweep the few-shot budget below 10k to find the adaptation floor, and decompose the domain shift by separately re-fitting the gene embedding, the conv stem and the niche head to see which module absorbs the shift. Adding Visium HD and imaging-based modalities as pretraining rather than evaluation domains would test whether a genuinely multi-platform corpus removes the need for fine-tuning at all — the single most valuable follow-up for anyone who wants to use these weights off the shelf.</p>
+      <p><span class="lab mine">Added value to my research</span>Platform shift here is <strong>sensor and jurisdiction shift</strong> in my work, and I hit it constantly: a model trained on US census + Sentinel-2 + Twitter-derived mobility does not survive transplant to a Chinese city with Baidu-heat data, different administrative units and a different POI ontology. The paper's decomposition strategy — figure out <em>which module</em> owns the domain gap — is exactly the diagnostic I lack when a fine-tuned geospatial foundation model degrades across regions. Its finding that the <strong>gene vocabulary</strong> is the likely bottleneck maps to my POI-taxonomy problem: harmonizing category schemas across data providers is the analogue of harmonizing gene panels, and both argue for a learned, alignable vocabulary embedding rather than a fixed one-hot ontology. The few-shot budget curve is also a concrete deliverable for my open-science/FAIR line: reporting "how many local labels does a transferred model need" is far more useful to a public-health agency than a single headline accuracy, and I can adopt that reporting convention directly.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Universal cell embedding provides a foundation model for cell biology — <a href="https://doi.org/10.1038/s41586-026-10689-z" target="_blank">10.1038/s41586-026-10689-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Add time and a mechanistic prior: from static niches to a physics-informed spatiotemporal operator</h3>
+      <p><span class="lab paper">Extending this paper</span>Every slide SpatialFormer sees is a <strong>fixed section</strong> — a single frame of a process that is intrinsically dynamic. Fibrotic granulomas form, immune cells migrate, tumour cells transit through the "transitional" state the paper itself names in the breast-cancer analysis. The learned co-localization is therefore a snapshot of an equilibrium whose kinetics are invisible. Two coupled extensions: (a) <strong>serial-section or time-course pretraining</strong>, so the pairwise objective becomes "will these cells co-localize <em>next</em>", turning the model into a niche-dynamics predictor; and (b) a <strong>physics-informed constraint</strong> that encodes what is already known about the mechanism — the effective communication range is set by the ratio of cytokine secretion to diffusion time constants (a result cited in the paper's own reference list), which is a soft constraint the network could be forced to respect rather than rediscover from data. A diffusion-consistency penalty on the learned interaction kernel would both regularize the small-sample regime and make extrapolation to unseen tissues principled instead of empirical.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the centre of my <strong>physics-informed graph learning</strong> and <strong>spatiotemporal KDE</strong> agenda, and the biological framing sharpens it. The secretion-versus-diffusion constant that sets interaction range is formally the same object as the decay parameter in my spatiotemporal kernel density estimates of disease or service demand, and the paper's willingness to bind a learned kernel to a known transport law is exactly what I have argued for against purely data-driven GNNs. The "predict the next configuration" reformulation transfers to job-housing network evolution and to agent-based models of care-seeking: pairwise co-location prediction over time is the microscopic version of an ABM transition rule, which suggests a hybrid where a learned pairwise operator supplies the interaction rules an ABM normally hard-codes. Practically, an SIR-style or diffusion-style conservation penalty added to a spatial GNN is a small implementation change with a large payoff in extrapolation — the same argument the paper would need to make to defend "universal" beyond its Xenium corpus.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for the Earth system — <a href="https://doi.org/10.1038/s41586-025-09005-y" target="_blank">10.1038/s41586-025-09005-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Reuse the pairwise-niche objective as a general spatial pretext task for urban and health geography</h3>
+      <p><span class="lab paper">Extending this paper</span>Strip SpatialFormer of its biology and what remains is a broadly reusable recipe: <strong>tokenize a spatial unit by its attribute vector plus its subunit geometry, pretrain on whether two units share a neighbourhood, and read off relations rather than labels</strong>. The paper never tests that abstraction, and it should — a decisive demonstration would be to apply the identical architecture to a non-omics spatial point pattern and show the pairwise pretext task still yields transferable embeddings. Internally, there is a cheaper version of the same test: the paper shows gene <em>pairs</em> (DGCO) out-discriminate single genes for cell typing, which is a claim about <strong>co-occurrence being a richer descriptor than marginal intensity</strong>. Formalizing that — deriving when pairwise co-occurrence statistics dominate marginals, as a function of sparsity and spatial autocorrelation — would give the architecture a theoretical rationale rather than an empirical one, and would tell practitioners in <em>any</em> spatial field when the extra cost of pairwise training is justified.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the idea I would actually build. Replace cells with <strong>POIs, buildings or census blocks</strong>, replace subcellular transcript coordinates with <strong>intra-parcel land-use composition or building footprint geometry</strong>, replace the 30 µm niche with a <strong>walkable buffer or street-network neighbourhood</strong>, and the pairwise objective becomes "do these two POIs belong to the same functional neighbourhood" — a self-supervised pretext task that needs <em>no labels</em>, which is the binding constraint in urban analytics. That yields pretrained neighbourhood embeddings I can fine-tune for 15-minute-city delineation, job-housing balance, healthy-city typologies or EV-charging siting, all from the same encoder. The DGCO result maps to <strong>POI co-location patterns</strong>: pairs of amenities (pharmacy + clinic, gym + grocery) plausibly characterize neighbourhood function better than amenity counts alone, which is a testable hypothesis I can run on open OSM data tomorrow and which reframes spatial entropy and co-location mining as a pretraining objective rather than a descriptive statistic. The perturbation machinery then comes free: ablate an amenity pair and measure the drop in predicted neighbourhood coherence — an explainable, equity-auditable siting tool.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Integrative deep learning of spatial multi-omics with SWITCH — <a href="https://doi.org/10.1038/s43588-025-00891-w" target="_blank">10.1038/s43588-025-00891-w</a> · Predicting human mobility flows in cities using deep learning on satellite imagery — <a href="https://doi.org/10.1038/s41467-025-65373-z" target="_blank">10.1038/s41467-025-65373-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

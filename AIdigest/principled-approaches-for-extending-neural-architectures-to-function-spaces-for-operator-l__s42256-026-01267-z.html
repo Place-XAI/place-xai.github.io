@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Principled approaches for extending neural architectures to function spaces for operator learning — AI Digest</title>
+<meta name="description" content="AI Digest: Principled approaches for extending neural architectures to function spaces for operator learning (Nature Machine Intelligence, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Neural operators</span>
+      <span class="tag">Function spaces</span>
+      <span class="tag">Discretization-agnostic learning</span>
+      <span class="tag">Scientific ML / PDEs</span>
+    </div>
+    <h1>Principled approaches for extending neural architectures to function spaces for operator learning</h1>
+    <div class="meta">
+      <span class="authors">Julius Berner · Miguel Liu-Schiaffini · Jean Kossaifi · Valentin Duruisseaux · Boris Bonev · Kamyar Azizzadenesheli · Anima Anandkumar</span>
+      <span><b>Published</b> 2026-07-03</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-026-01267-z" target="_blank">10.1038/s42256-026-01267-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-026-01267-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Standard neural networks learn maps between <strong>finite-dimensional arrays</strong>, but most scientific data are discretized samples of <strong>continuous fields</strong>. The paper distils three defining principles for learning in function space — <strong>discretization agnosticism, a fixed parameter count and universal approximation</strong> — and gives a concrete recipe for converting popular architectures (MLPs, CNNs, GNNs, transformers, encoder–decoders) into <strong>neural operators</strong>: replace index-based parameters with <strong>coordinate-dependent kernels</strong>, replace sums over neighbour indices with <strong>quadrature-weighted integrals over coordinate-defined neighbourhoods</strong>, and make latent interfaces independent of the observation grid. Empirically on Navier–Stokes, FNO and OFORMER trained only at resolution 128 generalize to unseen coarser and finer resolutions, whereas U-Net and ViT degrade away from the training resolution — and mixed-resolution training helps only at the resolutions actually seen.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Turns "neural operator" from a family of models into a design rule.</b> Instead of proposing yet another architecture, the paper states what any layer must satisfy to be a legitimate function-space map, then shows how to retrofit that property onto architectures people already trust.</li>
+      <li><b>Explains a failure mode that is easy to mistake for a data problem.</b> A U-Net accepts arrays of any size, so it <em>looks</em> resolution-flexible; in fact its receptive field is tied to grid spacing, so at a new resolution it silently implements a <strong>different operation</strong>. The paper isolates this as an architectural defect, not a generalization gap to be patched with augmentation.</li>
+      <li><b>Rehabilitates quadrature weights as a first-class modelling object.</b> Aggregating irregularly sampled values with uniform weights over-counts densely sampled regions and the output has <strong>no unique limit</strong> under refinement (Fig. 5). Weighting by Voronoi/Delaunay segment measure, grid spacing or Monte Carlo density restores a consistent limit — a point with direct consequences far beyond PDEs.</li>
+      <li><b>Keeps operator learning coupled to mainstream deep learning progress.</b> Because the conversion is layer-local and "minimal", advances in attention, normalization and multiscale design can be inherited rather than reinvented, which is the paper's explicit strategic argument.</li>
+      <li><b>Practically actionable.</b> The recipe ships with the open <code>neuraloperator</code> library, an archived dataset and archived code, so the claims are reproducible rather than programmatic.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Perspective-shaped contribution with a testable core:</b> Nature Machine Intelligence favours pieces that reframe a field; this one pairs the reframing with a controlled cross-resolution experiment rather than leaving it as commentary.</li>
+      <li><b>Cross-cutting rather than task-specific:</b> the principles apply to fluids, climate, mechanics, imaging and any domain whose data are samples of fields — matching the journal's preference for transferable methodology over a single benchmark win.</li>
+      <li><b>Bridges two communities:</b> numerical analysis (quadrature, discretization error, convergence) and deep-learning architecture design, a bridging role the journal actively solicits.</li>
+      <li><b>Honest about limits:</b> it states plainly that discretization-agnostic designs can lose accuracy at a fixed resolution versus specialized networks, and lists open problems (error estimates, complex geometries, efficient high-resolution attention) — the balanced framing expected of a Nature-family perspective.</li>
+      <li><b>Open-science posture:</b> CC-BY, public library, Zenodo-archived data and code, supporting reuse as infrastructure.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Data type</dt><dd><strong>Simulated PDE solution data only.</strong> This paper uses no observational, remote-sensing or survey data; every field is generated from governing equations. This is stated here explicitly because the "volume" of such a study is measured in resolutions and architectures rather than in samples or countries.</dd>
+      <dt>Primary benchmark</dt><dd><strong>Navier–Stokes equations for incompressible fluids</strong> — the learned operator maps a <em>forcing function</em> to the <em>vorticity field at a later time</em>, starting from zero initial vorticity. Errors are reported as <strong>relative L<sup>2</sup> error on unseen test data</strong> (Fig. 4).</dd>
+      <dt>Resolutions</dt><dd>Main models trained at a <strong>single resolution of 128</strong>; the mixed-resolution setting trains on <strong>64, 128 and 256</strong>. Cross-resolution evaluation reuses <strong>the same learned parameters at every test resolution</strong> — no resolution-specific retraining or fine-tuning. Test resolutions span both below and above the training resolution.</dd>
+      <dt>Secondary benchmark</dt><dd><strong>Darcy flow</strong> (steady-state two-dimensional Darcy equation), learning the map from pressure to forcing for a fixed diffusion coefficient; FNO-based architectures use padding to handle the non-periodic boundaries. Described in Supplementary Section F.2.</dd>
+      <dt>Architectures compared</dt><dd>Eight settings: <strong>U-Net</strong> and <strong>ViT</strong> (fixed-discretization baselines), <strong>FNO</strong> and <strong>OFORMER</strong> (neural operators), a <strong>kernel-interpolated U-Net</strong>, an <strong>interpolation-based encoder–decoder</strong> baseline, and composite <strong>FNO + LocalConv</strong> / <strong>FNO + DiffConv</strong> variants.</dd>
+      <dt>Training setup</dt><dd>Trained on <strong>absolute L<sup>2</sup> error</strong>, evaluated on <strong>relative L<sup>2</sup> error</strong>; <strong>Adam</strong> with model-specific learning-rate schedules and weight decay. Losses use quadrature-aware norms so that the discrete loss approximates a function-space integral.</dd>
+      <dt>Sample counts</dt><dd><strong>Not stated in the main text.</strong> The number of training/test trajectories, the viscosity and the forcing distribution are deferred to Supplementary Sections F.1–F.3; no headline sample count is reported, and none is invented here.</dd>
+      <dt>Availability</dt><dd>Data archived on <strong>Zenodo</strong> (<a href="https://doi.org/10.5281/zenodo.15687518" target="_blank">10.5281/zenodo.15687518</a>); code on <strong>Zenodo</strong> (<a href="https://doi.org/10.5281/zenodo.20335280" target="_blank">10.5281/zenodo.20335280</a>) and built on the open <strong>NEURALOPERATOR</strong> library.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Navier–Stokes (incompressible) simulations</td><td>Main operator-learning task: forcing → vorticity</td><td>Train at res. 128 (mixed: 64/128/256); tested at unseen lower &amp; higher resolutions; sample count not reported in main text</td><td><a href="https://doi.org/10.5281/zenodo.15687518" target="_blank">Zenodo 15687518</a></td></tr>
+        <tr><td>Darcy flow (steady-state 2D)</td><td>Complementary benchmark: pressure → forcing, fixed diffusion coefficient</td><td>Supplementary Section F.2; non-periodic domain handled by padding</td><td><a href="https://doi.org/10.5281/zenodo.15687518" target="_blank">Zenodo 15687518</a></td></tr>
+        <tr><td>NEURALOPERATOR Python library</td><td>Reference implementations of FNO, GNO, UNO, SFNO, local FNO</td><td>Open-source library used for all operator baselines</td><td><a href="https://github.com/neuraloperator/neuraloperator" target="_blank">github.com/neuraloperator</a></td></tr>
+        <tr><td>NNs-to-NOs code release</td><td>Experiment code for this paper</td><td>Archived release v1.0.0</td><td><a href="https://doi.org/10.5281/zenodo.20335280" target="_blank">Zenodo 20335280</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Honesty note: the article reports resolutions, architectures and relative L<sup>2</sup> errors, but does not state dataset sizes, viscosity values or parameter counts in the main text — those live in the Supplementary Information (Sections F.1–F.3). No numbers beyond those printed in the article are asserted on this page.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Three defining principles.</b> A function-space model must be (i) <strong>discretization agnostic</strong> — the same parameters apply at any discretization with outputs consistent up to a vanishing discretization error; (ii) <strong>fixed in parameter count</strong>, independent of the number of sample points; and (iii) a <strong>universal approximator</strong> of sufficiently regular operators.</li>
+      <li><b>The conversion recipe.</b> Identify which continuous operator a finite-dimensional layer discretizes, then re-discretize it respecting coordinates, quadrature weights and sampling structure. Concretely: index-dependent parameters → coordinate-dependent functions; sums over indices → integrals over coordinate-defined neighbourhoods; integrals → quadrature on the available points. Most layers fall under the template <code>g(y) = Ψ(y, f(y), ∫ K(x, y, f(x), f(y)) dx)</code>.</li>
+      <li><b>Layer-by-layer correspondences.</b> Fully connected layer → <strong>integral transform</strong> with learnable kernel and bias functions; activations, 1×1 convolutions, liftings and projections → <strong>pointwise operators</strong> (transfer almost unchanged); discrete convolution → <strong>coordinate-defined convolution with fixed support radius</strong>, or, via the convolution theorem, <strong>spectral convolution</strong> (the FNO); GNN message passing → <strong>graph neural operator</strong> with quadrature-weighted neighbourhood integrals; attention → <strong>global input-dependent integral operator</strong> requiring quadrature weights in both aggregation and normalization (reducing to standard attention on uniform grids); encoder–decoder → inner products with learned basis functions and a latent dimension fixed independently of the sample count.</li>
+      <li><b>Quadrature as the load-bearing detail.</b> Weights Δ<sub>i</sub> are grid-spacing products on regular grids, Delaunay-triangulation partitions on point clouds, or Monte Carlo weights when samples follow a known density. Without them, refinement changes the answer and no unique limit exists (Fig. 5).</li>
+      <li><b>Receptive-field diagnosis.</b> Nearest-neighbour neighbourhoods collapse in physical extent as the mesh is refined (Fig. 3); fixing the support radius in domain coordinates makes the receptive field a property of the domain rather than of the grid.</li>
+      <li><b>Function-space training objectives.</b> Losses are defined through discretization-consistent (quadrature-aware) norms, so that the discrete loss approximates ∫|g − g*|<sup>2</sup> dy; Sobolev and physics-informed variants, multiresolution training and autoregressive rollouts are discussed as operator-preserving strategies.</li>
+      <li><b>Controlled cross-resolution protocol.</b> Train once, evaluate the identical parameters across resolutions, and contrast principled operators against (a) fixed-grid networks, (b) multiresolution-augmented networks and (c) interpolation-wrapped networks — isolating <em>which</em> design choice actually buys resolution generalization.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig1.png" target="_blank">
+        <img src="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig1.png" alt="Fig.1 Illustration of a neural operator" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Illustration of a neural operator — input function f given at any discretization (x<sub>i</sub>), output function g queryable at any discretization (y<sub>j</sub>).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig2.png" target="_blank">
+        <img src="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig2.png" alt="Fig.2 Pipeline of converting neural networks to neural operators" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> The conversion pipeline — GNN and convolutional layers become well-posed operator layers (GNO, spectral convolution, local FNO, UNO, SFNO) through a sequence of simple modifications.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig3.png" target="_blank">
+        <img src="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig3.png" alt="Fig.3 Collapsing receptive fields with nearest neighbours" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Collapsing receptive fields — a k-nearest-neighbour neighbourhood shrinks in physical extent as the discretization is refined; a coordinate-defined radius does not.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig4.png" target="_blank">
+        <img src="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig4.png" alt="Fig.4 Relative L2 errors on unseen Navier-Stokes test data" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Relative L<sup>2</sup> error on unseen Navier–Stokes data — FNO and OFORMER (trained at res. 128) hold up across resolutions; U-Net and ViT degrade away from the training resolution.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig5.png" target="_blank">
+        <img src="assets/principled-approaches-for-extending-neural-architectures-to-function-spaces-for-operator-l__s42256-026-01267-z/fig5.png" alt="Fig.5 Visualizing the need for quadrature weights" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Why quadrature weights are necessary — uniform weights over-count densely sampled regions and yield no unique limit under refinement; segment-length weights converge to the integral.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 1 in the main text — <b>Table 1</b>, notation and side-by-side comparison of neural networks versus neural operators. Supplementary Information adds Figs. 1–3 and Table 1, plus Sections A–G (theory, per-architecture derivations, FNO details, losses/training, applications, experiments, pseudocode).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, spatiotemporal analysis for urban/public health).</p>
+
+    <div class="idea">
+      <h3>① Push the quadrature argument out of the toy setting and into biased, non-uniform sampling</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 5 makes the paper's sharpest point — uniform aggregation over irregular points has <strong>no unique limit under refinement</strong> — but demonstrates it on a one-dimensional illustration, while every quantitative experiment (Navier–Stokes, Darcy) runs on <strong>regular grids where the weights cancel</strong>. The obvious extension is to stress-test the recipe where quadrature actually bites: sample the same field on point clouds whose density is <em>correlated with the signal</em> (dense where gradients are steep, sparse elsewhere), and compare Delaunay/Voronoi weights, Monte Carlo weights under a known density, and naive uniform weights. That would convert the paper's qualitative "use quadrature weights" instruction into an empirical error budget, directly addressing its own stated open problem of quantifying and controlling discretization error in practice.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the <strong>modifiable areal unit problem stated as numerical analysis</strong>. Census tracts, grid cells, sensor networks and mobile-phone towers are all non-uniform quadrature schemes, and my accessibility and exposure surfaces are integrals over them. Adopting explicit population- or area-weighted Δ<sub>i</sub> inside a spatial ML model gives me a defensible answer to the perennial reviewer question of why results shift between tract, block-group and hexagon aggregations — and a diagnostic for when they should <em>not</em> shift. It also suggests a scale-consistency check for spatiotemporal kernel density estimation: refine the bandwidth grid and verify convergence rather than tuning it by eye.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Fast, scale-adaptive and uncertainty-aware downscaling of Earth system model fields with generative machine learning — <a href="https://doi.org/10.1038/s42256-025-00980-5" target="_blank">10.1038/s42256-025-00980-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Read 2SFCA as an instance of the paper's Eq. (4) — and learn its kernel</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's central template, <code>g(y) = ∫<sub>D(y)</sub> K(x, y, f(x), f(y)) dx</code>, is presented as the continuum limit of message passing on PDE meshes. But structurally it <em>is</em> a spatial accessibility operator: f is a supply or demand density, D(y) is a catchment, K is a distance-decay kernel. Extending the paper means demonstrating the recipe on a non-PDE field problem where the ground-truth operator is known analytically but the domain is an irregular network rather than a square — showing that "operator learning" is a statement about data being fields, not about physics. This also tests the paper's own claim that graph neural operators subsume integral-transform and convolutional cases through the choice of neighbourhood D(y).</p>
+      <p><span class="lab mine">Added value to my research</span>Direct and concrete: in 2SFCA/R2SFCA the decay function is <em>assumed</em> (Gaussian, power, piecewise), and the catchment radius is a hand-set constant. Rewriting the estimator as a graph neural operator layer makes K a <strong>learnable coordinate-dependent kernel</strong> fitted to observed utilization or mobility flows, while the fixed-radius-versus-kNN distinction of Fig. 3 explains precisely why kNN-based catchments behave inconsistently as one moves from rural to dense urban sampling. The prize is an accessibility model whose parameters transfer between study areas with different spatial resolutions instead of being re-tuned per city.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting human mobility flows in cities using deep learning on satellite imagery — <a href="https://doi.org/10.1038/s41467-025-65373-z" target="_blank">10.1038/s41467-025-65373-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Treat cross-city transfer as the geographic analogue of cross-resolution generalization</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's experimental axis is resolution: train at 128, test at 64 and 256, same parameters throughout. It never varies the <em>domain</em> — the underlying operator is fixed and only its sampling changes. A natural and more demanding extension is a two-axis protocol that varies discretization <em>and</em> the distribution of input functions (different forcing statistics, different boundary geometry), separating <strong>discretization error</strong> from <strong>conditional shift</strong>. The paper implicitly needs this: it warns that discretization-agnostic designs can underperform specialized networks at a fixed resolution, and only a two-axis study can show whether that cost buys robustness to real distribution change.</p>
+      <p><span class="lab mine">Added value to my research</span>This is exactly my spatial transferability problem stated cleanly. A model of primary-care access or telehealth uptake trained in one metro is asked to run in another, where both the <em>sampling</em> (tract sizes, survey density) and the <em>process</em> (demographics, provider supply) differ. Borrowing the paper's protocol gives me a principled ablation for GeoAI papers: hold parameters fixed, vary resolution first, then vary region — and report the two error contributions separately instead of a single out-of-sample number. It also gives spatial non-stationarity (my MGWR territory) a crisp companion diagnostic: non-stationarity is conditional shift, not discretization error, and the two demand different fixes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep transfer operator learning for partial differential equations under conditional shift — <a href="https://doi.org/10.1038/s42256-022-00569-2" target="_blank">10.1038/s42256-022-00569-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Take the recipe to domains with holes, coastlines and moving boundaries</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper names "operator architectures for complex geometries and adaptive discretizations" as an open direction, and its own evidence is confined to a periodic square (with padding as the workaround for Darcy's non-periodic boundaries). Spectral convolution — the workhorse behind its strongest result — assumes a structure that real domains violate. Extending the paper means specifying, layer by layer, what the conversion recipe becomes when the domain has <strong>irregular boundaries, interior holes and a boundary that moves</strong>: which layers survive unchanged (pointwise ones), which need coordinate-defined local kernels instead of global spectral ones, and how quadrature weights must be redefined near the boundary so the integral remains consistent.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban domains are exactly this: street networks with holes, administrative boundaries that cut catchments, rivers and coastlines that make Euclidean kernels wrong, and — in flood or epidemic settings — a boundary that <em>moves in time</em>. A boundary-aware operator layer would let me model an exposure or accessibility field on a domain that respects barriers rather than smoothing across them, which is the single most common criticism of kernel-based urban surfaces. It also connects naturally to my agent-based and SIR work, where the "free boundary" is the moving edge of an outbreak or an evacuation zone.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Deep neural operator for free boundary problems — <a href="https://doi.org/10.1038/s42256-026-01233-9" target="_blank">10.1038/s42256-026-01233-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Apply the conversion recipe to pretrained geospatial foundation models — and benchmark it honestly</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper shows that a ViT is <em>not</em> a neural operator because its tokenization is tied to the grid, and that interpolation-wrapping any pretrained network yields only a naive operator that discards high-resolution detail. Yet nearly every geospatial and Earth-system foundation model today is a patch-tokenized ViT. The high-value extension is to apply the recipe <strong>to a pretrained model rather than a from-scratch one</strong>: replace patch tokenization with coordinate-based positional information, insert quadrature weights into attention aggregation and normalization, and fine-tune — then measure how much of the pretrained representation survives, and whether the resulting model achieves genuine zero-shot resolution transfer instead of interpolation-quality transfer. Paired with this, the field needs a benchmark whose evaluation grid is <em>deliberately different</em> from any training grid, so that resolution-overfitting cannot be mistaken for skill.</p>
+      <p><span class="lab mine">Added value to my research</span>Fine-tuning geospatial foundation models is an active line for me, and this reframes the central obstacle. Satellite and reanalysis products arrive at heterogeneous resolutions (10 m, 30 m, 250 m, 0.25°), and a patch-tokenized backbone quietly encodes the resolution it was pretrained on — so fine-tuning on one sensor and deploying on another changes the operation, not just the input. An operator-ified backbone would let one model ingest Sentinel, Landsat and reanalysis fields <strong>without resampling everything to a lowest common denominator</strong>, which is where most multi-source fusion loses information. The benchmark discipline is equally useful to me: for FAIR/open-science reporting, "tested at a resolution never seen in training" is a far more informative claim than a held-out split at the same grid.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for the Earth system — <a href="https://doi.org/10.1038/s41586-025-09005-y" target="_blank">10.1038/s41586-025-09005-y</a> · Envisioning better benchmarks for machine learning PDE solvers — <a href="https://doi.org/10.1038/s42256-024-00962-z" target="_blank">10.1038/s42256-024-00962-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

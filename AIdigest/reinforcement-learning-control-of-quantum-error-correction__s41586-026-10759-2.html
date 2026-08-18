@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reinforcement learning control of quantum error correction — AI Digest</title>
+<meta name="description" content="AI Digest: Reinforcement learning control of quantum error correction (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Reinforcement learning</span>
+      <span class="tag">Quantum error correction</span>
+      <span class="tag">Online calibration under drift</span>
+      <span class="tag">Scalable control</span>
+    </div>
+    <h1>Reinforcement learning control of quantum error correction</h1>
+    <div class="meta">
+      <span class="authors">Volodymyr Sivak · Alexis Morvan · Michael Broughton · Rodrigo G. Cortiñas · Johannes Bausch · Andrew W. Senior · Alec Eickbusch · Noah Shutty · … · Hartmut Neven · William D. Oliver · Vadim Smelyanskiy · Paul V. Klimov (Google Quantum AI &amp; Google DeepMind collaboration, 300+ authors)</span>
+      <span><b>Published</b> 2026-07-08</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10759-2" target="_blank">10.1038/s41586-026-10759-2</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10759-2" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Quantum error correction can <strong>calibrate the machine that runs it</strong>. By repurposing QEC <strong>error-detection events as a reward signal</strong>, a policy-gradient RL agent continuously steers &gt;1,000 analogue control parameters of a Willow superconducting processor <em>during</em> computation, instead of halting the algorithm for recalibration. Against injected drift this improves logical-error-rate stability <strong>2.4×</strong> (<strong>3.5×</strong> with decoder steering) and cuts LER by 24–31%; fine-tuning an already expertly calibrated device gives a further <strong>~20% LER suppression</strong>, reaching record <strong>7.72(9) × 10⁻⁴</strong> per cycle for the distance-7 surface code and <strong>8.19(14) × 10⁻³</strong> for the distance-5 colour code. Simulations to distance-15 (~40,000 parameters) show the <strong>convergence rate is independent of system size</strong>, because the surrogate objective is sparse on a detector–parameter factor graph.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Removes a hard blocker for long algorithms.</b> Useful quantum algorithms are projected to run for days or months; the standard fix for drift — stop everything and recalibrate — is incompatible with that. Unifying calibration with computation removes the stop.</li>
+      <li><b>Turns an error signal into a learning signal.</b> Detection events already exist for decoding; using the <em>same</em> stream as reward means the control loop costs no extra quantum resources — unlike proposals based on logical swaps or code deformation, which pay in runtime, footprint and complexity.</li>
+      <li><b>Beats human experts and physics-based calibration.</b> A ~20% additional LER suppression <em>after</em> exhaustive conventional calibration shows model-free in-context tuning reaches regions the physical model does not describe — the regime that matters deep below threshold.</li>
+      <li><b>Scalability is argued, not assumed.</b> The scale-independent convergence rate follows from factor-graph sparsity (locality of detecting regions), giving a mechanism for why the approach should survive to fault-tolerant machine sizes.</li>
+      <li><b>Modality-agnostic recipe.</b> The requirements are only "error-detection signals + tunable controls", so the framework transfers to neutral atoms, ions, and codes with nonlocal connectivity — a general template for closed-loop control of any large system that emits local failure signals.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>A record plus a paradigm.</b> Nature rewards results that are simultaneously a best-in-class number (lowest logical error per cycle demonstrated across any qubit modality) and a conceptual reframing ("a computer that learns from its errors and never stops computing").</li>
+      <li><b>Experiment + theory + scaling simulation in one arc.</b> Hardware demonstration on Willow, a derived surrogate-objective relation (∇log ε_L = (d+1)/2 · ∇log C) validated by finite-difference experiments, and distance-15 simulations — the full evidence chain Nature expects for a claim about the future of a technology.</li>
+      <li><b>Cross-field significance.</b> It lands at the AI/quantum interface: a policy-gradient RL result that physicists must read and an experimental physics result that ML researchers must read.</li>
+      <li><b>Removes a named bottleneck on the road to fault tolerance.</b> Editorially, "drift makes long computations impossible" is a recognized field-level obstacle; a general, overhead-free solution to it is Nature-scale news.</li>
+      <li><b>Generality claim is defensible.</b> The framework's minimal requirements make it architecture-independent, which supports the "broad interest" bar better than a device-specific tuning trick would.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Nature of the data</dt><dd>This is an <strong>experimental hardware</strong> paper, not a secondary-data study: all primary data are <strong>error-detection (syndrome) records</strong> generated by QEC cycles on a Google <strong>Willow superconducting processor</strong>, plus simulated syndrome data from stabilizer-circuit simulations.</dd>
+      <dt>Codes measured</dt><dd><strong>Distance-5 and distance-7 surface codes</strong> and the <strong>distance-5 colour code</strong>, run as a <em>quantum memory</em> algorithm (logical state preserved by repetitive QEC cycles). The exact physical qubit count of the processor is <em>not stated</em> in the main text.</dd>
+      <dt>Control-parameter volume</dt><dd><strong>&gt;1,000</strong> control parameters managed by the agent in the experiments; <strong>&gt;2,000</strong> in the d = 7 experiment; parameter count scales as O(d²). Simulated scaling reaches <strong>≈40,000</strong> parameters at distance-15 (30 control parameters per gate).</dd>
+      <dt>Factor-graph density</dt><dd>In the distance-5 surface-code experiment, each detector node connects on average to <strong>302 parameter nodes</strong>, and each parameter node to <strong>18 detector nodes</strong> — the sparsity that makes high-dimensional optimization tractable.</dd>
+      <dt>Experimental runs</dt><dd><strong>Five independent RL fine-tuning runs each</strong> for the distance-5 surface code and the distance-5 colour code (Fig. 3a). The number of QEC cycles executed per policy candidate is described qualitatively ("a finite, preferably small number") and is <em>not given as a headline number</em> in the main text.</dd>
+      <dt>Simulation volume</dt><dd>Real-time steering study on the <strong>distance-3 surface code</strong> counts detection events in a <strong>1.8 × 10⁹-cycle window</strong> under sinusoidal drift at multiple frequencies; scaling study spans code distances up to <strong>15</strong>.</dd>
+      <dt>Headline measurements</dt><dd>LER per cycle <strong>7.72(9) × 10⁻⁴</strong> (d = 7 surface code, AlphaQubit2 decoder, averaged over X and Z bases) and <strong>8.19(14) × 10⁻³</strong> (d = 5 colour code, Tesseract decoder). Steering: <strong>24% LER reduction, 2.4× stability</strong>; with decoder steering <strong>31% and 3.5×</strong>. Learning response time <strong>≈130 epochs</strong>; critical steerable drift frequency <strong>≈1/150 epochs</strong>; <strong>≈4 dB</strong> suppression of low-frequency LER fluctuations under natural drift.</dd>
+      <dt>Time period</dt><dd>Not reported as calendar dates — the paper's time axis is <strong>learning epochs and QEC cycles</strong>, not wall-clock acquisition windows.</dd>
+      <dt>Data availability</dt><dd>Supporting data deposited at <strong>Zenodo</strong>: <a href="https://doi.org/10.5281/zenodo.17566521" target="_blank">10.5281/zenodo.17566521</a>. Dataset file sizes/record counts are not stated in the article text.</dd>
+      <dt>Code availability</dt><dd><strong>Not open.</strong> The custom code is proprietary to Google; the RL algorithm is described mathematically in Supplementary Information section VIII for independent replication. This is the paper's main reproducibility limitation.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset / Tool</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Zenodo deposit (Google Quantum AI, 2026)</td><td>All supporting experimental and simulation data</td><td>Size not stated in article</td><td><a href="https://doi.org/10.5281/zenodo.17566521" target="_blank">zenodo.17566521</a></td></tr>
+        <tr><td>Willow superconducting processor (syndrome records)</td><td>Primary experimental substrate; source of detection events used as reward</td><td>d = 5 &amp; d = 7 surface code, d = 5 colour code; &gt;1,000–2,000 control parameters</td><td>Hardware — not publicly accessible</td></tr>
+        <tr><td>AlphaQubit2 neural decoder</td><td>Decoding for the record d = 7 surface-code LER</td><td>Real-time neural decoder for topological codes</td><td><a href="https://doi.org/10.48550/arXiv.2512.07737" target="_blank">arXiv:2512.07737</a></td></tr>
+        <tr><td>Tesseract most-likely-error decoder</td><td>Decoding for the d = 5 colour code</td><td>Search-based QEC decoder</td><td><a href="https://doi.org/10.48550/arXiv.2503.10988" target="_blank">arXiv:2503.10988</a></td></tr>
+        <tr><td>Stim stabilizer-circuit simulator</td><td>Underpins the real-time-steering and distance-15 scaling simulations</td><td>1.8 × 10⁹-cycle windows; up to ~40,000 parameters</td><td><a href="https://doi.org/10.22331/q-2021-07-06-497" target="_blank">Quantum 5, 497 (2021)</a></td></tr>
+        <tr><td>SciPy 1.0</td><td>Numerical/analysis stack cited in Methods</td><td>Library</td><td><a href="https://scipy.org" target="_blank">scipy.org</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Honesty note: this paper reports <em>no</em> external observational datasets (no census, satellite or POI-type sources). Every number above is taken verbatim from the article; where the article does not state a quantity (qubit count, cycles per policy candidate, Zenodo record size, calendar acquisition window), it is marked as not stated rather than estimated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Surrogate objective from detection statistics.</b> Instead of optimizing the logical error rate directly (exponentially expensive to resolve, unusable in real time, hopeless as a single scalar for thousands of parameters), the agent minimizes <code>C = E[D]</code>, the average error-detection-event rate over all detectors — a local, cheap proxy whose cost to resolve is independent of code distance.</li>
+      <li><b>Validated gradient equivalence.</b> From the surface-code scaling model ε_L ∝ Λ^(−d/2), the paper derives ∇log ε_L = (d+1)/2 · ∇log C and confirms it experimentally with finite-difference derivatives along random directions in the high-dimensional control space (Fig. 2c).</li>
+      <li><b>Factor-graph sparsity.</b> Detectors are local in space–time, so each term of <code>C</code> depends only on gates inside its detecting region. This bipartite detector↔parameter factor graph is the structural prior that makes the problem tractable and makes convergence size-independent.</li>
+      <li><b>Parameter-exploring policy gradients.</b> A factorized multivariate Gaussian over all control parameters is maintained; each sample is a complete control policy handed to the classical controller. Mean μ(t) tracks the optimum; diagonal covariance σ(t)² sets exploration.</li>
+      <li><b>Stability and efficiency stack.</b> Proximal policy optimization for stable updates, <strong>entropy regularization</strong> to prevent the policy from collapsing to deterministic (this is what enables steering under drift), a replay buffer for sample efficiency, and <strong>gradient masking</strong> on the factor graph for Monte-Carlo variance reduction.</li>
+      <li><b>Controlled drift injection.</b> Artificial drift with step-like, sinusoidal and stroboscopic profiles is injected on selected CZ coupling strengths, XY pulse amplitudes and frequencies at chosen grid locations, so the steering response can be measured against ground truth (Fig. 4).</li>
+      <li><b>Joint decoder steering.</b> The same RL loop reweights the decoder's matching graph; note the honest caveat that decoder steering currently relies on LER estimation and is therefore not yet real-time scalable.</li>
+      <li><b>Exploration–exploitation analysis.</b> Simulated real-time steering identifies a critical drift frequency (~1/150 epochs) below which the aggregate performance including exploration noise still beats a fixed policy — the condition for steering during a single-shot long algorithm.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig1.png" target="_blank">
+        <img src="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig1.png" alt="Fig.1 Overview of RL control" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of RL control — detection events feed the decoder <em>and</em> the RL agent, which steers the analogue control parameters during computation.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig2.png" target="_blank">
+        <img src="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig2.png" alt="Fig.2 Learning from errors" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Learning from errors — detecting regions, the epoch loop (sample policies → measure detection rates → gradient step), the (d+1)/2 gradient relation, and the detector–parameter factor graph (302 params per detector, 18 detectors per param at d = 5).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig3.png" target="_blank">
+        <img src="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig3.png" alt="Fig.3 RL fine-tuning of QEC performance" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> RL fine-tuning beyond expert calibration — ~20% extra LER suppression across five runs per code, and the record decay curves (7.72 × 10⁻⁴ surface, 8.19 × 10⁻³ colour).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig4.png" target="_blank">
+        <img src="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig4.png" alt="Fig.4 Demonstration of RL steering" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> RL steering under injected drift — elevated detection rates appear exactly where the factor graph predicts; steering tracks the drift with a ~130-epoch response time and stabilizes the LER (2.4×, or 3.5× with decoder steering).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig5.png" target="_blank">
+        <img src="assets/reinforcement-learning-control-of-quantum-error-correction__s41586-026-10759-2/fig5.png" alt="Fig.5 Real-time steering and scaling simulations" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Real-time steering and scaling — the exploration/exploitation phase boundary versus drift frequency, and distance-15 (~40,000-parameter) simulations showing a convergence rate independent of system size.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0). Supporting detail lives in Supplementary Information sections II–VIII (factor graph, natural-drift Fourier analysis, randomized-policy recovery, real-time steering, and the full RL algorithm specification).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed graph learning, facility-location optimization, open/FAIR spatial data).</p>
+
+    <div class="idea">
+      <h3>① Replace the factorized Gaussian with a factor-graph neural policy</h3>
+      <p><span class="lab paper">Extending this paper</span>The authors explicitly concede the weak link: because the data rate is limited, they fall back on a <strong>diagonal multivariate Gaussian</strong> — a policy with no parameter coupling, no memory, and no transfer between devices or code distances. Yet they hand us the exact structure a network should consume: the bipartite <strong>detector↔parameter factor graph</strong> (302 parameter nodes per detector, 18 detectors per parameter at d = 5). The extension is to make the policy a <strong>message-passing GNN over that graph</strong>, conditioned on recent detection statistics, trained across distances 3→7 and transferred to 15 — turning per-device re-optimization into amortized inference and testing whether the size-independent convergence of Fig. 5c survives (or improves) with a coupled policy.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the same architecture I want for <strong>physics-informed graph learning on service networks</strong>: a policy that reads a bipartite <em>demand-cell ↔ facility-parameter</em> graph and outputs allocations. The "detecting region" is my <strong>catchment</strong>; gradient masking is exactly the credit-assignment rule an R2SFCA optimizer needs so that a clinic's capacity is updated only from signals inside its own service area — a principled alternative to the global objective I currently optimize for EV-charging siting.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Push the drift-frequency response from a threshold to a full transfer function</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reports two scalar summaries of its dynamics: a ~130-epoch response time and a critical steerable drift frequency of ~1/150 epochs, plus ~4 dB of low-frequency suppression under natural drift. That is a <strong>controller Bode plot with only three points on it</strong>. Extending the paper: measure the full <strong>frequency response and phase lag</strong> of the RL loop across drift amplitudes and profiles, then add a <strong>predictive (feedforward) drift model</strong> — learn the device's drift spectrum from historical epochs and pre-compensate, moving the critical frequency upward instead of accepting it. The paper concedes fast correlated drift (cosmic-ray-like impacts) must be handled in hardware; a forecast-then-steer agent is the obvious software attempt.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial accessibility surfaces drift too — clinics close, POIs churn, populations move, telehealth uptake shifts after a policy change. This gives me a <strong>quantitative recalibration-cadence criterion</strong>: characterize the drift spectrum of a service landscape and derive how often a 2SFCA/accessibility index must be re-estimated before it is "outdated" in exactly the paper's sense. It reframes my spatiotemporal KDE and MGWR updates as a <strong>tracking</strong> problem, not a sequence of independent cross-sectional fits.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Loss of plasticity in deep continual learning — <a href="https://doi.org/10.1038/s41586-024-07711-7" target="_blank">10.1038/s41586-024-07711-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Interrogate the surrogate objective: when does the local proxy lie?</h3>
+      <p><span class="lab paper">Extending this paper</span>Everything rests on <code>C = E[D]</code> being a faithful stand-in for the logical error rate, justified by one scaling model and validated only <strong>in the small-perturbation regime</strong>. The paper itself flags the danger — detection rates could fall because detection capability is impaired rather than because errors are suppressed (they check this once, via logical performance in Fig. 4c). A systematic extension: map the <strong>failure envelope of the surrogate</strong> — leakage, crosstalk, correlated and non-Markovian noise channels where minimizing detection events actively degrades the logical outcome — and build an <strong>explainable audit</strong> that attributes each unit of <code>C</code>-improvement to a physical error channel, so the agent cannot quietly optimize the wrong thing.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my <strong>explainable-ML-for-spatial-prediction</strong> agenda restated in a hard-science setting: proxy indicators (POI counts as "access", provider addresses as "capacity", search volume as "demand") are optimized all the time in urban and health analytics, almost never with a stated regime of validity. Borrowing the paper's discipline — derive the proxy↔outcome gradient relation, verify it empirically, and state where it breaks — is a directly transferable methodological standard for accessibility indices.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Automating turbulence modelling by multi-agent reinforcement learning — <a href="https://doi.org/10.1038/s42256-020-00272-0" target="_blank">10.1038/s42256-020-00272-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Close the loop on decoder steering without ever estimating the logical error rate</h3>
+      <p><span class="lab paper">Extending this paper</span>The most valuable single number in the paper — 3.5× stability — depends on <strong>decoder steering</strong>, and the authors state plainly that this branch relies on LER estimation and "is not straightforwardly scalable to the real-time setting". The paper thus reports its best result using a component it admits cannot yet run in production. The concrete extension: make decoder reweighting driven purely by <strong>online detector correlation statistics</strong> (as sketched in the alternatives they cite), then re-run the drift experiment to see how much of the 3.5× survives without oracle LER access. That single experiment decides whether joint control+decoder steering is a real-time capability or a benchmark artefact.</p>
+      <p><span class="lab mine">Added value to my research</span>Structurally identical to a problem I face in spatial epidemiology and health-access modelling: the <strong>observation model drifts</strong> (reporting completeness, geocoding quality, testing intensity) at the same time as the process I am trying to estimate. Learning to reweight the inference graph from internal consistency signals alone — never from ground truth, which I also never have — is the transferable trick, and it pairs naturally with physics-informed constraints to keep the reweighting identifiable.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Neural-network decoders for measurement induced phase transitions — <a href="https://doi.org/10.1038/s41467-023-37902-1" target="_blank">10.1038/s41467-023-37902-1</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Export "never stop computing" to city-scale infrastructure control</h3>
+      <p><span class="lab paper">Extending this paper</span>The authors claim modality-generality (only "error-detection signals and tunable controls" are required) but demonstrate it on one processor family. The strongest test of that claim is not another qubit platform — it is a <strong>completely different substrate that emits sparse local failure signals</strong>. Extending the paper means formalizing its three ingredients (local surrogate objective, factor-graph sparsity, entropy-regularized steering) as a <strong>domain-independent control template</strong> with stated preconditions: sparse locality between failure detectors and controls, cheap local signals, slow drift relative to the learning response time. Publishing that template with a non-quantum stress test would convert an impressive experiment into a reusable methodology.</p>
+      <p><span class="lab mine">Added value to my research</span>Urban service systems satisfy those preconditions almost exactly: EV-charging queues, telehealth session failures, transit dwell-time violations and clinic no-shows are <strong>sparse, local, continuously emitted failure detectors</strong>, and the controls (pricing, dispatch, appointment capacity, station power caps) are tunable in place. The paper hands me a defensible reason to expect <strong>size-independent convergence</strong> in a city-scale controller, and its exploration-noise analysis gives the safety criterion I would need before steering a live public service: only steer when the system's drift is slower than the agent's response time.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning — <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a> · A digital twin framework for urban parking management and mobility forecasting — <a href="https://doi.org/10.1038/s41467-025-65306-w" target="_blank">10.1038/s41467-025-65306-w</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

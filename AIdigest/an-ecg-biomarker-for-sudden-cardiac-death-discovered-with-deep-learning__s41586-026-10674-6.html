@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An ECG biomarker for sudden cardiac death discovered with deep learning — AI Digest</title>
+<meta name="description" content="AI Digest: An ECG biomarker for sudden cardiac death discovered with deep learning (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">ECG deep learning</span>
+      <span class="tag">Sudden cardiac death</span>
+      <span class="tag">Generative counterfactuals</span>
+      <span class="tag">Biomarker discovery</span>
+    </div>
+    <h1>An ECG biomarker for sudden cardiac death discovered with deep learning</h1>
+    <div class="meta">
+      <span class="authors">Ziad Obermeyer · Alexander Schubert · James Ross · Sendhil Mullainathan · Markus Lingman</span>
+      <span><b>Published</b> 2026-06-24</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10674-6" target="_blank">10.1038/s41586-026-10674-6</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10674-6" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>A deep model trained on an entire Swedish region's ECGs linked to death certificates flags a <strong>high-risk group of 2.2% of the sample with a 7.0% annual rate of sudden cardiac death</strong> — higher than the 4.6% rate in patients with reduced LVEF (1.9% of the sample), and <strong>86.1% of these high-risk patients are invisible to LVEF</strong>. The model transfers <strong>zero-shot</strong> to a US health system (VF/VT AUC 0.822) and a Taiwanese arrest registry (arrhythmic-arrest AUC 0.767, with a near-chance 0.582 "placebo" AUC for non-arrhythmic arrests). Pairing the classifier with a <strong>generative model of the ECG beat</strong> morphs real low-risk waveforms into counterfactual high-risk ones, exposing a previously undescribed, visually obvious feature — a <strong>slurred terminal R wave in lead aVL</strong> — that independently predicts sudden cardiac death and points to diffuse myocardial fibrosis as a candidate mechanism.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>It breaks a 40-year clinical deadlock.</b> Defibrillators have existed since 1980, but LVEF — the only biomarker in wide use — misses most sudden cardiac deaths and sends two-thirds of implanted devices to patients who never receive a life-saving shock. This model finds a <strong>net-new</strong> high-risk population: only 13.9% of its high-risk group had known reduced LVEF.</li>
+      <li><b>It rescues the patients with "normal" hearts.</b> Among those with a measured and <em>normal</em> LVEF — a group for whom no risk prediction currently exists — the model isolates patients at 6.4% annual risk, above the 4.6% seen in reduced-LVEF patients. In the whole cohort, <strong>41.2% of sudden cardiac deaths had no obvious risk factor</strong> at the time of their ECG.</li>
+      <li><b>It uses the cheapest test in medicine.</b> A standard 12-lead ECG costs a fraction of cMRI, electrophysiology studies or genetic profiling — the modalities that dominate current SCD research — making population-scale screening plausible rather than aspirational.</li>
+      <li><b>Suggestive evidence of preventability, not just prediction.</b> High-risk patients who happened to have defibrillators died 54.4% less than their predicted rate; the same regression framework "rediscovers" the known 50–88% trial effect in reduced-LVEF patients, a face-validity check that most prediction papers never attempt.</li>
+      <li><b>It turns a black box into a hypothesis.</b> Rather than stopping at a saliency map, the generative morphing pipeline produces a <em>human-legible waveform feature</em>, which the authors then tie to electrophysiological first principles (wavefront scattering by diffuse fibrosis) and test against blinded cMRI review. This is machine learning used as a <strong>discovery instrument</strong>, not just a classifier.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>A new biological finding, not a new benchmark.</b> The headline is a <em>previously undescribed biomarker</em> and a mechanistic hypothesis about sudden cardiac death — Nature rewards the discovery, and the AI is the microscope.</li>
+      <li><b>Methodological credibility that is unusually hard-won.</b> A pre-specified <strong>40% data lockbox</strong>, untouched from model development through peer review and opened only at provisional acceptance, plus a "placebo AUC" specificity test in Taiwan — the study design anticipates the standard objections to clinical ML.</li>
+      <li><b>Generalization across three continents, two vendors and two sampling rates.</b> Zero-shot transfer from Philips-derived Swedish training data to GE MUSE data in the USA and Taiwan, and from death-certificate labels to VF/VT codes to adjudicated arrests, addresses the field's central worry about brittle medical AI.</li>
+      <li><b>Immediate translational stakes.</b> The results define a concrete candidate population for a randomized defibrillator trial — the paper explicitly frames this as the next step.</li>
+      <li><b>A transferable AI-for-science template.</b> "Predictive model + generative model → counterfactual instance → first-principles reasoning" is a recipe other fields can copy, which is exactly the kind of general contribution Nature's main journal prizes.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training population<br>(Sweden)</dt><dd><strong>All 441,614 ECGs performed 2010–2016 in Region Halland</strong>, a public regional health system in Sweden (12 patients opted out), linked to <strong>death certificates</strong> and complete <strong>electronic health records</strong> via the regional healthcare information platform. ECGs sampled at <strong>500 Hz</strong>, retrieved as XML from a <strong>Philips IntelliSpace</strong> system. Ethics: Lund University review board, protocol 2016/517 (amendment 2024-02316-02).</dd>
+      <dt>Split &amp; lockbox</dt><dd>Patient-level random split fixed <em>before</em> any analysis: <strong>40% lockbox = 179,060 ECGs / 51,481 patients</strong>, untouched until provisional acceptance. Final model retrained on the accessed <strong>60% = 262,554 ECGs / 75,157 patients</strong>. Main results are computed in the under-80 lockbox subset: <strong>119,541 ECGs / 35,885 patients</strong> with one-year follow-up, and specifically the <strong>113,072 ECGs / 35,417 patients without defibrillators</strong>. Censoring: 6,446 of 125,987 lockbox ECGs (12,969 of 247,286 in training) excluded from outcome metrics.</dd>
+      <dt>US validation</dt><dd><strong>Dandelion Health</strong> cohort drawn from a large non-academic US health system (<strong>Sharp HealthCare, San Diego, CA</strong>): <strong>251,858 ECGs performed in 2021–2022 across 139,613 patients under 80</strong>. <strong>GE MUSE</strong> storage; 83.3% at 500 Hz, 16.7% at 250 Hz (linearly interpolated to 500 Hz). Outcome available: VF/VT diagnoses only (cause of death not linkable).</dd>
+      <dt>Taiwan validation</dt><dd><strong>National Taiwan University Hospital</strong> emergency-department registry, <strong>2011–2019</strong>, distributed through <strong>Nightingale Open Science</strong>; Utstein-style reporting template. <strong>4,268 patients under 80: 257 cardiac arrests + 4,011 random ED controls</strong>; detailed case review adjudicated <strong>96 arrests (37%) as arrhythmic</strong>. Median ECG-to-ED interval 391 days (IQR 74–2,189). GE MUSE, 500 Hz.</dd>
+      <dt>Outcome definition</dt><dd>Primary label = death certificate indicating (i) cardiac or ill-defined cause and (ii) death outside hospital or within the first 24 h of admission, in the year after the ECG. Complemented by VF/VT diagnoses in EHRs (Sweden, USA) and adjudicated arrest cause (Taiwan).</dd>
+      <dt>Base rates</dt><dd>Sudden cardiac death in the year after an ECG: <strong>0.6%</strong> overall in the lockbox; median follow-up <strong>2,010 days</strong>. Of these deaths, 43.9% had LVEF measured premortem and 36.4% of measured LVEFs were ≤35%; <strong>41.2% had no coronary disease, prior MI, heart failure or prior ventricular arrhythmia</strong>. Analyses focus on patients under 80 — 74.6% of all ECGs and 25.7% of all sudden cardiac deaths. US VF/VT base rate: 3.8%.</dd>
+      <dt>Availability</dt><dd><em>Deliberately uneven, and the paper says so.</em> Swedish data and the Swedish-derived model weights are accessible <strong>only through a direct collaboration agreement with Region Halland</strong> (GDPR constraint). Dandelion Health data require a research partnership or the company's standard access pathway. <strong>Taiwanese data are freely available from Nightingale Open Science</strong>. All non-model code, including the morphing pipeline, is public.</dd>
+      <dt>Not reported</dt><dd>No patient-level geography, socioeconomic status, or residential context is used or released; the number of ECGs per patient, and the exact ICD-implantation counts in each cohort, are not stated in the main text (Table 1 summarizes the lockbox). We do not invent these numbers here.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Region Halland ECG + death-certificate + EHR linkage (Sweden)</td><td>Training + primary evaluation (lockbox)</td><td>441,614 ECGs, 2010–2016; 60% train (262,554 ECGs / 75,157 patients); 40% lockbox (179,060 ECGs / 51,481 patients)</td><td>Collaboration agreement with Region Halland (see Ashfaq et al., <em>Int. J. Epidemiol.</em> 49, 738–739f, 2020, for the platform profile)</td></tr>
+        <tr><td>Dandelion Health / Sharp HealthCare (USA)</td><td>External zero-shot validation on VF/VT</td><td>251,858 ECGs, 2021–2022; 139,613 patients &lt;80; GE MUSE, 500/250 Hz</td><td><a href="https://dandelionhealth.ai" target="_blank">dandelionhealth.ai</a> (partnership / standard access pathway)</td></tr>
+        <tr><td>NTUH cardiac-arrest registry (Taiwan)</td><td>External zero-shot validation on adjudicated arrhythmic arrest + placebo test</td><td>4,268 patients (257 arrests, 4,011 controls), 2011–2019; 96 arrhythmic arrests</td><td><a href="https://ngsci.org" target="_blank">Nightingale Open Science</a> · <a href="https://doi.org/10.48815/N5WC7D" target="_blank">10.48815/N5WC7D</a></td></tr>
+        <tr><td>Randomized defibrillator trials (MUSTT, DEFINITE, DINAMIT and others)</td><td>External anchor for the risk threshold and for effect-size face validity</td><td>Six major trials; median control-group SCD rate 4.9%; trial effect sizes 50–88%</td><td>Supplementary Information §II (literature)</td></tr>
+        <tr><td>Comparator risk scores</td><td>Benchmarks against the ECG model</td><td>AHA/ACC 10-year risk score (AUC 0.697); SEER ECG deep-learning risk score (AUC 0.655)</td><td>Goff et al., <em>Circulation</em> 129, S49–S73 (2014); Hughes et al., <em>npj Digit. Med.</em> 6, 169 (2023)</td></tr>
+        <tr><td>Code (morphing + non-Swedish analyses)</td><td>Reproducibility</td><td>Predictive-model weights withheld under GDPR; morphing pipeline public</td><td><a href="https://github.com/alexmschubert/ECG-SCD" target="_blank">github.com/alexmschubert/ECG-SCD</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: every figure above is taken verbatim from the article's Methods, Results, or data-availability statement. Where the paper reports a range or a confidence interval, we carry it through rather than rounding to a point estimate.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Predictive architecture:</b> a <strong>64-layer ResNet</strong> (32 residual blocks; 2 convolutional layers per block, 128 filters, kernel size 16) over raw 12-lead waveforms, selected after benchmarking CNNs, transformers and LSTMs. Sanity-checked against published benchmarks for QRS/QTc intervals, atrial fibrillation, age and sex.</li>
+      <li><b>Multitask training objective:</b> (i) sudden cardiac death over several horizons in the whole cohort; (ii) among those who died within a year, SCD versus other causes; (iii) reduced LVEF (≤35%) among those with measured LVEF. Predictions are then <strong>logit-calibrated</strong> on under-80 patients in the Swedish training set.</li>
+      <li><b>Analysis at the ECG level</b>, not one ECG per patient, with standard errors clustered by patient — avoiding the survivorship bias that "most recent ECG" selection would introduce. All tests two-sided.</li>
+      <li><b>Threshold selection from trial ethics, not from statistics:</b> the high-risk cut-off is the largest group whose lower 95% bound exceeds the median SCD rate in defibrillator-trial control arms (4.9%) — an explicitly decision-theoretic choice, yielding the 2.2% group at 7.0% annual risk (95% CI 4.9–9.5%).</li>
+      <li><b>Multi-definition outcome validation:</b> death certificates (Sweden) → documented VF/VT (Sweden and USA) → chart-adjudicated arrest cause (Taiwan), plus a <strong>placebo AUC</strong> on non-arrhythmic arrests to prove specificity (0.582, significantly worse than 0.767, P &lt; 0.001).</li>
+      <li><b>Observational treatment-effect probe:</b> OLS of SCD (and all-cause mortality) on age, sex, a high-risk indicator, a defibrillator indicator and their interaction; coefficients read as absolute probability changes. Face validity established by replicating the known reduced-LVEF effect (67.5% reduction, within the 50–88% trial range).</li>
+      <li><b>Generative "morphing" for interpretability:</b> a <strong>512-dimensional VAE</strong> trained on single beats segmented from 10-s ECGs (NeuroKit2). Starting from 56 sampled real low-risk beats, the latent vector is repeatedly perturbed <em>along the gradient of predicted risk</em> and decoded — up to 2,000 iterations or until the synthetic beat reaches the 90th risk percentile — producing patient-specific counterfactual high-risk waveforms that hold non-risk variation fixed.</li>
+      <li><b>Quantifying the discovered feature:</b> mean absolute <strong>first and second differences of aVL amplitude from R-peak to QRS end</strong>, regressed on SCD with and without conventional quantitative-ECG controls (rate, intervals, axes, QRS duration). Effect magnitude is comparable, in s.d. units, to left axis deviation — and additive to it.</li>
+      <li><b>Mechanistic follow-up:</b> single-lead models (AUCs nearly matching the 12-lead model) suggest a diffuse myocardial process; blinded cMRI review found higher prevalence of subtle, diffuse late gadolinium enhancement in the riskiest 10%, supporting fibrosis-driven wavefront scattering as the candidate mechanism.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig1.png" target="_blank">
+        <img src="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig1.png" alt="Fig.1 Positive predictive value for sudden cardiac death" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Positive predictive value for sudden cardiac death — SCD rate in the high-risk group versus the risk-percentile threshold (n = 113,072 ECGs), with defibrillator-trial control rates and the reduced-LVEF rate drawn as reference lines.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig2.png" target="_blank">
+        <img src="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig2.png" alt="Fig.2 Incidence of ventricular arrhythmia versus risk threshold" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Incidence of ventricular arrhythmia versus the high-risk threshold — (a) Sweden, VF/VT + SCD and VF/VT alone; (b) USA, VF/VT in 251,858 ECGs. The monotone rise is the external-validity backbone of the paper.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig3.png" target="_blank">
+        <img src="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig3.png" alt="Fig.3 Overlap of high-risk ECG group and reduced LVEF group" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Overlap of the high-risk ECG group and the reduced-LVEF group (Sweden, n = 113,072 ECGs) — the figure that establishes the model finds <em>net-new</em> patients rather than rediscovering LVEF.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig4.png" target="_blank">
+        <img src="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig4.png" alt="Fig.4 Low-risk versus high-risk ECG waveform morphs" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Low-risk versus high-risk waveform morphs across 12 leads — one real patient's beat and its generative counterfactual; the arrowhead marks the novel aVL feature alongside left axis deviation and poor R-wave progression.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig5.png" target="_blank">
+        <img src="assets/an-ecg-biomarker-for-sudden-cardiac-death-discovered-with-deep-learning__s41586-026-10674-6/fig5.png" alt="Fig.5 The biomarker quantified in lead aVL" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> The biomarker quantified — running absolute first and second differences of aVL amplitude from R-peak to QRS end, converting a visual impression into a regressable scalar feature.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: 2 in the main text — Table 1 (summary statistics for the Sweden lockbox, under 80) and Table 2 (regression of sudden cardiac death and all-cause mortality on defibrillator status × risk group). Both are rendered as images in the source and are not reproduced here. Extensive Supplementary Information sections I–IX carry the calibration curves, subgroup analyses, trial-threshold derivation, and the morphing details.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, health geography &amp; 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed spatial learning, facility-location optimization, open/FAIR reproducibility).</p>
+
+    <div class="idea">
+      <h3>① The label is a health-system artifact: make ascertainment spatially explicit</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reports one of the most instructive numbers in clinical ML almost in passing: <em>conditional on model-predicted risk, US patients are six times more likely to be coded with VF/VT than Swedish patients</em>, and the authors explicitly attribute this to measurement intensity and financial incentives — the same reason the US AUC (0.822) beats the Swedish one (0.717). The model's apparent performance is therefore partly a map of who gets tested, monitored and coded. A direct extension: treat <strong>ascertainment as a latent, place-varying process</strong> — model P(outcome coded | outcome occurred, site, catchment) with site- and region-level covariates (monitoring intensity, ED density, insurance mix, distance to cardiology services), and re-estimate PPV curves under corrected labels. Because the paper already spans three health systems with radically different measurement regimes, it is an unusually good testbed for a label-noise model whose nuisance parameter is <em>geography of care</em>, not random noise.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my telehealth/digital-divide and spatial-accessibility agenda expressed as a machine-learning nuisance term. Concretely: use <strong>R2SFCA access surfaces to primary and specialty care as covariates in a label-ascertainment correction</strong>, so that "this area has low observed disease" is decomposed into low incidence versus low detection. That single move upgrades every spatial disease-prediction model I build — the residual of a health-outcome model becomes interpretable as an <em>access</em> residual, and I get a principled way to compare risk scores across regions with unequal service provision.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Access to care affects electronic health record reliability and AI-driven disease prediction — <a href="https://doi.org/10.1038/s44360-026-00054-9" target="_blank">10.1038/s44360-026-00054-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② From "who is high risk" to "where, and can they reach a defibrillator?"</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper produces an actionable screening output — 2.2% of ECGs at 7.0% annual risk — and then stops at the patient level. But acting on it requires <strong>capacity that is spatially distributed</strong>: electrophysiology labs, implanting centres, outpatient monitoring, and, for the interim period before implantation, EMS response and public AED coverage (the paper's own case study describes a woman who died <em>while waiting</em> for a scheduled outpatient defibrillator). The natural extension is to join model-derived risk density to service geography and solve a joint problem: where to screen (which clinics' ECG streams to score first), where to expand implantation capacity, and how to route the newly flagged. Because risk here is <em>generated</em> by a model rather than observed, the demand surface is itself a prediction with uncertainty — a genuinely new twist on facility-location.</p>
+      <p><span class="lab mine">Added value to my research</span>This is a direct transplant of my <strong>EV charging-station efficiency-versus-equity optimization</strong> into cardiac care, with a harder demand model: predicted-risk density replaces observed demand, and the objective becomes expected deaths averted per implantation slot subject to an equity floor across catchments. It also gives my 2SFCA family a new supply type — <em>procedural capacity with a waiting queue</em> — where the distance-decay function must encode time-to-procedure, not just travel time.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Inequities in geographic access to emergency obstetric and newborn care in Greater Accra — <a href="https://doi.org/10.1038/s44284-026-00479-z" target="_blank">10.1038/s44284-026-00479-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Generalize the "morph" operator: counterfactual generation as a discovery instrument for space</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's most portable contribution is not the biomarker but the <strong>protocol</strong>: train a risk model, train a generative model of the same signal, then walk the generative latent space along the risk gradient until a human can <em>see</em> what the classifier sees. Two extensions the paper leaves open. First, <strong>stability</strong>: the morphs come from 56 sampled beats and a single VAE, and the authors concede this analysis was run on the pre-lockbox data because it was computationally expensive — an ensemble of generators and predictors, with a formal test of which morph features recur across seeds, would separate discovery from artefact. Second, <strong>closing the loop with mechanism</strong>: the paper proposes linking the generator to computational electrophysiology models so a morph becomes an inferred parameter change (fibrosis density, conduction velocity) rather than a picture — turning an interpretability tool into simulation-based inference.</p>
+      <p><span class="lab mine">Added value to my research</span>I want this operator for <strong>space</strong>. My explainable-ML work leans on SHAP/PDP over engineered features, which can only rank inputs I already chose. Instead: train a generative model of the built environment (street-network patch, POI configuration, morphological signature), train a spatial risk model (accessibility deficit, mental-health outcome, crash risk), then morph a real low-risk neighbourhood into its counterfactual high-risk twin and <em>look at what changed</em>. That produces candidate urban-form biomarkers rather than attributions — a genuinely generative XAI for GeoAI, and one whose outputs a planner can read.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Causal inference and counterfactual prediction in machine learning for actionable healthcare — <a href="https://doi.org/10.1038/s42256-020-0197-y" target="_blank">10.1038/s42256-020-0197-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Fuse the waveform latent with place: is the residual risk spatially structured?</h3>
+      <p><span class="lab paper">Extending this paper</span>The model sees only the myocardium's electrical signature. Yet sudden cardiac death is strongly patterned by exposure and deprivation — air pollution, heat, food environment, neighbourhood disadvantage — none of which enter the model, and 41.2% of the deaths carried no conventional clinical risk factor at all. An extension with real scientific payoff: join the ECG risk score (or, better, the penultimate-layer latent) to a residential <strong>place-based determinants index</strong> and ask two questions the paper cannot. Does place add <em>independent</em> predictive signal beyond the waveform, in the way LVEF was shown to (co-flagged patients reached 10.7%)? And is the model's <em>error</em> spatially autocorrelated — i.e. does the biomarker mean the same thing in a deprived neighbourhood as in an affluent one? Region Halland's population coverage makes this feasible in principle within a single health system.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my core spatiotemporal toolkit applied to a state-of-the-art clinical model: <strong>MGWR / spatially varying coefficients on the risk-score residual</strong>, spatiotemporal KDE of high-risk ECG clusters, and spatial-entropy measures of how concentrated the flagged population is. The deliverable is a general diagnostic I have wanted for years — a <em>spatial audit protocol for clinical AI</em>, reporting whether a deployed risk model's calibration drifts across neighbourhoods, which is the geographic analogue of the fairness audits the field already accepts.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Developing a novel index for neighborhood social determinants of cardiovascular diseases in the CARDIA study — <a href="https://doi.org/10.1038/s41467-026-70741-4" target="_blank">10.1038/s41467-026-70741-4</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ The lockbox and the locked weights: a reproducibility template, and its unfinished half</h3>
+      <p><span class="lab paper">Extending this paper</span>The <strong>40% lockbox</strong> — created before any modelling, untouched through peer review, opened only at provisional acceptance, with the AUC moving 0.837 → 0.872 on retraining — is the most rigorous overfitting safeguard I have seen in an applied deep-learning paper, and it should be named and standardized. But the paper's other half is a reproducibility dead end: under GDPR, the Swedish-trained weights themselves can only be obtained through a collaboration agreement, so no one can independently re-run the headline model. The obvious extension is a <strong>federated / privacy-preserving successor</strong>: a multi-site ECG foundation model pretrained self-supervised across health systems, with site-local calibration heads and only gradients or distilled surrogates crossing borders — plus a public benchmark built on the openly available Nightingale Taiwan data so that external claims become checkable rather than merely stated.</p>
+      <p><span class="lab mine">Added value to my research</span>Two things I can adopt immediately. (1) The lockbox becomes my <strong>pre-registration protocol for spatial prediction</strong>: hold out entire regions or time windows before modelling, since spatial autocorrelation makes random k-fold optimistic in exactly the way random ECG splits would have been here. (2) The federated-foundation-model design is the governance pattern my <strong>geospatial foundation-model fine-tuning</strong> work needs, where mobile-phone, trajectory and health data are similarly non-shareable — I get to keep the FAIR/open-science commitment (open code, open benchmark, open protocol) even when the primary data can never leave its jurisdiction.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for continuous glucose monitoring data — <a href="https://doi.org/10.1038/s41586-025-09925-9" target="_blank">10.1038/s41586-025-09925-9</a> · Equitable impact of an AI-driven breast cancer screening workflow in real-world US-wide deployment — <a href="https://doi.org/10.1038/s44360-025-00001-0" target="_blank">10.1038/s44360-025-00001-0</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

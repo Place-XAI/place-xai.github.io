@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaining biological insights through supervised data visualization — AI Digest</title>
+<meta name="description" content="AI Digest: Gaining biological insights through supervised data visualization (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Supervised dimensionality reduction</span>
+      <span class="tag">Random forest proximities</span>
+      <span class="tag">Manifold learning</span>
+      <span class="tag">Interpretability</span>
+    </div>
+    <h1>Gaining biological insights through supervised data visualization</h1>
+    <div class="meta">
+      <span class="authors">Jake S. Rhodes · Adrien Aumon · Sacha Morin · Marc Girard · Catherine Larochelle · Elsa Brunet-Ratnasingham · Amélie Pagliuzza · Lorie Marchitto · Wei Zhang · Adele Cutler · François Grand’Maison · Anhong Zhou · Andrés Finzi · Nicolas Chomont · Daniel E. Kaufmann · Stephanie Zandee · Alexandre Prat · Guy Wolf · Kevin R. Moon</span>
+      <span><b>Published</b> 2026-06-30</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-00999-7" target="_blank">10.1038/s43588-026-00999-7</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-00999-7" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Unsupervised embeddings (t-SNE, UMAP, Isomap) show only the <strong>dominant</strong> structure of a dataset, which frequently is <em>not</em> the structure the analyst cares about. <strong>RF-PHATE</strong> fixes the mismatch by letting a <strong>random forest</strong> learn which feature relationships actually predict an expert-provided label, converting those learned relationships into a diffusion geometry and then into a low-dimensional map — so label-relevant structure is amplified and extraneous variation is suppressed. It works for both <strong>classification and regression</strong>, scales to large datasets, and across four biological case studies (longitudinal multiple sclerosis, Raman spectra of antioxidant effects, COVID-19 patient outcomes, RNA-seq with simulated dropout) it exposes continuous biological gradients that unsupervised maps bury under noise.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Names a failure mode everyone silently tolerates.</b> Nearly every omics, spectroscopy and clinical-cohort paper opens with a t-SNE/UMAP panel. Those maps are optimized for whatever variance dominates — batch, donor, instrument, acquisition day — not for the biological question. The paper turns "my UMAP looks like batch" from folklore into an addressable design problem.</li>
+      <li><b>Supervision without collapsing the manifold.</b> Prior supervised variants (supervised t-SNE / UMAP / Isomap / LLE) tend to either over-separate classes into artificial islands or destroy continuous structure. RF-PHATE keeps a <strong>continuum</strong>: in the MS case it reveals gradients of disease trajectory rather than tidy but uninformative label blobs.</li>
+      <li><b>Regression targets, not just classes.</b> Most supervised embedding work assumes discrete labels. Handling continuous responses matters for dose–response, severity scores, viral load, and any exposure-gradient study.</li>
+      <li><b>Robustness is demonstrated, not asserted.</b> The RNA-seq case study injects <strong>simulated dropout</strong>, and the Raman case works on noisy, baseline-drifting spectra — testing the embedding where real biological measurement actually lives.</li>
+      <li><b>Ships as usable software.</b> A Python implementation is public (<a href="https://github.com/jakerhodes/RF-PHATE" target="_blank">jakerhodes/RF-PHATE</a>) with a Zenodo-archived release, so the method is adoptable the day the paper appears.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Method-plus-discovery, the house format of <em>Nature Computational Science</em>:</b> the contribution is an algorithm, but it is validated by what it <em>finds</em> biologically (MS disease-course structure, antioxidant protection signal, COVID-19 outcome geometry), not only by benchmark tables.</li>
+      <li><b>Generality across domains:</b> clinical registry data, vibrational spectroscopy, plasma immunoprofiling and transcriptomics in one paper — evidence that this is infrastructure rather than a single-assay trick.</li>
+      <li><b>Interpretability as the framing:</b> the journal has been actively publishing on representation learning and explainability; a method whose entire premise is "align the embedding with expert knowledge" sits directly on that editorial line.</li>
+      <li><b>Reproducibility package:</b> open code, Zenodo DOI, per-figure Source Data files, 13 supplementary figures and 14 supplementary tables of benchmarks — the level of computational accountability the journal enforces.</li>
+      <li><b>Clinically consequential exemplar:</b> the flagship case study is built on <strong>MSBase</strong>, a real international registry, with neurologist co-authors — moving the claim from "nicer scatterplot" to "different clinical read of a patient cohort."</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Case studies</dt><dd><strong>Four</strong> biological applications plus synthetic controls: (1) longitudinal multiple sclerosis follow-up data; (2) Raman spectral measurements of antioxidant effects in A549 cells; (3) COVID-19 patient plasma samples and outcomes; (4) cancer RNA-seq with <em>simulated dropout</em>. An artificial "tree" dataset and a neural (hippocampus) dataset serve as controls/regression demonstrations.</dd>
+      <dt>Clinical MS data</dt><dd>Contributed through <strong>MSBase</strong> (<a href="https://www.msbase.org" target="_blank">msbase.org</a>), an international MS registry the paper describes as holding longitudinal data from <strong>more than 120,000 patients worldwide</strong>. <em>The size of the specific analysed subset behind Fig. 2 is not stated in the publicly accessible text.</em> Records were entered/retrieved via the <strong>iMed</strong> platform and read from institutional clinical records through <strong>OACIS</strong> (Open Architecture Clinical Information System, TELUS Santé). Raw data cannot be shared publicly: access requires collaboration with an MSBase contributing investigator and substudy approval by the MSBase Scientific Leadership Group.</dd>
+      <dt>Raman spectra</dt><dd>Spectra of <strong>A549 lung carcinoma cells</strong> under oxidative stress / antioxidant conditions, released in full as <strong>Supplementary Data 1</strong> (Excel workbook, <strong>three tabs — one per dataset</strong>) and mirrored on Zenodo. Underlying acquisition protocol follows Zhang et al., <em>Anal. Chim. Acta</em> 1128, 221–230 (2020). <em>Exact spectrum counts are given in the supplementary workbook, not in the main text.</em></dd>
+      <dt>COVID-19 cohort</dt><dd>Plasma samples and clinical outcomes taken from Brunet-Ratnasingham et al., <em>Nat. Commun.</em> 15, 4177 (2024) (ref. 42), which draws on the <strong>Biobanque québécoise de la COVID-19 (BQC19)</strong> prospective cohort. Used for Fig. 4 and Supplementary Table 14. <em>Per-sample counts are inherited from that source study.</em></dd>
+      <dt>RNA-seq</dt><dd><strong>"Gene expression cancer RNA-Seq"</strong>, UC Irvine Machine Learning Repository (Fiorini, 2016), <a href="https://doi.org/10.24432/C5R88H" target="_blank">10.24432/C5R88H</a> — an RNA-seq panel of multiple tumour types; the paper adds <strong>simulated dropout</strong> to stress-test the embedding (Fig. 5).</dd>
+      <dt>Benchmark suite</dt><dd>Additional evaluation datasets are catalogued in <strong>Supplementary Tables 10 and 11</strong> and are publicly available from the <a href="https://archive.ics.uci.edu/datasets" target="_blank">UCI ML Repository</a> or <a href="https://www.kaggle.com" target="_blank">Kaggle</a>. <em>The paper's headline text does not state a single benchmark-dataset count; the tables are the authoritative list.</em></dd>
+      <dt>Neural data</dt><dd><strong>Achilles hippocampus</strong> recordings from CRCNS <code>hc-11</code> (<a href="https://crcns.org/data-sets/hc/hc-11/about-hc-11" target="_blank">crcns.org/hc-11</a>), preprocessed with the public pi-VAE script (<a href="https://github.com/zhd96/pi-vae/blob/main/code/rat_preprocess_data.py" target="_blank">zhd96/pi-vae</a>) — a continuous-label (regression) test bed.</dd>
+      <dt>Synthetic control</dt><dd><strong>Artificial tree data</strong> (branching manifold with known ground truth) provided as <strong>Supplementary Data 2</strong> (CSV) and on Zenodo.</dd>
+      <dt>Reproducibility</dt><dd>Source Data provided for <strong>all five main figures</strong> (one XLSX per figure, tabbed by dataset). Code: <a href="https://github.com/jakerhodes/RF-PHATE" target="_blank">github.com/jakerhodes/RF-PHATE</a> (academic use), archived at <a href="https://doi.org/10.5281/zenodo.19666268" target="_blank">Zenodo 10.5281/zenodo.19666268</a>. Supplementary: <strong>Figs. 1–13, Tables 1–14</strong>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MSBase registry (via iMed / OACIS)</td><td>Longitudinal MS follow-up — flagship case study (Fig. 2)</td><td>Registry holds &gt;120,000 patients worldwide; analysed subset size not stated publicly</td><td><a href="https://www.msbase.org" target="_blank">msbase.org</a> (controlled access)</td></tr>
+        <tr><td>Raman spectra, A549 cells</td><td>Antioxidant / oxidative-stress effect visualization (Fig. 3)</td><td>Three datasets, released in full as Supplementary Data 1</td><td><a href="https://doi.org/10.5281/zenodo.19666268" target="_blank">Zenodo</a></td></tr>
+        <tr><td>COVID-19 plasma cohort (BQC19-derived, ref. 42)</td><td>Patient-outcome geometry (Fig. 4, Suppl. Table 14)</td><td>Prospective Quebec COVID-19 biobank; counts per source study</td><td>Via ref. 42: Brunet-Ratnasingham et al., <em>Nat. Commun.</em> 15, 4177 (2024); cohort described at <a href="https://www.bqc19.ca" target="_blank">bqc19.ca</a></td></tr>
+        <tr><td>Gene expression cancer RNA-Seq (UCI)</td><td>Dropout-robustness test (Fig. 5)</td><td>Multi-tumour RNA-seq panel + simulated dropout</td><td><a href="https://doi.org/10.24432/C5R88H" target="_blank">10.24432/C5R88H</a></td></tr>
+        <tr><td>UCI / Kaggle benchmark collection</td><td>Quantitative comparison vs. baselines</td><td>Enumerated in Supplementary Tables 10–11</td><td><a href="https://archive.ics.uci.edu/datasets" target="_blank">UCI</a> · <a href="https://www.kaggle.com" target="_blank">Kaggle</a></td></tr>
+        <tr><td>CRCNS hc-11 (Achilles hippocampus)</td><td>Continuous-label / regression demonstration</td><td>Rodent hippocampal recordings, pi-VAE preprocessing</td><td><a href="https://crcns.org/data-sets/hc/hc-11/about-hc-11" target="_blank">crcns.org</a></td></tr>
+        <tr><td>Artificial tree data</td><td>Ground-truth branching manifold control</td><td>Supplementary Data 2 (CSV)</td><td><a href="https://doi.org/10.5281/zenodo.19666268" target="_blank">Zenodo</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Honesty note: this digest is built from the abstract, figure captions, data/code-availability statements and reference list. Sample sizes for the MS, Raman and COVID-19 case studies live in the main text and supplementary tables of the paywalled full text and are <em>not</em> reproduced here — no counts have been invented. Every URL and DOI above is quoted from the article's own availability statements.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Step 1 — supervised similarity from a random forest.</b> A random forest (Breiman, 2001) is fitted to predict the expert label from the features. The forest's partitioning encodes <em>which</em> feature interactions matter for that label; irrelevant variation is never used to split, so it is implicitly discounted.</li>
+      <li><b>Step 2 — RF-GAP proximities.</b> Similarity between samples is read out with <strong>geometry- and accuracy-preserving random forest proximities</strong> (Rhodes, Cutler &amp; Moon, <em>IEEE TPAMI</em>, 2023) rather than naive co-occurrence counts. This is the load-bearing choice: RF-GAP proximities reproduce the forest's own out-of-bag predictions, which keeps the similarity faithful to the fitted model instead of merely to leaf co-membership.</li>
+      <li><b>Step 3 — diffusion geometry.</b> Proximities become a Markov diffusion operator (Coifman &amp; Lafon, 2006); powering it denoises local noise and reveals multi-scale connectivity — the mechanism that preserves <em>continuous</em> transitions instead of shattering the data into label islands.</li>
+      <li><b>Step 4 — PHATE potential distances + MDS.</b> Following PHATE (Moon et al., <em>Nat. Biotechnol.</em> 37, 1482–1492, 2019), diffusion probabilities are transformed into an information (potential) distance and embedded by <strong>multidimensional scaling</strong> into 2–3 dimensions, retaining both local and global structure.</li>
+      <li><b>Classification <em>and</em> regression supervision.</b> Because the supervision enters only through the forest's objective, continuous targets work with no change of machinery — demonstrated on the hippocampus/regression setting.</li>
+      <li><b>Scalability.</b> The implementation is designed for large datasets (landmark/approximation strategies in the diffusion + MDS stage), addressing a standard bottleneck of diffusion-based embeddings.</li>
+      <li><b>Longitudinal handling.</b> The MS analysis compares patient follow-up trajectories with <strong>dynamic time warping</strong> (Berndt &amp; Clifford; Keogh &amp; Ratanamahatana) so visits sampled at irregular intervals remain comparable in embedding space.</li>
+      <li><b>Evaluation.</b> Quantitative comparison against t-SNE, UMAP, Isomap, LLE, MDS and their supervised variants, using <strong>silhouette scores</strong>, distance-weighted <strong>k-NN</strong> label recovery and embedding-stress diagnostics; group differences tested with the <strong>Mann–Whitney U</strong> test. Raman spectra are preprocessed by adaptive iteratively reweighted penalized least-squares baseline correction (Zhang et al., 2010).</li>
+      <li><b>Stress tests.</b> Simulated <strong>dropout</strong> on RNA-seq and noisy spectral acquisition probe robustness; the synthetic branching tree gives a known-ground-truth check that the method does not manufacture structure.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig1.png" target="_blank">
+        <img src="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig1.png" alt="Fig.1 A visual representation of the RF-PHATE algorithm" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> A visual representation of the RF-PHATE algorithm — the pipeline from labelled features to random forest, to RF-GAP proximities, to diffusion geometry, to the 2D embedding.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig2.png" target="_blank">
+        <img src="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig2.png" alt="Fig.2 Exploratory analysis of MS follow-up data" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Exploratory analysis of multiple-sclerosis follow-up data (MSBase) — the flagship clinical case study; longitudinal patient trajectories in supervised embedding space.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig3.png" target="_blank">
+        <img src="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig3.png" alt="Fig.3 PHATE vs RF-PHATE on Raman spectra of A549 cells" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Two-dimensional PHATE vs. RF-PHATE on Raman spectra of A549 cells — the head-to-head that isolates what supervision adds on noisy spectral data.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig4.png" target="_blank">
+        <img src="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig4.png" alt="Fig.4 RF-PHATE applied to COVID-19 plasma samples" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> RF-PHATE applied to COVID-19 plasma samples — patient-outcome structure recovered from immunovirological profiling.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig5.png" target="_blank">
+        <img src="assets/gaining-biological-insights-through-supervised-data-visualization__s43588-026-00999-7/fig5.png" alt="Fig.5 RF-PHATE on gene expression RNA-seq" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> RF-PHATE on gene-expression RNA-seq — behaviour under simulated dropout, the robustness stress test.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>no main-text table (Tables = 0)</b>; 5 main figures. The Supplementary Information carries <b>Figs. 1–13 and Tables 1–14</b>, including the benchmark-dataset catalogues (Suppl. Tables 10–11) and the COVID-19 results table (Suppl. Table 14). Source Data XLSX files are provided for each of the five main figures.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how RF-PHATE itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, health-geography accessibility &amp; 2SFCA/R2SFCA, explainable &amp; physics-informed spatial learning, multi-source data fusion).</p>
+
+    <div class="idea">
+      <h3>① Geo-RF-PHATE: make the supervising forest spatially non-stationary</h3>
+      <p><span class="lab paper">Extending this paper</span>RF-PHATE's supervision is a <em>single global</em> random forest: one feature-importance regime is assumed to hold for every sample. That is exactly the assumption that fails when samples carry coordinates — the features predicting an outcome in a dense urban core differ from those in a rural periphery. A direct extension: fit <strong>geographically weighted / locally adaptive forests</strong>, derive RF-GAP proximities under local weighting, and let the diffusion operator blend <em>local</em> supervised geometries. The embedding then shows not just "which samples are alike given the label" but "where the label-generating mechanism itself changes" — a spatial-heterogeneity map that no current supervised embedding produces. The paper's artificial-tree control gives a ready-made ground-truth harness: plant two different branching rules in two regions and check that the method recovers the boundary rather than smearing it.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the missing visual companion to <strong>MGWR</strong>. My MGWR work returns per-variable bandwidth surfaces that are hard to read jointly; a Geo-RF-PHATE embedding of the local-forest proximity space would cluster neighbourhoods by <em>mechanism regime</em> instead of by outcome level — giving me a defensible way to delineate "spatial process zones" for primary-care and mental-health accessibility studies, and to argue that a single global model is inadequate before I fit one.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Learning with explainable trees — <a href="https://doi.org/10.1038/s42256-019-0142-0" target="_blank">10.1038/s42256-019-0142-0</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Turn the MS trajectory analysis into a general supervised spatiotemporal trajectory space</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 2 is the paper's most consequential result and also its most under-formalized: longitudinal MS visits are embedded and then compared with <strong>dynamic time warping</strong>, i.e. the temporal logic is bolted on <em>after</em> a static embedding. Extending the paper: make time first-class — supervise the forest on a <em>future</em> outcome (progression at t+Δ), define proximities between <em>trajectory segments</em> rather than visits, and diffuse on a graph whose edges encode both similarity and admissible temporal transitions. That converts the map from a snapshot into a <strong>supervised trajectory manifold</strong> with directionality, so branch points become candidate prognostic decision moments rather than post-hoc annotations. The COVID-19 case (Fig. 4) would then also gain a course, not just an outcome label.</p>
+      <p><span class="lab mine">Added value to my research</span>Directly portable to my spatiotemporal work: substitute "patient visit" with "census tract–month" and "EDSS progression" with telehealth-uptake or care-utilization change. A supervised trajectory manifold would let me visualize how neighbourhoods <em>move</em> through digital-divide states over a decade — a far more honest representation than the KDE surfaces and change-detection maps I currently use, and one that naturally exposes tracts sitting at a branch point where policy could still redirect the trajectory.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Machine learning approach finds nonlinear patterns of neurodegenerative disease progression — <a href="https://doi.org/10.1038/s43588-022-00300-6" target="_blank">10.1038/s43588-022-00300-6</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ A parametric, out-of-sample RF-PHATE encoder for streaming and city-scale data</h3>
+      <p><span class="lab paper">Extending this paper</span>RF-PHATE inherits the classic transductive limitation of diffusion + MDS pipelines: the embedding is computed for a fixed sample set, and adding new observations invites recomputation. The paper mitigates cost with scalability engineering, but not with an <em>inductive</em> map. Extension: train a <strong>graph neural network on the RF-GAP proximity graph</strong> to regress the RF-PHATE coordinates, yielding a parametric encoder that (a) embeds unseen samples in constant time, (b) can be fine-tuned as the forest is retrained, and (c) makes the embedding differentiable so it can be plugged into downstream models. Validation is cheap — hold out entire MSBase sites or entire Raman acquisition batches and test whether the encoder places them where full recomputation would.</p>
+      <p><span class="lab mine">Added value to my research</span>Recomputation cost is precisely why supervised embeddings have not entered my pipelines: mobile-phone, POI and trajectory datasets arrive continuously and are far larger than a clinical cohort. An inductive RF-PHATE encoder makes supervised visualization usable for <strong>streaming urban data</strong> — new POI batches or new months of mobility land on a stable map, so drift becomes visible as movement rather than as an unrecognizably re-laid-out plot.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Accelerating network layouts using graph neural networks — <a href="https://doi.org/10.1038/s41467-023-37189-2" target="_blank">10.1038/s41467-023-37189-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Multi-label and multi-modal supervision: which label owns which axis?</h3>
+      <p><span class="lab paper">Extending this paper</span>Every case study supervises on <strong>one</strong> label, yet real cohorts carry many simultaneously — MS: disability score, relapse count, treatment line, MRI lesion load; COVID-19: severity, viral load, antibody titre. Extension: fit a multi-output forest (or a set of forests) and either <em>concatenate</em> proximity operators with learned weights or build a <strong>partially shared</strong> geometry that separates variation common to all labels from variation specific to each. The payoff is diagnostic as much as visual: an explicit decomposition of how much of the embedding a given clinical annotation is responsible for, plus a principled way to fuse modalities (spectra + transcriptome + clinical record) with heterogeneous label availability. This would also answer the sharpest reviewer objection to any supervised embedding — the worry that the map merely re-draws the label you fed it.</p>
+      <p><span class="lab mine">Added value to my research</span>My data fusion problem is structurally identical: remote sensing, POIs, social media and mobile-phone records with partially overlapping outcome labels (access, utilization, health status). A shared-plus-specific supervised geometry would let me state which fused signal is actually carrying an accessibility outcome and which is redundant — turning "multi-source fusion" from a data-plumbing claim into a measurable contribution.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Partially shared multi-modal embedding learns holistic representation of cell state — <a href="https://doi.org/10.1038/s43588-025-00948-w" target="_blank">10.1038/s43588-025-00948-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Guardrails: make supervised visualization falsifiable before it becomes clinical evidence</h3>
+      <p><span class="lab paper">Extending this paper</span>A supervised embedding is a persuasive object — separation in the picture <em>looks</em> like discovery, even when it partly reflects the supervision itself. RF-GAP's out-of-bag construction is a real defence, but the paper's own framing ("gaining biological insights") invites a stronger protocol. Extension: ship RF-PHATE with a <strong>label-permutation null</strong> (embed under shuffled labels and report the separation actually attributable to signal), a <strong>held-out embedding</strong> convention where the forest never sees the visualized samples, and a <strong>stability index</strong> across forest seeds and bootstrap resamples. Report these as standard panels beside every map, as effect sizes with confidence intervals are reported beside every group comparison. For the MS case this is not pedantry: a branch point read as a prognostic subgroup will eventually be read as a clinical claim.</p>
+      <p><span class="lab mine">Added value to my research</span>Exactly the protocol my explainable-spatial-ML work needs, with a spatial twist: the permutation null must be a <strong>spatially constrained</strong> one (conditional/torus permutation) or autocorrelation alone will manufacture "significant" structure. Formalizing supervised-embedding guardrails for spatial data is a publishable methods contribution in its own right, and it fits my open-science/FAIR line — a reusable reporting checklist plus reference implementation, not just another map.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead — <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a> · Mobile phone data show spatial and socioeconomic inequalities in hospital utilization — <a href="https://doi.org/10.1038/s44360-026-00100-6" target="_blank">10.1038/s44360-026-00100-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

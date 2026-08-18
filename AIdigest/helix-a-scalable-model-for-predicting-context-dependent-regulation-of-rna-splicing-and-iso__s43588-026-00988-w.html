@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HELIX: context-dependent RNA splicing and isoform usage — AI Digest</title>
+<meta name="description" content="AI Digest: HELIX — a scalable model for predicting context-dependent regulation of RNA splicing and isoform usage (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">RNA splicing</span>
+      <span class="tag">Isoform usage</span>
+      <span class="tag">Context-conditioned deep learning</span>
+      <span class="tag">sQTL</span>
+    </div>
+    <h1>HELIX: a scalable model for predicting context-dependent regulation of RNA splicing and isoform usage</h1>
+    <div class="meta">
+      <span class="authors">Zihan Zhou · Bingqi Wu · Xin Zheng · Lipu Song · Shuai Zhang · Dali Han · Zhaoqi Liu · Yuan Gao</span>
+      <span><b>Published</b> 2026-05-19</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-00988-w" target="_blank">10.1038/s43588-026-00988-w</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-00988-w" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Splicing is not written in the sequence alone — it is written in the <strong>sequence × cellular context</strong> pair. HELIX is a <strong>hierarchical deep learning framework</strong> that feeds pre-mRNA sequence into one branch and <strong>RNA-binding protein (RBP) expression profiles</strong> into another, then predicts tissue- and condition-specific <strong>splice-site strength and transcript isoform usage simultaneously</strong>. Trained jointly on <strong>short-read and long-read RNA-seq</strong>, it beats existing splicing predictors and conventional short-read pipelines on differential splicing, on highly regulated splice sites, and on isoform usage. Downstream, it recovers <strong>tissue-specific sQTLs</strong>, attributes patient-level splicing dysregulation in colon cancer to <strong>genetic variants versus aberrant RBP expression</strong>, and — via transfer learning — extends to <strong>scRNA-seq for cell-type-specific isoform prediction</strong>.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Breaks the "one sequence, one answer" ceiling.</b> SpliceAI-class models map a DNA window to a single splicing verdict; the same locus, however, splices differently in brain, testis and tumour. HELIX makes the <strong>context an explicit model input</strong> (the RBP expression vector), so one trained model emits <em>many</em> context-specific predictions instead of one context-blind one.</li>
+      <li><b>Predicts two coupled quantities at once.</b> Splice-site strength (local) and isoform usage (transcript-level) are usually attacked by separate tools. The hierarchical design ties the local decision to the assembled transcript, which is what biologists and clinicians actually read out.</li>
+      <li><b>Uses long reads to fix the labels, not just the model.</b> Short-read isoform quantification is inference-heavy and error-prone; training against long-read evidence upgrades the <em>supervision signal</em>. This is a data-quality argument as much as an architecture argument.</li>
+      <li><b>Turns prediction into attribution.</b> In colon cancer cohorts the model quantitatively partitions a patient's splicing dysregulation into a <strong>cis-genetic component</strong> and a <strong>trans-RBP component</strong> — a decomposition that maps directly onto therapeutic strategy (edit the variant vs. modulate the splicing factor).</li>
+      <li><b>Scales down to single cells by transfer.</b> Rather than retraining on scarce single-cell long-read data, HELIX transfers, enabling cell-type-specific isoform calls where direct measurement is still expensive and sparse.</li>
+      <li><b>Open and reusable.</b> Code and trained weights are released on <a href="https://github.com/gyjames/HELIX" target="_blank">GitHub</a> and archived on <a href="https://doi.org/10.5281/zenodo.19272015" target="_blank">Zenodo</a>.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Computational Science (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Method-first, biology-validated:</b> the contribution is an architecture and a training recipe, but it is judged on biological readouts (sQTLs, tumour cohorts, cell types) — exactly the split <em>Nature Computational Science</em> asks for.</li>
+      <li><b>Multi-modal, multi-fidelity data fusion:</b> combining short-read breadth with long-read accuracy is a general computational lesson that travels far beyond splicing.</li>
+      <li><b>A single model spanning scales:</b> nucleotide motif → splice site → transcript isoform → tissue → patient → single cell. Cross-scale generality is a recurring editorial preference at this journal.</li>
+      <li><b>From black box to attribution:</b> motif and RBP interrogation (Fig. 3) plus variant/RBP decomposition (Fig. 5) answer the interpretability demand that now accompanies any genomic deep-learning claim.</li>
+      <li><b>Community infrastructure:</b> released weights, Zenodo archive and source data per figure make the work reusable rather than merely reported — and the journal ran a companion News &amp; Views on it (<a href="https://doi.org/10.1038/s43588-026-00987-x" target="_blank">10.1038/s43588-026-00987-x</a>).</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training / testing corpus</dt><dd>Short-read <strong>and</strong> long-read RNA-seq samples across human tissues. <strong>The article states that the full sample list is enumerated in Supplementary Data 1</strong>; the accessible text does <em>not</em> give a headline sample or tissue count, so no number is asserted here.</dd>
+      <dt>Model inputs</dt><dd>Two modalities per prediction: (i) <strong>pre-mRNA sequence</strong> around candidate splice sites, and (ii) a <strong>RBP expression profile</strong> encoding the cellular context. Supplementary Information reports performance as a function of <strong>RBP feature size</strong> (i.e., the context-vector width is an explicit ablation axis).</dd>
+      <dt>sQTL evaluation</dt><dd><strong>GTEx</strong> (adult-GTEx QTL release) — tissue-specific splicing QTL calls used for enrichment testing of HELIX-nominated variants. GTEx is the reference multi-tissue regulatory-genetics atlas (GTEx Consortium, <em>Science</em> <b>369</b>, 1318–1330, 2020).</dd>
+      <dt>Disease cohort</dt><dd><strong>Colorectal cancer cohort</strong> obtained from the <strong>European Variation Archive</strong> under accession <code>PRJEB61514</code> — the genome + transcriptome resource of Nunes et al., <em>Nature</em> <b>633</b>, 137–146 (2024). Used for patient-specific splicing dysregulation and its attribution.</dd>
+      <dt>Single-cell transfer</dt><dd>scRNA-seq / single-cell long-read resources; the referenced ecosystem includes single-cell full-length isoform atlases (Tian et al., <em>Genome Biol.</em> 2021; Joglekar et al., <em>Nat. Neurosci.</em> 2024) and barcode/UMI tooling (<strong>BLAZE</strong>, <strong>Seurat</strong>). Exact per-experiment cell counts are not stated in the accessible text.</dd>
+      <dt>Long-read context</dt><dd>Referenced long-read transcriptome resources include the <strong>ENCODE4 long-read RNA-seq collection</strong> and <strong>GTEx long-read</strong> transcriptome variation (Glinos et al., <em>Nature</em> <b>608</b>, 353–359, 2022), plus the <strong>RNA Atlas</strong>.</dd>
+      <dt>Processing stack</dt><dd><strong>STAR</strong> (short-read alignment), <strong>minimap2</strong> (long-read alignment), <strong>Bambu</strong> and <strong>ESPRESSO</strong> (long-read transcript quantification/discovery), <strong>featureCounts</strong>, <strong>LeafCutter</strong> (annotation-free splicing quantification), <strong>MaxEntScan</strong>-style splice-site scoring, <strong>RBPmap</strong> and <strong>SEA/MEME</strong> (motif enrichment), <strong>Metascape</strong> (enrichment), quantile normalization for expression features.</dd>
+      <dt>Baselines compared</dt><dd><strong>SpliceAI</strong>, <strong>Pangolin</strong>, <strong>SpliceTransformer</strong>, <strong>MTSplice</strong>, <strong>DARTS</strong>, plus conventional short-read isoform pipelines (e.g. StringTie-class assembly/quantification).</dd>
+      <dt>Availability</dt><dd>Public training/evaluation data listed in Supplementary Data 1; GTEx QTL and EVA <code>PRJEB61514</code> are open/controlled-access downloads; <strong>source data provided per figure</strong> (Figs. 1–6, XLSX). Code + trained weights: <a href="https://github.com/gyjames/HELIX" target="_blank">github.com/gyjames/HELIX</a>, archived at <a href="https://doi.org/10.5281/zenodo.19272015" target="_blank">Zenodo 10.5281/zenodo.19272015</a>. Publishing model: Hybrid Access (full text partly paywalled).</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Supplementary Data 1 sample list</td><td>Training + testing RNA-seq samples (short- and long-read)</td><td>Full enumeration in supplement; headline count not stated in accessible text</td><td><a href="https://www.nature.com/articles/s43588-026-00988-w" target="_blank">article supplement</a></td></tr>
+        <tr><td>GTEx adult-GTEx QTL</td><td>Tissue-specific sQTL enrichment / validation</td><td>Multi-tissue human QTL release</td><td><a href="https://www.gtexportal.org/home/downloads/adult-gtex/qtl" target="_blank">gtexportal.org</a></td></tr>
+        <tr><td>European Variation Archive <code>PRJEB61514</code></td><td>Colon cancer cohort — patient-specific splicing dysregulation</td><td>Colorectal cancer genome + transcriptome cohort (Nunes et al. 2024)</td><td><a href="https://www.ebi.ac.uk/eva/?eva-study=PRJEB61514" target="_blank">EBI EVA</a></td></tr>
+        <tr><td>ENCODE4 long-read RNA-seq collection</td><td>Long-read transcript-structure reference (cited resource)</td><td>Human cell lines / tissues</td><td><a href="https://www.encodeproject.org" target="_blank">encodeproject.org</a></td></tr>
+        <tr><td>HELIX code + trained weights</td><td>Model reuse and reproduction</td><td>Repository + archived release</td><td><a href="https://doi.org/10.5281/zenodo.19272015" target="_blank">Zenodo</a> · <a href="https://github.com/gyjames/HELIX" target="_blank">GitHub</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Honesty note: this digest is built from the abstract, data/code-availability statements, figure titles and the 67-item reference list of the article record. Sample sizes, window lengths, RBP-vector dimensionality and benchmark deltas live in the paywalled Methods and Supplementary Data 1 and are therefore <em>not</em> quoted — none of the numbers above have been inferred or invented.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Hierarchical two-branch architecture:</b> a sequence encoder over pre-mRNA context plus a context encoder over <strong>RBP expression profiles</strong>; the hierarchy propagates local splice-site decisions upward into transcript-level isoform usage, so the two tasks are learned jointly rather than stitched post hoc.</li>
+      <li><b>Multi-fidelity supervision:</b> short-read data supply breadth and depth of coverage; long-read data supply unambiguous transcript structure. Training on both lets the cheap-and-broad modality be calibrated by the expensive-and-accurate one.</li>
+      <li><b>Dual prediction targets:</b> (i) <strong>splicing strength</strong> at splice sites, with emphasis on <em>highly regulated</em> sites where context matters most, and (ii) <strong>isoform usage</strong> fractions per transcript — evaluated against differential-splicing ground truth (Fig. 2).</li>
+      <li><b>In-silico interrogation of regulators:</b> systematic perturbation/attribution over sequence windows and RBP features to surface the <strong>cis regulatory elements and trans RBPs</strong> that drive a prediction (Fig. 3), cross-checked against motif databases (RBPmap, SEA).</li>
+      <li><b>Variant-effect scanning for tissue-specific sQTLs:</b> score reference vs. alternate alleles under each tissue's context vector; a variant is tissue-specific when its predicted effect is conditional on the RBP profile. Nominations are tested for enrichment against GTEx sQTLs (Fig. 4).</li>
+      <li><b>Patient-level attribution decomposition:</b> for each colon-cancer sample, split predicted splicing dysregulation into a component explained by the patient's <strong>genetic variants</strong> and one explained by <strong>aberrant RBP expression</strong> (Fig. 5) — an ablation-style counterfactual over the two input branches.</li>
+      <li><b>Transfer learning to single cells:</b> adapt the bulk-trained model to scRNA-seq so that cell-type-specific isoform usage becomes predictable without full retraining (Fig. 6).</li>
+      <li><b>Benchmarking protocol:</b> head-to-head against SpliceAI, Pangolin, SpliceTransformer, MTSplice and DARTS, plus conventional short-read isoform quantification, with per-figure source data released.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig1.png" target="_blank">
+        <img src="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig1.png" alt="Fig.1 Schematic overview of the HELIX framework" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Schematic overview of the HELIX framework — the two-branch (sequence + RBP context) hierarchy and its joint splice-strength / isoform-usage outputs.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig2.png" target="_blank">
+        <img src="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig2.png" alt="Fig.2 Evaluation of splicing strength and isoform usage prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Evaluation of splicing strength and isoform usage prediction — the benchmark against existing splicing models and short-read pipelines.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig3.png" target="_blank">
+        <img src="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig3.png" alt="Fig.3 Regulatory elements and RBPs in splicing strength prediction" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Regulatory elements and RBPs in splicing strength prediction — the interpretability panel linking learned signal to cis motifs and trans regulators.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig4.png" target="_blank">
+        <img src="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig4.png" alt="Fig.4 Tissue-specific sQTL identification using HELIX" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Tissue-specific sQTL identification — variant effects conditioned on tissue context, validated against GTEx.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig5.png" target="_blank">
+        <img src="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig5.png" alt="Fig.5 Isoform usage analysis in colon cancer cohorts" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Isoform usage analysis in colon cancer cohorts — patient-specific dysregulation attributed to genetic variants vs. abnormal RBP expression.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig6.png" target="_blank">
+        <img src="assets/helix-a-scalable-model-for-predicting-context-dependent-regulation-of-rna-splicing-and-iso__s43588-026-00988-w/fig6.png" alt="Fig.6 Application on scRNA-seq data" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Application on scRNA-seq data — transfer learning yields cell-type-specific isoform predictions.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>0</b> in the main text (metadata records <code>tables_count = 0</code>). Supporting material: Supplementary Figs. 1–10 plus an RBP-feature-size performance analysis, a Reporting Summary, Supplementary Data 1 (samples used for training and testing), and Source Data XLSX files for each of Figs. 1–6. Figure count: <b>6</b>.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how HELIX itself could be extended (drawing on our corpus), then the transferable value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatial accessibility &amp; 2SFCA/R2SFCA, explainable and physics-informed spatial learning, multi-source data fusion, geospatial foundation-model fine-tuning). The bridge is structural, not metaphorical: HELIX is a <strong>context-conditioned predictor</strong> — <em>tissue</em> is to splicing what <em>place</em> is to health and accessibility.</p>
+
+    <div class="idea">
+      <h3>① Widen the context vector: from RBP expression to a learned regulatory-environment embedding</h3>
+      <p><span class="lab paper">Extending this paper</span>HELIX encodes cellular context as an <strong>RBP expression profile</strong> — a strong but hand-picked proxy. The Supplementary already shows performance varies with RBP feature size, which is exactly the signature of a context representation that is <em>chosen</em> rather than <em>learned</em>. A direct extension: replace the fixed RBP vector with a <strong>learned context embedding</strong> distilled from a transcription/cell-state foundation model, add chromatin state, splicing-factor mutation status and cell-cycle phase as extra context channels, and then test the property HELIX has not yet claimed — <strong>zero-shot transfer to an unseen tissue</strong> whose context embedding was never in training. If a learned embedding beats the curated RBP vector at equal width, the context branch becomes a reusable module rather than a splicing-specific feature engineering choice.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the architecture I want for <strong>place-conditioned health prediction</strong>: a static branch over the "sequence" of a place (street network, land use, facility layout — slow-changing, structural) and a context branch over its living state (mobility, socioeconomic composition, service supply, season). One model, many cities, each conditioned on its own context embedding — instead of the current practice of refitting a separate model per study area. The unseen-tissue test translates directly into the question I care most about: does an accessibility or telehealth-uptake model trained on 100 US counties transfer to a county it never saw, purely by swapping the context vector?</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model of transcription across human cell types — <a href="https://doi.org/10.1038/s41586-024-08391-z" target="_blank">10.1038/s41586-024-08391-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Formalize the short-read × long-read recipe as a fidelity-aware learning framework</h3>
+      <p><span class="lab paper">Extending this paper</span>HELIX's quiet innovation is that it trains on two data modalities with <strong>different cost, coverage and error structure</strong> — abundant short reads and accurate but scarce long reads — yet the paper treats this as a training detail rather than a stated framework. Extending it: make fidelity explicit. Attach a per-sample <strong>noise/fidelity weight</strong> to each label, learn heteroscedastic uncertainty so the model knows when a short-read label should be distrusted, and then answer the operational question every lab has — <em>how many long-read samples are actually needed</em> before the marginal accuracy gain flattens? A published fidelity-vs-accuracy curve would turn HELIX's training set into a sequencing-budget planning tool, and would let new tissues be added continually as long-read data arrive rather than requiring a full retrain.</p>
+      <p><span class="lab mine">Added value to my research</span>This is precisely my <strong>multi-source data fusion</strong> problem restated in a cleaner domain. Mobile-phone records and social-media geotags are my "short reads" — huge coverage, biased and noisy; travel-survey diaries and GPS trajectories are my "long reads" — small, expensive, trustworthy. A fidelity-weighted loss with heteroscedastic uncertainty gives me a principled alternative to the ad-hoc reweighting most mobility fusion studies use, and the budget curve answers a real grant-writing question: how much ground-truth survey do I need to buy to make a billion noisy pings usable?</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Continual integration of single-cell multimodal data with MIRACLE — <a href="https://doi.org/10.1038/s43588-026-01030-9" target="_blank">10.1038/s43588-026-01030-9</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Read tissue-specific sQTLs as context-varying coefficients — a genomic MGWR</h3>
+      <p><span class="lab paper">Extending this paper</span>Figure 4's tissue-specific sQTLs are, statistically, <strong>effect modification</strong>: the same variant carries a different coefficient in each context. HELIX currently reports these as nominations validated by GTEx enrichment. The extension is to expose the underlying <strong>effect surface</strong> — for each variant, emit a calibrated effect estimate as a smooth function of the context embedding, with credible intervals, rather than a per-tissue point call. That yields three things the paper lacks: (i) a continuous map of <em>where in context space</em> a variant switches on, (ii) uncertainty for the many tissues with thin GTEx power, and (iii) a falsifiable prediction for context values never sampled. Pairing this with sparse-code interpretability would let each effect shift be traced to a small set of identifiable regulatory directions instead of a dense uninterpretable embedding.</p>
+      <p><span class="lab mine">Added value to my research</span>This is <strong>MGWR reborn as a neural operator</strong>. In GWR/MGWR I estimate coefficients that vary over geographic space via a kernel with a cross-validated bandwidth; HELIX suggests replacing the kernel with a <em>learned context encoder</em>, so coefficients vary over a semantic context manifold rather than raw coordinates — which handles the non-stationarity that Euclidean kernels fundamentally cannot (two distant but structurally identical neighborhoods should share a coefficient). The genomic case is my clean testbed: unlike geography, it has GTEx as external ground truth, so I can validate a context-varying-coefficient network before importing it into spatial health models.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A unifying framework from neural superposition to sparse interpretable codes — <a href="https://doi.org/10.1038/s42256-026-01259-z" target="_blank">10.1038/s42256-026-01259-z</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Harden the variant-vs-RBP attribution into a causal, decision-grade decomposition</h3>
+      <p><span class="lab paper">Extending this paper</span>The colon-cancer analysis (Fig. 5) splits a patient's splicing dysregulation into a <strong>cis-genetic</strong> and a <strong>trans-RBP</strong> share — the most clinically consequential claim in the paper, and the one most exposed to critique, because branch-ablation attribution is <em>associational</em>: the two inputs are correlated (a variant can itself alter RBP expression), so the shares are not identified without an explicit causal graph. Extending it: write the mediation model down, use the model as a <strong>counterfactual simulator</strong> (edit the allele in silico, hold RBPs fixed, and vice versa), and validate against real interventions — RBP knockdown/overexpression and base-edited splice sites — where the ground-truth direction of effect is known. Only then does "this patient's dysregulation is 70% trans" become an actionable statement about whether to target the variant or the splicing factor.</p>
+      <p><span class="lab mine">Added value to my research</span>Every explainable-ML result I publish in health geography has this identical weakness: SHAP tells me a feature <em>associates</em> with poor primary-care access, and I want to say it <em>causes</em> it. HELIX gives me a template for the honest version — a mediation-aware decomposition validated against genuine interventions (clinic openings, telehealth policy changes, transit line launches act as my knockdown experiments). Concretely, it reframes my accessibility attribution as: how much of a community's access deficit is <strong>structural</strong> (fixed geography and built form — the "variant") versus <strong>modifiable</strong> (service supply and provider staffing — the "RBP expression")? That is the split policymakers actually need, and it is currently missing from the 2SFCA literature.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Causal inference and counterfactual prediction in machine learning for actionable healthcare — <a href="https://doi.org/10.1038/s42256-020-0197-y" target="_blank">10.1038/s42256-020-0197-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Push the bulk → single-cell transfer one step further: add coordinates, and study its scaling limits</h3>
+      <p><span class="lab paper">Extending this paper</span>Figure 6 shows HELIX transferring from bulk tissue to scRNA-seq — that is, from a <strong>population average to its constituent units</strong>, which is a downscaling problem in disguise. Two extensions follow. First, add space: <strong>spatial transcriptomics</strong> supplies each cell's location, so the context vector can carry a <em>neighbourhood</em> term (the RBP milieu of surrounding cells), testing whether splicing context is partly extracellular and spatially autocorrelated — something a coordinate-free model structurally cannot see. Second, characterize deployment cost: HELIX is billed as "scalable", yet scalability is asserted rather than measured, so a systematic scaling-and-quantization study (parameters vs. accuracy vs. throughput under 8-bit/4-bit inference) would establish whether cell-type-specific isoform prediction can actually run at atlas scale on commodity hardware.</p>
+      <p><span class="lab mine">Added value to my research</span>Bulk → single cell <em>is</em> my downscaling problem: census tract → household, county → individual. The ecological fallacy and MAUP are the biology-free names for exactly the aggregation bias HELIX's transfer step must overcome, and a working recipe from a domain with cell-level ground truth is worth more to me than another purely spatial heuristic. The spatial-transcriptomics variant is even closer to home — cells with coordinates and a neighbourhood context term is the same object as residents in a neighbourhood with a spatial-lag term, which means my spatial-autocorrelation and kernel-density machinery transfers <em>into</em> that problem, not just out of it. The quantization angle is the practical half: fine-tuning geospatial foundation models is currently gated by inference cost, and their scaling curves tell me where the cliff is.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Scaling and quantization of a foundational deep learning model for network biology — <a href="https://doi.org/10.1038/s43588-026-00990-2" target="_blank">10.1038/s43588-026-00990-2</a> · Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

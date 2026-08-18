@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guiding generative models to uncover diverse and novel crystals via reinforcement learning — AI Digest</title>
+<meta name="description" content="AI Digest: Guiding generative models to uncover diverse and novel crystals via reinforcement learning (Nature Machine Intelligence, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Machine Intelligence</span>
+      <span class="tag">Reinforcement learning</span>
+      <span class="tag">Latent diffusion</span>
+      <span class="tag">GRPO</span>
+      <span class="tag">Inverse materials design</span>
+    </div>
+    <h1>Guiding generative models to uncover diverse and novel crystals via reinforcement learning</h1>
+    <div class="meta">
+      <span class="authors">Hyunsoo Park · Aron Walsh (Department of Materials, Imperial College London)</span>
+      <span><b>Published</b> 2026-07-06</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s42256-026-01262-4" target="_blank">10.1038/s42256-026-01262-4</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s42256-026-01262-4" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Likelihood-trained generative models are <strong>objective-misaligned</strong> with discovery: they reproduce the training distribution, whereas discovery needs the <em>underexplored</em> regions where novelty and stability coincide. The authors post-train a <strong>latent denoising diffusion model (Chemeleon2)</strong> with <strong>group-relative policy optimization (GRPO)</strong> and <strong>verifiable multi-objective rewards</strong> (creativity, stability, compositional and structural diversity). On the Alex-MP-20 benchmark this lifts <strong>mSUN from 15.9% to 61.3%</strong> (+45.4 pp; +285.5% relative), novelty from 62.3% to 97.5% and metastability from 51.2% to 72.1%, at a modest uniqueness cost (99.4% → 88.7%) — <strong>pushing the novelty–stability Pareto frontier outward</strong> rather than trading one for the other. The same reward machinery also beats classifier-free guidance for property-targeted (3 eV bandgap) generation while preserving chemical validity (mSUN 45.3% vs near-zero for CFG).</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>It names and then breaks a general dilemma of scientific generative AI.</b> The "novelty–validity trade-off" is not a crystals problem: any likelihood-trained generator is pulled toward the data it has seen. Showing that <strong>RL post-training moves the whole Pareto frontier</strong> rather than sliding along it is a claim that transfers to molecules, proteins, materials — and to spatial/urban design generators.</li>
+      <li><b>Rewards are <em>verifiable</em>, not learned preferences.</b> Stability comes from a physics proxy (MLFF-predicted energy above the convex hull, validated against DFT), creativity from an isometry-invariant crystal descriptor (AMD), diversity from a kernel MMD in latent space. This is the "RL with verifiable rewards" recipe imported from reasoning LLMs into physical science, where the verifier is a simulator instead of a grader.</li>
+      <li><b>Latent space is the enabler, not a detail.</b> Operating on <code>(A, X, L)</code> — discrete atom types plus continuous coordinates and lattice — makes policy log-probabilities intractable and roll-outs expensive. Compressing to a homogeneous continuous latent makes policy gradients well-posed and yields 3.8×–5.9× higher sampling throughput than the real-space predecessor.</li>
+      <li><b>Property targeting without heuristic guidance.</b> Classifier-free guidance on a compressed latent collapses chemical validity (mSUN → ~0); RL keeps it (45.3%, rising to 60.8% after DFT relaxation) while concentrating the bandgap distribution on a deliberately out-of-distribution 3 eV target.</li>
+      <li><b>It is honest about reward hacking.</b> Turning the diversity weight up broadens coverage (FMD<sup>−1</sup> 40.1% → 71.2%) but degrades metastability (40.9% → 32.2%) and pushes the policy toward chemically baroque quinary/senary compounds whose stability the sparse reference hull may overestimate — a documented failure mode, not a footnote.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature Machine Intelligence (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>A method with a transferable thesis.</b> NMI favours work whose machine-learning contribution generalizes beyond its application domain; "align generative models with verifiable scientific objectives via policy gradients" is exactly that kind of portable statement.</li>
+      <li><b>Bridges two hot literatures.</b> GRPO arrived from LLM reasoning; latent diffusion from vision. Landing both on crystal generation, with ablations against REINFORCE and against removing the diversity reward, is the cross-field synthesis NMI likes to host.</li>
+      <li><b>Benchmarked against strong public baselines.</b> MatterGen, DiffCSP, ADiT and Chemeleon1 are evaluated on the same 10,000-structure protocol, as-generated and without geometry optimization — a deliberately unforgiving comparison.</li>
+      <li><b>Fully open and reproducible.</b> Open-access CC-BY, code on GitHub with Zenodo DOIs, public training datasets, W&amp;B training logs, and source data for two figures — the "AI for science" reproducibility bar NMI has been pushing.</li>
+      <li><b>Explicit about limitations.</b> Ordered-structure-only generation (the Ag–Au–Pd solid-solution artefact), 0 K stability proxy, unresolved metrics for genuine structural-prototype novelty — the paper argues its own boundaries, which editors and reviewers reward.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training corpora</dt><dd>Two public crystal-structure datasets: <strong>MP-20</strong> (the standard Materials Project subset distributed with the CDVAE repository) and the larger <strong>Alex-MP-20</strong> (obtained from the MatterGen repository; derived from the Alexandria database and the Materials Project). <em>The article does not state the record count of either dataset</em> — it describes MP-20 as "standard/smaller" and Alex-MP-20 as "large" without giving N.</dd>
+      <dt>Generation benchmark</dt><dd><strong>10,000 structures sampled per model</strong> for the de novo benchmark, conditioned only on the number of atoms in the unit cell and evaluated <strong>as-generated, without geometry optimization</strong>. Models compared: Chemeleon2 (pretrained baseline), Chemeleon2 w/ RL, Chemeleon1 (text encoder removed), MatterGen, DiffCSP, ADiT.</dd>
+      <dt>Property-guided task</dt><dd><strong>43,295 bandgap values</strong> from Alex-MP-20 used to train the surrogate; target bandgap <strong>3 eV</strong> (deliberately out-of-distribution); <strong>512 structures sampled per strategy</strong> (RL vs CFG vs CFG+LoRA); <strong>82 of 512</strong> RL-generated samples were mSUN structures with bandgaps in 2.7–3.3 eV.</dd>
+      <dt>RL roll-out volume</dt><dd>GRPO draws <strong>G = 64 roll-outs</strong> per conditioning input with a batch of 5 conditions → <strong>320 structures per gradient update</strong>; ε = 10<sup>−3</sup>, KL weight β = 1.0, entropy bonus γ = 10<sup>−5</sup>, AdamW lr = 10<sup>−5</sup>, early stopping on a 500-step reward plateau.</dd>
+      <dt>Validation samples</dt><dd><strong>1,000 sampled structures</strong> cross-checked DFT vs MLFF energy above hull (errors &lt; 0.10 eV per atom in the metastable window); t-SNE panels use 1,000 reference + 500 (Fig. 1d) or 1,000 generated (Fig. 4a,b) structures.</dd>
+      <dt>Reference thermodynamics</dt><dd>Convex hull built from <strong>Materials Project</strong> formation energies (GGA/GGA+U, uncorrected, for compatibility with foundational MLFFs); energies predicted by the <strong>MACE-MPA-0</strong> machine-learning force field; metastability threshold <em>E</em><sub>hull</sub> &lt; 0.1 eV per atom.</dd>
+      <dt>First-principles</dt><dd><strong>VASP</strong> with PAW + PBE, workflows orchestrated by <strong>Atomate2</strong> / <strong>Jobflow-remote</strong> (MPGGAStaticMaker, MPGGADoubleRelaxStaticMaker) to stay commensurate with the Materials Project hull.</dd>
+      <dt>Descriptors &amp; filters</dt><dd><strong>AMD</strong> (average minimum distance, k = 100, Chebyshev distance) for continuous creativity; <strong>StructureMatcher</strong> (pymatgen, default tolerances) for uniqueness/novelty; <strong>SMACT</strong> with the ICSD24 oxidation-state set for compositional validity; VAE-latent <strong>Fréchet materials distance (FMD<sup>−1</sup>)</strong> for coverage.</dd>
+      <dt>Model scale</dt><dd>Diffusion transformer: 12 layers, hidden dim 768, 12 attention heads; T = 1,000 DDPM training steps, 50 DDIM sampling steps; pretraining 5,000 epochs with EMA decay 0.99. VAE reconstruction accuracy <strong>99.4%</strong> on the MP-20 test set (vs 85.5% for the ADiT transformer baseline).</dd>
+      <dt>Time window</dt><dd>Received 2025-11-03; accepted 2026-05-28; published 2026-07-06 (<em>Nat. Mach. Intell.</em> <b>8</b>, 1087–1099).</dd>
+      <dt>Availability</dt><dd>Open access (CC-BY 4.0). All sampled structures in the code repository; training metrics/hyperparameters/logs on Weights &amp; Biases; source data provided for Figs. 2b,c and 4c. Supplementary: Notes 1–3, Figs. 1–21, Table 1.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>MP-20</td><td>Training + novelty reference (small benchmark)</td><td>Materials Project subset; N not stated in article</td><td><a href="https://github.com/txie-93/cdvae" target="_blank">github.com/txie-93/cdvae</a></td></tr>
+        <tr><td>Alex-MP-20</td><td>Training + novelty reference (large benchmark); source of 43,295 bandgaps</td><td>Alexandria + Materials Project merge; N not stated in article</td><td><a href="https://github.com/microsoft/mattergen" target="_blank">github.com/microsoft/mattergen</a></td></tr>
+        <tr><td>Materials Project</td><td>Convex-hull reference energies (GGA/GGA+U)</td><td>Public DFT thermodynamic database</td><td><a href="https://next-gen.materialsproject.org" target="_blank">materialsproject.org</a></td></tr>
+        <tr><td>MACE-MPA-0 (MLFF)</td><td>Fast stability reward proxy for DFT</td><td>Foundation interatomic potential; validated on 1,000 structures</td><td><a href="https://doi.org/10.48550/arXiv.2401.00096" target="_blank">arXiv:2401.00096</a></td></tr>
+        <tr><td>SMACT (ICSD24 oxidation states)</td><td>Compositional validity filter</td><td>Charge-neutrality + electronegativity screen</td><td><a href="https://github.com/WMD-group/SMACT" target="_blank">github.com/WMD-group/SMACT</a></td></tr>
+        <tr><td>Chemeleon2 code + sampled structures</td><td>Full RL framework, rewards, all benchmark outputs</td><td>v0.0.1; W&amp;B logs for training runs</td><td><a href="https://doi.org/10.5281/zenodo.20179921" target="_blank">Zenodo 20179921</a> · <a href="https://wandb.ai/hspark1212/chemeleon2" target="_blank">W&amp;B</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Honesty note: the article reports <em>sampling</em> volumes precisely (10,000 / 512 / 320 / 1,000) but never states the number of records in MP-20 or Alex-MP-20, nor the number of DFT calculations run. Any dataset size quoted elsewhere would be inferred from the upstream repositories, not from this paper.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Latent denoising diffusion as the policy.</b> A VAE encodes <code>(A, X, L)</code> — atom types, fractional coordinates, lattice matrix — into a homogeneous continuous latent <b>z</b>; a 12-layer diffusion transformer denoises in that latent; the decoder (frozen during RL) reconstructs full crystals. Unlike ADiT, the VAE takes the lattice matrix rather than Cartesian coordinates, which is credited for the 99.4% reconstruction accuracy.</li>
+      <li><b>Reverse diffusion recast as an MDP.</b> State <em>s<sub>t</sub></em> = (noisy latent, conditioning <b>x</b>, timestep); action = the predicted noise; policy = the denoising transition kernel <em>p<sub>θ</sub></em>(<b>z</b><sub>t−1</sub>|<b>z</b><sub>t</sub>, <b>x</b>). Terminal reward evaluated on the decoded structure at t = 0.</li>
+      <li><b>GRPO instead of a critic.</b> Group-relative advantage — reward z-scored within G = 64 roll-outs sharing the same conditioning — removes the value network, isolates conditioning-driven difficulty, and empirically shows lower gradient variance than REINFORCE (Fig. 2b). Clipped surrogate + KL to the pretrained reference policy + entropy bonus.</li>
+      <li><b>Four-term verifiable reward.</b> <em>Creativity</em>: binary unique∧novel, smoothed for borderline cases by the Chebyshev distance between AMD vectors (k = 100) restricted to same-reduced-formula comparisons. <em>Stability</em>: −clip(<em>E</em><sub>hull</sub><sup>MLFF</sup>, 0, 1). <em>Diversity</em>: negative unbiased mixed MMD with a polynomial kernel over compositional and structural latents, credit-assigned per sample by a leave-one-out marginal-utility decomposition. Weights 1.0 / 1.0 / 1.0 and 0.1 for structural diversity.</li>
+      <li><b>Evaluation protocol.</b> mSUN (metastable ∧ unique ∧ novel) as the headline metric, plus uniqueness, novelty, SMACT compositional validity, metastability, and coverage as FMD<sup>−1</sup> on VAE structural embeddings; all measured on as-generated structures to avoid the flattering effect of post hoc relaxation.</li>
+      <li><b>Ablations that matter.</b> GRPO vs REINFORCE (variance); with vs without the diversity reward (mode collapse into trivial geometric variants); diversity weight 0.1 vs 1.0 (coverage↑ 40.1→71.2% but metastability↓ 40.9→32.2%); RL vs CFG vs CFG+LoRA for property targeting; static vs DFT-relaxed bandgaps.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig1.png" target="_blank">
+        <img src="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig1.png" alt="Fig.1 RL learning framework for guided exploration of crystalline materials" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> The framework: latent diffusion + GRPO shifting from likelihood-driven sampling to reward-guided exploration; the AMD-based creativity reward matrix, the <em>E</em><sub>hull</sub> stability mapping, and a t-SNE of 1,000 reference vs 500 generated structures coloured by diversity reward.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig2.png" target="_blank">
+        <img src="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig2.png" alt="Fig.2 Policy optimization algorithm and ablations" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> GRPO schematic plus the two decisive ablations — GRPO vs REINFORCE (gradient variance) and training without the diversity reward (mode collapse). Source data provided.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig3.png" target="_blank">
+        <img src="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig3.png" alt="Fig.3 Benchmark of generative models on Alex-MP-20" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Head-to-head benchmark on Alex-MP-20 across 10,000 sampled structures per model: mSUN, uniqueness, novelty, compositional validity (SMACT), metastability and coverage (FMD<sup>−1</sup>). Chemeleon2 w/ RL reaches mSUN 61.3% vs MatterGen's 41.0%.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig4.png" target="_blank">
+        <img src="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig4.png" alt="Fig.4 Novelty-stability dilemma" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> The novelty–stability dilemma made visual: baseline dispersion vs RL's compact mSUN-enriched clusters in t-SNE, the cross-model trade-off plot showing the Pareto frontier extended, and representative structures from four characteristic regions. Source data provided.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig5.png" target="_blank">
+        <img src="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig5.png" alt="Fig.5 Elemental distribution shift under RL" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Where the policy actually goes in the periodic table: across 10,000 structures, transition-metal content rises 26.2% → 35.6% while non-metals fall 27.2% → 16.6%, with a broader spread into polarizable species (I, Br, Se).</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig6.png" target="_blank">
+        <img src="assets/guiding-generative-models-to-uncover-diverse-and-novel-crystals-via-reinforcement-learning__s42256-026-01262-4/fig6.png" alt="Fig.6 RL for property-guided generation" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Property-guided design at a 3 eV bandgap target: RL concentrates the DFT-computed bandgap distribution of 512 samples on target while keeping mSUN at 45.3%, where CFG and CFG+LoRA collapse chemical validity to near zero.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: no main-text table (Tables = 0). Supplementary Information contains Notes 1–3, Figs. 1–21 and Table 1 (the MP-20 benchmark counterpart to Fig. 3). Statistical source data are released for Figs. 2b,c and 4c.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, 2SFCA/R2SFCA accessibility, explainable &amp; physics-informed spatial learning, facility-location and equity optimization, geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Make the reward geometry-aware: from a global convex hull to a <em>local</em> feasibility field</h3>
+      <p><span class="lab paper">Extending this paper</span>The stability reward is a scalar, <strong>context-free</strong> quantity: −clip(<em>E</em><sub>hull</sub>, 0, 1) at 0 K, referenced to a global Materials Project hull. The paper itself flags the consequence — for quinary/senary compounds the sparse hull <em>overestimates</em> stability, and the Ag<sub>2</sub>Au<sub>6</sub>Pd example is an ordered-supercell artefact of a solid-solution system. The extension is to make the reward a <strong>field rather than a number</strong>: condition the stability term on where in composition space the sample sits, weighting it by the local density and completeness of the reference hull (an epistemic-uncertainty discount), and adding a synthesizability/disorder term so that regions with thin thermodynamic support cannot be farmed for reward. Concretely, a calibrated MLFF ensemble variance becomes a per-sample confidence multiplier, and the policy is forbidden from converting <em>ignorance</em> into <em>advantage</em>.</p>
+      <p><span class="lab mine">Added value to my research</span>This is precisely the failure mode of naive spatial-optimization objectives in my work: a facility-siting or EV-charging optimizer that maximizes a modelled accessibility score will happily exploit the places where the model is <em>least</em> constrained by data (rural cells with sparse mobility observations, tracts with unstable 2SFCA denominators). Importing the "uncertainty-discounted reward" pattern gives me a principled way to make <strong>R2SFCA-driven allocation risk-aware</strong>: catchment-level supply decisions weighted by the local epistemic confidence of the demand model, so optimization gains are not manufactured in data deserts. It also sharpens the explainable-ML agenda — the discount surface itself is an interpretable map of where the model should not be trusted.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A framework to evaluate machine learning crystal stability predictions — <a href="https://doi.org/10.1038/s42256-025-01055-1" target="_blank">10.1038/s42256-025-01055-1</a> · Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Close the loop the paper leaves open: RL post-training as an <em>active-learning</em> outer loop</h3>
+      <p><span class="lab paper">Extending this paper</span>Chemeleon2's reward model is <strong>frozen</strong> during RL — MACE-MPA-0 and the bandgap surrogate never learn from what the policy discovers, even though the policy deliberately migrates into regions (transition-metal-rich, quaternary, polarizable-anion chemistries; 31.1% quaternary among RL outputs) where those surrogates were <em>least</em> trained. That is a self-defeating design: the better the exploration, the more off-distribution the verifier becomes. The natural extension is an <strong>alternating loop</strong> — GRPO explores, a small DFT budget is spent on the highest-uncertainty / highest-reward samples (the paper already runs VASP via Atomate2 for 1,000 validation structures), the MLFF and property surrogate are refit, and the policy resumes against a verifier that has followed it. This converts a one-shot post-training into a genuine closed-loop discovery engine and directly tests whether the mSUN gain survives an honest, continually re-grounded reward.</p>
+      <p><span class="lab mine">Added value to my research</span>The same architecture is what my multi-source data-fusion work needs: a generator of candidate interventions (new clinic sites, telehealth hub placements, charger locations) proposing configurations, a cheap surrogate scoring them, and a <strong>budgeted expensive evaluation</strong> — an agent-based model run, a field survey, a mobile-phone-validated flow model — spent only where the surrogate is uncertain. It reframes "how many simulations can I afford?" as an explicit acquisition problem, and it makes the fine-tuning of geospatial foundation models iterative rather than a single supervised pass.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Port the "creativity reward" idea: continuous, isometry-invariant novelty for <em>spatial</em> objects</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's cleverest single move is replacing binary novelty (StructureMatcher: match or no match) with a <strong>continuous, isometry-invariant descriptor</strong> (AMD, k = 100) that gives gradients on borderline cases. But the paper concedes that AMD-based novelty is still <em>compositional</em> in scope — comparisons are restricted to identical reduced formulas — and that "quantifying true structural novelty remains an open challenge" for low-symmetry structures and subtle lattice distortions. Extending it means building a <strong>prototype-level novelty metric</strong>: a symmetry-aware, distortion-tolerant embedding (Wyckoff-position or space-group-conditioned) whose distances reward genuinely new <em>structural archetypes</em> rather than new decorations of known ones. That would let the reward distinguish the paper's "controlled multi-element substitution" strategy from actual prototype discovery — a distinction the current mSUN metric cannot make.</p>
+      <p><span class="lab mine">Added value to my research</span>I have the identical measurement problem in urban form: is a neighbourhood configuration <em>novel</em>, or a translated/rotated copy of a familiar type? Building an <strong>invariance-aware descriptor for spatial configurations</strong> — invariant to translation, rotation and rescaling of the local street/POI arrangement, yet sensitive to genuine topological change — would upgrade my typology work from cluster labels to a continuous novelty coordinate, and gives spatial entropy a differentiable companion usable inside an optimizer rather than only in post hoc description.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A generative model for inorganic materials design — <a href="https://doi.org/10.1038/s41586-025-08628-5" target="_blank">10.1038/s41586-025-08628-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Transplant the whole recipe to generative <em>urban</em> design: latent diffusion + GRPO over health-equity rewards</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's own claim is that its contribution is <strong>modular and domain-agnostic</strong>: "a modular foundation for controllable AI-driven inverse design … across the scientific discovery applications of generative models." Testing that claim is itself an extension — the framework's three ingredients (a compressed continuous latent that makes policy gradients tractable, group-relative advantages that kill the critic, verifiable rewards that a simulator can compute) have never been tried on a domain where the "physics" is a social simulator rather than a force field. A crystal is a periodic arrangement of typed units under hard validity constraints; a neighbourhood plan is an arrangement of typed land uses under hard zoning, network and budget constraints. Running Chemeleon2's exact pipeline on urban configurations would tell us whether the novelty–stability Pareto shift is a property of the <em>algorithm</em> or of crystal chemistry.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the most direct import into my healthy-cities and 15-minute-neighbourhood lines: a <strong>latent diffusion generator of facility layouts</strong> post-trained with GRPO against a reward that stacks a 2SFCA accessibility term, a Gini/Theil equity term, a budget-feasibility term and a diversity term that stops the policy from proposing the same template for every city. Existing deep-RL urban planners search one site at a time; a diffusion policy proposes <em>whole configurations</em> and the group-relative baseline compares 64 alternative plans for the same neighbourhood — exactly the structure a planning workshop wants (a portfolio of distinct, defensible options, not one optimum).</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Spatial planning of urban communities via deep reinforcement learning — <a href="https://doi.org/10.1038/s43588-023-00503-5" target="_blank">10.1038/s43588-023-00503-5</a> · Efficient and scalable reinforcement learning for large-scale network control — <a href="https://doi.org/10.1038/s42256-024-00879-7" target="_blank">10.1038/s42256-024-00879-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Audit the reward-hacking boundary: turn the paper's cautionary note into a diagnostic instrument</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper reports a striking, under-exploited result: raising the structural-diversity weight from 0.1 to 1.0 nearly doubles coverage (FMD<sup>−1</sup> 40.1% → 71.2%) while metastability falls (40.9% → 32.2%) and the policy drifts toward chemically baroque high-order systems — an explicit case of <strong>reward hacking</strong>, diagnosed but only sketched. Extending it: sweep the four reward weights systematically, trace the resulting <strong>reward-weight → outcome manifold</strong>, and build an automatic hacking detector — e.g. flag when marginal reward is being earned mainly through elemental cardinality, or when generated samples cluster in composition regions with the fewest competing phases. Coupled with the entropy and KL terms, that yields a principled recipe for <em>choosing</em> reward weights rather than reporting the two that were tried, and an interpretable answer to "what did the policy learn to exploit?"</p>
+      <p><span class="lab mine">Added value to my research</span>Every multi-objective spatial optimization I run — efficiency vs equity in EV charger siting, coverage vs cost in primary-care allocation — has the same hidden degrees of freedom, and the same danger that a weight choice silently determines the policy conclusion. A <strong>weight-sweep manifold plus a hacking detector</strong> is a directly transferable methodological product: it converts a subjective weighting decision into a reported sensitivity surface, and it fits the FAIR/open-science commitment of publishing the whole trade-off rather than the flattering corner of it. It also pairs naturally with explainable-ML attribution: which spatial covariates does the optimizer lean on when it starts gaming the objective?</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning — <a href="https://doi.org/10.1038/s41586-025-09422-z" target="_blank">10.1038/s41586-025-09422-z</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Understanding language model scaling for protein fitness prediction — AI Digest</title>
+<meta name="description" content="AI Digest: Understanding language model scaling for protein fitness prediction (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Protein language models</span>
+      <span class="tag">Scaling behaviour</span>
+      <span class="tag">Zero-shot fitness prediction</span>
+      <span class="tag">Model calibration</span>
+    </div>
+    <h1>Understanding language model scaling for protein fitness prediction</h1>
+    <div class="meta">
+      <span class="authors">Chao Hou · Di Liu · Aziz Zafar · Yufeng Shen</span>
+      <span><b>Published</b> 2026-07-13</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-01010-z" target="_blank">10.1038/s43588-026-01010-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-01010-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p><strong>Bigger is not better for protein fitness prediction.</strong> Protein models score mutations through the sequence likelihood <em>p</em>(sequence), but that likelihood is pushed around by <strong>model size, training corpus and stochastic training elements</strong> — factors that have nothing to do with real fitness. Performance is best when the predicted <strong>wild-type sequence likelihood sits in a moderate range</strong>, where <em>p</em>(sequence) tracks the evolutionary patterns visible in homologs; at extreme likelihoods the model assigns nearly all mutations a uniformly low or uniformly high score and the fitness landscape flattens into noise. Because <strong>larger models systematically push proteins toward higher likelihood</strong>, scaling can carry a protein <em>out</em> of the useful regime — which explains the observed performance decline beyond a certain model size, and makes wild-type likelihood a practical per-protein model-selection signal.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Explains an anomaly the field could only describe.</b> The "scaling wall" for protein language models was known empirically — larger checkpoints scoring <em>worse</em> on ProteinGym — but unexplained. This work supplies a mechanism: the scoring quantity itself, <em>p</em>(sequence), drifts with model capacity independently of biology.</li>
+      <li><b>Turns a diagnosis into a usable rule.</b> Wild-type sequence likelihood is computable <strong>before</strong> you have any experimental fitness data, so it becomes a <strong>zero-label, per-protein model-selection criterion</strong>: pick the model whose predicted wild-type likelihood falls in the moderate band rather than the largest model available.</li>
+      <li><b>Reframes what "likelihood" means.</b> A high <em>p</em>(sequence) signals that the model has memorised or over-condensed the sequence family, not that it understands the fitness landscape — a distribution-saturation failure mode with clear analogues in every likelihood-scored foundation model.</li>
+      <li><b>Direct clinical and design consequences.</b> The same <em>p</em>(sequence) scores drive missense variant-effect prediction for disease genes (the paper dissects <strong>PTEN</strong>, a cancer/autism gene with saturation-mutagenesis data) and drive protein design ranking. A silently mis-scaled score propagates into variant interpretation.</li>
+      <li><b>A cautionary note for scaling-law orthodoxy.</b> It supplies a concrete counterexample to "larger models perform better across tasks" in a domain where the pretraining objective is only a <em>proxy</em> for the downstream quantity of interest.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Mechanism, not benchmark chasing.</b> <em>Nature Computational Science</em> favours work that explains <em>why</em> computational methods behave as they do; this Analysis dissects a widely used score rather than proposing yet another architecture.</li>
+      <li><b>Cross-cutting relevance.</b> It sits precisely at the journal's intersection of computational biology, machine learning and method evaluation — the scaling question matters to ML readers, the PTEN/variant analysis matters to genetics readers.</li>
+      <li><b>Immediately actionable guidance.</b> The paper closes with practical guidelines for choosing and developing protein models, the kind of community-level deliverable the journal's Analysis format is built for.</li>
+      <li><b>Reproducible and benchmark-anchored.</b> Built on the public <strong>ProteinGym</strong> benchmark with data and code deposited on Zenodo and per-figure source data supplied — matching the journal's reproducibility expectations.</li>
+      <li><b>Counter-consensus but well-evidenced.</b> Challenging the "scale is all you need" narrative with a diagnosable mechanism is high-signal editorially, especially as protein foundation models push toward 100B parameters.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Primary benchmark</dt><dd><strong>ProteinGym</strong> (Notin et al., NeurIPS 2023) — the community large-scale benchmark suite for protein fitness prediction and design. It supplies both the deep mutational scanning (DMS) assays used as ground truth and the model-running code, which the authors reuse unchanged.</dd>
+      <dt>Mutation / fitness data</dt><dd>Deep mutational scanning measurements distributed through ProteinGym, plus the <strong>mega-scale protein folding-stability dataset</strong> of Tsuboyama et al. (<em>Nature</em> 620, 434–444, 2023), archived at <a href="https://doi.org/10.5281/zenodo.7992926" target="_blank">Zenodo 10.5281/zenodo.7992926</a>.</dd>
+      <dt>Case-study protein</dt><dd><strong>PTEN</strong> — analysed in Fig. 2 using published saturation-mutagenesis studies: Mighell et al. (<em>Am. J. Hum. Genet.</em> 102, 943–955, 2018, lipid-phosphatase activity) and Matreyek et al. (<em>Genome Med.</em> 13, 165, 2021, variant activity + abundance). Clinical/cancer variant context via the <strong>cBioPortal</strong> cancer genomics portal.</dd>
+      <dt>Sequence universe</dt><dd><strong>UniProt</strong> (<em>Nucleic Acids Res.</em> 47, D506–D515) — the protein knowledgebase underlying the pretraining corpora whose size/composition the paper implicates in likelihood bias. Homolog sets for the evolutionary-pattern comparison are built with <strong>MMseqs2</strong>.</dd>
+      <dt>Models evaluated</dt><dd>Families spanning sequence-only, structure-aware and MSA/homolog-conditioned scoring, cited in the reference list: <strong>ESM-family</strong> language models (Meier et al. 2021; Lin et al. 2023; ESM3 / Hayes et al. 2025), <strong>MSA Transformer</strong>, inverse-folding models (Hsu et al. 2022), <strong>ProSST</strong>, <strong>RITA</strong>, CARP-style convolutional models (Yang et al. 2024), <strong>xTrimoPGLM</strong> (100B parameters), and generative/alignment baselines <strong>EVE</strong> / EVmutation. <em>The exact checkpoint list and per-model parameter counts are not stated in the openly available text — treat this as the model families named in the references, not a verified enumeration.</em></dd>
+      <dt>Structural context</dt><dd>Structures/biophysical context (Fig. 5) obtained with <strong>ColabFold</strong>; trajectory and geometry analysis with <strong>MDTraj</strong>; structure search with <strong>Foldseek</strong>.</dd>
+      <dt>Volume — honest note</dt><dd>The publicly accessible text (abstract, figure titles, data statement, reference list) does <strong>not</strong> state the number of DMS assays, proteins, mutations or model checkpoints analysed. ProteinGym v1 covers on the order of 200+ DMS assays and millions of mutants, but <strong>this digest does not assert the exact subset used here</strong>. Full counts are in the paywalled Methods and Supplementary Table 1.</dd>
+      <dt>Reproducibility</dt><dd>All analysis data <em>and</em> code deposited at <a href="https://doi.org/10.5281/zenodo.20348280" target="_blank">Zenodo 10.5281/zenodo.20348280</a>. Per-figure statistical <strong>Source Data</strong> (XLSX) provided for Figs. 1–6 and for Supplementary Figs. 1–13.</dd>
+      <dt>Funding</dt><dd>NIH R35GM149527; Simons Foundation SFARI #1019623.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>ProteinGym</td><td>Benchmark assays + model-running code</td><td>Community DMS benchmark suite; exact subset used not stated in open text</td><td><a href="https://proteingym.org" target="_blank">proteingym.org</a></td></tr>
+        <tr><td>Tsuboyama et al. mega-scale stability data</td><td>Folding-stability fitness ground truth</td><td>Mega-scale DMS of folding stability (Nature 620, 2023)</td><td><a href="https://doi.org/10.5281/zenodo.7992926" target="_blank">Zenodo 7992926</a></td></tr>
+        <tr><td>PTEN saturation mutagenesis</td><td>Per-protein case study (Fig. 2)</td><td>Mighell 2018 (activity) + Matreyek 2021 (activity &amp; abundance)</td><td><a href="https://doi.org/10.1186/s13073-021-00984-x" target="_blank">Genome Med. 13:165</a></td></tr>
+        <tr><td>UniProt</td><td>Pretraining sequence universe / homolog source</td><td>Worldwide protein knowledgebase</td><td><a href="https://www.uniprot.org" target="_blank">uniprot.org</a></td></tr>
+        <tr><td>cBioPortal</td><td>Cancer variant context for PTEN</td><td>Multidimensional cancer genomics portal</td><td><a href="https://www.cbioportal.org" target="_blank">cbioportal.org</a></td></tr>
+        <tr><td>Paper Zenodo deposit</td><td>Reproduction data + code</td><td>All figures and analyses in this Analysis</td><td><a href="https://doi.org/10.5281/zenodo.20348280" target="_blank">Zenodo 20348280</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: this digest is built from the openly available abstract, figure titles, data/code statements and the full 41-item reference list. Where a count or checkpoint list is not stated there, it is flagged as unknown rather than estimated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Likelihood-based mutation scoring.</b> Every model is used in the standard zero-shot way: score a mutant by the shift in sequence likelihood <em>p</em>(sequence) relative to wild type (masked-marginal / pseudo-likelihood scoring as implemented in ProteinGym), then correlate with experimental DMS fitness.</li>
+      <li><b>Decomposition of likelihood bias.</b> The paper isolates three non-biological drivers of predicted <em>p</em>(sequence) — <strong>model size</strong>, <strong>training dataset composition</strong>, and <strong>stochastic elements</strong> of training/inference (Fig. 1) — showing the score moves even when the underlying fitness landscape cannot.</li>
+      <li><b>Wild-type likelihood as the controlling variable.</b> Prediction accuracy (Spearman correlation with DMS) is regressed against the model-predicted wild-type sequence likelihood, revealing an <strong>inverted-U / moderate-optimum</strong> relationship rather than monotone improvement (Fig. 3).</li>
+      <li><b>Saturation diagnostics at the extremes.</b> At very low or very high wild-type likelihood the mutation-score distribution collapses — nearly all substitutions receive uniformly low or uniformly high likelihood — which is shown directly on the PTEN mutational distribution (Fig. 2) and generalised across proteins.</li>
+      <li><b>Two-resolution performance analysis.</b> Performance is separated into <strong>mean mutation effect per protein</strong> versus <strong>mutation effects per residue</strong> (Fig. 4), distinguishing global calibration failure from local, position-specific failure.</li>
+      <li><b>Biophysical grounding.</b> Model-predicted residue likelihoods are compared against biophysical context (structure/solvent context via ColabFold + MDTraj) and empirical mutation sensitivity (Fig. 5), testing whether the model's confidence reflects physics or corpus statistics.</li>
+      <li><b>Evolutionary-pattern benchmark.</b> Homolog alignments (MMseqs2; conservation/co-variation baselines in the spirit of EVmutation/EVE) define the "evolutionary pattern" target; general models are scored on how well their <em>p</em>(sequence) reproduces it (Fig. 6) — the paper's proposed explanatory axis.</li>
+      <li><b>Statistics &amp; tooling.</b> LOESS/locally weighted regression (Cleveland 1979) for the trend curves; Matplotlib and seaborn for visualisation; all model inference run with unmodified ProteinGym code to keep comparisons fair.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig1.png" target="_blank">
+        <img src="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig1.png" alt="Fig.1 Sequence likelihood influenced by non-fitness factors" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Model-predicted sequence likelihood is influenced by factors unrelated to protein fitness — the core evidence that <em>p</em>(sequence) drifts with model size, training data and stochastic elements.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig2.png" target="_blank">
+        <img src="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig2.png" alt="Fig.2 Experimental vs predicted PTEN mutation effect distributions" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Distributions of experimental and predicted PTEN mutation effects — shows the distributional collapse (uniformly low/high scores) that hides the real fitness landscape.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig3.png" target="_blank">
+        <img src="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig3.png" alt="Fig.3 Performance vs wild-type sequence likelihood" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Fitness-prediction performance versus model-predicted wild-type sequence likelihood — the moderate-likelihood optimum, and the paper's practical model-selection signal.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig4.png" target="_blank">
+        <img src="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig4.png" alt="Fig.4 Mean mutation effects vs per-residue effects" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Performance on mean mutation effects versus mutation effects per residue — separates protein-level calibration error from position-level error.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig5.png" target="_blank">
+        <img src="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig5.png" alt="Fig.5 Residue likelihood vs biophysical context and mutation sensitivity" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Model-predicted residue likelihood versus biophysical context and mutation sensitivity — tests whether model confidence tracks physics or corpus statistics.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig6.png" target="_blank">
+        <img src="assets/understanding-language-model-scaling-for-protein-fitness-prediction__s43588-026-01010-z/fig6.png" alt="Fig.6 General model performance vs capture of evolutionary patterns" loading="lazy"></a>
+        <figcaption><b>Fig. 6</b> Performance of general models depends on how well they capture evolutionary patterns in homologs — the paper's proposed explanatory mechanism for scaling behaviour.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>no main-text table</b> (tables_count = 0). Supplementary Information contains Supplementary Table 1 and Supplementary Figs. 1–13, with Supplementary Data 1–13 (XLSX) as their source data; Source Data XLSX files are provided for main Figs. 1–6.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatial accessibility &amp; 2SFCA, explainable/physics-informed spatial learning, geospatial foundation-model fine-tuning, open science &amp; reproducibility).</p>
+
+    <div class="idea">
+      <h3>① Promote wild-type likelihood from a diagnostic into a routing layer</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper <em>observes</em> that accuracy peaks at moderate wild-type <em>p</em>(sequence) and stops at "practical guidelines". The obvious extension is to operationalise it: build a <strong>per-protein model router</strong> that, given only the unlabelled wild-type sequence, computes each candidate model's wild-type likelihood, places it on the paper's inverted-U curve (Fig. 3), and selects — or likelihood-weights an ensemble of — the models sitting in the moderate band. Because the routing feature requires no DMS labels, the whole selector can be fit on the paper's own Zenodo deposit and then evaluated as a ProteinGym submission: does a routed <em>mixture of moderately-confident small models</em> beat the single largest checkpoint? That converts a scaling caveat into a deployable inference-time system, and would test whether the moderate-likelihood band is a stable, transferable constant or itself protein-family dependent.</p>
+      <p><span class="lab mine">Added value to my research</span>This is exactly the missing piece in my <strong>geospatial foundation-model fine-tuning</strong> line. When I fine-tune a remote-sensing or mobility foundation model and then apply it city-by-city, I currently have no label-free way to know whether the model is in its competent regime for <em>this</em> city. The analogue of wild-type likelihood is the model's likelihood/reconstruction score on the <em>unlabelled local context</em> — the city's own imagery, POI mix or flow matrix. Very high scores mean the city looks like the pretraining corpus (Manhattan-like, over-represented) and the model has collapsed to a prior; very low means out-of-distribution. A moderate-likelihood router would let me pick a per-city model without any local ground-truth survey — a direct answer to the transferability problem that blocks scaling GeoAI accessibility models to data-poor regions.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Scaling and quantization of a foundational deep learning model for network biology — <a href="https://doi.org/10.1038/s43588-026-00990-2" target="_blank">10.1038/s43588-026-00990-2</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Make likelihood saturation a measurable quantity, not a described one</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's mechanism at the extremes is <strong>distributional collapse</strong>: nearly all mutations receive uniformly low or uniformly high likelihood, so the fitness landscape is flattened (visible in the PTEN distributions, Fig. 2). Right now this is shown graphically. Extending it: define a scalar <strong>landscape-resolution index</strong> — e.g. the entropy or effective dynamic range of the predicted mutation-score distribution per protein, or the Gini/spread ratio between predicted and experimental score distributions — and show that this single number, not model size, is what predicts Spearman performance. That would replace the paper's qualitative "extreme likelihood" language with a threshold anyone can compute, and would let the community re-plot every ProteinGym leaderboard entry on a resolution axis instead of a parameter-count axis.</p>
+      <p><span class="lab mine">Added value to my research</span>I have been using <strong>spatial entropy</strong> as a descriptor of urban configurations; this idea flips it into a diagnostic for my own predictive surfaces. When an explainable ML model predicts an accessibility, telehealth-uptake or mental-health-service-demand surface, the same failure appears as a <em>flattened prediction surface</em>: the model outputs nearly the same value everywhere and the map looks smooth and confident while carrying no discriminative information. A "surface-resolution entropy" computed per city or per catchment would flag this before I interpret an MGWR coefficient map or hand a 2SFCA surface to a health-policy audience — a cheap, principled guard against over-smoothed pseudo-precision.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Reliable deep learning in anomalous diffusion against out-of-distribution dynamics — <a href="https://doi.org/10.1038/s43588-024-00703-7" target="_blank">10.1038/s43588-024-00703-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Attack the proxy-objective gap directly: train on the target, not the likelihood</h3>
+      <p><span class="lab paper">Extending this paper</span>The deepest reading of this paper is that <strong>the pretraining objective is a proxy</strong>: models optimise <em>p</em>(sequence) but are graded on fitness, and scaling improves the proxy while degrading the target. The extension is to close that loop — take the paper's own moderate-likelihood finding as a <strong>calibration constraint</strong> and post-hoc recalibrate (temperature/quantile mapping of the mutation-score distribution toward the empirically observed DMS distribution), or fine-tune with a small labelled DMS head and ask whether the inverted U flattens. If a few hundred labelled mutants per family removes the size penalty, the "scaling wall" is a calibration artefact, not a capacity limit — a far stronger and more falsifiable claim than the paper currently makes.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the generic pathology of every foundation model I want to reuse: pretrained on a reconstruction proxy, judged on a policy-relevant target. In my <strong>telehealth and primary-care accessibility</strong> work, an imagery- or mobility-pretrained encoder optimises pixel/trajectory reconstruction while I need it to rank <em>service deserts</em>. The recipe transfers verbatim — quantile-map the model's predicted deprivation/accessibility distribution onto the observed one before use, and measure whether a small, cheaply-collected local label set removes the transfer penalty. It also gives me a defensible answer to a reviewer's standard question: why not just use the largest available foundation model?</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Foundation models in healthcare require rethinking reliability — <a href="https://doi.org/10.1038/s42256-024-00924-5" target="_blank">10.1038/s42256-024-00924-5</a> · Evaluating large language models for accuracy incentivizes hallucinations — <a href="https://doi.org/10.1038/s41586-026-10549-w" target="_blank">10.1038/s41586-026-10549-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Corpus representation as the hidden confounder — an equity audit of the pretraining set</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper names <strong>training dataset</strong> as one of the three non-fitness drivers of <em>p</em>(sequence), but treats it mainly as a nuisance term. Extending it: quantify, for each benchmark protein, its <strong>homolog abundance and redundancy in the UniProt-derived pretraining corpus</strong> (MMseqs2 cluster size, taxonomic breadth, sequence-identity spread), then test whether <em>corpus over-representation</em> — not parameter count — is the true cause of the excessive wild-type likelihood that pushes a protein out of the moderate band. That would predict a specific, checkable asymmetry: well-sampled model organisms and heavily-studied human disease genes degrade first as models scale, while orphan and viral proteins keep improving. Since variant interpretation is clinically consequential, this is a <strong>representation-bias audit</strong> with real stakes.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my <strong>digital-divide argument in molecular clothing</strong>, and I can lift the design wholesale. Geospatial foundation models are pretrained on corpora that over-represent wealthy, dense, well-mapped cities (rich OSM coverage, frequent high-resolution imagery, dense mobile-phone panels) and under-represent rural and low-income regions — precisely the places where accessibility analysis matters most for health equity. The protocol maps one-to-one: measure each study area's representation in the pretraining corpus, then test whether model competence is a function of representation rather than model size. That produces a publishable <strong>geographic representation audit</strong> for GeoAI, and gives a quantitative basis for arguing that scaling alone will not close spatial-health-equity gaps.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for the Earth system — <a href="https://doi.org/10.1038/s41586-025-09005-y" target="_blank">10.1038/s41586-025-09005-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Local support beats global scale: a neighbourhood-conditioned scoring operator</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 6 is the paper's causal claim — general models succeed to the extent they reproduce <strong>evolutionary patterns in homologs</strong> — which implies that what matters is not global capacity but the quality of the <em>local support set</em> around the target sequence. The extension is architectural: instead of scaling a single global model, build a <strong>retrieval-conditioned scorer</strong> that, per protein, retrieves its homolog neighbourhood (MMseqs2 / Foldseek), and conditions scoring on that neighbourhood — an MSA-Transformer-style idea pushed to explicit, tunable retrieval, where the paper's inverted-U curve is used to choose <em>how much</em> neighbourhood to retrieve. Prediction: matched local support recovers the performance that scaling destroys, and the moderate-likelihood band becomes a knob (retrieval depth) rather than a fixed property of the checkpoint.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the molecular restatement of the first law of geography, and it validates the direction I already argue for: <strong>local, neighbourhood-conditioned models beat globally-pooled giants</strong> when the phenomenon is non-stationary. Concretely it motivates a <em>retrieval-conditioned GeoAI predictor</em> — for a target neighbourhood, retrieve its k most similar neighbourhoods across cities (by density, network form, service mix) and condition prediction on that retrieved support, which is MGWR's kernel logic re-implemented as learned retrieval and freed from contiguous-space adjacency. It also sharpens the physics-informed graph-learning agenda: the retrieval set defines where the learned operator is trustworthy, and the paper supplies the diagnostic (likelihood in the moderate band) for detecting when the support has run out.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Generalizable mutation-effect prediction across adaptive immune recognition via unified multimodal framework — <a href="https://doi.org/10.1038/s42256-026-01243-7" target="_blank">10.1038/s42256-026-01243-7</a> · A universal scaling law of intra-urban inequality — <a href="https://doi.org/10.1038/s41467-026-73015-1" target="_blank">10.1038/s41467-026-73015-1</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, figure titles and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

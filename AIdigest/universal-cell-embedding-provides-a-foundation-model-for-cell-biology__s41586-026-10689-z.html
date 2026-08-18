@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal cell embedding provides a foundation model for cell biology — AI Digest</title>
+<meta name="description" content="AI Digest: Universal cell embedding provides a foundation model for cell biology (Nature, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature</span>
+      <span class="tag">Foundation model</span>
+      <span class="tag">Single-cell transcriptomics</span>
+      <span class="tag">Zero-shot transfer</span>
+      <span class="tag">Representation learning</span>
+    </div>
+    <h1>Universal cell embedding provides a foundation model for cell biology</h1>
+    <div class="meta">
+      <span class="authors">Yanay Rosen · Yusuf Roohani · Ayush Agrawal · Leon Samotorčan · Stephen R. Quake · Jure Leskovec</span>
+      <span><b>Published</b> 2026-07-08</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s41586-026-10689-z" target="_blank">10.1038/s41586-026-10689-z</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s41586-026-10689-z" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Universal Cell Embedding (UCE) is a <strong>self-supervised transformer foundation model</strong> that maps any single cell — from any tissue, any species, any protocol — into one shared 1,280-dimensional latent space with <strong>no labels, no retraining and no fine-tuning</strong>. The key trick is representing each gene not by an ID but by the <strong>ESM2 protein-language embedding of its protein product</strong>, which makes the model genome-agnostic and removes any dependence on homology mapping. Applied to build the <strong>Integrated Mega-scale Atlas (IMA) of 36 million cells</strong>, &gt;1,000 named cell types, &gt;300 datasets and eight species, the embedding space shows <strong>emergent structure it was never trained for</strong> — germ-layer lineages, Cell-Ontology-consistent distances, and correct cell-type transfer to species (green monkey, naked mole rat, chicken) absent from training. A single logistic classifier over these embeddings rediscovered kidney Norn cells and found Norn-like cells in lung and heart, including in IPF/COPD lungs.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>Zero-shot ends the per-dataset retraining tax.</b> Every prior atlas-integration method (scVI, scArches, SAMap, SATURN) must be retrained on each new dataset, which mutates the representation space and makes results non-comparable across studies. UCE is used <em>as is</em>, so embeddings computed in different labs, years and species live in <strong>one shared, permanently comparable coordinate system</strong>.</li>
+      <li><b>Universality is achieved through the tokenizer, not through more data.</b> By tokenizing genes as protein embeddings (ESM2-15B, 5,120-d) and grouping them by chromosome, UCE can encode <strong>any protein-coding gene of any species from sequence alone</strong> — no orthologue tables, no shared gene panel, no highly-variable-gene selection. This is the transferable design lesson far beyond cell biology.</li>
+      <li><b>Emergent biology is the evidence, not the metric.</b> Trained only to predict whether a masked gene was expressed, the model recovers germ-layer organization (90/97 mesoderm-derived cell types nearest another mesoderm type), Cell Ontology tree distance monotonically up to five hops, and cross-tissue macrophage identity (human macrophages appear in 73 tissues; 72% of tissue-specific centroids are nearest another macrophage centroid).</li>
+      <li><b>It converts an atlas into a search engine for hypotheses.</b> Because a classifier trained on 1,280-d embeddings can be applied directly to all 36M IMA cells, the Norn-cell case study runs an <em>unbiased, annotation-independent</em> sweep across tissues, species and diseases — a workflow that would otherwise require re-integrating every dataset.</li>
+      <li><b>Concrete quantitative gains.</b> +13.9% overall, +16.2% biological conservation and +10.1% batch correction over the next-best zero-shot model (Geneformer) on Tabula Sapiens v.2; cross-atlas cell-type centroid alignment is 65% more accurate than in raw gene-expression space (92% when scored on the single nearest centroid).</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>A universal representation, not another benchmark win.</b> Nature favours claims of generality; the paper's thesis is a single latent space "spanning the universe of cell biology", validated on species the model never saw — a universality claim with a falsifiable test attached.</li>
+      <li><b>Emergent capability with mechanistic biological grounding.</b> The AI story (self-supervision → emergence) is anchored to canonical biology (germ layers, Cell Ontology, marker genes), so the result reads as cell biology rather than as machine-learning engineering.</li>
+      <li><b>Discovery, not only representation.</b> The Norn-cell study delivers an actual biological hypothesis — Norn-like, EPO-associated cells in lung and heart, with distinctive collagen and <em>Egln1</em> signatures in IPF versus COPD — closing the loop from method to new biology to disease.</li>
+      <li><b>Infrastructure for a community-scale programme.</b> UCE feeds directly into the Human Cell Atlas / virtual-cell agenda; weights, code (<code>snap-stanford/uce</code>) and embeddings (Zenodo) are open, making the paper a shared resource rather than a one-off analysis.</li>
+      <li><b>Honest about limits.</b> The Discussion states that benchmarks only test recovery of subjective expert labels, that the model is a black box, that training data are mammal- and brain-biased, and that fine-grained transfer degrades at large evolutionary distance (Drosophila) — the kind of self-critique Nature-level review demands.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Training corpus</dt><dd>The <strong>Integrated Mega-scale Atlas (IMA)</strong>: <strong>over 36 million cells</strong>, more than <strong>1,000 uniquely named cell types</strong>, <strong>more than 300 datasets</strong>, dozens of tissues, <strong>eight species</strong> (human, mouse, mouse lemur, zebrafish, pig, rhesus macaque, crab-eating macaque, western clawed frog).</dd>
+      <dt>Main source</dt><dd><strong>CZ CELLxGENE Discover Census v.2023-07-10</strong> supplies <strong>33.9 million cells across 285 datasets</strong> (human + mouse), de-duplicated by keeping primary cells only. The remaining <strong>2.3 million cells from 28 datasets</strong> cover the other species and were pulled from their original repositories (full list in the paper's Supplementary Table 16).</dd>
+      <dt>Gene tokens</dt><dd><strong>ESM2</strong> protein language model (15-billion-parameter variant) embeddings of amino-acid sequences, dimension <strong>d<sub>p</sub> = 5,120</strong>, averaged over all proteins encoded by a gene. Ablations showed ESM2-15B outperformed smaller protein LMs and random gene embeddings for under-represented species.</dd>
+      <dt>Preprocessing</dt><dd>For Census data: cells filtered at <strong>≥200 genes</strong>, genes at <strong>≥10 cells</strong>; <strong>no highly-variable-gene selection</strong> and no batch correction. Non-Census datasets were not preprocessed uniformly (the paper says so explicitly, Supplementary Note 1).</dd>
+      <dt>Working sample</dt><dd>For UMAPs, centroid matching and Norn prediction, a representative subsample of <strong>2,969,114 cells</strong> was used (10,000 randomly drawn per dataset, or the whole dataset if smaller; mean 9,486 cells per dataset), with labels coarsened to <strong>51 coarse cell types</strong>.</dd>
+      <dt>Primary benchmark</dt><dd><strong>Tabula Sapiens v.2</strong> — <strong>581,430 cells, 27 tissues, 167 batches, 162 unique cell types</strong>, unpublished at model-training time. Ovary batch-effect test: <strong>45,757 cells (10x 3′ v3.1)</strong> plus <strong>3,610 cells (Smart-seq2.5)</strong>.</dd>
+      <dt>Held-out species</dt><dd>Green monkey lung + mediastinal lymph node (<code>GSE156755</code>), naked mole rat spleen/circulating immune cells (<code>GSE132642</code>), chick retina (<code>GSE159107</code>), developing chick heart (<code>GSE149457</code>); Drosophila from the Fly Cell Atlas as an extreme-divergence probe.</dd>
+      <dt>Case-study data</dt><dd>Mouse kidney Norn-cell dataset (<code>GSE193321</code>) and human lung disease — IPF, COPD and controls (<code>GSE136831</code>).</dd>
+      <dt>Baseline space</dt><dd>The "original gene expression space" comparison uses the <strong>5,704 genes shared across all 184 human IMA datasets</strong>, log-normalized per Scanpy defaults.</dd>
+      <dt>Ontology reference</dt><dd><strong>Cell Ontology</strong>, release 16 August 2016; distance analysis on <strong>100,000 randomly sampled cell pairs</strong> from Tabula Sapiens v.2.</dd>
+      <dt>Compute</dt><dd><strong>33 layers, &gt;650 million parameters</strong>, output embedding <strong>d<sub>emb</sub> = 1,280</strong>, context of <strong>1,024 sampled gene tokens</strong>, trained <strong>40 days on 24 × A100 80 GB GPUs</strong>.</dd>
+      <dt>Availability</dt><dd>Code: <a href="https://github.com/snap-stanford/uce" target="_blank">github.com/snap-stanford/uce</a> (+ <a href="https://github.com/yhr91/uce_reproduce/tree/master" target="_blank">uce_reproduce</a>). Processed data and embeddings, including Tabula Sapiens v.2: <a href="https://doi.org/10.5281/zenodo.19462110" target="_blank">Zenodo 10.5281/zenodo.19462110</a>. Model weights are openly hosted.</dd>
+      <dt>Honest unknowns</dt><dd>The paper gives "<em>more than</em> 300 datasets", "<em>over</em> 36 million cells" and "dozens of tissues" rather than exact totals; the precise dataset roster lives in Supplementary Table 16, which is not part of the scraped main text. Per-species cell counts (beyond the 33.9M / 2.3M split) and exact hyperparameters (Supplementary Table 2) are likewise not stated in the main article and are <strong>not reconstructed here</strong>.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>CZ CELLxGENE Discover Census v.2023-07-10</td><td>Bulk of training corpus (IMA)</td><td>33.9M cells, 285 datasets, human + mouse</td><td><a href="https://cellxgene.cziscience.com/" target="_blank">cellxgene.cziscience.com</a></td></tr>
+        <tr><td>Non-Census multi-species datasets</td><td>Cross-species coverage in IMA</td><td>2.3M cells, 28 datasets, 8 species</td><td><a href="https://doi.org/10.5281/zenodo.19462110" target="_blank">Zenodo record</a></td></tr>
+        <tr><td>ESM2 protein embeddings</td><td>Gene tokenization (species-agnostic)</td><td>15B-parameter LM, 5,120-d per protein</td><td><a href="https://github.com/facebookresearch/esm" target="_blank">facebookresearch/esm</a></td></tr>
+        <tr><td>Tabula Sapiens v.2</td><td>Held-out zero-shot benchmark</td><td>581,430 cells · 27 tissues · 167 batches · 162 cell types</td><td><a href="https://tabula-sapiens.sf.czbiohub.org/" target="_blank">tabula-sapiens</a></td></tr>
+        <tr><td>Green monkey / naked mole rat / chick</td><td>Unseen-species zero-shot tests</td><td>GSE156755 · GSE132642 · GSE159107 · GSE149457</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">NCBI GEO</a></td></tr>
+        <tr><td>Mouse kidney &amp; human lung disease</td><td>Norn-cell discovery + IPF/COPD analysis</td><td>GSE193321 · GSE136831</td><td><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">NCBI GEO</a></td></tr>
+        <tr><td>Cell Ontology (2016-08-16)</td><td>External structure validation</td><td>Tree distances between cell types</td><td><a href="https://obophenotype.github.io/cell-ontology/" target="_blank">Cell Ontology</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Note: all figures above are taken verbatim from the article's Main text, Methods and Data-availability statement. Where the paper reports a bound ("more than", "over", "dozens"), that bound is reproduced rather than sharpened into a false exact count.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Cell as a "bag of RNA".</b> Each cell is reduced to a multi-set of <strong>1,024 genes sampled with replacement</strong> from its expressed genes, with sampling probability proportional to log-normalized expression — deliberately discarding exact quantitative levels in exchange for protocol and depth invariance.</li>
+      <li><b>Protein-embedding tokenization.</b> Every sampled gene becomes the ESM2 embedding of its protein product (averaged over isoform products), compressed by a one-layer MLP. This is what makes the model <strong>genome-agnostic</strong>: a new species needs only its amino-acid sequences, no orthology mapping.</li>
+      <li><b>Genomic-position structure.</b> Tokens are ordered by genomic location, grouped by chromosome between special chromosome start/end tokens (chromosome order randomized), forming a "cell sentence"; a <strong>CLS token</strong> prepended to the sequence yields the cell embedding at the final layer.</li>
+      <li><b>Self-supervised masked-expression objective.</b> A fraction r<sub>mask</sub> (20% in the released model) of expressed genes is masked; the cell embedding is concatenated with each candidate gene embedding and an MLP predicts <strong>binary expressed/not-expressed</strong> under a binary cross-entropy loss balanced over equal numbers of masked-expressed and unexpressed genes. <em>No cell-type or dataset labels are used at any point.</em></li>
+      <li><b>Zero-shot evaluation protocol.</b> New datasets are embedded without any weight update and scored with the <strong>single-cell integration benchmark</strong> (bio-conservation + batch-correction), against zero-shot transformers (Geneformer, scGPT, tGPT) <em>and</em> fine-tuned methods (scVI, scArches) that see the target data.</li>
+      <li><b>Cross-species centroid matching.</b> For each annotated cell type, a centroid is computed and matched to its nearest (and three-nearest) cell-type centroids in the IMA — the metric used to show 13/17 green-monkey, 17/24 naked-mole-rat and 12/15 chick-heart cell types align to the correct cross-species counterpart.</li>
+      <li><b>Structure audits against external knowledge.</b> Hierarchical clustering dendrograms of embedded cell types; Euclidean-vs-Cell-Ontology-tree-distance regression with one-sided t-tests (P as low as 10<sup>−201</sup>); a germ-layer classifier on held-out cell types reaching &gt;80% accuracy.</li>
+      <li><b>Downstream transfer by simple classifiers.</b> A plain <strong>logistic classifier</strong> on frozen embeddings does the work — cross-species label transfer, and the Norn-cell sweep (98.3% label recapture in mouse kidney) applied unchanged to all 36M IMA cells, then validated by canonical marker-gene fold changes and pseudobulk differential expression across IPF/COPD/control.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig1.png" target="_blank">
+        <img src="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig1.png" alt="Fig.1 UCE architecture and the Integrated Mega-scale Atlas" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Model architecture — expression-weighted gene sampling, ESM2 protein tokens grouped by chromosome, CLS-token cell embedding, masked-gene objective — plus UMAPs of the 36M-cell Integrated Mega-scale Atlas.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig2.png" target="_blank">
+        <img src="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig2.png" alt="Fig.2 Zero-shot embedding capabilities" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Zero-shot vs fine-tuned embedding; Tabula Sapiens v.1/v.2 comparisons; green monkey (unseen species) UMAP with a mislabelled B-cell cluster expressing T-cell markers; cross-species label transfer by logistic classifier.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig3.png" target="_blank">
+        <img src="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig3.png" alt="Fig.3 Emergent organization of cell types" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Emergent structure — cell-type dendrogram on unseen lung data, embedding distance vs Cell Ontology tree distance, fine-grained mapping of new donors into the IMA, and centroid-alignment accuracy across all 27 Tabula Sapiens v.2 tissues.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig4.png" target="_blank">
+        <img src="assets/universal-cell-embedding-provides-a-foundation-model-for-cell-biology__s41586-026-10689-z/fig4.png" alt="Fig.4 Norn cell case study" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Norn-cell case study — discovery workflow, mouse kidney Norn cluster (98.3% label recapture), Norn-like cells detected in other kidney, lung and heart datasets by marker fold change, and pseudobulk differences across IPF / COPD / control lungs.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>no table in the main text (tables = 0)</b>. The quantitative evidence lives in Extended Data Figs. 1–10 and in at least 21 Supplementary Tables (integration-benchmark scores in Table 1, hyperparameters in Table 2, ablations in Tables 3–4/8–9, cross-species centroid matches in Table 15, the full training-dataset roster in Table 16, Norn markers in Table 17).</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatial accessibility &amp; health geography, explainable and physics-informed spatial learning, fine-tuning geospatial foundation models).</p>
+
+    <div class="idea">
+      <h3>① Give UCE a context token: from dissociated cells to spatial neighbourhoods</h3>
+      <p><span class="lab paper">Extending this paper</span>UCE's core abstraction — a cell is a <strong>"bag of RNA"</strong> with 1,024 sampled gene tokens — deliberately throws away everything outside the cell membrane. Yet the paper's own best story is contextual: macrophages keep a shared identity across 73 tissues, Norn-like cells appear in lung and heart, and IPF Norn-like cells differ from COPD ones. A direct extension: append a small set of <strong>context tokens</strong> (spatial neighbours from spatial transcriptomics, niche composition, donor/disease state) to the cell sentence, and train the same masked-expression objective so the model learns <em>cell state conditioned on its microenvironment</em>. The zero-shot property survives because the context tokens, like the gene tokens, are built from a universal descriptor space rather than dataset-specific IDs.</p>
+      <p><span class="lab mine">Added value to my research</span>This is exactly the representation problem in my urban analytics work: a place is a "bag of POIs" whose meaning depends on its neighbourhood. A UCE-style encoder over POI tokens (embedded by their text/semantic descriptors instead of a city-specific taxonomy code) plus context tokens for street-network position and population density yields a <strong>transferable place embedding</strong> — one coordinate system in which a neighbourhood in Wuhan and one in Boston can be compared for 15-minute accessibility or primary-care service-area delineation, without refitting per city.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> SpatialFormer: universal spatial representation learning from subcellular molecular to multicellular landscapes — <a href="https://doi.org/10.1038/s43588-026-01016-7" target="_blank">10.1038/s43588-026-01016-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Turn the IMA from an atlas into a calibrated retrieval index</h3>
+      <p><span class="lab paper">Extending this paper</span>The paper's headline weakness is buried in Fig. 3d: cross-atlas centroid alignment is <strong>exact for only 41% of cell types</strong>, and the authors attribute most misses to label-resolution differences rather than model error — but they have no way to <em>tell the two apart</em>. Extending the paper: wrap the 36M-cell IMA in an approximate-nearest-neighbour index and replace hard centroid matching with <strong>calibrated retrieval</strong> — return a ranked set of neighbours with a conformal confidence set over cell-type labels, and flag queries that fall outside the training manifold (the paper already shows shuffled-expression cells land out-of-distribution, so the signal exists). That converts "41% exact" into an honest, per-query uncertainty statement and makes the atlas usable as a production annotation service.</p>
+      <p><span class="lab mine">Added value to my research</span>The same retrieval-plus-conformal pattern is what my accessibility work needs when transferring a 2SFCA/R2SFCA-calibrated model from a data-rich metro to a data-poor one: instead of silently extrapolating a distance-decay curve, retrieve the k most similar service areas in an embedding index and emit a <strong>prediction interval plus an out-of-support flag</strong>. It turns "does this model transfer?" from a hand-wave into a measurable per-tract quantity — directly relevant to telehealth and mental-health access mapping where quiet extrapolation is a policy hazard.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A cell atlas foundation model for scalable search of similar human cells — <a href="https://doi.org/10.1038/s41586-024-08411-y" target="_blank">10.1038/s41586-024-08411-y</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Stress-test "universal": a distance-stratified transfer benchmark</h3>
+      <p><span class="lab paper">Extending this paper</span>The word "universal" is doing enormous work here, and the paper itself concedes the crack: coherent embeddings for Drosophila, but fine-grained cell-type transfer degrades across large evolutionary distances, and the training corpus is admittedly mammal- and brain-heavy. The extension is a proper <strong>ablation of universality as a function of distance</strong>: hold out entire clades and tissues, and fit performance against divergence time, protein-sequence identity, and training-corpus density, producing a <em>transfer decay curve</em> with an explicit competence boundary. That would replace a binary claim with a quantitative law — and would let users know, before running the model, whether their species is inside or outside the envelope.</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial models fail the same way and it is almost never audited. I want the geospatial analogue: a <strong>transfer-decay curve for spatial foundation models</strong>, where the x-axis is not evolutionary distance but a composite of built-form dissimilarity, climate zone, income level and data-density — telling me in advance how far a model trained on North American cities can travel before its accessibility or urban-health predictions become unsupported. This pairs naturally with MGWR: local coefficient instability and embedding-space distance should be two readings of the same non-stationarity.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> TranscriptFormer: A generative cell atlas across 1.5 billion years of evolution — <a href="https://doi.org/10.1126/science.aec8514" target="_blank">10.1126/science.aec8514</a> · Transfer learning reveals large discrepancies between air and land surface temperatures in cities — <a href="https://doi.org/10.1038/s41467-026-73716-7" target="_blank">10.1038/s41467-026-73716-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Open the 1,280 dimensions: mechanistic interpretability of a cell embedding</h3>
+      <p><span class="lab paper">Extending this paper</span>The Discussion names the problem plainly — UCE "operates largely as a black box" and interpretability tools are needed to connect representations to mechanism. A concrete extension: train a <strong>sparse dictionary / overcomplete autoencoder</strong> on the 1,280-d embeddings of the IMA, then test whether the recovered latent directions align with pathways, cell-cycle phase, hypoxia response or germ-layer identity, and validate causally by ablating gene tokens and measuring embedding displacement. Because UCE is frozen and shared, such a dictionary becomes a <strong>reusable public interpretation layer</strong> for every downstream study — a much stronger contribution than per-paper attention-map inspection.</p>
+      <p><span class="lab mine">Added value to my research</span>My explainable-ML-for-spatial-prediction line has the identical failure mode: SHAP over engineered features explains the wrapper, not the representation. Adapting this gives me <strong>concept-level explanations for geospatial embeddings</strong> — latent directions corresponding to "transit richness", "green exposure", "service desert" — which is what a health-policy audience actually needs, and which survives the classic Rudin critique better than post-hoc attribution on a black box.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead — <a href="https://doi.org/10.1038/s42256-019-0048-x" target="_blank">10.1038/s42256-019-0048-x</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Steal the tokenizer, not the weights: a sequence-style universal token space for places</h3>
+      <p><span class="lab paper">Extending this paper</span>The single most portable idea in this paper is that <strong>universality was bought at the tokenizer</strong>: genes are represented by ESM2 embeddings of their protein products, so an unseen genome costs nothing. The extension inside cell biology is obvious and untried at scale — apply the same substitution to other entity vocabularies (regulatory elements by DNA-LM embeddings, metabolites by structure embeddings, perturbations by compound embeddings) and check whether the resulting model inherits the same zero-shot property, i.e. test whether "descriptor-space tokenization ⇒ zero-shot transfer" is a general principle or an ESM2-specific accident.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the design I would carry straight into GeoAI. Today geospatial models tokenize land use and POIs by <em>categorical codes</em>, which is precisely why they do not cross national data standards. Replacing those codes with embeddings from a universal descriptor space (text descriptions, imagery, or functional signatures) should make a spatial foundation model <strong>portable across countries with incompatible POI taxonomies</strong> — the geospatial equivalent of dropping the orthologue table. That is my most direct path to fine-tuning geospatial foundation models for cross-national urban-health and accessibility work.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> A foundation model for the Earth system — <a href="https://doi.org/10.1038/s41586-025-09005-y" target="_blank">10.1038/s41586-025-09005-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>

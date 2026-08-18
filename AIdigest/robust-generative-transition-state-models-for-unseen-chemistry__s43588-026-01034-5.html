@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robust generative transition-state models for unseen chemistry — AI Digest</title>
+<meta name="description" content="AI Digest: Robust generative transition-state models for unseen chemistry (Nature Computational Science, 2026)">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6675;
+    --line:#e6e9ee; --accent:#2c6e8f; --accent-soft:#eaf2f6;
+    --warm:#c4582f; --warm-soft:#fbeee7; --green:#3a7d5d; --green-soft:#e9f3ee;
+    --radius:14px; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:32px 20px 80px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:13px;color:var(--muted)}
+  .top a{color:var(--muted)}
+
+  header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 32px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent)}
+  .tag.journal{background:#1c2530;color:#fff}
+  h1{font-size:26px;line-height:1.35;margin:0 0 14px;letter-spacing:-.01em}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--muted);margin-top:6px}
+  .meta b{color:var(--ink);font-weight:600}
+  .meta .authors{flex-basis:100%}
+
+  .tldr{margin-top:22px;background:var(--green-soft);border-left:4px solid var(--green);
+    border-radius:8px;padding:16px 18px}
+  .tldr .label{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+  .tldr p{margin:6px 0 0;font-size:16px}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 28px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.04)}
+  .sec-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .sec-head .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-size:16px;flex:none}
+  .sec-head h2{font-size:18px;margin:0;letter-spacing:-.01em}
+  section.card p{margin:10px 0}
+  section.card ul{margin:10px 0;padding-left:20px}
+  section.card li{margin:6px 0}
+
+  .why-nature .ico{background:#1c2530;color:#fff}
+  .expand .ico{background:var(--warm-soft);color:var(--warm)}
+  .expand{border-color:#f0ddd2;background:linear-gradient(180deg,#fffdfb,#fff)}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px 16px;margin-top:8px}
+  .kv dt{font-weight:600;color:var(--muted);font-size:14px}
+  .kv dd{margin:0}
+  .src-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .src-table th,.src-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .src-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .src-table tr:last-child td{border-bottom:none}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    background:#f0f2f5;padding:1px 6px;border-radius:5px}
+
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafbfc}
+  figure img{width:100%;display:block;background:#eef1f4;min-height:120px}
+  figcaption{padding:10px 12px;font-size:13px;color:var(--muted)}
+  figcaption b{color:var(--ink)}
+  .no-table{font-size:14px;color:var(--muted);font-style:italic}
+
+  .idea{border:1px solid #f0ddd2;border-radius:10px;padding:14px 16px;margin:12px 0;background:#fff}
+  .idea h3{margin:0 0 6px;font-size:15px;color:var(--warm)}
+  .idea p{margin:4px 0;font-size:15px}
+  .link-mine{font-size:13px;color:var(--muted);margin-top:6px}
+  .idea .ref{margin-top:10px;padding-top:8px;border-top:1px dashed #ecd9cd;font-size:12.5px;color:var(--muted)}
+  .idea .ref b{color:var(--ink);font-weight:600}
+  .idea .ref a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .idea .lab{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .idea .lab.paper{background:var(--accent-soft);color:var(--accent)}
+  .idea .lab.mine{background:var(--warm-soft);color:var(--warm)}
+
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  .disclaimer{margin-top:8px;font-size:11px;color:#9aa4b1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a href="./index.html">← Back to AI Digest list</a>
+    <span>Place-XAI · Nature Thinking</span>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="hero">
+    <div class="tags">
+      <span class="tag journal">Nature Computational Science</span>
+      <span class="tag">Transition states</span>
+      <span class="tag">Generative models</span>
+      <span class="tag">Self-supervised pretraining</span>
+      <span class="tag">Out-of-distribution generalization</span>
+    </div>
+    <h1>Robust generative transition-state models for unseen chemistry</h1>
+    <div class="meta">
+      <span class="authors">Samir Darouich · Jacob W. Toney · Weiliang Luo · Johannes Kästner · Mathias Niepert · Heather J. Kulik</span>
+      <span><b>Published</b> 2026-08-12</span>
+      <span><b>DOI</b> <a href="https://doi.org/10.1038/s43588-026-01034-5" target="_blank">10.1038/s43588-026-01034-5</a></span>
+      <span><b>Source</b> <a href="https://www.nature.com/articles/s43588-026-01034-5" target="_blank">nature.com ↗</a></span>
+    </div>
+
+    <div class="tldr">
+      <div class="label">Core Conclusion</div>
+      <p>Generative transition-state (TS) models that reach near-chemical accuracy on small organic reactions <strong>do not generalize beyond their training domain</strong>. Using two purpose-built benchmarks — <strong>Transition1x-2p3p4p</strong> (controlled elemental substitutions) and <strong>Transition1x-TMC</strong> (transition metal complexes) — the authors show that a vanilla React-OT-style model fails on previously unseen elements. Their fix is architecture-agnostic and cheap: <strong>self-supervised pretraining on equilibrium conformers</strong> turned into "pseudo-reactions", which exposes the generator to new chemical environments before targeted fine-tuning. This <strong>lowers the median RMSD of generated TS geometries on Transition1x-TMC</strong> and <strong>cuts the amount of fine-tuning data required</strong>, giving reliable performance even in low-data regimes, with validation carried through to the DFT level.</p>
+    </div>
+  </header>
+
+  <!-- ============ WHY IMPORTANT ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">★</span><h2>Why It Matters</h2></div>
+    <ul>
+      <li><b>It audits a field that was grading itself on a single test set.</b> Nearly every recent generative TS model (OA-ReactDiff, React-OT, GoFlow, and relatives) reports numbers on Transition1x, whose chemistry is small organic molecules. This paper asks the question the leaderboard never asked — <em>what happens off-distribution?</em> — and answers it with controlled, reproducible splits rather than anecdote.</li>
+      <li><b>The failure is not a rounding error; it is structural.</b> Elemental substitution alone (moving into heavier p-block analogues) and, more sharply, transition metal complexes break the vanilla model. That matters because TMCs are exactly where TS search is most expensive and most valuable — homogeneous catalysis, organometallic mechanism design.</li>
+      <li><b>The remedy needs no new labels.</b> Equilibrium conformers are abundant and cheap (semi-empirical or force-field level), whereas TS structures require saddle-point searches at DFT cost. Converting free conformers into pseudo-reaction supervision is a data-economics argument, not just a modelling trick.</li>
+      <li><b>Low-data regimes become viable.</b> Reduced fine-tuning requirements mean a group with a few hundred well-computed TMC transition states — rather than tens of thousands — can adapt a pretrained generator to their own chemistry.</li>
+      <li><b>It ships as reusable infrastructure.</b> Benchmarks, pretrained checkpoints and databases (Zenodo) and an open codebase (<a href="https://github.com/samirdarouich/RobustTSGen" target="_blank">RobustTSGen</a>) let others measure their own model's novelty gap immediately.</li>
+    </ul>
+  </section>
+
+  <!-- ============ WHY NATURE ============ -->
+  <section class="card why-nature">
+    <div class="sec-head"><span class="ico">N</span><h2>Why Nature (Editorial Fit)</h2></div>
+    <ul>
+      <li><b>Benchmark + method + data release in one package</b> — Nature Computational Science favours contributions that change how a community evaluates itself, not only how it scores.</li>
+      <li><b>Negative result turned constructive.</b> Exposing a fundamental limitation of an established model class would be publishable on its own; pairing it with a working, general remedy is what lifts it above a critique.</li>
+      <li><b>Cross-domain generality.</b> "Pretrain on cheap equilibrium states, fine-tune on expensive rare events" is a recipe that transfers well outside chemistry — exactly the kind of transferable computational idea the journal targets.</li>
+      <li><b>Validated at the level practitioners care about.</b> The claims are carried through to DFT (Fig. 5) rather than stopping at RMSD on a held-out ML dataset.</li>
+      <li><b>Open, reproducible, and continuously maintained</b> — figshare dataset, Zenodo checkpoints, GitHub repository with an archived stable release, plus per-figure Source Data.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CORE DATA ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⛁</span><h2>Core Data — Sources &amp; Volume</h2></div>
+    <dl class="kv">
+      <dt>Base dataset</dt><dd><strong>Transition1x</strong> (Schreiner et al., <em>Sci. Data</em> 9, 779, 2022; ref. 36) — a large-scale reaction dataset built from nudged-elastic-band pathways over <strong>small organic molecules restricted to C, H, N and O</strong>, computed at the ωB97x/6-31G(d) level. Distributed via figshare, <a href="https://doi.org/10.6084/m9.figshare.19614657" target="_blank">10.6084/m9.figshare.19614657</a>. <em>The exact reaction/structure counts used for each split are not stated in the openly accessible text of this article; the dataset's own publication is the authoritative volume reference.</em></dd>
+      <dt>Benchmark 1</dt><dd><strong>Transition1x-2p3p4p</strong> — a curated extension applying <strong>controlled elemental substitutions</strong> that push reactions into heavier p-block analogues (period 2 → 3 → 4), isolating <em>chemical</em> novelty from structural novelty. Generated by the workflow in Fig. 1. Exact number of substituted reactions is not reported in the accessible text.</dd>
+      <dt>Benchmark 2</dt><dd><strong>Transition1x-TMC</strong> — a curated set of reactions involving <strong>diverse transition metal complexes</strong>, the hardest generalization target (new elements, new coordination geometries, open-shell/spin considerations). Ligand and complex construction draws on the transition-metal-chemistry toolchain of the Kulik group (molSimplify, refs. 50–51) with ligand chemistry informed by the <strong>Cambridge Structural Database</strong> (ref. 46). Reaction counts are not given in the accessible text.</dd>
+      <dt>Pretraining data</dt><dd><strong>Equilibrium conformers</strong> converted into "pseudo-reactions" (Fig. 3) — self-supervised, requires no transition-state labels. Conformer ensembles are generated with fast quantum-chemical / tight-binding tooling (<strong>CREST</strong>, ref. 61; <strong>GFN2-xTB</strong>, ref. 42).</dd>
+      <dt>Quantum-chemistry stack</dt><dd><strong>ORCA</strong> (ref. 55) for DFT; range-separated hybrid ωB97X-family and <strong>PBE0</strong> functionals (refs. 56, 59) with <strong>def2</strong> basis sets (ref. 57) and D3/D4-type dispersion corrections (refs. 58, 60); <strong>Sella</strong> (ref. 54) for saddle-point optimization; <strong>ASE</strong> (ref. 53) as the driver; IRC-based verification in the spirit of ref. 44.</dd>
+      <dt>Model lineage</dt><dd>Generative baselines are <strong>OA-ReactDiff</strong> (Duan et al., <em>Nat. Comput. Sci.</em> 2023; ref. 25) and <strong>React-OT</strong> (Duan et al., <em>Nat. Mach. Intell.</em> 2025; ref. 28), built on E(3)-equivariant 3D graph networks of the <strong>LEFTNet</strong> family (ref. 63).</dd>
+      <dt>Time window</dt><dd>Base data 2022 (Transition1x); benchmarks, checkpoints and code released 2026 alongside the article (published 2026-08-12).</dd>
+      <dt>Availability</dt><dd>Fully open. Pretrained checkpoints and derived databases on <strong>Zenodo</strong> (<a href="https://doi.org/10.5281/zenodo.18338076" target="_blank">10.5281/zenodo.18338076</a>); code on <strong>GitHub</strong> (<a href="https://github.com/samirdarouich/RobustTSGen" target="_blank">RobustTSGen</a>) with an archived stable release (<a href="https://doi.org/10.5281/zenodo.20569785" target="_blank">10.5281/zenodo.20569785</a>). Source Data provided for Figs. 1, 2, 4 and 5.</dd>
+    </dl>
+
+    <table class="src-table">
+      <thead><tr><th>Dataset</th><th>Role</th><th>Volume / Scope</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Transition1x</td><td>Training / in-domain baseline</td><td>Small organic reactions, C/H/N/O only; ωB97x/6-31G(d) NEB pathways (2022)</td><td><a href="https://doi.org/10.6084/m9.figshare.19614657" target="_blank">figshare</a></td></tr>
+        <tr><td>Transition1x-2p3p4p</td><td>Chemical-novelty benchmark</td><td>Controlled elemental substitutions into heavier p-block analogues; count not stated in accessible text</td><td><a href="https://doi.org/10.5281/zenodo.18338076" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Transition1x-TMC</td><td>Hard out-of-domain benchmark</td><td>Diverse transition metal complex reactions; count not stated in accessible text</td><td><a href="https://doi.org/10.5281/zenodo.18338076" target="_blank">Zenodo</a></td></tr>
+        <tr><td>Equilibrium conformer ensembles</td><td>Self-supervised pretraining (pseudo-reactions)</td><td>Generated with CREST / GFN2-xTB; no TS labels required</td><td><a href="https://github.com/samirdarouich/RobustTSGen" target="_blank">RobustTSGen</a></td></tr>
+        <tr><td>Cambridge Structural Database</td><td>Reference chemistry for TMC / ligand construction (ref. 46)</td><td>Experimental crystal structures, licensed</td><td><a href="https://www.ccdc.cam.ac.uk/structures/" target="_blank">CCDC</a></td></tr>
+        <tr><td>Pretrained checkpoints + databases</td><td>Reproduction / reuse</td><td>Released with the paper (2026)</td><td><a href="https://doi.org/10.5281/zenodo.18338076" target="_blank">Zenodo</a></td></tr>
+      </tbody>
+    </table>
+    <p class="no-table" style="margin-top:12px">Honesty note: this article is not open access, so only the abstract, figure titles, data/code statements and the 66-item reference list are machine-readable here. Every number above is either quoted from those sections or attributed to the cited source dataset; where a count (reactions, conformers, DFT jobs, fine-tuning set sizes) is not stated in the accessible text, it is explicitly marked as unstated rather than estimated.</p>
+  </section>
+
+  <!-- ============ CORE METHODS ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">⚙</span><h2>Core Methods</h2></div>
+    <ul>
+      <li><b>Targeted novelty benchmarks (Fig. 1).</b> Two data-generation workflows separate the axes of generalization: <em>elemental</em> novelty (2p3p4p substitutions, same reaction topology) and <em>chemical + structural</em> novelty (TMCs, new coordination environments). This is the paper's methodological backbone — a controlled ablation of "unseen-ness" rather than a random train/test split.</li>
+      <li><b>Failure-mode diagnosis of the baseline (Fig. 2).</b> The vanilla React-OT generator is stress-tested on the new benchmarks and its errors are characterized qualitatively (what kind of geometry it produces when it fails), not just aggregated into a mean RMSD.</li>
+      <li><b>Conformer-based pseudo-reaction pretraining (Fig. 3).</b> The core contribution: equilibrium conformers of molecules containing the novel elements are assembled into synthetic reactant/product/TS-like triplets, giving a self-supervised objective in the <em>same</em> input format the TS generator consumes. The model learns the geometry and equivariance statistics of unseen elements without a single true saddle point.</li>
+      <li><b>Targeted fine-tuning with data-efficiency scans (Fig. 4).</b> After pretraining, the generator is fine-tuned on limited true TS data, and performance is traced as a function of fine-tuning set size to quantify the low-data advantage.</li>
+      <li><b>Equivariant generative backbone.</b> Diffusion/optimal-transport generation over 3D molecular graphs with E(3)-equivariant message passing — reactant and product conditions in, TS geometry out — inherited from OA-ReactDiff / React-OT and LEFTNet.</li>
+      <li><b>DFT-level validation (Fig. 5).</b> Generated TS geometries are carried into real quantum-chemistry workflows (saddle-point refinement with Sella, energy evaluation with ORCA) so that improvements are demonstrated in barrier/geometry terms a computational chemist would accept, not only in ML metrics.</li>
+      <li><b>Evaluation metric of record:</b> median RMSD of predicted vs. reference TS geometries (reported as the headline improvement on Transition1x-TMC), complemented by barrier-related and success-rate style diagnostics.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FIGURES & TABLES ============ -->
+  <section class="card">
+    <div class="sec-head"><span class="ico">▦</span><h2>Core Figures &amp; Tables</h2></div>
+    <div class="figs">
+      <figure>
+        <a href="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig1.png" target="_blank">
+        <img src="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig1.png" alt="Fig.1 Data-generation workflow for Transition1x-2p3p4p and Transition1x-TMC" loading="lazy"></a>
+        <figcaption><b>Fig. 1</b> Overview of the data-generation workflow for Transition1x-2p3p4p and Transition1x-TMC — how the two novelty benchmarks are constructed.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig2.png" target="_blank">
+        <img src="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig2.png" alt="Fig.2 Failure modes of the vanilla React-OT model" loading="lazy"></a>
+        <figcaption><b>Fig. 2</b> Failure modes of the vanilla React-OT model on reactions involving novel chemistry — the diagnostic that motivates pretraining.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig3.png" target="_blank">
+        <img src="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig3.png" alt="Fig.3 Conformer-based pseudo-reaction pretraining pipeline" loading="lazy"></a>
+        <figcaption><b>Fig. 3</b> Schematic of the conformer-based pseudo-reaction pretraining pipeline — the paper's central mechanism.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig4.png" target="_blank">
+        <img src="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig4.png" alt="Fig.4 Conformer-based pseudo-reaction pretraining results" loading="lazy"></a>
+        <figcaption><b>Fig. 4</b> Pretraining results — TS-geometry accuracy gains and reduced fine-tuning data requirements across the benchmarks.</figcaption>
+      </figure>
+      <figure>
+        <a href="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig5.png" target="_blank">
+        <img src="assets/robust-generative-transition-state-models-for-unseen-chemistry__s43588-026-01034-5/fig5.png" alt="Fig.5 Validation at the DFT level of theory" loading="lazy"></a>
+        <figcaption><b>Fig. 5</b> Validation at the DFT level of theory — improvements survive refinement in a real quantum-chemistry workflow.</figcaption>
+      </figure>
+    </div>
+    <p class="no-table">Tables: <b>no main-text table</b> (Tables = 0). The Supplementary Information contains <b>Tables 1–13</b> and <b>Supplementary Figs. 1–6</b>, plus Supplementary Code 1 (archived copy of the GitHub repository). Source Data are provided as CSV bundles for Figs. 1, 2, 4 and 5.</p>
+  </section>
+
+  <!-- ============ EXPANDED IDEAS ============ -->
+  <section class="card expand">
+    <div class="sec-head"><span class="ico">✦</span><h2>Expanded Ideas <span style="font-size:12px;color:var(--muted);font-weight:500">— this paper's extensibility &amp; added value to my research</span></h2></div>
+    <p style="color:var(--muted);font-size:14px">Each idea stays anchored to <em>this</em> paper: first how the paper itself could be extended (drawing on our corpus), then the added value for my research lines (<a href="https://migis.net/about" target="_blank">migis.net</a> — GeoAI, spatial accessibility &amp; health geography, explainable and physics-informed spatial learning, geospatial foundation-model fine-tuning, open/FAIR science).</p>
+
+    <div class="idea">
+      <h3>① Generalize "pseudo-reactions" into a taxonomy of cheap-proxy pretext tasks</h3>
+      <p><span class="lab paper">Extending this paper</span>The pretraining signal here is one specific construction: equilibrium conformers assembled into synthetic reactant–TS–product triplets. That is a single point in a much larger design space, and the paper does not ablate <em>why</em> it works — is the model learning element-specific bond-length priors, equivariant geometry statistics, or simply a better initialization? A direct extension is to define a <strong>family</strong> of label-free pretext tasks over the same input format (conformer interpolation, deliberately distorted geometries, masked-atom-type reconstruction, cheap GFN2-xTB relaxation trajectories treated as pseudo-paths) and measure which one buys the most transfer per unit of compute. That would turn an effective trick into a stated principle: <em>which cheap physical states carry the information a rare-event generator is missing?</em> Testing whether pretraining representations converge to a shared geometry prior across backbones would also connect this work to the emerging "universal representation" literature on atomistic foundation models.</p>
+      <p><span class="lab mine">Added value to my research</span>This maps almost one-to-one onto my geospatial foundation-model fine-tuning work. Rare, expensive labels (verified healthcare-facility catchments, validated telehealth-utilization outcomes, ground-truthed mental-health survey points) are the geospatial equivalent of DFT transition states; abundant, cheap "equilibrium states" are the static layers I already hold — POIs, road networks, remote-sensing composites, building footprints. The lesson is that I should design <strong>label-free spatial pretext tasks</strong> (masked-POI reconstruction, network-distance regression, land-cover-to-morphology prediction) rather than jumping straight to fine-tuning on scarce health outcomes.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Platonic representation of foundation machine learning interatomic potentials — <a href="https://doi.org/10.1038/s42256-026-01235-7" target="_blank">10.1038/s42256-026-01235-7</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>② Give the generator a conscience: uncertainty-aware refusal and active benchmark growth</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 2 shows the vanilla model <em>fails silently</em> — it emits a confident-looking geometry for chemistry it has never seen. Pretraining reduces the error but does not install a detector. The natural extension is to equip the generative TS model with a <strong>calibrated applicability domain</strong>: an ensemble or evidential head over the equivariant backbone that scores each generated TS for out-of-domain risk, so the pipeline can route uncertain reactions to a full NEB/dimer search instead of returning a plausible-looking artefact. Once that exists, it closes into an <strong>active loop</strong>: the uncertainty signal selects which TMC reactions are worth their DFT cost, and each new saddle point is added to Transition1x-TMC — the benchmark grows where the model is weakest rather than where data happened to exist.</p>
+      <p><span class="lab mine">Added value to my research</span>This is the missing piece in my explainable-ML spatial prediction work. Models trained on dense, well-instrumented cities are routinely applied to rural or low-income regions with no warning flag — the geospatial equivalent of a TMC. I want a <strong>spatial applicability-domain layer</strong> that reports, per grid cell, whether the prediction is interpolation or extrapolation, and an active-sampling rule that tells a public-health agency <em>where the next survey should go</em> to maximally shrink model uncertainty. That converts uncertainty from a caveat into a survey-design instrument.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Uncertainty-driven dynamics for active learning of interatomic potentials — <a href="https://doi.org/10.1038/s43588-023-00406-5" target="_blank">10.1038/s43588-023-00406-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>③ Treat "novelty axes" as the real contribution and extend them beyond elements</h3>
+      <p><span class="lab paper">Extending this paper</span>The quiet innovation here is <em>benchmark design</em>: instead of a random split, novelty is decomposed into controllable axes (element identity in 2p3p4p; element + coordination geometry in TMC). But chemistry has more axes than the paper exercises — reaction <strong>mechanism class</strong>, charge and spin state, ring strain, solvent/environment, and molecule size beyond the small-organic regime of the base dataset. Extending the paper means building a <strong>novelty grid</strong> in which each axis is varied independently, then reporting a per-axis generalization profile for each published TS generator. Pairing that with a controlled study of <em>training-set composition</em> would answer the follow-on question the paper raises but leaves open: how much of the failure is missing elements versus missing structural diversity in the training mixture?</p>
+      <p><span class="lab mine">Added value to my research</span>Spatial machine learning has exactly this pathology and mostly ignores it: random k-fold CV over grid cells reports flattering scores because neighbouring cells leak. I want to port this design directly — define explicit <strong>spatial novelty axes</strong> (unseen city, unseen climate zone, unseen density regime, unseen socio-economic stratum, unseen country) and report a generalization profile per axis for every accessibility or health-outcome model I publish. That is a concrete methodological paper for the GeoAI community, using this article's benchmark logic as the template.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Robust out-of-distribution prediction of Buchwald–Hartwig reactions — <a href="https://doi.org/10.1038/s43588-026-01017-6" target="_blank">10.1038/s43588-026-01017-6</a> · Training data composition determines machine learning generalization and biological rule discovery — <a href="https://doi.org/10.1038/s42256-025-01089-5" target="_blank">10.1038/s42256-025-01089-5</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>④ Push physics from the data into the sampler: saddle-point conditions as a hard constraint</h3>
+      <p><span class="lab paper">Extending this paper</span>Pretraining here is a <em>statistical</em> remedy — the model sees more chemistry and therefore extrapolates better — but nothing in the generator enforces what a transition state actually <em>is</em>: a first-order saddle point with exactly one imaginary vibrational mode. A physics-informed extension would couple the equivariant generative sampler to a fast surrogate Hessian or a pretrained interatomic potential, and steer sampling toward geometries satisfying the saddle condition (energy-tilted or gradient-guided sampling), so that correctness is <strong>structural rather than learned</strong>. The payoff should be strongest precisely where data are thinnest — TMCs — because the physical constraint does not care whether the element was in the training set.</p>
+      <p><span class="lab mine">Added value to my research</span>This is my physics-informed graph-learning agenda restated in a different domain, and it sharpens what I should be enforcing. In accessibility and mobility models the analogous hard constraints are conservation of flow through a network, monotonic distance decay, and capacity limits at facilities — properties I currently <em>hope</em> a GNN learns from data. Building them in as sampler-level constraints is what would let an accessibility model trained on a handful of well-mapped cities behave sensibly in an unmapped one, the same way saddle conditions rescue an unseen metal.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Molecular deep learning at the edge of chemical space — <a href="https://doi.org/10.1038/s42256-026-01216-w" target="_blank">10.1038/s42256-026-01216-w</a></div>
+    </div>
+
+    <div class="idea">
+      <h3>⑤ Turn the data-efficiency curve into a label-budget planning tool</h3>
+      <p><span class="lab paper">Extending this paper</span>Fig. 4 establishes that pretraining reduces fine-tuning data requirements — a qualitative claim from a scan. The extension is to make it <strong>prescriptive</strong>: fit the accuracy-versus-labels curve per novelty axis, express it in the currency practitioners actually spend (CPU-hours of DFT saddle-point search, not "number of samples"), and publish a calculator that answers "for target median RMSD X on metal M, compute N transition states". Adding <em>which</em> TS to compute (from idea ②) makes it a full experiment-design tool. A parallel worth testing is whether transfer to an unseen metal behaves like transfer to an unseen biological cell type — a well-studied setting where foundation-model fine-tuning curves are already characterized.</p>
+      <p><span class="lab mine">Added value to my research</span>Label budgets are the binding constraint in exactly the health-geography settings I care about most: fine-tuning a geospatial foundation model for primary-care or mental-health accessibility in a region where validated facility and utilization records number in the hundreds. A budget calculator — "to reach usable accuracy in this province, you need N ground-truthed facilities, and here is where they should be" — is a deliverable that funding agencies and health departments can act on directly, and it aligns with my open-science/FAIR commitment because the curve, not just the model, becomes the shared artefact.</p>
+      <div class="ref"><b>Cross-ref (corpus):</b> Predicting drug responses of unseen cell types through transfer learning with foundation models — <a href="https://doi.org/10.1038/s43588-025-00887-6" target="_blank">10.1038/s43588-025-00887-6</a> · A foundation model for the Earth system — <a href="https://doi.org/10.1038/s41586-025-09005-y" target="_blank">10.1038/s41586-025-09005-y</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Digest · generated by Claude from public metadata, abstract, and reference data · Nature Thinking Corpus</div>
+    <div class="disclaimer">This page is an AI-assisted research interpretation and may contain errors; consult the original article. Figure copyright belongs to Springer Nature; shown here for academic citation only.</div>
+  </footer>
+
+</div>
+</body>
+</html>
